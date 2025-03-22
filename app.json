@@ -30,6 +30,13 @@
     "plugins": ["expo-router"],
     "experiments": {
       "typedRoutes": true
+    },
+    "fonts": {
+      "Pretendard": "./assets/fonts/pretendard_regular.otf",
+      "Pretendard-Medium": "./assets/fonts/pretendard_medium.otf",
+      "Pretendard-SemiBold": "./assets/fonts/pretendard_semi_bold.otf",
+      "Pretendard-Bold": "./assets/fonts/pretendard_bold.otf",
+      "Cafe24Ssurround": "./assets/fonts/cafe_24_ssurround.ttf"
     }
   }
 }
