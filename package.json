@@ -3,9 +3,12 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
+    "dev": "ENV=dev expo start",
+    "prod": "ENV=prod expo start",
+    "android:dev": "ENV=dev expo run:android",
+    "android:prod": "ENV=prod expo run:android",
+    "ios:dev": "ENV=dev expo run:ios",
+    "ios:prod": "ENV=prod expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll"
   },
@@ -32,6 +35,7 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-native": "0.76.7",
+    "react-native-dotenv": "^3.4.11",
     "react-native-reanimated": "~3.16.1",
     "react-native-safe-area-context": "^4.12.0",
     "react-native-screens": "~4.4.0",
