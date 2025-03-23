@@ -10,8 +10,12 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import "../global.css";
-import { useColorScheme } from "@/components/useColorScheme";
+import { useColorScheme } from "nativewind";
 import { initializeKakaoSDK } from "@react-native-kakao/core";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { queryClient } from "@/lib/query/client";
+import { isDev } from "@/config/env";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -51,7 +55,12 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RootLayoutNav />
+      {isDev && <ReactQueryDevtools />}
+    </QueryClientProvider>
+  );
 }
 
 function RootLayoutNav() {
