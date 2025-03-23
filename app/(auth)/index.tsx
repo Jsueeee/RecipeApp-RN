@@ -1,10 +1,10 @@
 import LoginButtonColumn from "@/app/(auth)/components/LoginButton";
+import i18n from "@/lib/i18n";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
-import { Animated, Image, LayoutAnimation, Text, View } from "react-native";
-import i18n from "@/lib/i18n";
-import SplashLogo from "./components/SplashLogo";
+import { Animated, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import SplashLogo from "./components/SplashLogo";
 
 export default function Login() {
   const logoAnimation = useRef(new Animated.Value(0)).current;

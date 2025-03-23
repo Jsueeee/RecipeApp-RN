@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 import "../global.css";
 import { useColorScheme } from "@/components/useColorScheme";
+import { initializeKakaoSDK } from "@react-native-kakao/core";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -41,6 +42,10 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded]);
+
+  useEffect(() => {
+    initializeKakaoSDK("3cb89516c27c020802d2b85534cda074");
+  }, []);
 
   if (!loaded) {
     return null;

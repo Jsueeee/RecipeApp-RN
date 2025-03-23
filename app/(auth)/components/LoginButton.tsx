@@ -1,5 +1,6 @@
 import i18n from "@/lib/i18n";
 import { View, Text, TouchableOpacity, Image } from "react-native";
+import { useAuth } from "../hooks/useAuth";
 
 enum LoginMethod {
   KAKAO = "KAKAO",
@@ -40,24 +41,10 @@ const DefaultLoginButton = ({ method, onClick: onPress }: Props) => {
 };
 
 export default function LoginButtonColumn() {
-  // TODO : 훅으로 분리
-  const handleKakaoLogin = async () => {
-    // TODO : 카카오 로그인 로직
-    console.log("Kakao login");
-  };
-
-  const handleNaverLogin = async () => {
-    // TODO : 네이버 로그인 로직
-    console.log("Naver login");
-  };
-
-  const handleGoogleLogin = async () => {
-    // TODO : 구글 로그인 로직
-    console.log("Google login");
-  };
+  const { handleKakaoLogin, handleNaverLogin, handleGoogleLogin } = useAuth();
 
   return (
-    <View className="w-full max-w-[500px] mx-auto px-4 pb-6 gap-2 ">
+    <View className="w-full max-w-[500px] mx-auto px-4 pb-6 gap-2 mb-8 ">
       <DefaultLoginButton
         method={LoginMethod.KAKAO}
         onClick={handleKakaoLogin}
