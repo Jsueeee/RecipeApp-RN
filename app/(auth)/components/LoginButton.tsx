@@ -57,7 +57,7 @@ export default function LoginButtonColumn() {
   };
 
   return (
-    <View className="w-full px-4 pb-6 gap-2">
+    <View className="w-full max-w-[500px] mx-auto px-4 pb-6 gap-2 ">
       <DefaultLoginButton
         method={LoginMethod.KAKAO}
         onClick={handleKakaoLogin}
