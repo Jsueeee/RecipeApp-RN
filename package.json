@@ -10,7 +10,9 @@
     "ios:dev": "ENV=dev expo run:ios",
     "ios:prod": "ENV=prod expo run:ios",
     "web": "expo start --web",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
   },
   "jest": {
     "preset": "jest-expo"
