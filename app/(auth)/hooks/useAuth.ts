@@ -1,11 +1,13 @@
-import { login } from "@react-native-kakao/user";
+import { useLoginMutation } from "@/app/hooks/mutations/useLoginMutation";
+import { AUTH_KEYS } from "@/app/lib/storage/auth";
+import * as SecureStore from "expo-secure-store";
 
 export const useAuth = () => {
+  const { kakaoLogin, isLoading, error } = useLoginMutation();
+
   const handleKakaoLogin = async () => {
     try {
-      const result = await login();
-
-      console.log("result", result);
+      kakaoLogin();
     } catch (error) {
       console.error(error);
     }

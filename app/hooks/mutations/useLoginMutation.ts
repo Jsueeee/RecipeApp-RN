@@ -3,6 +3,7 @@ import { login } from "@react-native-kakao/user";
 import { useMutation } from "@tanstack/react-query";
 import { LoginResponse } from "@/app/types/api/auth";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
+import { authStorage } from "@/app/lib/storage/auth";
 
 export const useLoginMutation = () => {
   const kakaoLoginMutation = useMutation({
@@ -19,16 +20,17 @@ export const useLoginMutation = () => {
       );
       return data;
     },
-    onSuccess: (data) => {
-      console.log("로그인 성공:", data);
-      console.log("data.accessToken", data.accessToken);
-      console.log("data.refreshToken", data.refreshToken);
-      console.log("data.userId", data.userId);
+    onSuccess: async (data) => {
+      await authStorage.setTokens({
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+        userId: data.userId,
+      });
     },
   });
 
   return {
-    handleKakaoLogin: kakaoLoginMutation.mutate,
+    kakaoLogin: kakaoLoginMutation.mutate,
     isLoading: kakaoLoginMutation.isPending,
     error: kakaoLoginMutation.error,
   };
