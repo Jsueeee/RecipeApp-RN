@@ -5,8 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import { Animated, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SplashLogo from "./components/SplashLogo";
+import { useAutoLogin } from "./hooks/useAutoLogin";
 
-export default function Login() {
+export default function LoginScreen() {
+  const { checkAuth } = useAutoLogin();
+
   const logoAnimation = useRef(new Animated.Value(0)).current;
   const buttonAnimation = useRef(new Animated.Value(0)).current;
   const opacityAnimation = useRef(new Animated.Value(0)).current;
@@ -14,10 +17,11 @@ export default function Login() {
 
   useEffect(() => {
     const initialize = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const isAutoLoginSuccess = await checkAuth();
+
+      if (isAutoLoginSuccess) return;
 
       if (buttonHeight > 0) {
-        console.log("buttonHeight", buttonHeight);
         Animated.parallel([
           Animated.timing(logoAnimation, {
             toValue: 1,
@@ -41,7 +45,7 @@ export default function Login() {
     };
 
     initialize();
-  }, [buttonHeight]);
+  }, []);
 
   return (
     <SafeAreaView className="flex-1 bg-teal-300" edges={["top", "bottom"]}>

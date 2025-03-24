@@ -19,4 +19,7 @@ export const authStorage = {
     );
     await SecureStore.setItemAsync(AUTH_KEYS.USER_ID, String(tokens.userId));
   },
+  getAccessToken: async () => {
+    return await SecureStore.getItemAsync(AUTH_KEYS.ACCESS_TOKEN);
+  },
 };
