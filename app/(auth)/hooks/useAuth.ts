@@ -1,13 +1,14 @@
 import { useLoginMutation } from "@/app/hooks/mutations/useLoginMutation";
-import { AUTH_KEYS } from "@/app/lib/storage/auth";
-import * as SecureStore from "expo-secure-store";
+import { router } from "expo-router";
 
 export const useAuth = () => {
   const { kakaoLogin, isLoading, error } = useLoginMutation();
 
   const handleKakaoLogin = async () => {
     try {
-      kakaoLogin();
+      await kakaoLogin();
+
+      router.replace("/(tabs)");
     } catch (error) {
       console.error(error);
     }
