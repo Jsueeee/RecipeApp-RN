@@ -3,3 +3,7 @@ export interface LoginResponse {
   refreshToken: string;
   userId: number;
 }
+
+export interface AutoLoginResponse {
+  userId: number;
+}
