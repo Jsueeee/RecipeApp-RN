@@ -1,0 +1,16 @@
+{
+  "build": {
+    "dev": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "ENV": "dev"
+      }
+    },
+    "prod": {
+      "env": {
+        "ENV": "prod"
+      }
+    }
+  }
+}

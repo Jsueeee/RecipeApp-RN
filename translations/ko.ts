@@ -18,9 +18,9 @@ export default {
   },
   login: {
     title: "먹는 거에 진심인\n우리들의 공간",
-    with_kakao: "카카오로 로그인",
-    with_naver: "네이버로 로그인",
-    with_google: "구글로 로그인",
+    with_KAKAO: "카카오로 로그인",
+    with_NAVER: "네이버로 로그인",
+    with_GOOGLE: "구글로 로그인",
   },
   category: {
     youtube: "유튜브",
