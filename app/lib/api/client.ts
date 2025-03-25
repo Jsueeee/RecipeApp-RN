@@ -1,10 +1,9 @@
 import axios from "axios";
-import { config, isDev } from "@/app/config/env";
 import { authStorage } from "../storage/auth";
 
 export const apiClient = axios.create({
-  baseURL: config.apiUrl,
-  timeout: config.timeout,
+  baseURL: process.env.EXPO_PUBLIC_API_BASE_URL,
+  timeout: 30000,
   headers: {
     "Content-Type": "application/json",
   },
@@ -37,7 +36,7 @@ apiClient.interceptors.response.use(
 );
 
 // 개발 환경에서만 요청/응답 로깅
-if (isDev) {
+if (process.env.EXPO_PUBLIC_ENV === "dev") {
   apiClient.interceptors.request.use(
     (config) => {
       console.log("🚀 API 요청:", config.url, config.data);
