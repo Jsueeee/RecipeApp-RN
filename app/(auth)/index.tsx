@@ -6,6 +6,7 @@ import { Animated, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SplashLogo from "./components/SplashLogo";
 import { useAutoLogin } from "./hooks/useAutoLogin";
+import { router } from "expo-router";
 
 export default function LoginScreen() {
   const { checkAuth } = useAutoLogin();
@@ -17,35 +18,42 @@ export default function LoginScreen() {
 
   useEffect(() => {
     const initialize = async () => {
+      if (buttonHeight === 0) return;
+
       const isAutoLoginSuccess = await checkAuth();
 
-      if (isAutoLoginSuccess) return;
-
-      if (buttonHeight > 0) {
-        Animated.parallel([
-          Animated.timing(logoAnimation, {
-            toValue: 1,
-            duration: 800,
-            useNativeDriver: false,
-          }),
-          Animated.timing(buttonAnimation, {
-            toValue: 1,
-            duration: 800,
-            delay: 500,
-            useNativeDriver: false,
-          }),
-          Animated.timing(opacityAnimation, {
-            toValue: 1,
-            duration: 1300,
-            delay: 500,
-            useNativeDriver: false,
-          }),
-        ]).start();
+      if (isAutoLoginSuccess) {
+        console.log("🔑 자동 로그인 성공");
+        router.replace("/(tabs)");
+      } else {
+        startButtonLayoutAnimation();
       }
     };
 
     initialize();
-  }, []);
+  }, [buttonHeight]);
+
+  const startButtonLayoutAnimation = () => {
+    Animated.parallel([
+      Animated.timing(logoAnimation, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: false,
+      }),
+      Animated.timing(buttonAnimation, {
+        toValue: 1,
+        duration: 800,
+        delay: 500,
+        useNativeDriver: false,
+      }),
+      Animated.timing(opacityAnimation, {
+        toValue: 1,
+        duration: 1300,
+        delay: 500,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-teal-300" edges={["top", "bottom"]}>

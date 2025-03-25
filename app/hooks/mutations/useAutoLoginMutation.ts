@@ -15,7 +15,7 @@ export const useAutoLoginMutation = () => {
   });
 
   return {
-    autoLogin: autoLoginMutation.mutate,
+    autoLogin: autoLoginMutation.mutateAsync,
     error: autoLoginMutation.error,
   };
 };
