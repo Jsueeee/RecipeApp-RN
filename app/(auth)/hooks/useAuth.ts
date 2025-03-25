@@ -7,8 +7,6 @@ export const useAuth = () => {
   const handleKakaoLogin = async () => {
     try {
       await kakaoLogin();
-
-      router.replace("/(tabs)");
     } catch (error) {
       console.error(error);
     }

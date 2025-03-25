@@ -4,13 +4,14 @@ import { router } from "expo-router";
 export const useAutoLogin = () => {
   const { autoLogin } = useAutoLoginMutation();
 
-  const checkAuth = async () => {
+  const checkAuth: () => Promise<boolean> = async () => {
     try {
       await autoLogin();
-      router.replace("/(tabs)");
 
       return true;
     } catch (error) {
+      console.error("🚫 Auto login failed:", error);
+
       return false;
     }
   };
