@@ -9,6 +9,12 @@ export default {
   system: {
     back_pressed_message: "버튼을 한번 더 누르면 종료됩니다",
   },
+  bottom_tab: {
+    fridge: "냉장고",
+    recipe: "레시피 저장소",
+    search: "검색",
+    myPage: "마이페이지",
+  },
   navigation: {
     fridge: "나의냉장고",
     recipeSearch: "레시피검색",
