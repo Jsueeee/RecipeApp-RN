@@ -13,7 +13,7 @@ export default {
     fridge: "냉장고",
     recipe: "레시피 저장소",
     search: "검색",
-    myPage: "마이페이지",
+    myPage: "MY",
   },
   navigation: {
     fridge: "나의냉장고",
