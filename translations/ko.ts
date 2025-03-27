@@ -41,9 +41,9 @@ export default {
     myPage: "마이페이지",
   },
   freshness: {
-    green: "신선",
-    orange: "위험",
-    red: "폐기",
+    fresh: "신선",
+    risky: "위험",
+    spoiled: "폐기",
   },
   home: {
     fridge_is_empty: "냉장고가 비어있어요",
