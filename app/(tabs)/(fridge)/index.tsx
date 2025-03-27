@@ -3,7 +3,7 @@ import { useFridgesQuery } from "@/app/hooks/queries/useFridgeQuery";
 import { Ingredient } from "@/app/types/domain/fridge";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import { Stack } from "expo-router";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AddIngredientButton } from "./components/AddIngredientButton";
@@ -13,6 +13,7 @@ import { FridgeTabs } from "./constants/fridgeTabs";
 const TABS = Object.values(FridgeTabs);
 
 export default function FridgeScreen() {
+  const scrollViewRef = useRef<ScrollView>(null);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
   const { data: fridges } = useFridgesQuery();
@@ -25,6 +26,11 @@ export default function FridgeScreen() {
   const handleAddPress = () => {
     // TODO: 식재료 추가 화면으로 이동
     console.log("Add button pressed");
+  };
+
+  const handleTabSelect = (index: number) => {
+    setSelectedTabIndex(index);
+    scrollViewRef.current?.scrollTo({ y: 0, animated: true });
   };
 
   const filteredCategories = useMemo(
@@ -45,6 +51,7 @@ export default function FridgeScreen() {
         <Stack.Screen options={{ headerShown: false }} />
 
         <ScrollView
+          ref={scrollViewRef}
           className="flex-1"
           showsVerticalScrollIndicator={false}
           stickyHeaderIndices={[1]}
@@ -55,7 +62,7 @@ export default function FridgeScreen() {
           <CategoryTabs
             tabs={TABS}
             selectedTabIndex={selectedTabIndex}
-            onSelectTabIndex={setSelectedTabIndex}
+            onSelectTabIndex={handleTabSelect}
           />
 
           <View className="p-4">
