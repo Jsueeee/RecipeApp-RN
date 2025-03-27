@@ -1,4 +1,4 @@
-import { CategoryTabs } from "@/app/(tabs)/(home)/components/CategoryTabs";
+import { CategoryTabs } from "@/app/(tabs)/(fridge)/components/CategoryTabs";
 import { useFridgesQuery } from "@/app/hooks/queries/useFridgeQuery";
 import { Ingredient } from "@/app/types/domain/fridge";
 import { MainTabHeader } from "@/components/MainTabHeader";
@@ -12,7 +12,7 @@ import { FridgeTabs } from "./constants/fridgeTabs";
 
 const TABS = Object.values(FridgeTabs);
 
-export default function HomeScreen() {
+export default function FridgeScreen() {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
   const { data: fridges } = useFridgesQuery();

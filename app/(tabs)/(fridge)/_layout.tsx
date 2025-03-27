@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import React from "react";
 
-export default function HomeLayout() {
+export default function FridgeLayout() {
   return (
     <Stack
       screenOptions={{

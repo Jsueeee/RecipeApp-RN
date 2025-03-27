@@ -1,4 +1,4 @@
-import { IngredientItem } from "@/app/(tabs)/(home)/components/IngredientItem";
+import { IngredientItem } from "@/app/(tabs)/(fridge)/components/IngredientItem";
 import type { Ingredient } from "@/app/types/domain/fridge";
 import React from "react";
 import { Text, View } from "react-native";
