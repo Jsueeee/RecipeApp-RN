@@ -23,10 +23,10 @@ export function IngredientItem({
       {/* TODO : 아이콘 이미지 추가 */}
       <View className="w-12 h-12 bg-gray-100" />
 
-      <View className="flex-1 ml-1 mr-4">
+      <View className="flex-1 ml-1 mr-4 gap-[2px]">
         <Text className="text-title5 text-text-strong">{name}</Text>
 
-        <View className="flex-row items-center mt-[2px]">
+        <View className="flex-row items-center">
           <Text className="text-body3 text-text-alternative">
             {quantity}
             {unit}
