@@ -3,7 +3,7 @@ import { useFridgesQuery } from "@/app/hooks/queries/useFridgeQuery";
 import { Ingredient } from "@/app/types/domain/fridge";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import { Stack } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AddIngredientButton } from "./components/AddIngredientButton";
@@ -27,6 +27,18 @@ export default function FridgeScreen() {
     console.log("Add button pressed");
   };
 
+  const filteredCategories = useMemo(
+    () =>
+      fridges?.categories
+        .filter(
+          (category) =>
+            selectedTabIndex === 0 ||
+            category.categoryName === TABS[selectedTabIndex]
+        )
+        .filter((category) => category.ingredients.length > 0),
+    [fridges?.categories, selectedTabIndex]
+  );
+
   return (
     <SafeAreaView className="flex-1 bg-background-alternative">
       <View className="flex-1">
@@ -47,7 +59,7 @@ export default function FridgeScreen() {
           />
 
           <View className="p-4">
-            {fridges?.categories.map((category) => (
+            {filteredCategories?.map((category) => (
               <CategorizedIngredientsGroup
                 key={category.categoryName}
                 categoryName={category.categoryName}
