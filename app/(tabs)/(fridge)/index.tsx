@@ -1,14 +1,16 @@
 import { CategoryTabs } from "@/app/(tabs)/(fridge)/components/CategoryTabs";
 import { useFridgesQuery } from "@/app/hooks/queries/useFridgeQuery";
 import { Ingredient } from "@/app/types/domain/fridge";
+import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import { Stack } from "expo-router";
-import React, { useState, useMemo, useRef } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AddIngredientButton } from "./components/AddIngredientButton";
 import { CategorizedIngredientsGroup } from "./components/CategorizedIngredientsGroup";
 import { FridgeTabs } from "./constants/fridgeTabs";
+import i18n from "@/lib/i18n";
 
 const TABS = Object.values(FridgeTabs);
 
@@ -65,15 +67,26 @@ export default function FridgeScreen() {
             onSelectTabIndex={handleTabSelect}
           />
 
-          <View className="p-4">
-            {filteredCategories?.map((category) => (
-              <CategorizedIngredientsGroup
-                key={category.categoryName}
-                categoryName={category.categoryName}
-                ingredients={category.ingredients}
-                onIngredientItemClick={onIngredientItemClick}
-              />
-            ))}
+          <View className="px-4 flex-1">
+            {!filteredCategories || filteredCategories.length === 0 ? (
+              <View className="flex-1 justify-center items-center">
+                <EmptyPlaceholder
+                  title={i18n.t("home.fridge_is_empty")}
+                  description={i18n.t("home.fridge_is_empty_sub")}
+                />
+              </View>
+            ) : (
+              <View className="flex-1 pt-2">
+                {filteredCategories.map((category) => (
+                  <CategorizedIngredientsGroup
+                    key={category.categoryName}
+                    categoryName={category.categoryName}
+                    ingredients={category.ingredients}
+                    onIngredientItemClick={onIngredientItemClick}
+                  />
+                ))}
+              </View>
+            )}
           </View>
         </ScrollView>
 
