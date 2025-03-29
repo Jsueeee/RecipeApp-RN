@@ -16,8 +16,9 @@ export function CategoryTabs({
   return (
     <ScrollView
       horizontal
-      className="bg-gray-100 px-4 py-3"
+      className="bg-gray-100"
       showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
     >
       {tabs.map((tab, index) => (
         <Pressable
