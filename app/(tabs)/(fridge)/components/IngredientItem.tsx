@@ -1,7 +1,9 @@
 import React from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, Image } from "react-native";
 import { FreshnessLabel } from "./FreshnessLabel";
 import { Ingredient } from "@/app/types/domain/fridge";
+
+import { FoodDataManager } from "@/constants/IngredientManager";
 
 interface Props extends Ingredient {
   onPress: () => void;
@@ -14,14 +16,18 @@ export function IngredientItem({
   expiredAt,
   freshness,
   onPress,
+  ingredientIconId,
 }: Props) {
+  const Icon = FoodDataManager.getImageSource(ingredientIconId);
+
   return (
     <Pressable
       className="flex-row items-center p-2 bg-white rounded-lg"
       onPress={onPress}
     >
-      {/* TODO : 아이콘 이미지 추가 */}
-      <View className="w-12 h-12 bg-gray-100" />
+      <View className="w-12 h-12 justify-center items-center">
+        {Icon && <Icon width={40} height={40} />}
+      </View>
 
       <View className="flex-1 ml-1 mr-4 gap-[2px]">
         <Text className="text-title5 text-text-strong">{name}</Text>
@@ -41,7 +47,6 @@ export function IngredientItem({
           )}
         </View>
       </View>
-
       <FreshnessLabel freshness={freshness} />
     </Pressable>
   );
