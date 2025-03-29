@@ -67,7 +67,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="(fridge)"
         options={{
           tabBarIcon: ({ color }) => (
             <FridgeIcon color={color} width={20} height={20} />

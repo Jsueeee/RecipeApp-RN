@@ -37,12 +37,13 @@ export default {
   header: {
     home: "나의 냉장고",
     search: "검색",
-    fridge_recipe: "레시피 저장소",
+    recipe: "레시피 저장소",
+    myPage: "마이페이지",
   },
   freshness: {
-    green: "신선",
-    orange: "위험",
-    red: "폐기",
+    fresh: "신선",
+    risky: "위험",
+    spoiled: "폐기",
   },
   home: {
     fridge_is_empty: "냉장고가 비어있어요",
