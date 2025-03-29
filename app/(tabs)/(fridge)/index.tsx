@@ -3,7 +3,7 @@ import { useFridgesQuery } from "@/app/hooks/queries/useFridgeQuery";
 import { Ingredient } from "@/app/types/domain/fridge";
 import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
 import { MainTabHeader } from "@/components/MainTabHeader";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import React, { useMemo, useRef, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -22,7 +22,7 @@ export default function FridgeScreen() {
 
   const onIngredientItemClick = (ingredient: Ingredient) => {
     // TODO: 식재료 수정 화면으로 이동
-    console.log("Food pressed:", ingredient);
+    router.push("/(fridge)/(edit)");
   };
 
   const handleAddPress = () => {
