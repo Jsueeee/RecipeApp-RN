@@ -19,24 +19,17 @@ export const Header = ({
   className,
 }: Props) => {
   return (
-    <View
-      className={clsx(
-        "w-full p-4 flex-row items-center justify-between",
-        className
-      )}
-    >
-      <Pressable onPress={onBackClick}>
+    <View className={clsx("w-full p-4 flex-row items-center", className)}>
+      <Pressable onPress={onBackClick} className="z-10">
         <IC_CHEVRON_LEFT width={24} height={24} color={backgroundIconColor} />
       </Pressable>
 
-      <Text
-        className={clsx(
-          "absolute left-0 right-0 text-title4 text-text-strong text-center",
-          titleColor
-        )}
-      >
+      <Text className={clsx("flex-1 text-title4 text-center", titleColor)}>
         {title}
       </Text>
+
+      {/* 이 자리에 right 버튼 추가 */}
+      <View className="w-6" />
     </View>
   );
 };
