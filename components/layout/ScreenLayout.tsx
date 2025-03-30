@@ -27,6 +27,7 @@ export function ScreenLayout({
         showsVerticalScrollIndicator={false}
         bounces={false}
         overScrollMode="never"
+        keyboardShouldPersistTaps="handled"
       >
         {children}
       </ScrollView>
