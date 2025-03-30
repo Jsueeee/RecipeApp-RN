@@ -4,8 +4,8 @@ import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { FoodDataManager } from "@/constants/IngredientManager";
 import i18n from "@/lib/i18n";
 import { useLocalSearchParams } from "expo-router";
-import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Pressable, Text, View } from "react-native";
 import { EditExpiredAtMenu } from "./components/EditExpiredAtMenu";
 import { EditQuantityMenu } from "./components/EditQuantityMenu";
 import { EditUnitMenu } from "./components/EditUnitMenu";
@@ -26,10 +26,19 @@ export default function IngredientEditScreen() {
   const [localExpiredAt, setLocalExpiredAt] = useState(
     ingredient?.expiredAt ? new Date(ingredient.expiredAt) : null
   );
+  const quantityErrorAnim = useRef(new Animated.Value(0)).current;
 
   const onCTAClick = () => {
     console.log("CTA clicked");
   };
+
+  useEffect(() => {
+    Animated.timing(quantityErrorAnim, {
+      toValue: localQuantity === 0 ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  }, [localQuantity]);
 
   if (!ingredient) return null;
 
@@ -62,6 +71,21 @@ export default function IngredientEditScreen() {
           quantity={localQuantity ?? 0}
           onQuantityChanged={setLocalQuantity}
         />
+
+        <Animated.Text
+          style={[
+            {
+              opacity: quantityErrorAnim,
+              height: quantityErrorAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 20],
+              }),
+            },
+          ]}
+          className="text-body3 text-strong-destructive"
+        >
+          {i18n.t("edit_food.quantity_error")}
+        </Animated.Text>
 
         <EditExpiredAtMenu
           expiredAt={localExpiredAt}

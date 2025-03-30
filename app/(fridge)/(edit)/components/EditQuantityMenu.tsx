@@ -1,8 +1,7 @@
-import { View, Text, TextInput, Pressable } from "react-native";
-import { useState } from "react";
 import IC_EDIT_FOOD_MINUS from "@/assets/images/ic_edit_food_minus.svg";
 import IC_EDIT_FOOD_PLUS from "@/assets/images/ic_edit_food_plus.svg";
 import i18n from "@/lib/i18n";
+import { Pressable, Text, TextInput, View } from "react-native";
 
 interface Props {
   quantity: number;
