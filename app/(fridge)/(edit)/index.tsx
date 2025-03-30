@@ -23,7 +23,9 @@ export default function IngredientEditScreen() {
 
   const [localQuantity, setLocalQuantity] = useState(ingredient?.quantity);
   const [localUnit, setLocalUnit] = useState(ingredient?.unit);
-  const [localExpiredAt, setLocalExpiredAt] = useState(ingredient?.expiredAt);
+  const [localExpiredAt, setLocalExpiredAt] = useState(
+    ingredient?.expiredAt ? new Date(ingredient.expiredAt) : null
+  );
 
   const onCTAClick = () => {
     console.log("CTA clicked");
