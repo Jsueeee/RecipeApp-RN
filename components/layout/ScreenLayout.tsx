@@ -19,7 +19,7 @@ export function ScreenLayout({
   onBackClick,
 }: Props) {
   return (
-    <SafeAreaView className={`flex-1 ${backgroundColor}`}>
+    <SafeAreaView className={`flex-1 bg-${backgroundColor}`}>
       <Header title={title} onBackClick={onBackClick ?? router.back} />
 
       <ScrollView

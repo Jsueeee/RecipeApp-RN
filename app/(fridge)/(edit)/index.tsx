@@ -6,6 +6,8 @@ import { FoodDataManager } from "@/constants/IngredientManager";
 import i18n from "@/lib/i18n";
 import { router, useLocalSearchParams } from "expo-router";
 import { Pressable, SafeAreaView, Text, View } from "react-native";
+import { EditQuantityMenu } from "./components/EditQuantityMenu";
+import { useState } from "react";
 
 export default function IngredientEditScreen() {
   const { id } = useLocalSearchParams();
@@ -17,6 +19,8 @@ export default function IngredientEditScreen() {
   } = useFridgeDetailQuery(Number(id));
 
   const Icon = FoodDataManager.getImageSource(ingredient?.ingredientIconId);
+
+  const [localQuantity, setLocalQuantity] = useState(ingredient?.quantity);
 
   const onCTAClick = () => {
     console.log("CTA clicked");
@@ -38,7 +42,7 @@ export default function IngredientEditScreen() {
           <CTAButton
             buttonLabel={i18n.t("edit_food.cta")}
             onClick={onCTAClick}
-            disabled={ingredient.quantity <= 0}
+            disabled={!localQuantity || localQuantity <= 0}
             className="mt-2"
           />
         </View>
@@ -46,6 +50,13 @@ export default function IngredientEditScreen() {
     >
       <View className="flex-1 px-4 pt-3 items-center">
         {Icon && <Icon width={100} height={100} className="rounded-full" />}
+
+        <View className="h-3" />
+
+        <EditQuantityMenu
+          quantity={localQuantity ?? 0}
+          onQuantityChanged={setLocalQuantity}
+        />
       </View>
     </ScreenLayout>
   );
