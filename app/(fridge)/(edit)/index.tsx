@@ -9,6 +9,7 @@ import { Animated, Pressable, Text, View } from "react-native";
 import { EditExpiredAtMenu } from "./components/EditExpiredAtMenu";
 import { EditQuantityMenu } from "./components/EditQuantityMenu";
 import { EditUnitMenu } from "./components/EditUnitMenu";
+import { ChoiceDialog } from "@/components/ChoiceDialog";
 
 export default function IngredientEditScreen() {
   const { id } = useLocalSearchParams();
@@ -26,10 +27,24 @@ export default function IngredientEditScreen() {
   const [localExpiredAt, setLocalExpiredAt] = useState(
     ingredient?.expiredAt ? new Date(ingredient.expiredAt) : null
   );
+  const [removeDialogVisible, setRemoveDialogVisible] = useState(false);
   const quantityErrorAnim = useRef(new Animated.Value(0)).current;
 
   const onCTAClick = () => {
     console.log("CTA clicked");
+  };
+
+  const onRemoveClick = () => {
+    setRemoveDialogVisible(true);
+  };
+
+  const onRemoveDialogConfirm = () => {
+    console.log("Remove dialog confirmed");
+    setRemoveDialogVisible(false);
+  };
+
+  const onRemoveDialogCancel = () => {
+    setRemoveDialogVisible(false);
   };
 
   useEffect(() => {
@@ -47,7 +62,7 @@ export default function IngredientEditScreen() {
       title={ingredient.ingredientName}
       footer={
         <View className="fixed bottom-0 left-0 right-0 px-4 pb-safe">
-          <Pressable className="items-center py-[14px]">
+          <Pressable className="items-center py-[14px]" onPress={onRemoveClick}>
             <Text className="text-title5 text-strong-destructive">
               {i18n.t("edit_food.remove")}
             </Text>
@@ -76,10 +91,6 @@ export default function IngredientEditScreen() {
           style={[
             {
               opacity: quantityErrorAnim,
-              height: quantityErrorAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, 20],
-              }),
             },
           ]}
           className="text-body3 text-strong-destructive"
@@ -94,6 +105,14 @@ export default function IngredientEditScreen() {
 
         <EditUnitMenu unit={localUnit} onUnitChanged={setLocalUnit} />
       </View>
+
+      <ChoiceDialog
+        visible={removeDialogVisible}
+        title={i18n.t("edit_food.remove_dialog_title")}
+        message={i18n.t("edit_food.remove_dialog_message")}
+        onConfirm={onRemoveDialogConfirm}
+        onCancel={onRemoveDialogCancel}
+      />
     </ScreenLayout>
   );
 }

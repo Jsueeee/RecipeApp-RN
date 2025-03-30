@@ -206,6 +206,9 @@ export default {
   edit_food: {
     title: "재료 수정",
     remove: "삭제",
+    remove_dialog_confirm: "삭제하기",
+    remove_dialog_title: "재료를 삭제할까요?",
+    remove_dialog_message: "삭제한 재료는 복구할 수 없어요.",
     menu_name: "이름",
     menu_expired: "유통기한",
     expired_hint: "유통기한을 입력하세요",
@@ -322,5 +325,8 @@ export default {
     title: "문제가 발생했어요",
     desc: "잠시 후 다시 시도해 주세요",
     cta: "다시 시도하기",
+  },
+  common: {
+    close: "닫기",
   },
 };
