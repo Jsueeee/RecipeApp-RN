@@ -38,8 +38,8 @@ function QuantityInput({ quantity, onQuantityChanged }: Props) {
   };
 
   return (
-    <View className="flex-1 flex-row items-center justify-between rounded-full">
-      <Pressable onPress={handleDecrease} className="p-2 active:opacity-70">
+    <View className="flex-1 flex-row items-center justify-between">
+      <Pressable onPress={handleDecrease} className="active:opacity-70">
         <IC_EDIT_FOOD_MINUS width={32} height={32} />
       </Pressable>
 
@@ -64,7 +64,7 @@ function QuantityInput({ quantity, onQuantityChanged }: Props) {
         caretHidden={true}
       />
 
-      <Pressable onPress={handleIncrease} className="p-2 active:opacity-70">
+      <Pressable onPress={handleIncrease} className="active:opacity-70">
         <IC_EDIT_FOOD_PLUS width={32} height={32} />
       </Pressable>
     </View>

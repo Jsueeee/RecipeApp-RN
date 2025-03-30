@@ -8,6 +8,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Pressable, SafeAreaView, Text, View } from "react-native";
 import { EditQuantityMenu } from "./components/EditQuantityMenu";
 import { useState } from "react";
+import { EditUnitMenu } from "./components/EditUnitMenu";
 
 export default function IngredientEditScreen() {
   const { id } = useLocalSearchParams();
@@ -21,7 +22,8 @@ export default function IngredientEditScreen() {
   const Icon = FoodDataManager.getImageSource(ingredient?.ingredientIconId);
 
   const [localQuantity, setLocalQuantity] = useState(ingredient?.quantity);
-
+  const [localUnit, setLocalUnit] = useState(ingredient?.unit);
+  
   const onCTAClick = () => {
     console.log("CTA clicked");
   };
@@ -57,6 +59,8 @@ export default function IngredientEditScreen() {
           quantity={localQuantity ?? 0}
           onQuantityChanged={setLocalQuantity}
         />
+
+        <EditUnitMenu unit={localUnit} onUnitChanged={setLocalUnit} />
       </View>
     </ScreenLayout>
   );
