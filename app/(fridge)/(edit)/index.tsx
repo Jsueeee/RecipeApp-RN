@@ -1,13 +1,13 @@
 import { useFridgeDetailQuery } from "@/app/hooks/queries/useFridgeDetailQuery";
 import { CTAButton } from "@/components/CTAButton";
-import { Header } from "@/components/Header";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { FoodDataManager } from "@/constants/IngredientManager";
 import i18n from "@/lib/i18n";
-import { router, useLocalSearchParams } from "expo-router";
-import { Pressable, SafeAreaView, Text, View } from "react-native";
-import { EditQuantityMenu } from "./components/EditQuantityMenu";
+import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
+import { Pressable, Text, View } from "react-native";
+import { EditExpiredAtMenu } from "./components/EditExpiredAtMenu";
+import { EditQuantityMenu } from "./components/EditQuantityMenu";
 import { EditUnitMenu } from "./components/EditUnitMenu";
 
 export default function IngredientEditScreen() {
@@ -23,7 +23,8 @@ export default function IngredientEditScreen() {
 
   const [localQuantity, setLocalQuantity] = useState(ingredient?.quantity);
   const [localUnit, setLocalUnit] = useState(ingredient?.unit);
-  
+  const [localExpiredAt, setLocalExpiredAt] = useState(ingredient?.expiredAt);
+
   const onCTAClick = () => {
     console.log("CTA clicked");
   };
@@ -58,6 +59,11 @@ export default function IngredientEditScreen() {
         <EditQuantityMenu
           quantity={localQuantity ?? 0}
           onQuantityChanged={setLocalQuantity}
+        />
+
+        <EditExpiredAtMenu
+          expiredAt={localExpiredAt}
+          onExpiredAtChanged={setLocalExpiredAt}
         />
 
         <EditUnitMenu unit={localUnit} onUnitChanged={setLocalUnit} />

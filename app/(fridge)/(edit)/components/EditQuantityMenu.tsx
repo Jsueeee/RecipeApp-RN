@@ -55,7 +55,7 @@ function QuantityInput({ quantity, onQuantityChanged }: Props) {
             }
           }
         }}
-        className="flex-1 text-center text-text-strong font-[Pretendard-Regular] text-[15px]"
+        className="flex-1 text-center text-utility2 text-text-strong"
         keyboardType="numeric"
         returnKeyType="done"
         selectTextOnFocus
