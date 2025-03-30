@@ -213,6 +213,7 @@ export default {
     unit_hint: "단위를 입력하세요. (ex. 개, g, ml)",
     error: "잠시 후 다시 시도해주세요",
     quantity_error: "0 이하는 등록할 수 없어요",
+    cta: "저장",
   },
   delete_fridge: {
     dialog_title: "재료 삭제",
