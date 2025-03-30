@@ -21,8 +21,10 @@ export default function FridgeScreen() {
   const { data: fridges } = useFridgesQuery();
 
   const onIngredientItemClick = (ingredient: Ingredient) => {
-    // TODO: 식재료 수정 화면으로 이동
-    router.push("/(fridge)/(edit)");
+    router.push({
+      pathname: "/(fridge)/(edit)",
+      params: { id: ingredient.fridgeId },
+    });
   };
 
   const handleAddPress = () => {
