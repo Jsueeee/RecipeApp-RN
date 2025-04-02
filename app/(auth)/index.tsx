@@ -1,12 +1,12 @@
 import LoginButtonColumn from "@/app/(auth)/components/LoginButton";
 import i18n from "@/lib/i18n";
-import { StatusBar } from "expo-status-bar";
+import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Animated, View } from "react-native";
+import { SystemBars } from "react-native-edge-to-edge";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SplashLogo from "./components/SplashLogo";
 import { useAutoLogin } from "./hooks/useAutoLogin";
-import { router } from "expo-router";
 
 export default function LoginScreen() {
   const { checkAuth } = useAutoLogin();
@@ -57,7 +57,7 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-teal-300" edges={["top", "bottom"]}>
-      <StatusBar style="dark" />
+      <SystemBars style="auto" />
 
       <View className="flex-1 justify-between">
         <Animated.View
