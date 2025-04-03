@@ -11,6 +11,7 @@ import { AddIngredientButton } from "./components/AddIngredientButton";
 import { CategorizedIngredientsGroup } from "./components/CategorizedIngredientsGroup";
 import { FridgeTabs } from "./constants/fridgeTabs";
 import i18n from "@/lib/i18n";
+import { SystemBars } from "react-native-edge-to-edge";
 
 const TABS = Object.values(FridgeTabs);
 
@@ -52,6 +53,8 @@ export default function FridgeScreen() {
   return (
     <SafeAreaView className="flex-1 bg-background-alternative">
       <View className="flex-1">
+        <SystemBars style="dark" />
+
         <Stack.Screen options={{ headerShown: false }} />
 
         <ScrollView
