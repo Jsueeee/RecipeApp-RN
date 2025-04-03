@@ -32,6 +32,7 @@ function UnitInput({ unit, onUnitChanged }: Props) {
         selectTextOnFocus
         editable={true}
         placeholder={i18n.t("edit_food.unit_hint")}
+        placeholderTextColor="#9FADA6"
       />
     </View>
   );
