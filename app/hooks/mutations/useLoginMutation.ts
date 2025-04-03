@@ -30,7 +30,7 @@ export const useLoginMutation = () => {
   });
 
   return {
-    kakaoLogin: kakaoLoginMutation.mutate,
+    kakaoLogin: kakaoLoginMutation.mutateAsync,
     isLoading: kakaoLoginMutation.isPending,
     error: kakaoLoginMutation.error,
   };

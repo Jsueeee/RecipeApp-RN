@@ -1,5 +1,4 @@
 import { useAutoLoginMutation } from "@/app/hooks/mutations/useAutoLoginMutation";
-import { router } from "expo-router";
 
 export const useAutoLogin = () => {
   const { autoLogin } = useAutoLoginMutation();
