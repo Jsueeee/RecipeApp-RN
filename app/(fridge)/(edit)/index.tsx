@@ -1,4 +1,5 @@
 import { useFridgeDetailQuery } from "@/app/hooks/queries/useFridgeDetailQuery";
+import { ChoiceDialog } from "@/components/ChoiceDialog";
 import { CTAButton } from "@/components/CTAButton";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { FoodDataManager } from "@/constants/IngredientManager";
@@ -9,7 +10,6 @@ import { Animated, Pressable, Text, View } from "react-native";
 import { EditExpiredAtMenu } from "./components/EditExpiredAtMenu";
 import { EditQuantityMenu } from "./components/EditQuantityMenu";
 import { EditUnitMenu } from "./components/EditUnitMenu";
-import { ChoiceDialog } from "@/components/ChoiceDialog";
 
 export default function IngredientEditScreen() {
   const { id } = useLocalSearchParams();
@@ -87,16 +87,23 @@ export default function IngredientEditScreen() {
           onQuantityChanged={setLocalQuantity}
         />
 
-        <Animated.Text
+        <Animated.View
           style={[
             {
+              height: quantityErrorAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 20],
+              }),
               opacity: quantityErrorAnim,
+              overflow: "hidden",
             },
           ]}
-          className="text-body3 text-strong-destructive"
+          className="items-center"
         >
-          {i18n.t("edit_food.quantity_error")}
-        </Animated.Text>
+          <Text className="text-body3 text-strong-destructive ms-[100px]">
+            {i18n.t("edit_food.quantity_error")}
+          </Text>
+        </Animated.View>
 
         <EditExpiredAtMenu
           expiredAt={localExpiredAt}
