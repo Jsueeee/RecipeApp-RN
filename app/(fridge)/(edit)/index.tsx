@@ -61,7 +61,7 @@ export default function IngredientEditScreen() {
     <ScreenLayout
       title={ingredient.ingredientName}
       footer={
-        <View className="fixed bottom-0 left-0 right-0 px-4 pb-safe">
+        <View className="fixed bottom-0 left-0 right-0 px-4 pb-[22px]">
           <Pressable className="items-center py-[14px]" onPress={onRemoveClick}>
             <Text className="text-title5 text-strong-destructive">
               {i18n.t("edit_food.remove")}

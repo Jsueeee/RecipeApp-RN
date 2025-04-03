@@ -1,7 +1,8 @@
 import { Header } from "@/components/Header";
-import { SafeAreaView, View, ScrollView } from "react-native";
-import { ReactNode } from "react";
 import { router } from "expo-router";
+import { ReactNode } from "react";
+import { ScrollView, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
   title: string;
@@ -32,7 +33,7 @@ export function ScreenLayout({
         {children}
       </ScrollView>
 
-      <View className="px-4 pb-[22px] mb-safe">{footer}</View>
+      <View className="px-4">{footer}</View>
     </SafeAreaView>
   );
 }
