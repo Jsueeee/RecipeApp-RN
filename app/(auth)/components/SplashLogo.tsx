@@ -5,7 +5,7 @@ import { Image, Text } from "react-native";
 export default function SplashLogo() {
   return (
     <>
-      <Text className="text-heading1 font-cafe24 text-teal-800 text-center mb-[34px]">
+      <Text className="text-heading1 text-teal-800 text-center mb-[34px]">
         {i18n.t("login.title")}
       </Text>
 

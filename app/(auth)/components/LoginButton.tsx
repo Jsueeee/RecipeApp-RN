@@ -32,7 +32,7 @@ const DefaultLoginButton = ({ method, onClick: onPress }: Props) => {
     >
       <View className="flex-row items-center justify-center">
         <Image source={getIcon()} className="w-5 h-5 absolute left-4" />
-        <Text className="text-title5 font-pretendard text-gray-800 text-center flex-1">
+        <Text className="text-title5 text-gray-800 text-center flex-1">
           {i18n.t(`login.with_${method}`)}
         </Text>
       </View>
