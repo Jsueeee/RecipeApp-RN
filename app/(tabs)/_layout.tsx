@@ -23,7 +23,7 @@ const TabBarLabel = ({
   label: string;
 }) => (
   <Text
-    className={`text-bottomNavItem ${
+    className={`text-bottom-nav ${
       focused ? "text-text-strong" : "text-text-assistive"
     }`}
   >

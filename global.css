@@ -1,3 +1,101 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .text-heading1 {
+    font-family: cafe24;
+    font-size: 24px;
+    line-height: 30px;
+    color: #3f4542;
+  }
+  .text-heading2 {
+    font-family: cafe24;
+    font-size: 20px;
+    line-height: 26px;
+    color: #3f4542;
+  }
+  .text-title1 {
+    font-family: pretendard_bold;
+    font-size: 24px;
+    line-height: 30px;
+    color: #3f4542;
+  }
+  .text-title2 {
+    font-family: pretendard_bold;
+    font-size: 20px;
+    line-height: 26px;
+    color: #3f4542;
+  }
+  .text-title3 {
+    font-family: pretendard_bold;
+    font-size: 18px;
+    line-height: 24px;
+    color: #3f4542;
+  }
+  .text-title4 {
+    font-family: pretendard_bold;
+    font-size: 16px;
+    line-height: 20px;
+    color: #3f4542;
+  }
+  .text-title5 {
+    font-family: pretendard_bold;
+    font-size: 14px;
+    line-height: 20px;
+    color: #3f4542;
+  }
+  .text-body1 {
+    font-family: pretendard_medium;
+    font-size: 16px;
+    line-height: 22px;
+    color: #3f4542;
+  }
+  .text-body2 {
+    font-family: pretendard_medium;
+    font-size: 14px;
+    line-height: 20px;
+    color: #3f4542;
+  }
+  .text-body3 {
+    font-family: pretendard_medium;
+    font-size: 13px;
+    line-height: 18px;
+    color: #3f4542;
+  }
+  .text-body4 {
+    font-family: pretendard_medium;
+    font-size: 12px;
+    line-height: 18px;
+    color: #3f4542;
+  }
+  .text-utility1 {
+    font-family: pretendard_semi_bold;
+    font-size: 16px;
+    line-height: 22px;
+    color: #3f4542;
+  }
+  .text-utility2 {
+    font-family: pretendard_semi_bold;
+    font-size: 14px;
+    line-height: 20px;
+    color: #3f4542;
+  }
+  .text-utility3 {
+    font-family: pretendard_semi_bold;
+    font-size: 13px;
+    line-height: 18px;
+    color: #3f4542;
+  }
+  .text-utility4 {
+    font-family: pretendard_semi_bold;
+    font-size: 12px;
+    line-height: 14px;
+    color: #3f4542;
+  }
+  .text-bottom-nav {
+    font-family: pretendard_semi_bold;
+    font-size: 10px;
+    line-height: 18px;
+  }
+}

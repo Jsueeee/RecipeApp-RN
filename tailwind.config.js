@@ -4,6 +4,14 @@ module.exports = {
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["pretendard"],
+        cafe24: ["cafe24"],
+        pretendard: ["pretendard"],
+        pretendard_medium: ["pretendard_medium"],
+        pretendard_semi_bold: ["pretendard_semi_bold"],
+        pretendard_bold: ["pretendard_bold"],
+      },
       colors: {
         white: "#FFFFFF",
         black: "#000000",
@@ -147,128 +155,6 @@ module.exports = {
         material: {
           dimmer: "#00000080",
         },
-      },
-      fontFamily: {
-        cafe24: ["Cafe24Ssurround"],
-        pretendard: ["Pretendard"],
-      },
-      fontSize: {
-        heading1: [
-          "24px",
-          {
-            lineHeight: "30px",
-            fontWeight: "700",
-          },
-        ],
-        heading2: [
-          "20px",
-          {
-            lineHeight: "26px",
-            fontWeight: "700",
-          },
-        ],
-
-        title1: [
-          "24px",
-          {
-            lineHeight: "30px",
-            fontWeight: "700",
-          },
-        ],
-        title2: [
-          "20px",
-          {
-            lineHeight: "26px",
-            fontWeight: "700",
-          },
-        ],
-        title3: [
-          "18px",
-          {
-            lineHeight: "24px",
-            fontWeight: "700",
-          },
-        ],
-        title4: [
-          "16px",
-          {
-            lineHeight: "20px",
-            fontWeight: "700",
-          },
-        ],
-        title5: [
-          "14px",
-          {
-            lineHeight: "20px",
-            fontWeight: "700",
-          },
-        ],
-
-        body1: [
-          "16px",
-          {
-            lineHeight: "22px",
-            fontWeight: "500",
-          },
-        ],
-        body2: [
-          "14px",
-          {
-            lineHeight: "20px",
-            fontWeight: "500",
-          },
-        ],
-        body3: [
-          "13px",
-          {
-            lineHeight: "18px",
-            fontWeight: "500",
-          },
-        ],
-        body4: [
-          "12px",
-          {
-            lineHeight: "18px",
-            fontWeight: "500",
-          },
-        ],
-
-        utility1: [
-          "16px",
-          {
-            lineHeight: "22px",
-            fontWeight: "600",
-          },
-        ],
-        utility2: [
-          "14px",
-          {
-            lineHeight: "20px",
-            fontWeight: "600",
-          },
-        ],
-        utility3: [
-          "13px",
-          {
-            lineHeight: "18px",
-            fontWeight: "600",
-          },
-        ],
-        utility4: [
-          "12px",
-          {
-            lineHeight: "14px",
-            fontWeight: "600",
-          },
-        ],
-
-        bottomNavItem: [
-          "10px",
-          {
-            lineHeight: "18px",
-            fontWeight: "600", // SemiBold
-          },
-        ],
       },
     },
   },
