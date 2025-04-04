@@ -5,18 +5,16 @@ import { Pressable, Text, View } from "react-native";
 import { DateType } from "react-native-ui-datepicker";
 import { DatePicker } from "./DatePicker";
 interface Props {
-  expiredAt: Date | null | undefined;
-  onExpiredAtChanged: (value: Date) => void;
+  expiredAt: string | null | undefined;
+  onExpiredAtChanged: (value: string) => void;
 }
 
 export function EditExpiredAtMenu({ expiredAt, onExpiredAtChanged }: Props) {
   const [showPicker, setShowPicker] = useState(false);
 
   const handleDateChange = (params: { date: DateType }) => {
-    if (params.date) {
-      onExpiredAtChanged(params.date as Date);
-      setShowPicker(false);
-    }
+    onExpiredAtChanged(params.date?.toString() ?? "");
+    setShowPicker(false);
   };
 
   return (
@@ -36,7 +34,7 @@ export function EditExpiredAtMenu({ expiredAt, onExpiredAtChanged }: Props) {
       <DatePicker
         showPicker={showPicker}
         setShowPicker={setShowPicker}
-        expiredAt={expiredAt ?? new Date()}
+        expiredAt={expiredAt ? new Date(expiredAt) : new Date()}
         handleDateChange={handleDateChange}
       />
     </View>

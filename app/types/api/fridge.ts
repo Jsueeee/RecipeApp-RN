@@ -18,3 +18,13 @@ export interface IngredientResponse {
   unit: string;
   freshness: string;
 }
+
+/**
+ * 재료 수정 요청
+ */
+export interface PatchFridgeRequest {
+  fridgeId: number;
+  expiredAt: string | null;
+  quantity: number;
+  unit: string | null;
+}

@@ -11,6 +11,7 @@ import { Pressable, Text, View } from "react-native";
 import { EditExpiredAtMenu } from "./components/EditExpiredAtMenu";
 import { EditQuantityMenu } from "./components/EditQuantityMenu";
 import { EditUnitMenu } from "./components/EditUnitMenu";
+import { usePatchFridgeMutation } from "@/app/hooks/mutations/usePatchFridgeMutation";
 
 export default function IngredientEditScreen() {
   const { id } = useLocalSearchParams();
@@ -29,13 +30,27 @@ export default function IngredientEditScreen() {
   const [removeDialogVisible, setRemoveDialogVisible] = useState(false);
 
   const deleteFridgeMutation = useDeleteFridgeMutation();
+  const patchFridgeMutation = usePatchFridgeMutation();
 
   useEffect(() => {
     setLocalData(ingredient);
   }, [ingredient]);
 
-  const onCTAClick = () => {
-    console.log("CTA clicked");
+  const onCTAClick = async () => {
+    if (!localData) return;
+
+    try {
+      await patchFridgeMutation.mutateAsync({
+        fridgeId: Number(id),
+        expiredAt: localData.expiredAt,
+        quantity: localData.quantity,
+        unit: localData.unit,
+      });
+
+      router.back();
+    } catch (error) {
+      console.error("Failed to update fridge:", error);
+    }
   };
 
   const onRemoveClick = () => {
@@ -95,11 +110,11 @@ export default function IngredientEditScreen() {
         />
 
         <EditExpiredAtMenu
-          expiredAt={
-            localData?.expiredAt ? new Date(localData.expiredAt) : null
-          }
+          expiredAt={localData?.expiredAt}
           onExpiredAtChanged={(expiredAt) => {
-            updateLocalData({ expiredAt: expiredAt.toISOString() });
+            const date = new Date(expiredAt);
+            const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+            updateLocalData({ expiredAt: kstDate.toISOString() });
           }}
         />
 
