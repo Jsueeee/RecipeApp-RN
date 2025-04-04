@@ -1,8 +1,8 @@
-import React from "react";
-import { View, Text, Pressable, Image } from "react-native";
-import { FreshnessLabel } from "./FreshnessLabel";
 import { Ingredient } from "@/app/types/domain/fridge";
-
+import React from "react";
+import { Pressable, Text, View } from "react-native";
+import { FreshnessLabel } from "./FreshnessLabel";
+import { toConvertExpiredAt } from "@/app/utils/DateTimeUtils";
 import { FoodDataManager } from "@/constants/IngredientManager";
 
 interface Props extends Ingredient {
@@ -41,8 +41,8 @@ export function IngredientItem({
           {expiredAt && <View className="w-px h-4 bg-gray-200 mx-2" />}
 
           {expiredAt && (
-            <Text className="text-body3 text-text-alternative">
-              {expiredAt}
+            <Text className="flex-1text-body3 text-text-alternative">
+              {toConvertExpiredAt(expiredAt)}
             </Text>
           )}
         </View>
