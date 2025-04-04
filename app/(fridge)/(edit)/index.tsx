@@ -10,9 +10,12 @@ import { Animated, Pressable, Text, View } from "react-native";
 import { EditExpiredAtMenu } from "./components/EditExpiredAtMenu";
 import { EditQuantityMenu } from "./components/EditQuantityMenu";
 import { EditUnitMenu } from "./components/EditUnitMenu";
+import { useDeleteFridgeMutation } from "@/app/hooks/mutations/useDeleteFridgeMutation";
+import { useRouter } from "expo-router";
 
 export default function IngredientEditScreen() {
   const { id } = useLocalSearchParams();
+  const router = useRouter();
 
   const {
     data: ingredient,
@@ -29,6 +32,8 @@ export default function IngredientEditScreen() {
   );
   const [removeDialogVisible, setRemoveDialogVisible] = useState(false);
 
+  const deleteFridgeMutation = useDeleteFridgeMutation();
+
   const onCTAClick = () => {
     console.log("CTA clicked");
   };
@@ -37,9 +42,14 @@ export default function IngredientEditScreen() {
     setRemoveDialogVisible(true);
   };
 
-  const onRemoveDialogConfirm = () => {
-    console.log("Remove dialog confirmed");
+  const onRemoveDialogConfirm = async () => {
     setRemoveDialogVisible(false);
+    try {
+      await deleteFridgeMutation.mutateAsync(Number(id));
+      router.back();
+    } catch (error) {
+      console.error("Failed to delete fridge:", error);
+    }
   };
 
   const onRemoveDialogCancel = () => {
