@@ -979,7 +979,7 @@ class FoodDataManager {
     return this.categoryMap[categoryId] ?? [];
   }
 
-  static getImageSource(iconId: number | null): FC<SvgProps> | null {
+  static getImageSource(iconId: number | null | undefined): FC<SvgProps> | null {
     return this.iconMap.get(iconId ?? -1)?.imageSource ?? null;
   }
 

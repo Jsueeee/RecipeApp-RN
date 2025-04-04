@@ -206,13 +206,19 @@ export default {
   edit_food: {
     title: "재료 수정",
     remove: "삭제",
+    remove_dialog_confirm: "삭제하기",
+    remove_dialog_title: "재료를 삭제할까요?",
+    remove_dialog_message: "삭제한 재료는 복구할 수 없어요.",
     menu_name: "이름",
     menu_expired: "유통기한",
+    expired_hint: "유통기한을 입력하세요",
     menu_quantity: "수량",
     unit: "단위",
-    unit_hint: "단위를 입력하세요. (ex. 개, g, ml)",
+    unit_hint: "단위를 입력하세요 (ex. 개, g, ml)",
     error: "잠시 후 다시 시도해주세요",
     quantity_error: "0 이하는 등록할 수 없어요",
+    cta: "저장",
+    delete_dialog_confirm: "삭제하기",
   },
   delete_fridge: {
     dialog_title: "재료 삭제",
@@ -320,5 +326,9 @@ export default {
     title: "문제가 발생했어요",
     desc: "잠시 후 다시 시도해 주세요",
     cta: "다시 시도하기",
+  },
+  common: {
+    close: "닫기",
+    cancel: "취소",
   },
 };

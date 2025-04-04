@@ -57,7 +57,7 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-teal-300" edges={["top", "bottom"]}>
-      <SystemBars style="auto" />
+      <SystemBars style="dark" />
 
       <View className="flex-1 justify-between">
         <Animated.View
