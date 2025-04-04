@@ -16,7 +16,7 @@ export function ChoiceDialog({
   visible,
   title,
   message,
-  confirmText = i18n.t("edit_food.remove_dialog_confirm"),
+  confirmText,
   cancelText = i18n.t("common.close"),
   onConfirm,
   onCancel,
@@ -25,6 +25,7 @@ export function ChoiceDialog({
     <Modal
       visible={visible}
       transparent
+      statusBarTranslucent={true}
       animationType="fade"
       onRequestClose={onCancel}
     >
@@ -32,18 +33,19 @@ export function ChoiceDialog({
         <View className="bg-white rounded-[16px] p-4 w-[80%] max-w-[400px]">
           <Text className="text-title4 text-text-normal mt-1">{title}</Text>
 
-          {message && <Text className="text-body3 mt-2">{message}</Text>}
+          {message && <Text className="text-body3 mt-3">{message}</Text>}
 
-          <View className="flex-row gap-2 mt-5">
+          <View className="flex-row gap-2 mt-6">
             <CTAButton
-              buttonLabel={confirmText ?? ""}
-              backgroundColor="bg-fill-normal"
+              buttonLabel={cancelText ?? ""}
+              buttonLabelColor="text-text-alternative"
+              backgroundColor="bg-fill-subtle"
               onClick={onCancel}
               className="flex-1"
             />
 
             <CTAButton
-              buttonLabel={cancelText ?? ""}
+              buttonLabel={confirmText ?? ""}
               onClick={onConfirm}
               className="flex-1"
             />
