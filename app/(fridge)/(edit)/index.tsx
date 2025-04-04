@@ -28,7 +28,6 @@ export default function IngredientEditScreen() {
     ingredient?.expiredAt ? new Date(ingredient.expiredAt) : null
   );
   const [removeDialogVisible, setRemoveDialogVisible] = useState(false);
-  const quantityErrorAnim = useRef(new Animated.Value(0)).current;
 
   const onCTAClick = () => {
     console.log("CTA clicked");
@@ -46,14 +45,6 @@ export default function IngredientEditScreen() {
   const onRemoveDialogCancel = () => {
     setRemoveDialogVisible(false);
   };
-
-  useEffect(() => {
-    Animated.timing(quantityErrorAnim, {
-      toValue: localQuantity === 0 ? 1 : 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-  }, [localQuantity]);
 
   if (!ingredient) return null;
 
@@ -87,24 +78,6 @@ export default function IngredientEditScreen() {
           onQuantityChanged={setLocalQuantity}
         />
 
-        <Animated.View
-          style={[
-            {
-              height: quantityErrorAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, 20],
-              }),
-              opacity: quantityErrorAnim,
-              overflow: "hidden",
-            },
-          ]}
-          className="items-center"
-        >
-          <Text className="text-body3 text-strong-destructive ms-[100px]">
-            {i18n.t("edit_food.quantity_error")}
-          </Text>
-        </Animated.View>
-
         <EditExpiredAtMenu
           expiredAt={localExpiredAt}
           onExpiredAtChanged={setLocalExpiredAt}
@@ -117,6 +90,7 @@ export default function IngredientEditScreen() {
         visible={removeDialogVisible}
         title={i18n.t("edit_food.remove_dialog_title")}
         message={i18n.t("edit_food.remove_dialog_message")}
+        confirmText={i18n.t("edit_food.delete_dialog_confirm")}
         onConfirm={onRemoveDialogConfirm}
         onCancel={onRemoveDialogCancel}
       />
