@@ -21,11 +21,11 @@ export function EditExpiredAtMenu({ expiredAt, onExpiredAtChanged }: Props) {
 
   return (
     <View className="w-full flex-row items-center">
-      <Text className="text-title5 text-text-alternative w-[100px] py-[18px]">
+      <Text className="text-title5 text-text-alternative w-[100px] py-[10px]">
         {i18n.t("edit_food.menu_expired")}
       </Text>
 
-      <Pressable className="flex-1" onPress={() => setShowPicker(true)}>
+      <Pressable className="flex-1 py-2" onPress={() => setShowPicker(true)}>
         <Text className="text-utility2 text-text-alternative">
           {expiredAt
             ? format(new Date(expiredAt), "yyyy.MM.dd")

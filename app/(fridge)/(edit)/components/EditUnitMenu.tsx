@@ -12,7 +12,7 @@ interface Props {
 export function EditUnitMenu({ unit, onUnitChanged }: Props) {
   return (
     <View className="w-full flex-row items-center">
-      <Text className="text-title5 text-text-alternative w-[100px] py-[18px]">
+      <Text className="text-title5 text-text-alternative w-[100px] py-[10px]">
         {i18n.t("edit_food.menu_quantity")}
       </Text>
 
@@ -23,7 +23,7 @@ export function EditUnitMenu({ unit, onUnitChanged }: Props) {
 
 function UnitInput({ unit, onUnitChanged }: Props) {
   return (
-    <View className="flex-1 flex-row items-center justify-between rounded-full">
+    <View className="flex-1 flex-row items-center justify-between py-2">
       <TextInput
         value={unit}
         onChangeText={onUnitChanged}
