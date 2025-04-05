@@ -88,6 +88,10 @@ export default {
     cancelCreateMessage: "작성 중인 내용은 저장되지 않아요.",
   },
   recipe: {
+    matchingRate: "재료 일치도",
+    matchingRateDesc: "%",
+  },
+  my_recipe: {
     Modify: "수정",
     myRecipeModify: "나만의 레시피 수정",
     myRecipeModifyComplete: "나만의 레시피 수정이 완료되었습니다.",
