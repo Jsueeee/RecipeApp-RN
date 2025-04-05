@@ -1,6 +1,5 @@
 import { View } from "react-native";
-import React from "react";
 
-export default function Recipe() {
+export default function RecipeScreen() {
   return <View></View>;
 }
