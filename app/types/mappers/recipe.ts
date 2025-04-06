@@ -7,7 +7,7 @@ import { RecipeSummaryList, RecipeSummary } from "../domain/recipe";
 export const mapRecommendedRecipesResponse = (
   response: RecommendedRecipesResponse
 ): RecipeSummaryList => ({
-  totalCount: response.totalCount,
+  totalCount: response.totalCnt,
   recipes: response.recipes.map(mapRecommendedRecipeResponse),
 });
 

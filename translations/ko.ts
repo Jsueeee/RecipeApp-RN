@@ -90,6 +90,7 @@ export default {
   recipe: {
     matchingRate: "재료 일치도",
     matchingRateDesc: "%",
+    recipe_total_count_suffix: " 개의 레시피",
   },
   my_recipe: {
     Modify: "수정",

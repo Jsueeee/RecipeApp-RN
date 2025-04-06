@@ -39,7 +39,7 @@ export const useRecommendedRecipesQuery = () => {
     },
     select: (data) => {
       const combinedResponse: RecommendedRecipesResponse = {
-        totalCount: data.pages[0]?.totalCount || 0,
+        totalCnt: data.pages[0]?.totalCnt || 0,
         recipes: data.pages.flatMap((page) => page.recipes),
       };
 

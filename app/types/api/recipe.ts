@@ -1,5 +1,5 @@
 export interface RecommendedRecipesResponse {
-  totalCount: number;
+  totalCnt: number;
   recipes: RecommendedRecipeResponse[];
 }
 
