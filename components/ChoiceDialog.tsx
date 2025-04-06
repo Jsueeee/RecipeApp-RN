@@ -40,13 +40,13 @@ export function ChoiceDialog({
               buttonLabel={cancelText ?? ""}
               buttonLabelColor="text-text-alternative"
               backgroundColor="bg-fill-subtle"
-              onClick={onCancel}
+              onPress={onCancel}
               className="flex-1"
             />
 
             <CTAButton
               buttonLabel={confirmText ?? ""}
-              onClick={onConfirm}
+              onPress={onConfirm}
               className="flex-1"
             />
           </View>

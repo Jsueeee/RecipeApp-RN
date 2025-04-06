@@ -92,7 +92,7 @@ export default function IngredientEditScreen() {
 
           <CTAButton
             buttonLabel={i18n.t("edit_food.cta")}
-            onClick={onCTAClick}
+            onPress={onCTAClick}
             disabled={!localData?.quantity || localData.quantity <= 0}
             className="mt-2"
           />

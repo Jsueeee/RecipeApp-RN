@@ -5,6 +5,7 @@ import { Text, View } from "react-native";
 
 interface Props {
   tab: MainTab;
+  className?: string;
 }
 
 const formatToKoreanDate = (date: Date): string => {
@@ -15,9 +16,9 @@ const formatToKoreanDate = (date: Date): string => {
   return `${year}년 ${month}월 ${day}일`;
 };
 
-export function MainTabHeader({ tab }: Props) {
+export function MainTabHeader({ tab, className }: Props) {
   return (
-    <View className="px-4 py-[14px]">
+    <View className={`px-4 py-[14px] ${className}`}>
       <Text className="text-body3 text-teal-600">
         {tab === "home" ? formatToKoreanDate(new Date()) : ""}
       </Text>

@@ -88,6 +88,15 @@ export default {
     cancelCreateMessage: "작성 중인 내용은 저장되지 않아요.",
   },
   recipe: {
+    matchingRate: "재료 일치도",
+    matchingRateDesc: "%",
+    recipe_total_count_suffix: " 개의 레시피",
+    recipe_empty_title: "냉장고 재료가 부족해요",
+    recipe_empty_desc:
+      "냉장고를 채우면\n만들 수 있는 레시피를 추천해 드릴게요!",
+    recipe_empty_cta: "냉장고 채우러 가기",
+  },
+  my_recipe: {
     Modify: "수정",
     myRecipeModify: "나만의 레시피 수정",
     myRecipeModifyComplete: "나만의 레시피 수정이 완료되었습니다.",
