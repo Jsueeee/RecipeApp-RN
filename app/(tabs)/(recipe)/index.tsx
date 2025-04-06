@@ -38,7 +38,10 @@ export default function RecipeScreen() {
   const ListHeaderComponent = useMemo(() => {
     return (
       <View className="bg-background-alternative flex-column pb-6">
-        <MainTabHeader tab="recipe" className="bg-background-alternative" />
+        <MainTabHeader
+          tab="recipe"
+          className="bg-background-alternative mt-safe"
+        />
 
         <Text className="px-4 pt-2 text-title4">
           <Text className="text-primary-strong">
@@ -95,7 +98,7 @@ export default function RecipeScreen() {
         onEndReached={onEndReached}
         ItemSeparatorComponent={ItemSeparator}
         onEndReachedThreshold={0.5}
-        className="mt-6 bg-white"
+        className="bg-white"
         contentContainerStyle={{ paddingBottom: 24 }}
         getItemLayout={getItemLayout}
         bounces={false}
