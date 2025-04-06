@@ -1,5 +1,6 @@
 import { useRecommendedRecipesQuery } from "@/app/hooks/queries/useRecommendedRecipesQuery";
 import { RecipeSummary } from "@/app/types/domain/recipe";
+import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import i18n from "@/lib/i18n";
 import { LinearGradient } from "expo-linear-gradient";
@@ -78,9 +79,10 @@ export default function RecipeScreen() {
   });
 
   const renderContent = () => {
-    if (isLoading) return null;
+    if (isLoading) return <DotLoadingScreen />;
 
     const recipes = recipeList?.recipes;
+
     if (!recipes?.length) return <EmptyRecipeTab />;
 
     return (
