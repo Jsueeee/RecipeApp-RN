@@ -52,7 +52,8 @@
     "react-native-ui-datepicker": "^3.1.2",
     "react-native-web": "~0.19.13",
     "tailwindcss": "^3.4.17",
-    "expo-linear-gradient": "~14.0.2"
+    "expo-linear-gradient": "~14.0.2",
+    "lottie-react-native": "7.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
