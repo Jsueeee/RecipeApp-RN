@@ -1,8 +1,17 @@
 import {
   RecommendedRecipesResponse,
   RecommendedRecipeResponse,
+  RecipeDetailResponse,
+  RecipeIngredientResponse,
+  RecipeProcessResponse,
 } from "../api/recipe";
-import { RecipeSummaryList, RecipeSummary } from "../domain/recipe";
+import {
+  RecipeSummaryList,
+  RecipeSummary,
+  RecipeDetail,
+  RecipeIngredient,
+  RecipeProcess,
+} from "../domain/recipe";
 
 export const mapRecommendedRecipesResponse = (
   response: RecommendedRecipesResponse
@@ -25,4 +34,43 @@ const mapRecommendedRecipeResponse = (
   ingredientMatchRate: recipe.ingredientsMatchRate,
   linkUrl: recipe.linkUrl,
   postUserName: recipe.postUserName,
+});
+
+export const mapRecipeDetailResponse = (
+  response: RecipeDetailResponse
+): RecipeDetail => ({
+  id: response.recipeId,
+  title: response.recipeName,
+  description: response.introduction,
+  thumbnail: response.thumbnailImgUrl,
+  cookingTime: response.cookingTime,
+  link: response.linkUrl,
+  level: response.level,
+  isScrap: response.isUserScrap,
+  scrapCount: response.scrapCnt,
+  viewCount: response.viewCnt,
+  postUserId: response.postUserId,
+  postUserName: response.postUserName,
+  isReported: response.isReported,
+  ingredients: response.recipeIngredients.map(mapRecipeIngredientResponse),
+  processes: response.recipeProcesses.map(mapRecipeProcessResponse),
+});
+
+const mapRecipeIngredientResponse = (
+  response: RecipeIngredientResponse
+): RecipeIngredient => ({
+  name: response.ingredientName,
+  iconId: response.ingredientIconId,
+  quantity: response.quantity,
+  unit: response.unit,
+  isInFridge: response.isInUserFridge,
+});
+
+const mapRecipeProcessResponse = (
+  response: RecipeProcessResponse
+): RecipeProcess => ({
+  id: response.recipeProcessId,
+  no: response.recipeProcessNo,
+  description: response.recipeProcessDescription,
+  imageUrl: response.recipeProcessImgUrl,
 });

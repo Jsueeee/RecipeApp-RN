@@ -16,3 +16,36 @@ export interface RecommendedRecipeResponse {
   scrapCnt: number;
   viewCnt: number;
 }
+
+export interface RecipeDetailResponse {
+  recipeId: number;
+  recipeName: string;
+  introduction?: string;
+  thumbnailImgUrl?: string;
+  cookingTime?: number;
+  linkUrl?: string;
+  level?: string;
+  recipeIngredients: RecipeIngredientResponse[];
+  recipeProcesses: RecipeProcessResponse[];
+  isUserScrap: boolean;
+  scrapCnt: number;
+  viewCnt: number;
+  postUserId?: number;
+  postUserName?: string;
+  isReported: boolean;
+}
+
+export interface RecipeIngredientResponse {
+  ingredientName: string;
+  ingredientIconId?: number;
+  quantity?: string;
+  unit?: string;
+  isInUserFridge: boolean;
+}
+
+export interface RecipeProcessResponse {
+  recipeProcessId: number;
+  recipeProcessNo: number;
+  recipeProcessDescription?: string;
+  recipeProcessImgUrl?: string;
+}
