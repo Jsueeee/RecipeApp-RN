@@ -8,6 +8,7 @@ import React, { useMemo } from "react";
 import { FlatList, Text, View } from "react-native";
 import { EmptyRecipeTabPlaceholder } from "./components/EmptyRecipeTabPlaceholder";
 import RecipeItem from "./components/RecipeItem";
+import { DotLoading } from "@/components/DotLoading";
 
 export default function RecipeScreen() {
   const {
@@ -60,7 +61,7 @@ export default function RecipeScreen() {
     );
   }, [recipeList?.totalCount]);
 
-  const ListFooterComponent = () => <></>; // TODO : 닷 로딩 추가
+  const ListFooterComponent = () => <DotLoading className="mb-20" />;
 
   const ItemSeparator = () => <View className="h-[1px] mx-4 bg-gray-50" />;
 

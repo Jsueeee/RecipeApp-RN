@@ -1,29 +1,26 @@
 import LottieView from "lottie-react-native";
 import React, { useRef } from "react";
-import { StyleProp, View, ViewStyle } from "react-native";
+import { View } from "react-native";
 
 interface Props {
   size?: number;
-  style?: StyleProp<ViewStyle>;
+  className?: string;
 }
 
-export const DotLoading = ({ size = 72, style }: Props) => {
+export const DotLoading = ({ size = 72, className }: Props) => {
   const animation = useRef<LottieView>(null);
 
   return (
-    <LottieView
-      autoPlay
-      ref={animation}
-      style={[
-        {
+    <View className={`w-full items-center justify-center ${className}`}>
+      <LottieView
+        autoPlay
+        ref={animation}
+        style={{
           width: size,
           height: size,
-        },
-        style,
-      ]}
-      source={require("@/assets/lottie/lottie_loading_dot.json")}
-    />
+        }}
+        source={require("@/assets/lottie/lottie_loading_dot.json")}
+      />
+    </View>
   );
 };
-
-
