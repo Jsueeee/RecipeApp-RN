@@ -20,13 +20,14 @@ const RecipeViewScrapCount: React.FC<Props> = ({
 
   return (
     <TouchableOpacity
+      hitSlop={10}
       onPress={onScrapClick}
       className="flex-row items-center gap-[2px]"
     >
       {isScrapped ? (
         <HeartFillIcon color="#F3734F" width={16} height={16} />
       ) : (
-        <HeartStrokeIcon color="#3F4542" width={16} height={16} />
+        <HeartStrokeIcon color="#9FADA6" width={16} height={16} />
       )}
 
       <Text className="text-body4 text-text-normal">{scrapCount}</Text>
