@@ -213,6 +213,8 @@ export default {
     delete_dialog_confirm: "삭제하기",
     in_fridge_is_empty: "냉장고에 이 레시피의 재료가 없어요",
     not_in_fridge_is_empty: "냉장고에 모든 재료가 있어요\n한 번 만들어보세요!",
+    in_fridge: "있는 재료",
+    not_in_fridge: "없는 재료",
   },
   edit_food: {
     title: "재료 수정",
