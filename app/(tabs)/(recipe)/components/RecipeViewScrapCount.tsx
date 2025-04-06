@@ -20,6 +20,7 @@ const RecipeViewScrapCount: React.FC<Props> = ({
 
   return (
     <TouchableOpacity
+      hitSlop={10}
       onPress={onScrapClick}
       className="flex-row items-center gap-[2px]"
     >
