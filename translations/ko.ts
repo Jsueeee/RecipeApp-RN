@@ -187,7 +187,8 @@ export default {
     pick_food_go_basket_button: "%d개 담기",
   },
   recipe_detail: {
-    scrap_count: "저장 %,d",
+    scrap_count: "저장 {{count}}",
+    cooking_time: "{{cookingTime}}분",
     cooking_step_title: "이렇게 만들어요",
     cooking_step_number: "%02d",
     popup_menu_report: "신고하기",
