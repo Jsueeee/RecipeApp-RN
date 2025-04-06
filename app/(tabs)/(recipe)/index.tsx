@@ -87,7 +87,9 @@ export default function RecipeScreen() {
         onEndReached={onEndReached}
         ItemSeparatorComponent={ItemSeparator}
         onEndReachedThreshold={0.5}
-        className="mt-6 bg-white"
+        className={`mt-6 ${
+          isLoading ? "bg-background-alternative" : "bg-white"
+        }`}
         contentContainerStyle={{ paddingBottom: 24 }}
         getItemLayout={getItemLayout}
         bounces={false}
