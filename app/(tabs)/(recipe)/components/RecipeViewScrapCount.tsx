@@ -27,7 +27,7 @@ const RecipeViewScrapCount: React.FC<Props> = ({
       {isScrapped ? (
         <HeartFillIcon color="#F3734F" width={16} height={16} />
       ) : (
-        <HeartStrokeIcon color="#3F4542" width={16} height={16} />
+        <HeartStrokeIcon color="#9FADA6" width={16} height={16} />
       )}
 
       <Text className="text-body4 text-text-normal">{scrapCount}</Text>
