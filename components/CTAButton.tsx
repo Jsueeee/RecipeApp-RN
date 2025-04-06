@@ -8,7 +8,7 @@ interface Props {
   backgroundColor?: string;
   disableBackgroundColor?: string;
   disabled?: boolean;
-  onClick: () => void;
+  onPress: () => void;
   icon?: React.ReactNode;
   className?: string;
 }
@@ -19,7 +19,7 @@ export const CTAButton = ({
   backgroundColor = "bg-primary-normal",
   disableBackgroundColor = "bg-primary-disable",
   disabled = false,
-  onClick,
+  onPress,
   icon,
   className = "",
 }: Props) => {
@@ -31,9 +31,9 @@ export const CTAButton = ({
         className
       )}
       disabled={disabled}
-      onPress={onClick}
+      onPress={onPress}
     >
-      <View className="flex-row items-center justify-center py-3.5">
+      <View className="flex-row items-center justify-center py-3.5 px-4">
         {icon && (
           <>
             {icon}

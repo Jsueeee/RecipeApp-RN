@@ -1,22 +1,25 @@
 import IC_CRYING_ONION from "@/assets/images/ic_crying_onion.svg";
 import i18n from "@/lib/i18n";
 import { Text, View } from "react-native";
+import { CTAButton } from "./CTAButton";
 
 interface Props {
   title?: string;
   description?: string;
   buttonLabel?: string;
-  onClick?: () => void;
+  onPress?: () => void;
+  className?: string;
 }
 
 export function EmptyPlaceholder({
   title = i18n.t("home.fridge_is_empty"),
   description = i18n.t("home.fridge_is_empty_sub"),
   buttonLabel,
-  onClick,
+  onPress,
+  className = "",
 }: Props) {
   return (
-    <View className="flex-1 items-center justify-center">
+    <View className={`flex-1 items-center justify-center ${className}`}>
       <IC_CRYING_ONION width={80} height={80} />
 
       <Text className="text-title3 text-text-strong mt-4 text-center">
@@ -27,14 +30,13 @@ export function EmptyPlaceholder({
         {description}
       </Text>
 
-      {/* {buttonLabel && (
-        <View className="mt-4">
-          <AccentMediumDefaultButton // 이 컴포넌트도 별도 구현 필요
-            text={buttonLabel}
-            onPress={onClick}
-          />
-        </View>
-      )} */}
+      {buttonLabel && (
+        <CTAButton
+          buttonLabel={buttonLabel}
+          onPress={() => onPress?.()}
+          className="mt-4"
+        />
+      )}
     </View>
   );
 }

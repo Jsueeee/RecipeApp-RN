@@ -5,6 +5,7 @@ import i18n from "@/lib/i18n";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useMemo } from "react";
 import { FlatList, Text, View } from "react-native";
+import { EmptyRecipeTab } from "./components/EmptyRecipeTab";
 import RecipeItem from "./components/RecipeItem";
 
 export default function RecipeScreen() {
@@ -76,10 +77,15 @@ export default function RecipeScreen() {
     index,
   });
 
-  return (
-    <View className="flex-1 bg-background-alternative">
+  const renderContent = () => {
+    if (isLoading) return null;
+
+    const recipes = recipeList?.recipes;
+    if (!recipes?.length) return <EmptyRecipeTab />;
+
+    return (
       <FlatList
-        data={recipeList?.recipes ?? []}
+        data={recipes}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         ListHeaderComponent={ListHeaderComponent}
@@ -87,15 +93,19 @@ export default function RecipeScreen() {
         onEndReached={onEndReached}
         ItemSeparatorComponent={ItemSeparator}
         onEndReachedThreshold={0.5}
-        className={`mt-6 ${
-          isLoading ? "bg-background-alternative" : "bg-white"
-        }`}
+        className="mt-6 bg-white"
         contentContainerStyle={{ paddingBottom: 24 }}
         getItemLayout={getItemLayout}
         bounces={false}
         alwaysBounceVertical={false}
         showsVerticalScrollIndicator={false}
       />
+    );
+  };
+
+  return (
+    <View className="flex-1 bg-background-alternative">
+      {renderContent()}
 
       <LinearGradient
         colors={[
