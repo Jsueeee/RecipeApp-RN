@@ -1,14 +1,15 @@
+import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMutation";
 import { useRecommendedRecipesQuery } from "@/app/hooks/queries/useRecommendedRecipesQuery";
 import { RecipeSummary } from "@/app/types/domain/recipe";
+import { DotLoading } from "@/components/DotLoading";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import i18n from "@/lib/i18n";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { FlatList, Text, View } from "react-native";
 import { EmptyRecipeTabPlaceholder } from "./components/EmptyRecipeTabPlaceholder";
 import RecipeItem from "./components/RecipeItem";
-import { DotLoading } from "@/components/DotLoading";
 
 export default function RecipeScreen() {
   const {
@@ -18,6 +19,8 @@ export default function RecipeScreen() {
     hasNextPage,
     refetch,
   } = useRecommendedRecipesQuery();
+
+  const { addScrap, removeScrap } = useRecipeScrapMutation();
 
   const renderItem = ({
     item,
@@ -30,7 +33,9 @@ export default function RecipeScreen() {
       <RecipeItem
         item={item}
         onPress={() => {}}
-        onScrapPress={() => {}}
+        onScrapPress={() =>
+          item.isScrapped ? removeScrap(item.id) : addScrap(item.id)
+        }
         className={`bg-white ${index === 0 ? "rounded-t-[16px]" : ""}`}
       />
     </View>
