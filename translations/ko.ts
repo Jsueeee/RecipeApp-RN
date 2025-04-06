@@ -211,7 +211,8 @@ export default {
       "이 레시피를 삭제하시겠어요?\n삭제된 레시피는 복구되지 않습니다.",
     delete_dialog_cancel: "취소하기",
     delete_dialog_confirm: "삭제하기",
-    my_ingredient_is_empty: "냉장고에 이 레시피의 재료가 없어요",
+    in_fridge_is_empty: "냉장고에 이 레시피의 재료가 없어요",
+    not_in_fridge_is_empty: "냉장고에 모든 재료가 있어요\n한 번 만들어보세요!",
   },
   edit_food: {
     title: "재료 수정",
