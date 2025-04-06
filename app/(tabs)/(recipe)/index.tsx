@@ -6,7 +6,7 @@ import i18n from "@/lib/i18n";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useMemo } from "react";
 import { FlatList, Text, View } from "react-native";
-import { EmptyRecipeTab } from "./components/EmptyRecipeTab";
+import { EmptyRecipeTabPlaceholder } from "./components/EmptyRecipeTabPlaceholder";
 import RecipeItem from "./components/RecipeItem";
 
 export default function RecipeScreen() {
@@ -86,7 +86,7 @@ export default function RecipeScreen() {
 
     const recipes = recipeList?.recipes;
 
-    if (!recipes?.length) return <EmptyRecipeTab />;
+    if (!recipes?.length) return <EmptyRecipeTabPlaceholder />;
 
     return (
       <FlatList
