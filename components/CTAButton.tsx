@@ -1,6 +1,7 @@
+import { PressableScale } from "@/app/components/PressableScale";
 import clsx from "clsx";
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 interface Props {
   buttonLabel: string;
@@ -24,27 +25,26 @@ export const CTAButton = ({
   className = "",
 }: Props) => {
   return (
-    <Pressable
-      className={clsx(
-        "rounded-[12px]",
-        disabled ? disableBackgroundColor : backgroundColor,
-        className
-      )}
-      disabled={disabled}
-      onPress={onPress}
-    >
-      <View className="flex-row items-center justify-center py-3.5 px-4">
-        {icon && (
-          <>
-            {icon}
-            <View className="w-2" />
-          </>
+    <PressableScale disabled={disabled} onPress={onPress} className={className}>
+      <View
+        className={clsx(
+          "rounded-[12px]",
+          disabled ? disableBackgroundColor : backgroundColor
         )}
+      >
+        <View className="flex-row items-center justify-center py-3.5 px-4">
+          {icon && (
+            <>
+              {icon}
+              <View className="w-2" />
+            </>
+          )}
 
-        <Text className={clsx("text-title4", buttonLabelColor)}>
-          {buttonLabel}
-        </Text>
+          <Text className={clsx("text-title4", buttonLabelColor)}>
+            {buttonLabel}
+          </Text>
+        </View>
       </View>
-    </Pressable>
+    </PressableScale>
   );
 };
