@@ -38,7 +38,7 @@ export default function RecipeDetailScreen() {
 
   return (
     <View className="flex-1">
-      <ScreenLayout title={id as string} isShowHeader={false} footer={footer}>
+      <ScreenLayout isShowHeader={false} footer={footer}>
         <View>
           <Image
             source={{ uri: recipeDetail?.thumbnail }}
@@ -68,7 +68,7 @@ export default function RecipeDetailScreen() {
       />
 
       <Header
-        title={id as string}
+        title={""}
         onBackClick={() => router.back()}
         className="absolute top-safe left-0 right-0"
       />

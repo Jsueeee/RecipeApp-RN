@@ -5,7 +5,7 @@ import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
-  title: string;
+  title?: string;
   children: ReactNode;
   backgroundColor?: string;
   footer?: ReactNode;
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export function ScreenLayout({
-  title,
+  title = "",
   children,
   backgroundColor = "white",
   footer,
