@@ -198,6 +198,7 @@ export default {
     report_dialog_cancel: "취소하기",
     report_dialog_confirm: "신고하기",
     bottom_scrap_button: "저장하기",
+    bottom_remove_scrap_button: "취소하기",
     bottom_scrap_cancel_button: "취소하기",
     bottom_scrap_error: "다시 시도해주세요",
     report_success: "신고가 완료되었습니다",

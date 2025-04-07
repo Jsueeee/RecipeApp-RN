@@ -7,6 +7,7 @@ interface Props {
   buttonLabel: string;
   buttonLabelColor?: string;
   backgroundColor?: string;
+  borderColor?: string;
   disableBackgroundColor?: string;
   disabled?: boolean;
   onPress: () => void;
@@ -17,8 +18,9 @@ interface Props {
 export const CTAButton = ({
   buttonLabel,
   buttonLabelColor = "text-white",
-  backgroundColor = "bg-primary-normal",
+  backgroundColor = "primary-normal",
   disableBackgroundColor = "bg-primary-disable",
+  borderColor = undefined,
   disabled = false,
   onPress,
   icon,
@@ -29,7 +31,10 @@ export const CTAButton = ({
       <View
         className={clsx(
           "rounded-[12px]",
-          disabled ? disableBackgroundColor : backgroundColor
+          disabled ? disableBackgroundColor : `bg-${backgroundColor}`,
+          borderColor
+            ? `border border-${borderColor}`
+            : `border border-${backgroundColor}`
         )}
       >
         <View className="flex-row items-center justify-center py-3.5 px-4">
@@ -40,7 +45,9 @@ export const CTAButton = ({
             </>
           )}
 
-          <Text className={clsx("text-title4", buttonLabelColor)}>
+          <Text
+            className={clsx("text-title4 text-text-inverse", buttonLabelColor)}
+          >
             {buttonLabel}
           </Text>
         </View>
