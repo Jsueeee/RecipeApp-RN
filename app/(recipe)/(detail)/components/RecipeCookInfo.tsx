@@ -55,7 +55,7 @@ export const RecipeCookInfo: React.FC<Props> = ({
         text={i18n.t("recipe_detail.scrap_count", {
           count: scrapCount,
         })}
-        Icon={HeartFillIcon}
+        Icon={() => <HeartFillIcon width={20} height={20} color="#F3734F" />}
       />
       <InfoBox
         text={i18n.t("recipe_detail.cooking_time", {
