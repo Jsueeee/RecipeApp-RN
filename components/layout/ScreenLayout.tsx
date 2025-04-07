@@ -37,7 +37,7 @@ export function ScreenLayout({
         {children}
       </ScrollView>
 
-      <View className="px-4">{footer}</View>
+      <View>{footer}</View>
     </SafeAreaView>
   );
 }
