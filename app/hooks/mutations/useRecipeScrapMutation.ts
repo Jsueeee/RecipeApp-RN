@@ -1,54 +1,35 @@
 import { apiClient } from "@/app/lib/api/client";
-import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useCallback } from "react";
+import {
+  useUpdateRecipeDetailScrapState,
+  useUpdateRecipeListScrapState,
+} from "../useUpdateRecipeScrap";
 
 export const useRecipeScrapMutation = () => {
   const queryClient = useQueryClient();
+  const updateRecommendedList = useUpdateRecipeListScrapState();
+  const updateRecipeDetail = useUpdateRecipeDetailScrapState();
 
-  const updateRecipeScrap = (recipeId: number, isScrapped: boolean) => {
-    queryClient.setQueriesData(
-      { queryKey: QUERY_KEYS.RECIPE.RECOMMENDED_LIST },
-      (old: any) => {
-        if (!old?.pages) return old;
-
-        const newData = {
-          ...old,
-          pages: old.pages.map((page: any) => ({
-            ...page,
-            recipes: page.recipes.map((recipe: any) => {
-              if (recipe.recipeId === recipeId) {
-                return {
-                  ...recipe,
-                  isUserScrap: isScrapped,
-                  scrapCnt: isScrapped
-                    ? recipe.scrapCnt + 1
-                    : recipe.scrapCnt - 1,
-                };
-              }
-              return recipe;
-            }),
-          })),
-        };
-
-        return newData;
-      }
-    );
-  };
+  const handleSuccess = useCallback(
+    (recipeId: number, isScrapped: boolean) => {
+      const update = { recipeId, isScrapped };
+      updateRecommendedList(update);
+      updateRecipeDetail(update);
+    },
+    [updateRecommendedList, updateRecipeDetail]
+  );
 
   const addScrap = useMutation({
     mutationFn: (recipeId: number) =>
       apiClient.post(`/recipes/${recipeId}/scraps`),
-    onSuccess: (_, recipeId) => {
-      updateRecipeScrap(recipeId, true);
-    },
+    onSuccess: (_, recipeId) => handleSuccess(recipeId, true),
   });
 
   const removeScrap = useMutation({
     mutationFn: (recipeId: number) =>
       apiClient.delete(`/recipes/${recipeId}/scraps`),
-    onSuccess: (_, recipeId) => {
-      updateRecipeScrap(recipeId, false);
-    },
+    onSuccess: (_, recipeId) => handleSuccess(recipeId, false),
   });
 
   return {
