@@ -1,15 +1,16 @@
 import { PressableScale } from "@/app/components/PressableScale";
+import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { MainTabHeader } from "@/components/MainTabHeader";
-import React, { useState } from "react";
-import { SafeAreaView, Text, View } from "react-native";
-import { SearchBar } from "./components/SearchBar";
 import i18n from "@/lib/i18n";
+import React, { useState } from "react";
+import { Text, View } from "react-native";
+import { SearchBar } from "./components/SearchBar";
 
 export default function SearchScreen() {
   const [keyword, setKeyword] = useState("");
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <ScreenLayout isShowHeader={false}>
       <MainTabHeader tab="search" />
 
       <View className="flex-1 flex-row gap-[3px] px-4">
@@ -27,6 +28,6 @@ export default function SearchScreen() {
           </Text>
         </PressableScale>
       </View>
-    </SafeAreaView>
+    </ScreenLayout>
   );
 }
