@@ -35,6 +35,7 @@ export const SearchBar: React.FC<Props> = ({
           onSubmitEditing={() => {
             onSearch(keyword);
           }}
+          style={{ flex: 1 }}
         />
       </View>
     </View>
