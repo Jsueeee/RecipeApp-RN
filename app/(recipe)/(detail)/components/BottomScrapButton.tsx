@@ -5,12 +5,17 @@ import HeartStrokeIcon from "@/assets/images/ic_heart_stroke.svg";
 import { CTAButton } from "@/components/CTAButton";
 import i18n from "@/lib/i18n";
 import React from "react";
+import { LayoutChangeEvent } from "react-native";
 
 interface Props {
   recipeDetail: RecipeDetail | undefined;
+  onLayout: (e: LayoutChangeEvent) => void;
 }
 
-export const BottomScrapButton = ({ recipeDetail }: Props) => {
+export const BottomScrapButton = ({
+  recipeDetail,
+  onLayout,
+}: Props) => {
   const { addScrap, removeScrap, isLoading } = useRecipeScrapMutation();
 
   const onPress = () => {
@@ -45,6 +50,7 @@ export const BottomScrapButton = ({ recipeDetail }: Props) => {
       disabled={!recipeDetail}
       onPress={onPress}
       className="flex-1"
+      onLayout={onLayout}
     />
   );
 };

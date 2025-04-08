@@ -6,8 +6,8 @@ import { Header } from "@/components/Header";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
-import React from "react";
-import { Image, View } from "react-native";
+import React, { useState } from "react";
+import { Image, LayoutChangeEvent, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BottomScrapButton } from "./components/BottomScrapButton";
 import { RecipeDetailInfo } from "./components/RecipeDetailInfo";
@@ -18,21 +18,33 @@ export default function RecipeDetailScreen() {
 
   const { data: recipeDetail } = useRecipeDetailQuery(Number(id));
 
+  const [scrapButtonHeight, setScrapButtonHeight] = useState<number>(0);
+
+  const onScrapLayout = (e: LayoutChangeEvent) => {
+    setScrapButtonHeight(e.nativeEvent.layout.height);
+  };
+
   const footer: React.ReactNode = (
     <View className="flex-row w-full py-2 px-4 bg-white rounded-t-2xl border-t border-l border-r border-[#ECEFED] self-center max-w-[500px] gap-2">
       <PressableScale disabled={!recipeDetail} onPress={() => {}}>
-        <View className="w-12 h-12 bg-fill-subtle rounded-[12px] items-center justify-center">
+        <View
+          style={{ height: scrapButtonHeight, aspectRatio: 1 }}
+          className="bg-fill-subtle rounded-[12px] items-center justify-center"
+        >
           <YoutubeIcon width={24} height={24} />
         </View>
       </PressableScale>
 
       <PressableScale disabled={!recipeDetail} onPress={() => {}}>
-        <View className="w-12 h-12 bg-fill-subtle rounded-[12px] items-center justify-center">
+        <View
+          style={{ height: scrapButtonHeight, aspectRatio: 1 }}
+          className="bg-fill-subtle rounded-[12px] items-center justify-center"
+        >
           <BlogIcon width={24} height={24} />
         </View>
       </PressableScale>
 
-      <BottomScrapButton recipeDetail={recipeDetail} />
+      <BottomScrapButton recipeDetail={recipeDetail} onLayout={onScrapLayout} />
     </View>
   );
 

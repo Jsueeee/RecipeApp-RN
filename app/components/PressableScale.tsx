@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Animated, Pressable, ViewStyle } from "react-native";
+import { Animated, LayoutChangeEvent, Pressable, ViewStyle } from "react-native";
 
 interface PressableScaleProps {
   onPress: () => void;
@@ -7,6 +7,7 @@ interface PressableScaleProps {
   className?: string;
   style?: ViewStyle;
   disabled?: boolean;
+  onLayout?: (e: LayoutChangeEvent) => void;
 }
 
 export const PressableScale: React.FC<PressableScaleProps> = ({
@@ -15,6 +16,7 @@ export const PressableScale: React.FC<PressableScaleProps> = ({
   className,
   style,
   disabled = false,
+  onLayout,
 }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
@@ -54,6 +56,7 @@ export const PressableScale: React.FC<PressableScaleProps> = ({
       onPress={onPress}
       disabled={disabled}
       className={className}
+      onLayout={onLayout}
     >
       <Animated.View
         style={[

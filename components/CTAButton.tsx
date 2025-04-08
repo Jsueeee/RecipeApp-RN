@@ -1,7 +1,7 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import clsx from "clsx";
 import React from "react";
-import { Text, View } from "react-native";
+import { LayoutChangeEvent, Text, View } from "react-native";
 
 interface Props {
   buttonLabel: string;
@@ -13,6 +13,7 @@ interface Props {
   onPress: () => void;
   icon?: React.ReactNode;
   className?: string;
+  onLayout?: (e: LayoutChangeEvent) => void;
 }
 
 export const CTAButton = ({
@@ -25,9 +26,15 @@ export const CTAButton = ({
   onPress,
   icon,
   className = "",
+  onLayout,
 }: Props) => {
   return (
-    <PressableScale disabled={disabled} onPress={onPress} className={className}>
+    <PressableScale
+      disabled={disabled}
+      onPress={onPress}
+      className={className}
+      onLayout={onLayout}
+    >
       <View
         className={clsx(
           "rounded-[12px]",
