@@ -22,7 +22,11 @@ export default function SearchScreen() {
         />
 
         {/* 취소 버튼 */}
-        <PressableScale onPress={() => setKeyword("")} className="p-2.5">
+        <PressableScale
+          onPress={() => setKeyword("")}
+          disabled={keyword.length === 0}
+          className="p-2.5"
+        >
           <Text className="text-body2 text-text-strong">
             {i18n.t("search.search_cancel")}
           </Text>
