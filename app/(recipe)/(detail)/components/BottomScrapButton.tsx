@@ -31,7 +31,7 @@ export const BottomScrapButton = ({ recipeDetail }: Props) => {
           : i18n.t("recipe_detail.bottom_scrap_button")
       }
       buttonLabelColor={
-        recipeDetail?.isScrap ? "text-primary-normal" : "#FFFFFF"
+        recipeDetail?.isScrap ? "primary-normal" : "text-inverse"
       }
       backgroundColor={recipeDetail?.isScrap ? "white" : "primary-normal"}
       borderColor={recipeDetail?.isScrap ? "primary-normal" : undefined}
