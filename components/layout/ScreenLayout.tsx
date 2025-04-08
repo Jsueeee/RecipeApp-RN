@@ -5,23 +5,27 @@ import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
-  title: string;
+  title?: string;
   children: ReactNode;
   backgroundColor?: string;
   footer?: ReactNode;
+  isShowHeader?: boolean;
   onBackClick?: () => void;
 }
 
 export function ScreenLayout({
-  title,
+  title = "",
   children,
   backgroundColor = "white",
   footer,
+  isShowHeader = true,
   onBackClick,
 }: Props) {
   return (
     <SafeAreaView className={`flex-1 bg-${backgroundColor}`}>
-      <Header title={title} onBackClick={onBackClick ?? router.back} />
+      {isShowHeader && (
+        <Header title={title} onBackClick={onBackClick ?? router.back} />
+      )}
 
       <ScrollView
         className="flex-1"
@@ -33,7 +37,7 @@ export function ScreenLayout({
         {children}
       </ScrollView>
 
-      <View className="px-4">{footer}</View>
+      <View>{footer}</View>
     </SafeAreaView>
   );
 }

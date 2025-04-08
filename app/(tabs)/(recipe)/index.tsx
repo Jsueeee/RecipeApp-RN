@@ -6,7 +6,8 @@ import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import i18n from "@/lib/i18n";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useMemo } from "react";
+import { router } from "expo-router";
+import React, { useMemo } from "react";
 import { FlatList, Text, View } from "react-native";
 import { EmptyRecipeTabPlaceholder } from "./components/EmptyRecipeTabPlaceholder";
 import RecipeItem from "./components/RecipeItem";
@@ -22,6 +23,17 @@ export default function RecipeScreen() {
 
   const { addScrap, removeScrap } = useRecipeScrapMutation();
 
+  const onRecipeItemPress = (recipeId: number) => {
+    router.push({
+      pathname: "/(recipe)/(detail)",
+      params: { id: recipeId },
+    });
+  };
+
+  const onScrapPress = (recipeId: number, isScrapped: boolean) => {
+    isScrapped ? removeScrap(recipeId) : addScrap(recipeId);
+  };
+
   const renderItem = ({
     item,
     index,
@@ -32,10 +44,8 @@ export default function RecipeScreen() {
     <View className={index === 0 ? "bg-background-alternative " : "bg-white"}>
       <RecipeItem
         item={item}
-        onPress={() => {}}
-        onScrapPress={() =>
-          item.isScrapped ? removeScrap(item.id) : addScrap(item.id)
-        }
+        onPress={() => onRecipeItemPress(item.id)}
+        onScrapPress={() => onScrapPress(item.id, item.isScrapped)}
         className={`bg-white ${index === 0 ? "rounded-t-[16px]" : ""}`}
       />
     </View>
