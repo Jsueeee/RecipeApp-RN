@@ -79,6 +79,7 @@ function RootLayoutNav() {
           name="(recipe)/(detail)"
           options={{ headerShown: false }}
         />
+        <Stack.Screen name="(search)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
     </ThemeProvider>
