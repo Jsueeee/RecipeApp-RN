@@ -248,6 +248,9 @@ export default {
     custom_food_icon_title: "아이콘 선택",
     custom_food_icon_cta: "선택 완료",
   },
+  search: {
+    search_bar_hint: "레시피를 검색해 보세요.",
+  },
   search_result: {
     toolbar_total_count_suffix: "%,d<font color=#83958C> 개</font>",
     sort_newest: "최신순",
