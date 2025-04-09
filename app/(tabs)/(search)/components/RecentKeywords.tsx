@@ -22,8 +22,9 @@ export function RecentKeywords({
         <Text className="text-title4 text-text-strong">
           {i18n.t("search.recent_keywords")}
         </Text>
+
         <PressableScale onPress={onResetPress}>
-          <Text className="text-body3 text-text-medium">
+          <Text className="text-body3 text-text-alternative">
             {i18n.t("search.recent_keywords_clear_all")}
           </Text>
         </PressableScale>
