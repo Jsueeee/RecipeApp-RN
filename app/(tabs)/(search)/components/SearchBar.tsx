@@ -9,6 +9,7 @@ interface Props {
   onSearch: (keyword: string) => void;
   className?: string;
   onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 export const SearchBar: React.FC<Props> = ({
@@ -17,6 +18,7 @@ export const SearchBar: React.FC<Props> = ({
   onSearch,
   className,
   onFocus,
+  onBlur,
 }) => {
   return (
     <View className={className}>
@@ -39,6 +41,9 @@ export const SearchBar: React.FC<Props> = ({
           }}
           onFocus={() => {
             onFocus?.();
+          }}
+          onBlur={() => {
+            onBlur?.();
           }}
           style={{ flex: 1 }}
         />
