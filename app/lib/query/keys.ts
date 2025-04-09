@@ -11,4 +11,7 @@ export const QUERY_KEYS = {
     RECOMMENDED_LIST: ["recipe", "recommended"] as const,
     DETAIL: (recipeId: number) => ["recipe", "detail", recipeId] as const,
   },
+  SEARCH: {
+    POPULAR_KEYWORDS: ["search", "popularKeywords"] as const,
+  },
 } as const;

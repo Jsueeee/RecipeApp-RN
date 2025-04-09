@@ -1,4 +1,5 @@
 import { PressableScale } from "@/app/components/PressableScale";
+import { usePopularKeywordsQuery } from "@/app/hooks/queries/usePopularKeywordsQuery";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import i18n from "@/lib/i18n";
@@ -9,6 +10,8 @@ import { SearchKeywords } from "./components/SearchKeywords";
 
 export default function SearchScreen() {
   const [keyword, setKeyword] = useState("");
+
+  const { data: popularKeywords = [] } = usePopularKeywordsQuery();
 
   // 예시 데이터
   const recentKeywords = [
@@ -25,21 +28,6 @@ export default function SearchScreen() {
     "된장찌개",
     "비빔밥",
   ];
-  const popularKeywords = [
-    "한식",
-    "중식",
-    "일식",
-    "양식",
-    "분식",
-    "디저트",
-    "어쩌구 저쩌구 저쩌구",
-    "어쩌구 저쩌구 저쩌구2",
-    "어쩌구 저쩌구 저쩌구3",
-    "파스타",
-    "샐러드",
-    "분식",
-    "1",
-  ];
 
   return (
     <ScreenLayout isShowHeader={false}>
@@ -54,11 +42,11 @@ export default function SearchScreen() {
             className="flex-1"
             onFocus={() => {
               console.log("onFocus");
-            // TODO : 애니메이션
+              // TODO : 애니메이션
             }}
           />
 
-        {/* 취소 버튼 */}
+          {/* 취소 버튼 */}
           <PressableScale
             onPress={() => setKeyword("")}
             disabled={keyword.length === 0}
