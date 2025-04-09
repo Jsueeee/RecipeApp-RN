@@ -8,6 +8,7 @@ interface Props {
   onValueChange: (value: string) => void;
   onSearch: (keyword: string) => void;
   className?: string;
+  onFocus?: () => void;
 }
 
 export const SearchBar: React.FC<Props> = ({
@@ -15,6 +16,7 @@ export const SearchBar: React.FC<Props> = ({
   onValueChange,
   onSearch,
   className,
+  onFocus,
 }) => {
   return (
     <View className={className}>
@@ -34,6 +36,9 @@ export const SearchBar: React.FC<Props> = ({
           caretHidden={true}
           onSubmitEditing={() => {
             onSearch(keyword);
+          }}
+          onFocus={() => {
+            onFocus?.();
           }}
           style={{ flex: 1 }}
         />

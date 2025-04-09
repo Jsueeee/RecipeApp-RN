@@ -19,6 +19,10 @@ export default function SearchScreen() {
           onValueChange={setKeyword}
           onSearch={() => {}}
           className="flex-1"
+          onFocus={() => {
+            console.log("onFocus");
+            // TODO : 애니메이션
+          }}
         />
 
         {/* 취소 버튼 */}
