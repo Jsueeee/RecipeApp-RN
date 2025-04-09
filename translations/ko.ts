@@ -251,6 +251,9 @@ export default {
   search: {
     search_bar_hint: "레시피를 검색해 보세요.",
     search_cancel: "취소",
+    recent_keywords: "내가 찾아봤던 레시피",
+    recent_keywords_clear_all: "모두 지우기",
+    popular_keywords: "지금 가장 인기있는 레시피",
   },
   search_result: {
     toolbar_total_count_suffix: "%,d<font color=#83958C> 개</font>",
