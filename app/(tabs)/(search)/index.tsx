@@ -5,7 +5,7 @@ import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import i18n from "@/lib/i18n";
 import React, { useCallback, useRef, useState } from "react";
-import { Animated, Text, View } from "react-native";
+import { Animated, LayoutChangeEvent, Text, View } from "react-native";
 import { SearchBar } from "./components/SearchBar";
 import { SearchKeywords } from "./components/SearchKeywords";
 
@@ -13,10 +13,15 @@ export default function SearchScreen() {
   const [keyword, setKeyword] = useState("");
   const headerAnimation = useRef(new Animated.Value(1)).current;
   const searchBarAnimation = useRef(new Animated.Value(0)).current;
+  const headerHeight = useRef(0);
 
   const { recentSearches, addSearch, removeSearch, clearAllSearches } =
     useRecentSearch();
   const { data: popularKeywords = [] } = usePopularKeywordsQuery();
+
+  const onHeaderLayout = useCallback((event: LayoutChangeEvent) => {
+    headerHeight.current = event.nativeEvent.layout.height - 16; // top margin 16px
+  }, []);
 
   const handleSearch = useCallback(
     (searchKeyword: string = keyword) => {
@@ -61,13 +66,14 @@ export default function SearchScreen() {
   return (
     <ScreenLayout isShowHeader={false}>
       <Animated.View
+        onLayout={onHeaderLayout}
         style={{
           opacity: headerAnimation,
           transform: [
             {
               translateY: headerAnimation.interpolate({
                 inputRange: [0, 1],
-                outputRange: [-50, 0],
+                outputRange: [(headerHeight.current || 50) * -1, 0],
               }),
             },
           ],
@@ -83,7 +89,7 @@ export default function SearchScreen() {
             {
               translateY: searchBarAnimation.interpolate({
                 inputRange: [0, 1],
-                outputRange: [0, -50],
+                outputRange: [0, (headerHeight.current || 50) * -1],
               }),
             },
           ],
