@@ -30,7 +30,7 @@ export default function SearchScreen() {
         // TODO: 검색 실행
       }
     },
-    [addSearch]
+    [addSearch, keyword]
   );
 
   const animateOnFocus = useCallback(() => {
