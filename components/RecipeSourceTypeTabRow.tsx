@@ -1,30 +1,30 @@
+import { RecipeSourceType } from "@/constants/RecipeSourceType";
 import React, { useEffect, useRef } from "react";
 import {
-  View,
+  Animated,
   Text,
   TouchableOpacity,
-  Animated,
   useWindowDimensions,
+  View,
 } from "react-native";
 
-interface RecipeSourceTypeTabRowProps {
-  tabs: string[];
-  selectedTab: string;
-  onTabSelected: (tab: string) => void;
+interface Props {
+  tabs: readonly RecipeSourceType[];
+  selectedTab: RecipeSourceType;
+  onTabSelected: (tab: RecipeSourceType) => void;
 }
 
 export function RecipeSourceTypeTabRow({
   tabs,
   selectedTab,
   onTabSelected,
-}: RecipeSourceTypeTabRowProps) {
+}: Props) {
   const indicatorPosition = useRef(new Animated.Value(0)).current;
   const { width } = useWindowDimensions();
   const tabWidth = width / tabs.length;
 
   useEffect(() => {
     const selectedIndex = tabs.indexOf(selectedTab);
-
     Animated.timing(indicatorPosition, {
       toValue: selectedIndex,
       duration: 200,
@@ -50,7 +50,6 @@ export function RecipeSourceTypeTabRow({
             </Text>
           </TouchableOpacity>
         ))}
-
         <Animated.View
           className="absolute bottom-0 h-0.5 bg-gray-800 rounded-lg"
           style={{

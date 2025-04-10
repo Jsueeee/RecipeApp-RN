@@ -8,12 +8,15 @@ import React, { useCallback, useRef, useState } from "react";
 import { Animated, LayoutChangeEvent, Text, View } from "react-native";
 import { SearchBar } from "./components/SearchBar";
 import { SearchKeywords } from "./components/SearchKeywords";
+import SearchResult from "./SearchResult";
 
 export default function SearchScreen() {
   const [keyword, setKeyword] = useState("");
   const headerAnimation = useRef(new Animated.Value(1)).current;
   const searchBarAnimation = useRef(new Animated.Value(0)).current;
   const headerHeight = useRef(0);
+
+  const [isSearchResultShow, setIsSearchResultShow] = useState(true);
 
   const { recentSearches, addSearch, removeSearch, clearAllSearches } =
     useRecentSearch();
@@ -117,16 +120,20 @@ export default function SearchScreen() {
           </PressableScale>
         </View>
 
-        <SearchKeywords
-          recentKeywords={recentSearches}
-          popularKeywords={popularKeywords}
-          onKeywordPress={(keyword) => {
-            setKeyword(keyword);
-            handleSearch(keyword);
-          }}
-          onResetPress={clearAllSearches}
-          onRemovePress={removeSearch}
-        />
+        {isSearchResultShow ? (
+          <SearchResult keyword={keyword} />
+        ) : (
+          <SearchKeywords
+            recentKeywords={recentSearches}
+            popularKeywords={popularKeywords}
+            onKeywordPress={(keyword) => {
+              setKeyword(keyword);
+              handleSearch(keyword);
+            }}
+            onResetPress={clearAllSearches}
+            onRemovePress={removeSearch}
+          />
+        )}
       </Animated.View>
     </ScreenLayout>
   );
