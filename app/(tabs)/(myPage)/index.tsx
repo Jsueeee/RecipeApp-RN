@@ -4,6 +4,7 @@ import React from "react";
 import { MyPageHeader } from "./components/MyPageHeader";
 import { MyProfile } from "./components/MyProfile";
 import { MyScrapSummary } from "./components/MyScrapSummary";
+import { MyRecipeSummary } from "./components/MyRecipeSummary";
 
 export default function MyPageScreen() {
   const { data: userInfo } = useUserInfoQuery();
@@ -28,6 +29,11 @@ export default function MyPageScreen() {
         blogScrapCount={userInfo?.blogScrapCnt ?? 0}
         youtubeScrapCount={userInfo?.youtubeScrapCnt ?? 0}
         recipeScrapCount={userInfo?.recipeScrapCnt ?? 0}
+      />
+
+      <MyRecipeSummary
+        recipes={userInfo?.userRecipeSummaries ?? []}
+        className="mt-10 flex-1"
       />
     </ScreenLayout>
   );

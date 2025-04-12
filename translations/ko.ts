@@ -68,6 +68,7 @@ export default {
     scrap_blog_title: "블로그",
     scrap_youtube_title: "유튜브",
     scrap_recipe_title: "추천",
+    my_recipe_title: "나만의 레시피",
 
     cancel: "취소",
     save: "저장",
