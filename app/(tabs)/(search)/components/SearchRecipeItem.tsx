@@ -58,7 +58,7 @@ export default function SearchRecipeItem({
             <View className="flex-row items-center mt-1">
               {recipe.postUserName && (
                 <Text
-                  className="text-body4 text-text-assistive flex-1"
+                  className="text-body4 text-text-assistive"
                   numberOfLines={1}
                 >
                   {recipe.postUserName}
