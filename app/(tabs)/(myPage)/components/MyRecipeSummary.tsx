@@ -9,6 +9,11 @@ interface Props {
   className?: string;
 }
 
+// TODO: 이미지 업로드 문제 해결 후 제거
+const isContentUri = (uri: string) => {
+  return uri.startsWith("content://");
+};
+
 const ThumbnailItem = ({
   recipe,
   onPress,
@@ -16,11 +21,14 @@ const ThumbnailItem = ({
   recipe: UserRecipeSummary | null;
   onPress?: (id: number) => void;
 }) => {
-  console.log("recipe", recipe);
-
   if (!recipe) {
     return <View className="flex-1 aspect-square" />;
   }
+
+  const imageSource =
+    recipe.thumbnail && !isContentUri(recipe.thumbnail)
+      ? { uri: recipe.thumbnail }
+      : undefined;
 
   return (
     <PressableScale
@@ -29,7 +37,7 @@ const ThumbnailItem = ({
     >
       <View className="rounded-[12px] overflow-hidden">
         <Image
-          source={{ uri: recipe.thumbnail ?? "" }}
+          source={imageSource}
           className="w-full h-full bg-gray-50"
           resizeMode="cover"
         />
