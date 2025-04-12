@@ -17,7 +17,7 @@ export function RecentKeywords({
   onRemovePress,
 }: RecentKeywordsProps) {
   return (
-    <View>
+    <View className="w-full">
       <View className="flex-row items-center justify-between px-4">
         <Text className="text-title4 text-text-strong">
           {i18n.t("search.recent_keywords")}
@@ -33,14 +33,13 @@ export function RecentKeywords({
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        className="flex-1 mt-[14px]"
+        className="w-full mt-[14px]"
         contentContainerClassName="px-4 gap-1.5"
       >
         {keywords.map((keyword, index) => (
           <PressableScale
             key={keyword + index}
             onPress={() => onKeywordPress(keyword)}
-            className=""
           >
             <View className="flex-row items-center gap-1 bg-fill-subtle rounded-[12px] px-3 py-1.5">
               <Text className="text-body3 text-text-normal">{keyword}</Text>

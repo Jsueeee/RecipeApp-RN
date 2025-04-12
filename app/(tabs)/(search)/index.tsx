@@ -1,19 +1,28 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import { usePopularKeywordsQuery } from "@/app/hooks/queries/usePopularKeywordsQuery";
 import { useRecentSearch } from "@/app/hooks/useRecentSearch";
-import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import i18n from "@/lib/i18n";
 import React, { useCallback, useRef, useState } from "react";
-import { Animated, LayoutChangeEvent, Text, View } from "react-native";
+import {
+  Animated,
+  Keyboard,
+  LayoutChangeEvent,
+  SafeAreaView,
+  Text,
+  View,
+} from "react-native";
 import { SearchBar } from "./components/SearchBar";
 import { SearchKeywords } from "./components/SearchKeywords";
+import SearchResult from "./SearchResult";
 
 export default function SearchScreen() {
   const [keyword, setKeyword] = useState("");
   const headerAnimation = useRef(new Animated.Value(1)).current;
   const searchBarAnimation = useRef(new Animated.Value(0)).current;
   const headerHeight = useRef(0);
+
+  const [isSearchResultShow, setIsSearchResultShow] = useState(false);
 
   const { recentSearches, addSearch, removeSearch, clearAllSearches } =
     useRecentSearch();
@@ -26,8 +35,9 @@ export default function SearchScreen() {
   const handleSearch = useCallback(
     (searchKeyword: string = keyword) => {
       if (searchKeyword.trim()) {
+        Keyboard.dismiss();
         addSearch(searchKeyword);
-        // TODO: 검색 실행
+        setIsSearchResultShow(true);
       }
     },
     [addSearch, keyword]
@@ -64,7 +74,7 @@ export default function SearchScreen() {
   }, []);
 
   return (
-    <ScreenLayout isShowHeader={false}>
+    <SafeAreaView className="flex-1 bg-white">
       <Animated.View
         onLayout={onHeaderLayout}
         style={{
@@ -107,7 +117,11 @@ export default function SearchScreen() {
 
           {/* 취소 버튼 */}
           <PressableScale
-            onPress={() => setKeyword("")}
+            onPress={() => {
+              setKeyword("");
+              animateOnBlur();
+              setIsSearchResultShow(false);
+            }}
             disabled={keyword.length === 0}
             className="p-2.5"
           >
@@ -117,17 +131,22 @@ export default function SearchScreen() {
           </PressableScale>
         </View>
 
-        <SearchKeywords
-          recentKeywords={recentSearches}
-          popularKeywords={popularKeywords}
-          onKeywordPress={(keyword) => {
-            setKeyword(keyword);
-            handleSearch(keyword);
-          }}
-          onResetPress={clearAllSearches}
-          onRemovePress={removeSearch}
-        />
+        {isSearchResultShow ? (
+          <SearchResult keyword={keyword} className="w-full h-full bg-white" />
+        ) : (
+          <SearchKeywords
+            recentKeywords={recentSearches}
+            popularKeywords={popularKeywords}
+            onKeywordPress={(keyword) => {
+              animateOnFocus();
+              setKeyword(keyword);
+              handleSearch(keyword);
+            }}
+            onResetPress={clearAllSearches}
+            onRemovePress={removeSearch}
+          />
+        )}
       </Animated.View>
-    </ScreenLayout>
+    </SafeAreaView>
   );
 }

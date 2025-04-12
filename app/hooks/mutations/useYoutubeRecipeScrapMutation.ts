@@ -1,40 +1,28 @@
 import { apiClient } from "@/app/lib/api/client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useCallback } from "react";
-import {
-  useUpdateRecipeDetailScrapState,
-  useUpdateRecipeListScrapState,
-  useUpdateSearchRecipeListScrapState,
-} from "../useUpdateRecipeScrap";
+import { useUpdateSearchRecipeListScrapState } from "../useUpdateRecipeScrap";
 
-/**
- * 추천 레시피 스크랩 뮤테이션
- * 블로그, 유튜브는 따로 관리한다
- */
-export const useRecipeScrapMutation = () => {
-  const updateRecommendedList = useUpdateRecipeListScrapState();
-  const updateRecipeDetail = useUpdateRecipeDetailScrapState();
+export const useYoutubeRecipeScrapMutation = () => {
   const updateSearchRecipeList = useUpdateSearchRecipeListScrapState();
 
   const handleSuccess = useCallback(
     (recipeId: number, isScrapped: boolean) => {
       const update = { recipeId, isScrapped };
-      updateRecommendedList(update);
-      updateRecipeDetail(update);
       updateSearchRecipeList(update);
     },
-    [updateRecommendedList, updateRecipeDetail, updateSearchRecipeList]
+    [updateSearchRecipeList]
   );
 
   const addScrap = useMutation({
     mutationFn: (recipeId: number) =>
-      apiClient.post(`/recipes/${recipeId}/scraps`),
+      apiClient.post(`/recipes/youtube/${recipeId}/scraps`),
     onSuccess: (_, recipeId) => handleSuccess(recipeId, true),
   });
 
   const removeScrap = useMutation({
     mutationFn: (recipeId: number) =>
-      apiClient.delete(`/recipes/${recipeId}/scraps`),
+      apiClient.delete(`/recipes/youtube/${recipeId}/scraps`),
     onSuccess: (_, recipeId) => handleSuccess(recipeId, false),
   });
 

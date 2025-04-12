@@ -1,8 +1,6 @@
-import { View, Text } from "react-native";
-import { PressableScale } from "@/app/components/PressableScale";
-import i18n from "@/lib/i18n";
-import { RecentKeywords } from "./RecentKeywords";
+import { ScrollView, View } from "react-native";
 import { PopularKeywords } from "./PopularKeywords";
+import { RecentKeywords } from "./RecentKeywords";
 
 interface Props {
   recentKeywords: string[];
@@ -20,7 +18,13 @@ export function SearchKeywords({
   onRemovePress,
 }: Props) {
   return (
-    <View className="flex-1">
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      bounces={false}
+      overScrollMode="never"
+      className="flex-1"
+      keyboardShouldPersistTaps="handled"
+    >
       {recentKeywords.length > 0 && (
         <View className="mt-5">
           <RecentKeywords
@@ -40,6 +44,6 @@ export function SearchKeywords({
           />
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 }

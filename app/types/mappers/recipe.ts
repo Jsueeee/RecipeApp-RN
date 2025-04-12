@@ -4,6 +4,8 @@ import {
   RecipeDetailResponse,
   RecipeIngredientResponse,
   RecipeProcessResponse,
+  SearchRecipeResponse,
+  SearchRecipeItemResponse,
 } from "../api/recipe";
 import {
   RecipeSummaryList,
@@ -11,6 +13,8 @@ import {
   RecipeDetail,
   RecipeIngredient,
   RecipeProcess,
+  SearchRecipe,
+  SearchRecipeResult,
 } from "../domain/recipe";
 
 export const mapRecommendedRecipesResponse = (
@@ -73,4 +77,26 @@ const mapRecipeProcessResponse = (
   no: response.recipeProcessNo,
   description: response.recipeProcessDescription,
   imageUrl: response.recipeProcessImgUrl,
+});
+
+export const mapSearchRecipeResponse = (
+  response: SearchRecipeResponse
+): SearchRecipeResult => ({
+  totalCnt: response.totalCnt,
+  recipes: response.recipes.map(mapSearchRecipeItemResponse),
+});
+
+const mapSearchRecipeItemResponse = (
+  response: SearchRecipeItemResponse
+): SearchRecipe => ({
+  recipeId: response.recipeId,
+  title: response.recipeName,
+  description: response.introduction,
+  thumbnail: response.thumbnailImgUrl,
+  postUserName: response.postUserName,
+  postDate: response.postDate,
+  isScrapped: response.isUserScrap,
+  scrapCount: response.scrapCnt,
+  viewCount: response.viewCnt,
+  url: response.linkUrl,
 });
