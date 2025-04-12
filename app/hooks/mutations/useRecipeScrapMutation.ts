@@ -4,20 +4,22 @@ import { useCallback } from "react";
 import {
   useUpdateRecipeDetailScrapState,
   useUpdateRecipeListScrapState,
+  useUpdateSearchRecipeListScrapState,
 } from "../useUpdateRecipeScrap";
 
 export const useRecipeScrapMutation = () => {
-  const queryClient = useQueryClient();
   const updateRecommendedList = useUpdateRecipeListScrapState();
   const updateRecipeDetail = useUpdateRecipeDetailScrapState();
+  const updateSearchRecipeList = useUpdateSearchRecipeListScrapState();
 
   const handleSuccess = useCallback(
     (recipeId: number, isScrapped: boolean) => {
       const update = { recipeId, isScrapped };
       updateRecommendedList(update);
       updateRecipeDetail(update);
+      updateSearchRecipeList(update);
     },
-    [updateRecommendedList, updateRecipeDetail]
+    [updateRecommendedList, updateRecipeDetail, updateSearchRecipeList]
   );
 
   const addScrap = useMutation({

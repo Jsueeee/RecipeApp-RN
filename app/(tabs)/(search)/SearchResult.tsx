@@ -1,3 +1,4 @@
+import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMutation";
 import { useSearchRecipesQuery } from "@/app/hooks/queries/useSearchRecipeQuery";
 import { RecipeSourceTypeTabRow } from "@/components/RecipeSourceTypeTabRow";
 import {
@@ -16,6 +17,8 @@ export default function SearchResult({ keyword }: Props) {
   const [selectedTab, setSelectedTab] = useState<RecipeSourceType>(
     RECIPE_SOURCE_TYPE.PUBLIC
   );
+
+  const { addScrap, removeScrap } = useRecipeScrapMutation();
 
   const {
     data: searchResult,
@@ -37,7 +40,7 @@ export default function SearchResult({ keyword }: Props) {
   }, [searchResult]);
 
   const handleScrapButtonPress = (isScrapped: boolean, recipeId: number) => {
-    // TODO: 스크랩 API 호출
+    isScrapped ? removeScrap(recipeId) : addScrap(recipeId);
   };
 
   return (

@@ -61,3 +61,42 @@ export const useUpdateRecipeDetailScrapState = () => {
     );
   };
 };
+
+/**
+ * 레시피 검색 결과도 업데이트
+ */
+export const useUpdateSearchRecipeListScrapState = () => {
+  const queryClient = useQueryClient();
+
+  return ({ recipeId, isScrapped }: RecipeScrapUpdate) => {
+    queryClient.setQueriesData(
+      {
+        predicate: (query) =>
+          Array.isArray(query.queryKey) &&
+          query.queryKey[0] === "recipe-search",
+      },
+      (old: any) => {
+        if (!old?.pages) return old;
+
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            recipes: page.recipes.map((recipe: any) => {
+              if (recipe.recipeId === recipeId) {
+                return {
+                  ...recipe,
+                  isUserScrap: isScrapped,
+                  scrapCnt: isScrapped
+                    ? recipe.scrapCnt + 1
+                    : recipe.scrapCnt - 1,
+                };
+              }
+              return recipe;
+            }),
+          })),
+        };
+      }
+    );
+  };
+};
