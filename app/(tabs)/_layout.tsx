@@ -100,7 +100,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="myPage"
+        name="(myPage)"
         options={{
           tabBarIcon: ({ color }) => (
             <MyPageIcon color={color} width={20} height={20} />

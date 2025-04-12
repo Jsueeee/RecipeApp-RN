@@ -63,6 +63,13 @@ export default {
     networkError: "네트워크 연결 상태가 원활하지 않습니다.",
   },
   myPage: {
+    scrap_title: "스크랩 레시피",
+    all_view: "전체 보기",
+    scrap_blog_title: "블로그",
+    scrap_youtube_title: "유튜브",
+    scrap_recipe_title: "추천",
+    my_recipe_title: "나만의 레시피",
+
     cancel: "취소",
     save: "저장",
     save2: "저장하기",
@@ -256,7 +263,7 @@ export default {
     popular_keywords: "지금 가장 인기있는 레시피",
     result_is_empty_title: "검색 결과가 없어요",
     result_is_empty_desc: "다른 키워드로 검색해 보세요",
-    result_total_count_suffix: "개"
+    result_total_count_suffix: "개",
   },
   search_result: {
     toolbar_total_count_suffix: "%,d<font color=#83958C> 개</font>",

@@ -26,4 +26,7 @@ export const QUERY_KEYS = {
   SEARCH: {
     POPULAR_KEYWORDS: ["search", "popularKeywords"] as const,
   },
+  USER: {
+    INFO: () => ["user", "info"],
+  },
 } as const;

@@ -80,6 +80,7 @@ function RootLayoutNav() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="(search)" options={{ headerShown: false }} />
+        <Stack.Screen name="(myPage)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
     </ThemeProvider>
