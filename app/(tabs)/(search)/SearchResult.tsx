@@ -12,7 +12,7 @@ import {
 import i18n from "@/lib/i18n";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { FlatList, Linking, View } from "react-native";
+import { FlatList, Linking, Text, View } from "react-native";
 import SearchRecipeItem from "./components/SearchRecipeItem";
 
 interface Props {
@@ -98,6 +98,24 @@ export default function SearchResult({ keyword }: Props) {
 
   const keyExtractor = (item: SearchRecipe) => item.recipeId.toString();
 
+  const ListHeaderComponent = () => {
+    return (
+      <View className="flex-1 flex-row px-4 pt-5 pb-2 items-center justify-between">
+        <View className="flex-row justify-center items-center gap-0.5">
+          <Text className="text-title5 text-text-strong">
+            {searchResult?.totalCnt}
+          </Text>
+
+          <Text className="text-body3 text-text-alternative">
+            {i18n.t("search.result_total_count_suffix")}
+          </Text>
+        </View>
+
+        {/* TODO: 정렬 선택 버튼 추가 */}
+      </View>
+    );
+  };
+
   const renderContent = () => {
     if (isLoading) return <DotLoadingScreen />;
 
@@ -117,7 +135,7 @@ export default function SearchResult({ keyword }: Props) {
         data={recipes}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
-        // ListHeaderComponent={ListHeaderComponent}
+        ListHeaderComponent={ListHeaderComponent}
         ListFooterComponent={ListFooterComponent}
         onEndReached={onEndReached}
         ItemSeparatorComponent={ItemSeparator}

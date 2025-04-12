@@ -256,6 +256,7 @@ export default {
     popular_keywords: "지금 가장 인기있는 레시피",
     result_is_empty_title: "검색 결과가 없어요",
     result_is_empty_desc: "다른 키워드로 검색해 보세요",
+    result_total_count_suffix: "개"
   },
   search_result: {
     toolbar_total_count_suffix: "%,d<font color=#83958C> 개</font>",
