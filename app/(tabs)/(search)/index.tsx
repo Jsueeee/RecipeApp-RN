@@ -16,7 +16,7 @@ export default function SearchScreen() {
   const searchBarAnimation = useRef(new Animated.Value(0)).current;
   const headerHeight = useRef(0);
 
-  const [isSearchResultShow, setIsSearchResultShow] = useState(true);
+  const [isSearchResultShow, setIsSearchResultShow] = useState(false);
 
   const { recentSearches, addSearch, removeSearch, clearAllSearches } =
     useRecentSearch();
@@ -30,7 +30,7 @@ export default function SearchScreen() {
     (searchKeyword: string = keyword) => {
       if (searchKeyword.trim()) {
         addSearch(searchKeyword);
-        // TODO: 검색 실행
+        setIsSearchResultShow(true);
       }
     },
     [addSearch, keyword]
@@ -110,7 +110,11 @@ export default function SearchScreen() {
 
           {/* 취소 버튼 */}
           <PressableScale
-            onPress={() => setKeyword("")}
+            onPress={() => {
+              setKeyword("");
+              animateOnBlur();
+              setIsSearchResultShow(false);
+            }}
             disabled={keyword.length === 0}
             className="p-2.5"
           >
@@ -127,6 +131,7 @@ export default function SearchScreen() {
             recentKeywords={recentSearches}
             popularKeywords={popularKeywords}
             onKeywordPress={(keyword) => {
+              animateOnFocus();
               setKeyword(keyword);
               handleSearch(keyword);
             }}
