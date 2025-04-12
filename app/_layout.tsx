@@ -81,6 +81,10 @@ function RootLayoutNav() {
         />
         <Stack.Screen name="(search)" options={{ headerShown: false }} />
         <Stack.Screen name="(myPage)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="(myPage)/(profile)"
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
     </ThemeProvider>
