@@ -4,7 +4,7 @@ import ProfileImageEditIcon from "@/assets/images/ic_profile_image_edit.svg";
 import NicknameEditIcon from "@/assets/images/ic_profile_nickname_edit.svg";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
-import React from "react";
+import React, { useMemo } from "react";
 import { Image, Text, View } from "react-native";
 
 export default function MyProfileScreen() {
@@ -17,6 +17,17 @@ export default function MyProfileScreen() {
   const onNicknameEditButtonPress = () => {
     console.log("nickname edit button pressed");
   };
+
+  const loginProviderText = useMemo(() => {
+    switch (userInfo?.loginProvider.toLowerCase()) {
+      case "kakao":
+        return i18n.t("profile.loginProviderKakao");
+      case "naver":
+        return i18n.t("profile.loginProviderNaver");
+      case "google":
+        return i18n.t("profile.loginProviderGoogle");
+    }
+  }, [userInfo?.loginProvider]);
 
   return (
     <ScreenLayout
@@ -42,6 +53,22 @@ export default function MyProfileScreen() {
             <NicknameEditIcon width={20} height={20} />
           </View>
         </PressableScale>
+      </View>
+
+      <View className="w-full flex-row items-center gap-[34px] px-4 mt-10">
+        <Text className="text-title5 text-text-normal">
+          {i18n.t("profile.email")}
+        </Text>
+        <Text className="text-body2 text-text-strong">
+          {userInfo?.email ?? "-"}
+        </Text>
+      </View>
+
+      <View className="w-full flex-row items-center gap-[34px] px-4 mt-7">
+        <Text className="text-title5 text-text-normal">
+          {i18n.t("profile.loginProvider")}
+        </Text>
+        <Text className="text-body2 text-text-strong">{loginProviderText}</Text>
       </View>
     </ScreenLayout>
   );
