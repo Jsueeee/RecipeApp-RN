@@ -3,6 +3,7 @@ import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import React from "react";
 import { MyPageHeader } from "./components/MyPageHeader";
 import { MyProfile } from "./components/MyProfile";
+import { MyScrapSummary } from "./components/MyScrapSummary";
 
 export default function MyPageScreen() {
   const { data: userInfo } = useUserInfoQuery();
@@ -20,6 +21,13 @@ export default function MyPageScreen() {
         profileImage={userInfo?.profileImageUrl}
         nickname={userInfo?.nickname}
         onPress={onProfilePress}
+      />
+
+      <MyScrapSummary
+        className="mt-6 flex-1"
+        blogScrapCount={userInfo?.blogScrapCnt ?? 0}
+        youtubeScrapCount={userInfo?.youtubeScrapCnt ?? 0}
+        recipeScrapCount={userInfo?.recipeScrapCnt ?? 0}
       />
     </ScreenLayout>
   );
