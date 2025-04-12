@@ -2,11 +2,14 @@ import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMuta
 import { useSearchRecipesQuery } from "@/app/hooks/queries/useSearchRecipeQuery";
 import { SearchRecipe } from "@/app/types/domain/recipe";
 import { DotLoading } from "@/components/DotLoading";
+import { DotLoadingScreen } from "@/components/DotLoadingScreen";
+import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
 import { RecipeSourceTypeTabRow } from "@/components/RecipeSourceTypeTabRow";
 import {
   RECIPE_SOURCE_TYPE,
   RecipeSourceType,
 } from "@/constants/RecipeSourceType";
+import i18n from "@/lib/i18n";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { FlatList, Linking, View } from "react-native";
@@ -80,6 +83,54 @@ export default function SearchResult({ keyword }: Props) {
     return <DotLoading className="mb-20" />;
   };
 
+  const ItemSeparator = () => (
+    <View className="w-full mx-4 h-[1px] bg-line-alternative" />
+  );
+
+  const renderItem = ({ item }: { item: SearchRecipe }) => (
+    <SearchRecipeItem
+      keyword={keyword}
+      recipe={item}
+      onScrapButtonPress={handleScrapButtonPress}
+      onPress={() => onRecipePress(item)}
+    />
+  );
+
+  const keyExtractor = (item: SearchRecipe) => item.recipeId.toString();
+
+  const renderContent = () => {
+    if (isLoading) return <DotLoadingScreen />;
+
+    const recipes = searchResult?.recipes;
+
+    if (!recipes?.length) {
+      return (
+        <EmptyPlaceholder
+          title={i18n.t("search.result_is_empty_title")}
+          description={i18n.t("search.result_is_empty_desc")}
+        />
+      );
+    }
+
+    return (
+      <FlatList
+        data={recipes}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        // ListHeaderComponent={ListHeaderComponent}
+        ListFooterComponent={ListFooterComponent}
+        onEndReached={onEndReached}
+        ItemSeparatorComponent={ItemSeparator}
+        onEndReachedThreshold={0.5}
+        className="bg-white"
+        contentContainerStyle={{ paddingBottom: 24 }}
+        bounces={false}
+        alwaysBounceVertical={false}
+        showsVerticalScrollIndicator={false}
+      />
+    );
+  };
+
   return (
     <View className="flex-1">
       <RecipeSourceTypeTabRow
@@ -88,24 +139,7 @@ export default function SearchResult({ keyword }: Props) {
         onTabSelected={setSelectedTab}
       />
 
-      <FlatList
-        data={searchResult?.recipes}
-        renderItem={({ item }) => (
-          <SearchRecipeItem
-            keyword={keyword}
-            recipe={item}
-            onScrapButtonPress={handleScrapButtonPress}
-            onPress={() => onRecipePress(item)}
-          />
-        )}
-        ItemSeparatorComponent={() => (
-          <View className="w-full mx-4 h-[1px] bg-line-alternative" />
-        )}
-        scrollEnabled={true}
-        nestedScrollEnabled={true}
-        onEndReached={onEndReached}
-        ListFooterComponent={ListFooterComponent}
-      />
+      {renderContent()}
     </View>
   );
 }
