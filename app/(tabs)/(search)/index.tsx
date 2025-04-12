@@ -132,7 +132,7 @@ export default function SearchScreen() {
         </View>
 
         {isSearchResultShow ? (
-          <SearchResult keyword={keyword} />
+          <SearchResult keyword={keyword} className="w-full h-full bg-white" />
         ) : (
           <SearchKeywords
             recentKeywords={recentSearches}

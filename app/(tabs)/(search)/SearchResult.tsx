@@ -17,9 +17,10 @@ import SearchRecipeItem from "./components/SearchRecipeItem";
 
 interface Props {
   keyword: string;
+  className?: string;
 }
 
-export default function SearchResult({ keyword }: Props) {
+export default function SearchResult({ keyword, className }: Props) {
   const [selectedTab, setSelectedTab] = useState<RecipeSourceType>(
     RECIPE_SOURCE_TYPE.PUBLIC
   );
@@ -140,8 +141,7 @@ export default function SearchResult({ keyword }: Props) {
         onEndReached={onEndReached}
         ItemSeparatorComponent={ItemSeparator}
         onEndReachedThreshold={0.5}
-        className="bg-white"
-        contentContainerStyle={{ paddingBottom: 24 }}
+        // className="w-full h-full bg-red-500"
         bounces={false}
         alwaysBounceVertical={false}
         showsVerticalScrollIndicator={false}
@@ -150,7 +150,7 @@ export default function SearchResult({ keyword }: Props) {
   };
 
   return (
-    <View className="flex-1">
+    <View className={`${className}`}>
       <RecipeSourceTypeTabRow
         tabs={Object.values(RECIPE_SOURCE_TYPE)}
         selectedTab={selectedTab}
