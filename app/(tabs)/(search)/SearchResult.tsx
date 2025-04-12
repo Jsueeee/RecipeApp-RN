@@ -1,12 +1,14 @@
 import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMutation";
 import { useSearchRecipesQuery } from "@/app/hooks/queries/useSearchRecipeQuery";
+import { SearchRecipe } from "@/app/types/domain/recipe";
 import { RecipeSourceTypeTabRow } from "@/components/RecipeSourceTypeTabRow";
 import {
   RECIPE_SOURCE_TYPE,
   RecipeSourceType,
 } from "@/constants/RecipeSourceType";
+import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { FlatList, View } from "react-native";
+import { FlatList, Linking, View } from "react-native";
 import SearchRecipeItem from "./components/SearchRecipeItem";
 
 interface Props {
@@ -43,6 +45,23 @@ export default function SearchResult({ keyword }: Props) {
     isScrapped ? removeScrap(recipeId) : addScrap(recipeId);
   };
 
+  /**
+   * 블로그, 유튜브 레시피 클릭 시 링크 이동
+   * 추천 레시피 클릭 시 상세 페이지로 이동
+   */
+  const onRecipePress = (recipe: SearchRecipe) => {
+    switch (selectedTab) {
+      case RECIPE_SOURCE_TYPE.BLOG:
+      case RECIPE_SOURCE_TYPE.YOUTUBE:
+        if (recipe.url) {
+          Linking.openURL(recipe.url);
+        }
+        break;
+      default:
+        router.push(`/(recipe)/(detail)?id=${recipe.recipeId}`);
+        break;
+    }
+  };
   return (
     <View className="flex-1">
       <RecipeSourceTypeTabRow
@@ -58,6 +77,7 @@ export default function SearchResult({ keyword }: Props) {
             keyword={keyword}
             recipe={item}
             onScrapButtonPress={handleScrapButtonPress}
+            onPress={() => onRecipePress(item)}
           />
         )}
         ItemSeparatorComponent={() => (
