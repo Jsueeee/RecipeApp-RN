@@ -49,3 +49,21 @@ export interface RecipeProcess {
   description?: string;
   imageUrl?: string;
 }
+
+export interface SearchRecipeResult {
+  totalCnt: number;
+  recipes: SearchRecipe[];
+}
+
+export interface SearchRecipe {
+  recipeId: number;
+  title: string;
+  description: string | null;
+  thumbnail: string | null;
+  postUserName: string | null;
+  postDate: string | null;
+  isScrapped: boolean;
+  scrapCount: number;
+  viewCount: number;
+  url: string | null;
+}

@@ -1,9 +1,10 @@
+import { useSearchRecipesQuery } from "@/app/hooks/queries/useSearchRecipeQuery";
 import { RecipeSourceTypeTabRow } from "@/components/RecipeSourceTypeTabRow";
 import {
   RECIPE_SOURCE_TYPE,
   RecipeSourceType,
 } from "@/constants/RecipeSourceType";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 
 interface Props {
@@ -12,13 +13,32 @@ interface Props {
 
 export default function SearchResult({ keyword }: Props) {
   const [selectedTab, setSelectedTab] = useState<RecipeSourceType>(
-    RECIPE_SOURCE_TYPE[0]
+    RECIPE_SOURCE_TYPE.PUBLIC
   );
+
+  const {
+    data: searchResult,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    refetch,
+  } = useSearchRecipesQuery({
+    keyword,
+    size: 10,
+    sort: "newest",
+    searchType: selectedTab,
+  });
+
+  useEffect(() => {
+    if (searchResult) {
+      console.log(searchResult);
+    }
+  }, [searchResult]);
 
   return (
     <View className="flex-1">
       <RecipeSourceTypeTabRow
-        tabs={RECIPE_SOURCE_TYPE}
+        tabs={Object.values(RECIPE_SOURCE_TYPE)}
         selectedTab={selectedTab}
         onTabSelected={setSelectedTab}
       />
