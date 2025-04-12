@@ -57,6 +57,9 @@ export default function SearchResult({ keyword }: Props) {
             onScrapButtonPress={handleScrapButtonPress}
           />
         )}
+        ItemSeparatorComponent={() => (
+          <View className="w-full mx-4 h-[1px] bg-line-alternative" />
+        )}
       />
     </View>
   );

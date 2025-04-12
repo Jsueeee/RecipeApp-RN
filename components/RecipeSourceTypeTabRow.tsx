@@ -33,7 +33,7 @@ export function RecipeSourceTypeTabRow({
   }, [selectedTab, tabs]);
 
   return (
-    <View className="w-full bg-white">
+    <View className="w-full bg-white mt-2">
       <View className="flex-row border-b border-gray-100">
         {tabs.map((tab) => (
           <TouchableOpacity
