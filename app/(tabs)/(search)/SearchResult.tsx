@@ -5,7 +5,8 @@ import {
   RecipeSourceType,
 } from "@/constants/RecipeSourceType";
 import React, { useEffect, useState } from "react";
-import { View } from "react-native";
+import { FlatList, View } from "react-native";
+import SearchRecipeItem from "./components/SearchRecipeItem";
 
 interface Props {
   keyword: string;
@@ -35,12 +36,27 @@ export default function SearchResult({ keyword }: Props) {
     }
   }, [searchResult]);
 
+  const handleScrapButtonPress = (isScrapped: boolean, recipeId: number) => {
+    // TODO: 스크랩 API 호출
+  };
+
   return (
     <View className="flex-1">
       <RecipeSourceTypeTabRow
         tabs={Object.values(RECIPE_SOURCE_TYPE)}
         selectedTab={selectedTab}
         onTabSelected={setSelectedTab}
+      />
+
+      <FlatList
+        data={searchResult?.recipes}
+        renderItem={({ item }) => (
+          <SearchRecipeItem
+            keyword={keyword}
+            recipe={item}
+            onScrapButtonPress={handleScrapButtonPress}
+          />
+        )}
       />
     </View>
   );
