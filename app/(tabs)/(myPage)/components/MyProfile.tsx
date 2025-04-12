@@ -15,20 +15,20 @@ export function MyProfile({
   onPress = () => {},
 }: Props) {
   return (
-    <View className="flex-row items-center mx-4 mt-3">
-      <Image
-        source={{ uri: profileImage ?? "" }}
-        className="w-12 h-12 rounded-[18px] bg-gray-50"
-        resizeMode="cover"
-      />
+    <PressableScale onPress={onPress} className="flex-1 mx-4 mt-3">
+      <View className="flex-row items-center">
+        <Image
+          source={{ uri: profileImage ?? "" }}
+          className="w-12 h-12 rounded-[18px] bg-gray-50"
+          resizeMode="cover"
+        />
 
-      <Text className="flex-1 ml-3 text-title4 text-text-strong">
-        {nickname}
-      </Text>
+        <Text className="flex-1 ml-3 text-title4 text-text-strong">
+          {nickname}
+        </Text>
 
-      <PressableScale onPress={onPress} className="w-6 h-6 rounded-lg">
         <RightArrowIcon width={24} height={24} />
-      </PressableScale>
-    </View>
+      </View>
+    </PressableScale>
   );
 }
