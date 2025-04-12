@@ -103,7 +103,7 @@ export default function SearchResult({ keyword }: Props) {
       <View className="flex-1 flex-row px-4 pt-5 pb-2 items-center justify-between">
         <View className="flex-row justify-center items-center gap-0.5">
           <Text className="text-title5 text-text-strong">
-            {searchResult?.totalCnt}
+            {searchResult?.totalCnt.toLocaleString()}
           </Text>
 
           <Text className="text-body3 text-text-alternative">
