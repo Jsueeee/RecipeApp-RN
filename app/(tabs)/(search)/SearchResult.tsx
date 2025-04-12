@@ -22,7 +22,7 @@ interface Props {
 
 export default function SearchResult({ keyword, className }: Props) {
   const [selectedTab, setSelectedTab] = useState<RecipeSourceType>(
-    RECIPE_SOURCE_TYPE.PUBLIC
+    RECIPE_SOURCE_TYPE.BLOG
   );
 
   const { addScrap, removeScrap } = useRecipeScrapMutation();
