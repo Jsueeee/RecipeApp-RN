@@ -1,6 +1,7 @@
 import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMutation";
 import { useSearchRecipesQuery } from "@/app/hooks/queries/useSearchRecipeQuery";
 import { SearchRecipe } from "@/app/types/domain/recipe";
+import { DotLoading } from "@/components/DotLoading";
 import { RecipeSourceTypeTabRow } from "@/components/RecipeSourceTypeTabRow";
 import {
   RECIPE_SOURCE_TYPE,
@@ -22,6 +23,8 @@ export default function SearchResult({ keyword }: Props) {
 
   const { addScrap, removeScrap } = useRecipeScrapMutation();
 
+  const PAGE_SIZE = 10;
+
   const {
     data: searchResult,
     isLoading,
@@ -30,7 +33,7 @@ export default function SearchResult({ keyword }: Props) {
     refetch,
   } = useSearchRecipesQuery({
     keyword,
-    size: 10,
+    size: PAGE_SIZE,
     sort: "newest",
     searchType: selectedTab,
   });
@@ -62,6 +65,21 @@ export default function SearchResult({ keyword }: Props) {
         break;
     }
   };
+
+  const onEndReached = () => {
+    if ((searchResult?.totalCnt ?? 0) < PAGE_SIZE) return;
+
+    if (hasNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  const ListFooterComponent = () => {
+    if (!hasNextPage || (searchResult?.totalCnt ?? 0) < PAGE_SIZE) return null;
+
+    return <DotLoading className="mb-20" />;
+  };
+
   return (
     <View className="flex-1">
       <RecipeSourceTypeTabRow
@@ -85,6 +103,8 @@ export default function SearchResult({ keyword }: Props) {
         )}
         scrollEnabled={true}
         nestedScrollEnabled={true}
+        onEndReached={onEndReached}
+        ListFooterComponent={ListFooterComponent}
       />
     </View>
   );
