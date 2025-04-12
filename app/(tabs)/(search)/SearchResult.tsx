@@ -1,4 +1,6 @@
 import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMutation";
+import { useBlogRecipeScrapMutation } from "@/app/hooks/mutations/useBlogRecipeScrapMutation";
+import { useYoutubeRecipeScrapMutation } from "@/app/hooks/mutations/useYoutubeRecipeScrapMutation";
 import { useSearchRecipesQuery } from "@/app/hooks/queries/useSearchRecipeQuery";
 import { SearchRecipe } from "@/app/types/domain/recipe";
 import { DotLoading } from "@/components/DotLoading";
@@ -25,7 +27,12 @@ export default function SearchResult({ keyword, className }: Props) {
     RECIPE_SOURCE_TYPE.BLOG
   );
 
-  const { addScrap, removeScrap } = useRecipeScrapMutation();
+  const { addScrap: addPublicScrap, removeScrap: removePublicScrap } =
+    useRecipeScrapMutation();
+  const { addScrap: addBlogScrap, removeScrap: removeBlogScrap } =
+    useBlogRecipeScrapMutation();
+  const { addScrap: addYoutubeScrap, removeScrap: removeYoutubeScrap } =
+    useYoutubeRecipeScrapMutation();
 
   const PAGE_SIZE = 10;
 
@@ -49,7 +56,17 @@ export default function SearchResult({ keyword, className }: Props) {
   }, [searchResult]);
 
   const handleScrapButtonPress = (isScrapped: boolean, recipeId: number) => {
-    isScrapped ? removeScrap(recipeId) : addScrap(recipeId);
+    switch (selectedTab) {
+      case RECIPE_SOURCE_TYPE.BLOG:
+        isScrapped ? removeBlogScrap(recipeId) : addBlogScrap(recipeId);
+        break;
+      case RECIPE_SOURCE_TYPE.YOUTUBE:
+        isScrapped ? removeYoutubeScrap(recipeId) : addYoutubeScrap(recipeId);
+        break;
+      default:
+        isScrapped ? removePublicScrap(recipeId) : addPublicScrap(recipeId);
+        break;
+    }
   };
 
   /**
@@ -141,7 +158,6 @@ export default function SearchResult({ keyword, className }: Props) {
         onEndReached={onEndReached}
         ItemSeparatorComponent={ItemSeparator}
         onEndReachedThreshold={0.5}
-        // className="w-full h-full bg-red-500"
         bounces={false}
         alwaysBounceVertical={false}
         showsVerticalScrollIndicator={false}
