@@ -4,7 +4,7 @@ import { MyPageHeader } from "./components/MyPageHeader";
 
 export default function MyPageScreen() {
   return (
-    <ScreenLayout isShowHeader={false}>
+    <ScreenLayout isShowHeader={false} backgroundColor="background-alternative">
       <MyPageHeader />
     </ScreenLayout>
   );
