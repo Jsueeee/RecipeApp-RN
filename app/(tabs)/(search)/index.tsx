@@ -1,11 +1,17 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import { usePopularKeywordsQuery } from "@/app/hooks/queries/usePopularKeywordsQuery";
 import { useRecentSearch } from "@/app/hooks/useRecentSearch";
-import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import i18n from "@/lib/i18n";
 import React, { useCallback, useRef, useState } from "react";
-import { Animated, LayoutChangeEvent, Text, View } from "react-native";
+import {
+  Animated,
+  Keyboard,
+  LayoutChangeEvent,
+  SafeAreaView,
+  Text,
+  View,
+} from "react-native";
 import { SearchBar } from "./components/SearchBar";
 import { SearchKeywords } from "./components/SearchKeywords";
 import SearchResult from "./SearchResult";
@@ -29,6 +35,7 @@ export default function SearchScreen() {
   const handleSearch = useCallback(
     (searchKeyword: string = keyword) => {
       if (searchKeyword.trim()) {
+        Keyboard.dismiss();
         addSearch(searchKeyword);
         setIsSearchResultShow(true);
       }
@@ -67,7 +74,7 @@ export default function SearchScreen() {
   }, []);
 
   return (
-    <ScreenLayout isShowHeader={false}>
+    <SafeAreaView className="flex-1 bg-white">
       <Animated.View
         onLayout={onHeaderLayout}
         style={{
@@ -140,6 +147,6 @@ export default function SearchScreen() {
           />
         )}
       </Animated.View>
-    </ScreenLayout>
+    </SafeAreaView>
   );
 }
