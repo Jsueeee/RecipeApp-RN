@@ -29,6 +29,32 @@ export default function MyProfileScreen() {
     }
   }, [userInfo?.loginProvider]);
 
+  const loginProviderIcon = useMemo(() => {
+    switch (userInfo?.loginProvider.toLowerCase()) {
+      case "kakao":
+        return (
+          <Image
+            source={require("@/assets/images/ic_login_kakao.png")}
+            className="w-[18px] h-[18px]"
+          />
+        );
+      case "naver":
+        return (
+          <Image
+            source={require("@/assets/images/ic_login_naver.png")}
+            className="w-[18px] h-[18px]"
+          />
+        );
+      case "google":
+        return (
+          <Image
+            source={require("@/assets/images/ic_login_google.png")}
+            className="w-[18px] h-[18px]"
+          />
+        );
+    }
+  }, [userInfo?.loginProvider]);
+
   return (
     <ScreenLayout
       title={i18n.t("profile.title")}
@@ -64,11 +90,15 @@ export default function MyProfileScreen() {
         </Text>
       </View>
 
-      <View className="w-full flex-row items-center gap-[34px] px-4 mt-7">
-        <Text className="text-title5 text-text-normal">
+      <View className="w-full flex-row items-center px-4 mt-7">
+        <Text className="text-title5 text-text-normal mr-[34px]">
           {i18n.t("profile.loginProvider")}
         </Text>
-        <Text className="text-body2 text-text-strong">{loginProviderText}</Text>
+
+        {loginProviderIcon}
+        <Text className="text-body2 text-text-strong ml-1.5">
+          {loginProviderText}
+        </Text>
       </View>
     </ScreenLayout>
   );
