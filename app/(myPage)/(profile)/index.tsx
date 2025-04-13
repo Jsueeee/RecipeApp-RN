@@ -1,17 +1,22 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
+import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
 import ProfileImageEditIcon from "@/assets/images/ic_profile_image_edit.svg";
 import NicknameEditIcon from "@/assets/images/ic_profile_nickname_edit.svg";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import React, { useMemo } from "react";
 import { Image, Text, View } from "react-native";
+import EditProfileImageBottomSheet from "./components/EditProfileImageBottomSheet";
 
 export default function MyProfileScreen() {
   const { data: userInfo } = useUserInfoQuery();
 
+  const { ref: profileBottomSheetModalRef, open: openProfileBottomSheetModal } =
+    useDefaultBottomSheetModal();
+
   const onProfileImageEditButtonPress = () => {
-    console.log("profile image edit button pressed");
+    openProfileBottomSheetModal();
   };
 
   const onNicknameEditButtonPress = () => {
@@ -100,6 +105,10 @@ export default function MyProfileScreen() {
           {loginProviderText}
         </Text>
       </View>
+
+      <EditProfileImageBottomSheet
+        bottomSheetModalRef={profileBottomSheetModalRef}
+      />
     </ScreenLayout>
   );
 }
