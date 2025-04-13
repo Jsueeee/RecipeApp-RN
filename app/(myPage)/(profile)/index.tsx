@@ -8,6 +8,7 @@ import i18n from "@/lib/i18n";
 import React, { useMemo } from "react";
 import { Image, Text, View } from "react-native";
 import EditProfileImageBottomSheet from "./components/EditProfileImageBottomSheet";
+import EditProfileNicknameBottomSheet from "./components/EditProfileNicknameBottomSheet";
 
 export default function MyProfileScreen() {
   const { data: userInfo } = useUserInfoQuery();
@@ -15,12 +16,17 @@ export default function MyProfileScreen() {
   const { ref: profileBottomSheetModalRef, open: openProfileBottomSheetModal } =
     useDefaultBottomSheetModal();
 
+  const {
+    ref: nicknameBottomSheetModalRef,
+    open: openNicknameBottomSheetModal,
+  } = useDefaultBottomSheetModal();
+
   const onProfileImageEditButtonPress = () => {
     openProfileBottomSheetModal();
   };
 
   const onNicknameEditButtonPress = () => {
-    console.log("nickname edit button pressed");
+    openNicknameBottomSheetModal();
   };
 
   const loginProviderText = useMemo(() => {
@@ -109,6 +115,12 @@ export default function MyProfileScreen() {
       <EditProfileImageBottomSheet
         bottomSheetModalRef={profileBottomSheetModalRef}
         currentImageUrl={userInfo?.profileImageUrl}
+        currentNickname={userInfo?.nickname ?? ""}
+      />
+
+      <EditProfileNicknameBottomSheet
+        bottomSheetModalRef={nicknameBottomSheetModalRef}
+        currentImageUrl={userInfo?.profileImageUrl ?? ""}
         currentNickname={userInfo?.nickname ?? ""}
       />
     </ScreenLayout>

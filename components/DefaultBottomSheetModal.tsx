@@ -1,10 +1,10 @@
 import {
   BottomSheetBackdropProps,
   BottomSheetModal,
-  BottomSheetView,
+  BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import React, { useCallback } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Keyboard, Pressable, StyleSheet, Text, View } from "react-native";
 
 interface Props {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
@@ -25,11 +25,13 @@ export default function DefaultBottomSheetModal({
 
     if (index === -1) {
       bottomSheetModalRef.current?.dismiss();
+      Keyboard.dismiss();
     }
   }, []);
 
   const onBackDropPress = () => {
     bottomSheetModalRef.current?.dismiss();
+    Keyboard.dismiss();
   };
 
   const backdropComponent = ({
@@ -48,8 +50,10 @@ export default function DefaultBottomSheetModal({
       enableDismissOnClose={true}
       enablePanDownToClose={true}
       backdropComponent={backdropComponent}
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
     >
-      <BottomSheetView className="flex-1 pb-safe">
+      <BottomSheetScrollView className="flex-1 pb-safe">
         <View className="justify-center items-center">
           {title && (
             <Text className="w-full text-center text-title4 text-text-strong p-4 mt-2">
@@ -59,7 +63,7 @@ export default function DefaultBottomSheetModal({
 
           {children}
         </View>
-      </BottomSheetView>
+      </BottomSheetScrollView>
     </BottomSheetModal>
   );
 }
