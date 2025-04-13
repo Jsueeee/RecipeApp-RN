@@ -69,7 +69,7 @@ export const CTAButton = ({
 
           {isLoading && (
             <View className="absolute inset-0 items-center justify-center">
-              <DotLoading />
+              <DotLoading color="#FFFFFF" />
             </View>
           )}
         </View>

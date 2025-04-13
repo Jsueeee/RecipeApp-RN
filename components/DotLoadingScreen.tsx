@@ -11,7 +11,7 @@ export const DotLoadingScreen = ({ className }: Props) => {
     <View
       className={`absolute w-full h-full items-center justify-center ${className}`}
     >
-      <DotLoading size={85} style={{ position: "absolute" }} />
+      <DotLoading className="absolute" />
     </View>
   );
 };

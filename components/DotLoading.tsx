@@ -11,7 +11,7 @@ interface Props {
 export const DotLoading = ({
   size = 150,
   className,
-  color = "#FFFFFF",
+  color = "#4BD2B0",
 }: Props) => {
   const animation = useRef<LottieView>(null);
 
