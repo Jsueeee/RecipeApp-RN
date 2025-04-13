@@ -5,9 +5,14 @@ import { View } from "react-native";
 interface Props {
   size?: number;
   className?: string;
+  color?: string;
 }
 
-export const DotLoading = ({ size = 72, className }: Props) => {
+export const DotLoading = ({
+  size = 150,
+  className,
+  color = "#FFFFFF",
+}: Props) => {
   const animation = useRef<LottieView>(null);
 
   return (
@@ -19,7 +24,13 @@ export const DotLoading = ({ size = 72, className }: Props) => {
           width: size,
           height: size,
         }}
-        source={require("@/assets/lottie/lottie_loading_dot.json")}
+        colorFilters={[
+          {
+            keypath: "**",
+            color: color,
+          },
+        ]}
+        source={require("@/assets/lottie/lottie_dot_4.json")}
       />
     </View>
   );
