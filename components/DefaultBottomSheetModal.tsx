@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 interface Props {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
   children: React.ReactNode;
+  title?: string;
 }
 
 /**
@@ -14,6 +15,7 @@ interface Props {
 export default function DefaultBottomSheetModal({
   bottomSheetModalRef,
   children,
+  title,
 }: Props) {
   const insets = useSafeAreaInsets();
 
@@ -43,10 +45,16 @@ export default function DefaultBottomSheetModal({
         </Pressable>
       )}
     >
-      <BottomSheetView
-        style={[styles.contentContainer, { paddingBottom: insets.bottom }]}
-      >
+      <BottomSheetView className="flex-1 pb-safe">
+        <View className="justify-center items-center">
+          {title && (
+            <Text className="w-full text-center text-title4 text-text-strong p-4">
+              {title}
+            </Text>
+          )}
+
         {children}
+        </View>
       </BottomSheetView>
     </BottomSheetModal>
   );
