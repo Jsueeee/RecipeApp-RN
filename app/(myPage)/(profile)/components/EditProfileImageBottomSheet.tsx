@@ -1,3 +1,5 @@
+import { useUpdateUserMutation } from "@/app/hooks/mutations/useUpdateUserMutation";
+import { CTAButton } from "@/components/CTAButton";
 import DefaultBottomSheetModal from "@/components/DefaultBottomSheetModal";
 import i18n from "@/lib/i18n";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -6,6 +8,7 @@ import { Image, TouchableOpacity, View } from "react-native";
 
 interface Props {
   currentImageUrl: string | null | undefined;
+  currentNickname: string;
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
 }
 
@@ -22,14 +25,33 @@ const iconList = [
 
 export default function EditProfileImageBottomSheet({
   currentImageUrl,
+  currentNickname,
   bottomSheetModalRef,
 }: Props) {
   const [selectedImage, setSelectedImage] = useState<string | null>(
     currentImageUrl ?? null
   );
 
+  const { updateUserInfo, isPending } = useUpdateUserMutation({
+    onSuccess: () => {
+      bottomSheetModalRef.current?.dismiss();
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
   const handleImageSelect = (imageUrl: string) => {
     setSelectedImage(imageUrl);
+  };
+
+  const onCTAPress = () => {
+    if (!selectedImage) return;
+
+    updateUserInfo({
+      profileImgUrl: selectedImage,
+      nickname: currentNickname,
+    });
   };
 
   return (
@@ -67,6 +89,14 @@ export default function EditProfileImageBottomSheet({
             </TouchableOpacity>
           ))}
         </View>
+
+        <CTAButton
+          buttonLabel={i18n.t("profile.edit_profile_image_cta")}
+          onPress={onCTAPress}
+          className="mt-5 mb-[22px]"
+          disabled={!selectedImage || isPending}
+          isLoading={isPending}
+        />
       </View>
     </DefaultBottomSheetModal>
   );
