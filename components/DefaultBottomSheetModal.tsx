@@ -52,7 +52,7 @@ export default function DefaultBottomSheetModal({
       <BottomSheetView className="flex-1 pb-safe">
         <View className="justify-center items-center">
           {title && (
-            <Text className="w-full text-center text-title4 text-text-strong p-4">
+            <Text className="w-full text-center text-title4 text-text-strong p-4 mt-2">
               {title}
             </Text>
           )}

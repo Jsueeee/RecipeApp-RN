@@ -108,6 +108,7 @@ export default function MyProfileScreen() {
 
       <EditProfileImageBottomSheet
         bottomSheetModalRef={profileBottomSheetModalRef}
+        currentImageUrl={userInfo?.profileImageUrl}
       />
     </ScreenLayout>
   );
