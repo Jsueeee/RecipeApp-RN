@@ -1,7 +1,10 @@
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import {
+  BottomSheetBackdropProps,
+  BottomSheetModal,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 import React, { useCallback } from "react";
-import { Animated, Pressable, StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface Props {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
@@ -17,8 +20,6 @@ export default function DefaultBottomSheetModal({
   children,
   title,
 }: Props) {
-  const insets = useSafeAreaInsets();
-
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
 
@@ -31,6 +32,13 @@ export default function DefaultBottomSheetModal({
     bottomSheetModalRef.current?.dismiss();
   };
 
+  const backdropComponent = ({
+    animatedIndex,
+    style,
+  }: BottomSheetBackdropProps) => (
+    <Pressable onPress={onBackDropPress} style={[style, styles.backdrop]} />
+  );
+
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
@@ -39,11 +47,7 @@ export default function DefaultBottomSheetModal({
       handleComponent={null}
       enableDismissOnClose={true}
       enablePanDownToClose={true}
-      backdropComponent={({ animatedIndex, style }) => (
-        <Pressable onPress={onBackDropPress} style={style}>
-          <Animated.View style={styles.backdrop} />
-        </Pressable>
-      )}
+      backdropComponent={backdropComponent}
     >
       <BottomSheetView className="flex-1 pb-safe">
         <View className="justify-center items-center">
@@ -53,7 +57,7 @@ export default function DefaultBottomSheetModal({
             </Text>
           )}
 
-        {children}
+          {children}
         </View>
       </BottomSheetView>
     </BottomSheetModal>
@@ -61,9 +65,6 @@ export default function DefaultBottomSheetModal({
 }
 
 const styles = StyleSheet.create({
-  contentContainer: {
-    flex: 1,
-  },
   backdrop: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.2)",
