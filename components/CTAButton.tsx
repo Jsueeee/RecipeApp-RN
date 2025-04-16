@@ -2,6 +2,7 @@ import { PressableScale } from "@/app/components/PressableScale";
 import clsx from "clsx";
 import React from "react";
 import { LayoutChangeEvent, Text, View } from "react-native";
+import { DotLoading } from "./DotLoading";
 
 interface Props {
   buttonLabel: string;
@@ -14,11 +15,12 @@ interface Props {
   icon?: React.ReactNode;
   className?: string;
   onLayout?: (e: LayoutChangeEvent) => void;
+  isLoading?: boolean;
 }
 
 export const CTAButton = ({
   buttonLabel,
-  buttonLabelColor = "text-inverse",
+  buttonLabelColor = "white",
   backgroundColor = "primary-normal",
   disableBackgroundColor = "bg-primary-disable",
   borderColor = undefined,
@@ -27,10 +29,11 @@ export const CTAButton = ({
   icon,
   className = "",
   onLayout,
+  isLoading = false,
 }: Props) => {
   return (
     <PressableScale
-      disabled={disabled}
+      disabled={disabled || isLoading}
       onPress={onPress}
       className={className}
       onLayout={onLayout}
@@ -39,27 +42,29 @@ export const CTAButton = ({
         className={clsx(
           "rounded-[12px]",
           disabled ? disableBackgroundColor : `bg-${backgroundColor}`,
-          clsx("border", {
-            [`border-${borderColor}`]: borderColor,
-            [`border-${backgroundColor}`]: !borderColor,
-          })
+          borderColor ? `border-${borderColor}` : `border-${backgroundColor}`
         )}
       >
-        <View className="flex-row items-center justify-center py-3.5 px-4">
-          {icon && (
+        <View className="h-[52px] flex-row items-center justify-center py-3.5 px-4 relative">
+          {!isLoading && (
             <>
-              {icon}
-              <View className="w-2" />
+              {icon && (
+                <>
+                  {icon}
+                  <View className="w-2" />
+                </>
+              )}
+              <Text className={`text-title4 text-${buttonLabelColor}`}>
+                {buttonLabel}
+              </Text>
             </>
           )}
 
-          <Text
-            className={clsx("text-title4", {
-              [`text-${buttonLabelColor}`]: buttonLabelColor,
-            })}
-          >
-            {buttonLabel}
-          </Text>
+          {isLoading && (
+            <View className="absolute inset-0 items-center justify-center">
+              <DotLoading color="#FFFFFF" />
+            </View>
+          )}
         </View>
       </View>
     </PressableScale>

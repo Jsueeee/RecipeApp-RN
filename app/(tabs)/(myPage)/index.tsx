@@ -5,13 +5,12 @@ import { MyPageHeader } from "./components/MyPageHeader";
 import { MyProfile } from "./components/MyProfile";
 import { MyScrapSummary } from "./components/MyScrapSummary";
 import { MyRecipeSummary } from "./components/MyRecipeSummary";
-
+import { router } from "expo-router";
 export default function MyPageScreen() {
   const { data: userInfo } = useUserInfoQuery();
 
   const onProfilePress = () => {
-    console.log("profile press");
-    // TODO : 프로필 설정 페이지로 이동
+    router.push("/(myPage)/(profile)");
   };
 
   return (

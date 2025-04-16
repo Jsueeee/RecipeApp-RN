@@ -15,3 +15,8 @@ export interface UserInfoResponse {
   userRecipeTotalSize: number;
   userRecipes: UserRecipeResponse[];
 }
+
+export interface RequestUpdateUserInfo {
+  nickname?: string;
+  profileImgUrl?: string;
+}
