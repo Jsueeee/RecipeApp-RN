@@ -118,11 +118,13 @@ export default function MyProfileScreen() {
         currentNickname={userInfo?.nickname ?? ""}
       />
 
-      <EditProfileNicknameBottomSheet
-        bottomSheetModalRef={nicknameBottomSheetModalRef}
-        currentImageUrl={userInfo?.profileImageUrl ?? ""}
-        currentNickname={userInfo?.nickname ?? ""}
-      />
+      {userInfo && (
+        <EditProfileNicknameBottomSheet
+          bottomSheetModalRef={nicknameBottomSheetModalRef}
+          currentImageUrl={userInfo?.profileImageUrl ?? ""}
+          currentNickname={userInfo?.nickname ?? ""}
+        />
+      )}
     </ScreenLayout>
   );
 }
