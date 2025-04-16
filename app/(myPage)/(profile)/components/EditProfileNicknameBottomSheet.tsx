@@ -63,7 +63,12 @@ export default function EditProfileNicknameBottomSheet({
             editable={true}
           />
 
-          <TouchableOpacity onPress={() => inputRef.current?.clear()}>
+          <TouchableOpacity
+            onPress={() => {
+              inputRef.current?.clear();
+              setInputValue("");
+            }}
+          >
             <CancelIcon width={32} height={32} />
           </TouchableOpacity>
         </View>
