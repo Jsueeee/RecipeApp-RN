@@ -10,6 +10,7 @@ interface Props {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
   children: React.ReactNode;
   title?: string;
+  onDismiss?: () => void;
 }
 
 /**
@@ -19,6 +20,7 @@ export default function DefaultBottomSheetModal({
   bottomSheetModalRef,
   children,
   title,
+  onDismiss,
 }: Props) {
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
@@ -26,6 +28,7 @@ export default function DefaultBottomSheetModal({
     if (index === -1) {
       bottomSheetModalRef.current?.dismiss();
       Keyboard.dismiss();
+      onDismiss?.();
     }
   }, []);
 
