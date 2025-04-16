@@ -53,7 +53,10 @@ export default function DefaultBottomSheetModal({
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
     >
-      <BottomSheetScrollView className="flex-1 pb-safe">
+      <BottomSheetScrollView
+        className="flex-1 pb-safe"
+        keyboardShouldPersistTaps="handled"
+      >
         <View className="justify-center items-center">
           {title && (
             <Text className="w-full text-center text-title4 text-text-strong p-4 mt-2">
