@@ -54,10 +54,15 @@ export default function EditProfileImageBottomSheet({
     });
   };
 
+  const onDismiss = () => {
+    setSelectedImage(currentImageUrl ?? null);
+  };
+
   return (
     <DefaultBottomSheetModal
       bottomSheetModalRef={bottomSheetModalRef}
       title={i18n.t("profile.edit_profile_image")}
+      onDismiss={onDismiss}
     >
       <View className="px-4">
         {selectedImage && (
