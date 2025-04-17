@@ -1,6 +1,7 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import { UserRecipeSummary } from "@/app/types/domain/mypage";
 import i18n from "@/lib/i18n";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Image, Text, View } from "react-native";
 
@@ -47,8 +48,10 @@ const ThumbnailItem = ({
 };
 
 export function MyRecipeSummary({ recipes = [], className }: Props) {
+  const router = useRouter();
+
   const onAllViewPress = () => {
-    console.log("all view press");
+    router.push("/(myPage)/(myRecipe)");
   };
 
   const onRecipeItemPress = (id: number) => {
