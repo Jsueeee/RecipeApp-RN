@@ -10,6 +10,7 @@ interface Props {
   backgroundColor?: string;
   footer?: ReactNode;
   isShowHeader?: boolean;
+  isScrollEnabled?: boolean;
   onBackClick?: () => void;
 }
 
@@ -19,6 +20,7 @@ export function ScreenLayout({
   backgroundColor = "white",
   footer,
   isShowHeader = true,
+  isScrollEnabled = true,
   onBackClick,
 }: Props) {
   return (
@@ -27,15 +29,19 @@ export function ScreenLayout({
         <Header title={title} onBackClick={onBackClick ?? router.back} />
       )}
 
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-        overScrollMode="never"
-        keyboardShouldPersistTaps="handled"
-      >
-        {children}
-      </ScrollView>
+      {isScrollEnabled ? (
+        <ScrollView
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+          overScrollMode="never"
+          keyboardShouldPersistTaps="handled"
+        >
+          {children}
+        </ScrollView>
+      ) : (
+        <View className="flex-1">{children}</View>
+      )}
 
       <View>{footer}</View>
     </SafeAreaView>
