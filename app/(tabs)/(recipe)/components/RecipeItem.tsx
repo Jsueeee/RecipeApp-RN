@@ -26,7 +26,7 @@ const RecipeItem: React.FC<Props> = ({
     <PressableScale onPress={onPress} className={className}>
       <View className="flex-row px-4 py-5">
         <Image
-          source={{ uri: item.thumbnail }}
+          source={{ uri: item.thumbnail ?? "" }}
           className="w-[124px] h-[124px] rounded-[12px] mr-4 bg-gray-50"
         />
 
@@ -39,13 +39,15 @@ const RecipeItem: React.FC<Props> = ({
             {item.title}
           </Text>
 
-          <Text
-            className="text-body3 text-text-alternative mt-1"
-            numberOfLines={2}
-            ellipsizeMode="tail"
-          >
-            {item.description}
-          </Text>
+          {item.description && (
+            <Text
+              className="text-body3 text-text-alternative mt-1"
+              numberOfLines={2}
+              ellipsizeMode="tail"
+            >
+              {item.description}
+            </Text>
+          )}
 
           {isMatchRateShow && item.ingredientMatchRate !== null && (
             <View className="my-2">
