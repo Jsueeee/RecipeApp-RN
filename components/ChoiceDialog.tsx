@@ -1,5 +1,5 @@
 import i18n from "@/lib/i18n";
-import { Modal, Text, View } from "react-native";
+import { Modal, Pressable, Text, View } from "react-native";
 import { CTAButton } from "./CTAButton";
 
 interface Props {
@@ -21,16 +21,26 @@ export function ChoiceDialog({
   onConfirm,
   onCancel,
 }: Props) {
+  const handleCancel = () => {
+    onCancel();
+  };
+
   return (
     <Modal
       visible={visible}
       transparent
       statusBarTranslucent={true}
       animationType="fade"
-      onRequestClose={onCancel}
+      onRequestClose={handleCancel}
     >
-      <View className="flex-1 bg-material-dimmer justify-center items-center">
-        <View className="bg-white rounded-[16px] p-4 w-[80%] max-w-[400px]">
+      <Pressable
+        className="flex-1 bg-material-dimmer justify-center items-center"
+        onPress={handleCancel}
+      >
+        <Pressable
+          className="bg-white rounded-[16px] p-4 w-[80%] max-w-[400px]"
+          onPress={(e) => e.stopPropagation()}
+        >
           <Text className="text-title4 text-text-normal mt-1">{title}</Text>
 
           {message && <Text className="text-body3 mt-3">{message}</Text>}
@@ -39,8 +49,8 @@ export function ChoiceDialog({
             <CTAButton
               buttonLabel={cancelText ?? ""}
               buttonLabelColor="text-text-alternative"
-              backgroundColor="bg-fill-subtle"
-              onPress={onCancel}
+              backgroundColor="fill-subtle"
+              onPress={handleCancel}
               className="flex-1"
             />
 
@@ -50,8 +60,8 @@ export function ChoiceDialog({
               className="flex-1"
             />
           </View>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }

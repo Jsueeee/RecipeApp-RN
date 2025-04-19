@@ -1,7 +1,5 @@
-import { PressableScale } from "@/app/components/PressableScale";
 import { useRecipeDetailQuery } from "@/app/hooks/queries/useRecipeDetailQuery";
-import BlogIcon from "@/assets/images/ic_blog.svg";
-import YoutubeIcon from "@/assets/images/ic_youtube.svg";
+import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
 import { Header } from "@/components/Header";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { LinearGradient } from "expo-linear-gradient";
@@ -9,8 +7,9 @@ import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { Image, LayoutChangeEvent, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { BottomScrapButton } from "./components/BottomScrapButton";
+import { MyRecipeFooter } from "./components/MyRecipeFooter";
 import { RecipeDetailInfo } from "./components/RecipeDetailInfo";
+import { RecipeFooter } from "./components/RecipeFooter";
 
 export default function RecipeDetailScreen() {
   const { id } = useLocalSearchParams();
@@ -24,33 +23,25 @@ export default function RecipeDetailScreen() {
     setScrapButtonHeight(e.nativeEvent.layout.height);
   };
 
-  const footer: React.ReactNode = (
-    <View className="flex-row w-full py-2 px-4 bg-white rounded-t-2xl border-t border-l border-r border-[#ECEFED] self-center max-w-[500px] gap-2">
-      <PressableScale disabled={!recipeDetail} onPress={() => {}}>
-        <View
-          style={{ height: scrapButtonHeight, aspectRatio: 1 }}
-          className="bg-fill-subtle rounded-[12px] items-center justify-center"
-        >
-          <YoutubeIcon width={24} height={24} />
-        </View>
-      </PressableScale>
+  const { data: userId } = useUserInfoQuery({
+    select: (userInfo) => userInfo.userId,
+  });
 
-      <PressableScale disabled={!recipeDetail} onPress={() => {}}>
-        <View
-          style={{ height: scrapButtonHeight, aspectRatio: 1 }}
-          className="bg-fill-subtle rounded-[12px] items-center justify-center"
-        >
-          <BlogIcon width={24} height={24} />
-        </View>
-      </PressableScale>
+  const isMyRecipe = userId === recipeDetail?.postUserId;
 
-      <BottomScrapButton recipeDetail={recipeDetail} onLayout={onScrapLayout} />
-    </View>
+  const footer = isMyRecipe ? (
+    <MyRecipeFooter recipeId={recipeDetail!!.id} />
+  ) : (
+    <RecipeFooter
+      recipeDetail={recipeDetail}
+      scrapButtonHeight={scrapButtonHeight}
+      onScrapLayout={onScrapLayout}
+    />
   );
 
   return (
     <View className="flex-1">
-      <ScreenLayout isShowHeader={false} footer={footer}>
+      <ScreenLayout isShowHeader={false} footer={recipeDetail ? footer : null}>
         <View>
           <Image
             source={{ uri: recipeDetail?.thumbnail }}
