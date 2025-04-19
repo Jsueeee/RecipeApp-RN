@@ -30,7 +30,7 @@ export default function RecipeDetailScreen() {
   const isMyRecipe = userId === recipeDetail?.postUserId;
 
   const footer = isMyRecipe ? (
-    <MyRecipeFooter />
+    <MyRecipeFooter recipeId={recipeDetail!!.id} />
   ) : (
     <RecipeFooter
       recipeDetail={recipeDetail}
@@ -41,7 +41,7 @@ export default function RecipeDetailScreen() {
 
   return (
     <View className="flex-1">
-      <ScreenLayout isShowHeader={false} footer={footer}>
+      <ScreenLayout isShowHeader={false} footer={recipeDetail ? footer : null}>
         <View>
           <Image
             source={{ uri: recipeDetail?.thumbnail }}
