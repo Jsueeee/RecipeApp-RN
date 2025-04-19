@@ -1,4 +1,4 @@
-import { ScrapRecipeType } from "@/app/hooks/queries/useScrapRecipesQuery";
+import { RecipeSourceType } from "@/constants/RecipeSourceType";
 
 export const QUERY_KEYS = {
   AUTH: {
@@ -11,7 +11,7 @@ export const QUERY_KEYS = {
   },
   RECIPE: {
     RECOMMENDED_LIST: ["recipe", "recommended"] as const,
-    SCRAP_LIST: (type: ScrapRecipeType) => ["recipe", "scrap", type] as const,
+    SCRAP_LIST: (type: RecipeSourceType) => ["recipe", "scrap", type] as const,
     DETAIL: (recipeId: number) => ["recipe", "detail", recipeId] as const,
     SEARCH: (params: {
       keyword: string;
