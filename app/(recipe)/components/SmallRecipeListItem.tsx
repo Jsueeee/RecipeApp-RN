@@ -2,11 +2,18 @@ import { PressableScale } from "@/app/components/PressableScale";
 import { SearchRecipe } from "@/app/types/domain/recipe";
 import React from "react";
 import { Image, Text, View } from "react-native";
-import RecipeViewScrapCount from "../../(recipe)/components/RecipeViewScrapCount";
+import RecipeViewScrapCount from "../../(tabs)/(recipe)/components/RecipeViewScrapCount";
 
 interface Props {
   keyword: string;
-  recipe: SearchRecipe;
+  recipeId: number;
+  title: string;
+  thumbnail: string | null;
+  postUserName: string | null;
+  postDate: string | null;
+  viewCount: number;
+  scrapCount: number;
+  isScrapped: boolean;
   onScrapButtonPress?: (isScrapped: boolean, recipeId: number) => void;
   onPress?: () => void;
 }
@@ -14,9 +21,16 @@ interface Props {
 /**
  * 검색 결과 레시피 아이템
  */
-export default function SearchRecipeItem({
+export default function SmallRecipeListItem({
   keyword,
-  recipe,
+  recipeId,
+  title,
+  thumbnail,
+  postUserName,
+  postDate,
+  viewCount,
+  scrapCount,
+  isScrapped,
   onScrapButtonPress = () => {},
   onPress = () => {},
 }: Props) {
@@ -37,9 +51,9 @@ export default function SearchRecipeItem({
   return (
     <PressableScale onPress={onPress}>
       <View className="flex-row px-4 py-5">
-        {recipe.thumbnail && (
+        {thumbnail && (
           <Image
-            source={{ uri: recipe.thumbnail }}
+            source={{ uri: thumbnail }}
             className="w-[84px] h-[84px] rounded-[12px] bg-gray-50"
             resizeMode="cover"
           />
@@ -52,26 +66,26 @@ export default function SearchRecipeItem({
               numberOfLines={2}
               ellipsizeMode="tail"
             >
-              {highlightKeyword(recipe.title)}
+              {highlightKeyword(title)}
             </Text>
 
             <View className="flex-row items-center mt-1">
-              {recipe.postUserName && (
+              {postUserName && (
                 <Text
                   className="text-body4 text-text-assistive"
                   numberOfLines={1}
                 >
-                  {recipe.postUserName}
+                  {postUserName}
                 </Text>
               )}
 
-              {recipe.postUserName && recipe.postDate && (
+              {postUserName && postDate && (
                 <View className="h-4 w-[1px] bg-gray-300 mx-2" />
               )}
 
-              {recipe.postDate && (
+              {postDate && (
                 <Text className="text-body4 text-text-assistive flex-1">
-                  {recipe.postDate}
+                  {postDate}
                 </Text>
               )}
             </View>
@@ -81,12 +95,10 @@ export default function SearchRecipeItem({
 
           <View className="self-end">
             <RecipeViewScrapCount
-              viewCount={recipe.viewCount}
-              scrapCount={recipe.scrapCount}
-              isScrapped={recipe.isScrapped}
-              onScrapClick={() =>
-                onScrapButtonPress(recipe.isScrapped, recipe.recipeId)
-              }
+              viewCount={viewCount}
+              scrapCount={scrapCount}
+              isScrapped={isScrapped}
+              onScrapClick={() => onScrapButtonPress(isScrapped, recipeId)}
             />
           </View>
         </View>
