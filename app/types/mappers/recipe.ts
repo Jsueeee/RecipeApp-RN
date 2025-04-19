@@ -6,6 +6,8 @@ import {
   RecipeProcessResponse,
   RecommendedRecipeResponse,
   RecommendedRecipesResponse,
+  ScrapRecipeResponse,
+  ScrapRecipesResponse,
   SearchRecipeItemResponse,
   SearchRecipeResponse,
 } from "../api/recipe";
@@ -121,5 +123,28 @@ const mapMyRecipeResponse = (recipe: MyRecipeResponse): RecipeSummary => ({
   postDate: recipe.postDate ?? "",
   ingredientMatchRate: 0,
   linkUrl: undefined,
+  postUserName: recipe.postUserName ?? undefined,
+});
+
+export const mapScrapRecipesResponse = (
+  response: ScrapRecipesResponse
+): RecipeSummaryList => ({
+  totalCount: response.totalCnt,
+  recipes: response.recipes.map(mapScrapRecipeResponse),
+});
+
+const mapScrapRecipeResponse = (
+  recipe: ScrapRecipeResponse
+): RecipeSummary => ({
+  id: recipe.recipeId,
+  title: recipe.recipeName,
+  description: recipe.introduction ?? "",
+  thumbnail: recipe.thumbnailImgUrl,
+  isScrapped: recipe.isUserScrap,
+  viewCount: recipe.viewCnt,
+  scrapCount: recipe.scrapCnt,
+  postDate: recipe.postDate,
+  ingredientMatchRate: 0, // TODO: 여기도 추가 가능한지 서버 문의
+  linkUrl: recipe.linkUrl,
   postUserName: recipe.postUserName ?? undefined,
 });
