@@ -98,7 +98,7 @@ export default function MyRecipeScreen() {
   };
 
   return (
-    <ScreenLayout title={i18n.t("my_page.my_recipe")}>
+    <ScreenLayout title={i18n.t("my_page.my_recipe")} isScrollEnabled={false}>
       {renderContent()}
     </ScreenLayout>
   );
