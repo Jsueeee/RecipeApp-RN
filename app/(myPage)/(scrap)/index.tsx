@@ -1,4 +1,7 @@
 import SmallRecipeListItem from "@/app/(recipe)/components/SmallRecipeListItem";
+import { useBlogRecipeScrapMutation } from "@/app/hooks/mutations/useBlogRecipeScrapMutation";
+import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMutation";
+import { useYoutubeRecipeScrapMutation } from "@/app/hooks/mutations/useYoutubeRecipeScrapMutation";
 import { useScrapRecipesQuery } from "@/app/hooks/queries/useScrapRecipesQuery";
 import { RecipeSummary } from "@/app/types/domain/recipe";
 import { DotLoading } from "@/components/DotLoading";
@@ -26,6 +29,24 @@ export default function MyScrapScreen() {
     hasNextPage,
     fetchNextPage,
   } = useScrapRecipesQuery(selectedTab);
+
+  const { removeScrap: removePublicScrap } = useRecipeScrapMutation();
+  const { removeScrap: removeBlogScrap } = useBlogRecipeScrapMutation();
+  const { removeScrap: removeYoutubeScrap } = useYoutubeRecipeScrapMutation();
+
+  const handleScrapButtonPress = (isScrapped: boolean, recipeId: number) => {
+    switch (selectedTab) {
+      case RECIPE_SOURCE_TYPE.BLOG:
+        removeBlogScrap(recipeId);
+        break;
+      case RECIPE_SOURCE_TYPE.YOUTUBE:
+        removeYoutubeScrap(recipeId);
+        break;
+      default:
+        removePublicScrap(recipeId);
+        break;
+    }
+  };
 
   /**
    * 블로그, 유튜브 레시피 클릭 시 링크 이동
@@ -86,6 +107,7 @@ export default function MyScrapScreen() {
         viewCount={item.viewCount}
         scrapCount={item.scrapCount}
         isScrapped={item.isScrapped}
+        onScrapButtonPress={handleScrapButtonPress}
         onPress={() => onRecipeItemPress(item)}
       />
     </View>

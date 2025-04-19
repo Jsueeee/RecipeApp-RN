@@ -1,17 +1,25 @@
 import { apiClient } from "@/app/lib/api/client";
 import { useMutation } from "@tanstack/react-query";
 import { useCallback } from "react";
-import { useUpdateSearchRecipeListScrapState } from "../useUpdateRecipeScrap";
+import {
+  useUpdateMyScrapListScrapState,
+  useUpdateSearchRecipeListScrapState,
+} from "../useUpdateRecipeScrap";
+import { RECIPE_SOURCE_TYPE } from "@/constants/RecipeSourceType";
 
 export const useYoutubeRecipeScrapMutation = () => {
   const updateSearchRecipeList = useUpdateSearchRecipeListScrapState();
+  const updateMyScrapList = useUpdateMyScrapListScrapState(
+    RECIPE_SOURCE_TYPE.YOUTUBE
+  );
 
   const handleSuccess = useCallback(
     (recipeId: number, isScrapped: boolean) => {
       const update = { recipeId, isScrapped };
       updateSearchRecipeList(update);
+      updateMyScrapList(update);
     },
-    [updateSearchRecipeList]
+    [updateSearchRecipeList, updateMyScrapList]
   );
 
   const addScrap = useMutation({
