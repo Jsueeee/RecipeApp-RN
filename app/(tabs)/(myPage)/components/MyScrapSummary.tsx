@@ -1,8 +1,8 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import i18n from "@/lib/i18n";
+import { router } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
-
 interface Props {
   blogScrapCount: number;
   youtubeScrapCount: number;
@@ -34,7 +34,7 @@ export function MyScrapSummary({
   className,
 }: Props) {
   const onAllViewPress = () => {
-    console.log("all view press");
+    router.push("/(myPage)/(scrap)");
   };
 
   return (
