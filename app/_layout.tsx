@@ -98,6 +98,10 @@ function RootLayoutNav() {
               name="(myPage)/(profile)"
               options={{ headerShown: false }}
             />
+            <Stack.Screen
+              name="(myPage)/(myRecipe)"
+              options={{ headerShown: false }}
+            />
             <Stack.Screen name="modal" options={{ presentation: "modal" }} />
           </Stack>
         </ThemeProvider>

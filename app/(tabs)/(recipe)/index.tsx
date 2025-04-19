@@ -76,7 +76,8 @@ export default function RecipeScreen() {
     );
   }, [recipeList?.totalCount]);
 
-  const ListFooterComponent = () => <DotLoading className="mb-20" />;
+  const ListFooterComponent = () =>
+    hasNextPage ? <DotLoading className="mb-20" /> : null;
 
   const ItemSeparator = () => <View className="h-[1px] mx-4 bg-gray-50" />;
 

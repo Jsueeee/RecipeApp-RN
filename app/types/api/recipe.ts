@@ -67,3 +67,20 @@ export interface SearchRecipeItemResponse {
   viewCnt: number;
   linkUrl: string | null;
 }
+
+export interface MyRecipesResponse {
+  totalCnt: number;
+  recipes: MyRecipeResponse[];
+}
+
+export interface MyRecipeResponse {
+  recipeId: number;
+  recipeName: string;
+  introduction: string | null;
+  thumbnailImgUrl: string | null;
+  postUserName: string | null;
+  postDate: string | null;
+  isUserScrap: boolean;
+  scrapCnt: number;
+  viewCnt: number;
+}

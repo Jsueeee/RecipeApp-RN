@@ -7,7 +7,7 @@ export interface RecipeSummary {
   id: number;
   title: string;
   description: string;
-  thumbnail: string;
+  thumbnail: string | null;
   isScrapped: boolean;
   viewCount: number;
   scrapCount: number;
