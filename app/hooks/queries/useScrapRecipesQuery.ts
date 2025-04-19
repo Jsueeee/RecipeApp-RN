@@ -3,22 +3,20 @@ import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { ScrapRecipesResponse } from "@/app/types/api/recipe";
 import { RecipeSummaryList } from "@/app/types/domain/recipe";
 import { mapScrapRecipesResponse } from "@/app/types/mappers/recipe";
+import {
+  RECIPE_SOURCE_TYPE,
+  RecipeSourceType,
+} from "@/constants/RecipeSourceType";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 const PAGE_SIZE = 10;
 
-export enum ScrapRecipeType {
-  YOUTUBE = "YOUTUBE",
-  BLOG = "BLOG",
-  PUBLIC = "PUBLIC",
-}
-
-export const useScrapRecipesQuery = (type: ScrapRecipeType) => {
+export const useScrapRecipesQuery = (type: RecipeSourceType) => {
   return useInfiniteQuery<
     ScrapRecipesResponse,
     Error,
     RecipeSummaryList,
-    readonly [string, string, ScrapRecipeType],
+    readonly [string, string, RecipeSourceType],
     number
   >({
     queryKey: QUERY_KEYS.RECIPE.SCRAP_LIST(type),
@@ -26,13 +24,13 @@ export const useScrapRecipesQuery = (type: ScrapRecipeType) => {
     queryFn: async ({ pageParam = 0 }) => {
       let endpoint = "";
       switch (type) {
-        case ScrapRecipeType.YOUTUBE:
+        case RECIPE_SOURCE_TYPE.YOUTUBE:
           endpoint = "/recipes/youtube/scraps";
           break;
-        case ScrapRecipeType.BLOG:
+        case RECIPE_SOURCE_TYPE.BLOG:
           endpoint = "/recipes/blog/scraps";
           break;
-        case ScrapRecipeType.PUBLIC:
+        case RECIPE_SOURCE_TYPE.PUBLIC:
           endpoint = "/recipes/scraps";
           break;
       }
