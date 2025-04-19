@@ -149,7 +149,10 @@ export default function MyScrapScreen() {
   };
 
   return (
-    <ScreenLayout title={i18n.t("my_page.my_recipe")} isScrollEnabled={false}>
+    <ScreenLayout
+      title={i18n.t("my_page.scrap_recipe")}
+      isScrollEnabled={false}
+    >
       <RecipeSourceTypeTabRow
         tabs={Object.values(RECIPE_SOURCE_TYPE)}
         selectedTab={selectedTab}
