@@ -5,7 +5,7 @@ import { Image, Text, View } from "react-native";
 import RecipeViewScrapCount from "../../(tabs)/(recipe)/components/RecipeViewScrapCount";
 
 interface Props {
-  keyword: string;
+  keyword?: string;
   recipeId: number;
   title: string;
   thumbnail: string | null;
@@ -35,6 +35,8 @@ export default function SmallRecipeListItem({
   onPress = () => {},
 }: Props) {
   const highlightKeyword = (text: string) => {
+    if (!keyword) return text;
+
     const parts = text.split(new RegExp(`(${keyword})`, "gi"));
 
     return parts.map((part, i) =>
