@@ -14,13 +14,15 @@ import {
   RecipeSourceType,
 } from "@/constants/RecipeSourceType";
 import i18n from "@/lib/i18n";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { FlatList, Linking, View } from "react-native";
 
 export default function MyScrapScreen() {
+  const { type } = useLocalSearchParams<{ type: RecipeSourceType }>();
+
   const [selectedTab, setSelectedTab] = useState<RecipeSourceType>(
-    RECIPE_SOURCE_TYPE.BLOG
+    type ? (type as RecipeSourceType) : RECIPE_SOURCE_TYPE.BLOG
   );
 
   const {
