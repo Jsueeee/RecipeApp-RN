@@ -22,6 +22,7 @@ export const QUERY_KEYS = {
       params.sort,
       params.searchType,
     ],
+    MY_LIST: ["recipe", "my-list"] as const,
   },
   SEARCH: {
     POPULAR_KEYWORDS: ["search", "popularKeywords"] as const,

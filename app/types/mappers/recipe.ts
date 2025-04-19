@@ -1,18 +1,20 @@
 import {
-  RecommendedRecipesResponse,
-  RecommendedRecipeResponse,
+  MyRecipeResponse,
+  MyRecipesResponse,
   RecipeDetailResponse,
   RecipeIngredientResponse,
   RecipeProcessResponse,
-  SearchRecipeResponse,
+  RecommendedRecipeResponse,
+  RecommendedRecipesResponse,
   SearchRecipeItemResponse,
+  SearchRecipeResponse,
 } from "../api/recipe";
 import {
-  RecipeSummaryList,
-  RecipeSummary,
   RecipeDetail,
   RecipeIngredient,
   RecipeProcess,
+  RecipeSummary,
+  RecipeSummaryList,
   SearchRecipe,
   SearchRecipeResult,
 } from "../domain/recipe";
@@ -99,4 +101,25 @@ const mapSearchRecipeItemResponse = (
   scrapCount: response.scrapCnt,
   viewCount: response.viewCnt,
   url: response.linkUrl,
+});
+
+export const mapMyRecipesResponse = (
+  response: MyRecipesResponse
+): RecipeSummaryList => ({
+  totalCount: response.totalCnt,
+  recipes: response.recipes.map(mapMyRecipeResponse),
+});
+
+const mapMyRecipeResponse = (recipe: MyRecipeResponse): RecipeSummary => ({
+  id: recipe.recipeId,
+  title: recipe.recipeName,
+  description: recipe.introduction ?? "",
+  thumbnail: recipe.thumbnailImgUrl,
+  isScrapped: recipe.isUserScrap,
+  viewCount: recipe.viewCnt,
+  scrapCount: recipe.scrapCnt,
+  postDate: recipe.postDate ?? "",
+  ingredientMatchRate: 0,
+  linkUrl: undefined,
+  postUserName: recipe.postUserName ?? undefined,
 });
