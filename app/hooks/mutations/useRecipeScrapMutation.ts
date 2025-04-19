@@ -3,6 +3,7 @@ import { RECIPE_SOURCE_TYPE } from "@/constants/RecipeSourceType";
 import { useMutation } from "@tanstack/react-query";
 import { useCallback } from "react";
 import {
+  useUpdateMyScrapCount,
   useUpdateMyScrapListScrapState,
   useUpdateRecipeDetailScrapState,
   useUpdateRecipeListScrapState,
@@ -20,6 +21,7 @@ export const useRecipeScrapMutation = () => {
   const updateMyScrapList = useUpdateMyScrapListScrapState(
     RECIPE_SOURCE_TYPE.PUBLIC
   );
+  const updateMyScrapCount = useUpdateMyScrapCount();
 
   const handleSuccess = useCallback(
     (recipeId: number, isScrapped: boolean) => {
@@ -28,12 +30,14 @@ export const useRecipeScrapMutation = () => {
       updateRecipeDetail(update);
       updateSearchRecipeList(update);
       updateMyScrapList(update);
+      updateMyScrapCount();
     },
     [
       updateRecommendedList,
       updateRecipeDetail,
       updateSearchRecipeList,
       updateMyScrapList,
+      updateMyScrapCount,
     ]
   );
 

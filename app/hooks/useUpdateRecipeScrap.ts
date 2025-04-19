@@ -127,3 +127,16 @@ export const useUpdateMyScrapListScrapState = (type: RecipeSourceType) => {
     );
   };
 };
+
+/**
+ * 마이 페이지 스크랩 개수 업데이트
+ */
+export const useUpdateMyScrapCount = () => {
+  const queryClient = useQueryClient();
+
+  return () => {
+    queryClient.invalidateQueries({
+      queryKey: QUERY_KEYS.USER.INFO(),
+    });
+  };
+};
