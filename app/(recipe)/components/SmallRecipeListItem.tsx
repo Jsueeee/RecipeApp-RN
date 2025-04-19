@@ -1,5 +1,4 @@
 import { PressableScale } from "@/app/components/PressableScale";
-import { SearchRecipe } from "@/app/types/domain/recipe";
 import React from "react";
 import { Image, Text, View } from "react-native";
 import RecipeViewScrapCount from "../../(tabs)/(recipe)/components/RecipeViewScrapCount";
@@ -71,11 +70,12 @@ export default function SmallRecipeListItem({
               {highlightKeyword(title)}
             </Text>
 
-            <View className="flex-row items-center mt-1">
+            <View className="flex-row items-center mt-1 flex-1">
               {postUserName && (
                 <Text
-                  className="text-body4 text-text-assistive"
+                  className="text-body4 text-text-assistive flex-shrink"
                   numberOfLines={1}
+                  ellipsizeMode="tail"
                 >
                   {postUserName}
                 </Text>
@@ -86,7 +86,10 @@ export default function SmallRecipeListItem({
               )}
 
               {postDate && (
-                <Text className="text-body4 text-text-assistive flex-1">
+                <Text
+                  className="text-body4 text-text-assistive"
+                  numberOfLines={1}
+                >
                   {postDate}
                 </Text>
               )}
