@@ -1,3 +1,5 @@
+import { RecipeSourceType } from "@/constants/RecipeSourceType";
+
 export const QUERY_KEYS = {
   AUTH: {
     KAKAO: ["auth", "kakao"] as const,
@@ -9,6 +11,7 @@ export const QUERY_KEYS = {
   },
   RECIPE: {
     RECOMMENDED_LIST: ["recipe", "recommended"] as const,
+    SCRAP_LIST: (type: RecipeSourceType) => ["recipe", "scrap", type] as const,
     DETAIL: (recipeId: number) => ["recipe", "detail", recipeId] as const,
     SEARCH: (params: {
       keyword: string;

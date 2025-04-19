@@ -10,7 +10,7 @@ import { router } from "expo-router";
 import React, { useMemo } from "react";
 import { FlatList, Text, View } from "react-native";
 import { EmptyRecipeTabPlaceholder } from "./components/EmptyRecipeTabPlaceholder";
-import RecipeItem from "./components/RecipeItem";
+import LargeRecipeListItem from "../../(recipe)/components/LargeRecipeListItem";
 
 export default function RecipeScreen() {
   const {
@@ -42,10 +42,16 @@ export default function RecipeScreen() {
     index: number;
   }) => (
     <View className={index === 0 ? "bg-background-alternative " : "bg-white"}>
-      <RecipeItem
-        item={item}
+      <LargeRecipeListItem
+        recipeId={item.id}
+        title={item.title}
+        thumbnail={item.thumbnail}
+        description={item.description}
+        ingredientMatchRate={item.ingredientMatchRate}
+        viewCount={item.viewCount}
+        scrapCount={item.scrapCount}
+        isScrapped={item.isScrapped}
         onPress={() => onRecipeItemPress(item.id)}
-        onScrapPress={() => onScrapPress(item.id, item.isScrapped)}
         className={`bg-white ${index === 0 ? "rounded-t-[16px]" : ""}`}
       />
     </View>

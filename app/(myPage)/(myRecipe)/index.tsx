@@ -1,5 +1,5 @@
 import { EmptyRecipeTabPlaceholder } from "@/app/(tabs)/(recipe)/components/EmptyRecipeTabPlaceholder";
-import RecipeItem from "@/app/(tabs)/(recipe)/components/RecipeItem";
+import LargeRecipeListItem from "@/app/(recipe)/components/LargeRecipeListItem";
 import { useMyRecipeListQuery } from "@/app/hooks/queries/useMyRecipeListQuery";
 import { RecipeSummary } from "@/app/types/domain/recipe";
 import { DotLoading } from "@/components/DotLoading";
@@ -55,8 +55,15 @@ export default function MyRecipeScreen() {
     index: number;
   }) => (
     <View className={index === 0 ? "bg-background-alternative " : "bg-white"}>
-      <RecipeItem
-        item={item}
+      <LargeRecipeListItem
+        recipeId={item.id}
+        title={item.title}
+        thumbnail={item.thumbnail}
+        description={item.description}
+        ingredientMatchRate={item.ingredientMatchRate}
+        viewCount={item.viewCount}
+        scrapCount={item.scrapCount}
+        isScrapped={item.isScrapped}
         isScrapCountShow={false}
         onPress={() => onRecipeItemPress(item.id)}
         className={`bg-white ${index === 0 ? "rounded-t-[16px]" : ""}`}

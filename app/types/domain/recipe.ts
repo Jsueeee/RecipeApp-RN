@@ -11,9 +11,9 @@ export interface RecipeSummary {
   isScrapped: boolean;
   viewCount: number;
   scrapCount: number;
-  postDate: string;
+  postDate: string | null;
   ingredientMatchRate: number;
-  linkUrl?: string;
+  linkUrl?: string | null;
   postUserName?: string;
 }
 

@@ -1,3 +1,4 @@
+import { RecipeSourceType } from "@/constants/RecipeSourceType";
 import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../lib/query/keys";
 import { RecipeDetailResponse } from "../types/api/recipe";
@@ -98,5 +99,44 @@ export const useUpdateSearchRecipeListScrapState = () => {
         };
       }
     );
+  };
+};
+
+/**
+ * 나의 스크랩 목록 업데이트
+ */
+export const useUpdateMyScrapListScrapState = (type: RecipeSourceType) => {
+  const queryClient = useQueryClient();
+
+  return ({ recipeId, isScrapped }: RecipeScrapUpdate) => {
+    queryClient.setQueriesData(
+      { queryKey: QUERY_KEYS.RECIPE.SCRAP_LIST(type) },
+      (old: any) => {
+        if (!old?.pages) return old;
+
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            recipes: page.recipes.filter(
+              (recipe: any) => recipe.recipeId !== recipeId
+            ), // 스크랩 목록만 내려주는 api 이므로 스크랩 해제 시 해당 레시피 제거
+          })),
+        };
+      }
+    );
+  };
+};
+
+/**
+ * 마이 페이지 스크랩 개수 업데이트
+ */
+export const useUpdateMyScrapCount = () => {
+  const queryClient = useQueryClient();
+
+  return () => {
+    queryClient.invalidateQueries({
+      queryKey: QUERY_KEYS.USER.INFO(),
+    });
   };
 };

@@ -15,7 +15,7 @@ import i18n from "@/lib/i18n";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { FlatList, Linking, Text, View } from "react-native";
-import SearchRecipeItem from "./components/SearchRecipeItem";
+import SmallRecipeListItem from "../../(recipe)/components/SmallRecipeListItem";
 
 interface Props {
   keyword: string;
@@ -106,9 +106,16 @@ export default function SearchResult({ keyword, className }: Props) {
   );
 
   const renderItem = ({ item }: { item: SearchRecipe }) => (
-    <SearchRecipeItem
+    <SmallRecipeListItem
       keyword={keyword}
-      recipe={item}
+      recipeId={item.recipeId}
+      title={item.title}
+      thumbnail={item.thumbnail}
+      postUserName={item.postUserName}
+      postDate={item.postDate}
+      viewCount={item.viewCount}
+      scrapCount={item.scrapCount}
+      isScrapped={item.isScrapped}
       onScrapButtonPress={handleScrapButtonPress}
       onPress={() => onRecipePress(item)}
     />

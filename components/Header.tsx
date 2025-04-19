@@ -1,11 +1,11 @@
-import React from "react";
-import { View, Text, Pressable } from "react-native";
-import clsx from "clsx";
 import IC_CHEVRON_LEFT from "@/assets/images/ic_chevron_left.svg";
+import clsx from "clsx";
+import React from "react";
+import { Pressable, Text, View } from "react-native";
 
 interface Props {
   title: string;
-  backgroundIconColor?: string;
+  backButtonIconColor?: string;
   titleColor?: string;
   onBackClick: () => void;
   className?: string;
@@ -13,7 +13,7 @@ interface Props {
 
 export const Header = ({
   title,
-  backgroundIconColor = "text-fill-strong",
+  backButtonIconColor: backgroundIconColor = "fill-strong",
   titleColor = "text-strong",
   onBackClick,
   className,

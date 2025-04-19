@@ -1,8 +1,12 @@
 import { PressableScale } from "@/app/components/PressableScale";
+import {
+  RECIPE_SOURCE_TYPE,
+  RecipeSourceType,
+} from "@/constants/RecipeSourceType";
 import i18n from "@/lib/i18n";
+import { router } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
-
 interface Props {
   blogScrapCount: number;
   youtubeScrapCount: number;
@@ -34,7 +38,11 @@ export function MyScrapSummary({
   className,
 }: Props) {
   const onAllViewPress = () => {
-    console.log("all view press");
+    router.push("/(myPage)/(scrap)");
+  };
+
+  const onScrapCountPress = (type: RecipeSourceType) => {
+    router.push(`/(myPage)/(scrap)?type=${type}`);
   };
 
   return (
@@ -55,23 +63,17 @@ export function MyScrapSummary({
         <ScrapItem
           title={i18n.t("myPage.scrap_blog_title")}
           count={blogScrapCount}
-          onPress={() => {
-            console.log("blog scrap press");
-          }}
+          onPress={() => onScrapCountPress(RECIPE_SOURCE_TYPE.BLOG)}
         />
         <ScrapItem
           title={i18n.t("myPage.scrap_youtube_title")}
           count={youtubeScrapCount}
-          onPress={() => {
-            console.log("youtube scrap press");
-          }}
+          onPress={() => onScrapCountPress(RECIPE_SOURCE_TYPE.YOUTUBE)}
         />
         <ScrapItem
           title={i18n.t("myPage.scrap_recipe_title")}
           count={recipeScrapCount}
-          onPress={() => {
-            console.log("recipe scrap press");
-          }}
+          onPress={() => onScrapCountPress(RECIPE_SOURCE_TYPE.PUBLIC)}
         />
       </View>
     </View>
