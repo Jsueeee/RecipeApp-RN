@@ -55,7 +55,7 @@ export function MyRecipeSummary({ recipes = [], className }: Props) {
   };
 
   const onRecipeItemPress = (id: number) => {
-    console.log("recipe item press", id);
+    router.push(`/(recipe)/(detail)?id=${id}`);
   };
 
   return (
