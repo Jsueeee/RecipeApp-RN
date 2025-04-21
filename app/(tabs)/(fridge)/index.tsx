@@ -29,8 +29,7 @@ export default function FridgeScreen() {
   };
 
   const handleAddPress = () => {
-    // TODO: 식재료 추가 화면으로 이동
-    console.log("Add button pressed");
+    router.push("/(ingredient)/(pick)");
   };
 
   const handleTabSelect = (index: number) => {
