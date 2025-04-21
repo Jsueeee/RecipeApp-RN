@@ -1,5 +1,6 @@
 import { CategoryTabs } from "@/app/(tabs)/(fridge)/components/CategoryTabs";
 import { FridgeTabs } from "@/app/(tabs)/(fridge)/constants/fridgeTabs";
+import { useIngredientsQuery } from "@/app/hooks/queries/useMyIngredientsQuery";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import React, { useRef, useState } from "react";
@@ -10,6 +11,10 @@ const TABS = Object.values(FridgeTabs);
 export default function IngredientPickScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+
+  const { data: ingredients } = useIngredientsQuery({
+    keyword: TABS[selectedTabIndex],
+  });
 
   const handleTabSelect = (index: number) => {
     setSelectedTabIndex(index);
