@@ -6,12 +6,14 @@ interface Props {
   tabs: string[];
   selectedTabIndex: number;
   onSelectTabIndex: (index: number) => void;
+  className?: string;
 }
 
 export function CategoryTabs({
   tabs,
   selectedTabIndex,
   onSelectTabIndex,
+  className,
 }: Props) {
   const flatListRef = useRef<FlatList>(null);
 
@@ -30,7 +32,7 @@ export function CategoryTabs({
       onPress={() => handleTabPress(index)}
       className={clsx(
         "px-3 py-[9px] rounded-full",
-        index === selectedTabIndex ? "bg-primary-strong" : "bg-gray-100"
+        index === selectedTabIndex ? "bg-primary-strong" : undefined
       )}
     >
       <Text
@@ -52,7 +54,7 @@ export function CategoryTabs({
       renderItem={renderItem}
       horizontal
       showsHorizontalScrollIndicator={false}
-      className="bg-gray-100"
+      className={className}
       contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
     />
   );

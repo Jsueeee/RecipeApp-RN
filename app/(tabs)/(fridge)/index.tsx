@@ -69,6 +69,7 @@ export default function FridgeScreen() {
             tabs={TABS}
             selectedTabIndex={selectedTabIndex}
             onSelectTabIndex={handleTabSelect}
+            className="bg-gray-100"
           />
 
           <View className="px-4 flex-1">
