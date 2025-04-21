@@ -14,7 +14,11 @@ export default function MyPageScreen() {
   };
 
   return (
-    <ScreenLayout isShowHeader={false} backgroundColor="background-alternative">
+    <ScreenLayout
+      isShowHeader={false}
+      isScrollEnabled={true}
+      backgroundColor="background-alternative"
+    >
       <MyPageHeader />
 
       <MyProfile

@@ -41,7 +41,11 @@ export default function RecipeDetailScreen() {
 
   return (
     <View className="flex-1">
-      <ScreenLayout isShowHeader={false} footer={recipeDetail ? footer : null}>
+      <ScreenLayout
+        isShowHeader={false}
+        isScrollEnabled={true}
+        footer={recipeDetail ? footer : null}
+      >
         <View>
           <Image
             source={{ uri: recipeDetail?.thumbnail }}

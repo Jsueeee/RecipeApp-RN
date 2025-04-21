@@ -82,6 +82,7 @@ export default function IngredientEditScreen() {
   return (
     <ScreenLayout
       title={ingredient.ingredientName}
+      isScrollEnabled={true}
       footer={
         <View className="fixed bottom-0 left-0 right-0 px-4 pb-[22px]">
           <Pressable className="items-center py-[14px]" onPress={onRemoveClick}>
