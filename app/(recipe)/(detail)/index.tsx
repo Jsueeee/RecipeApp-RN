@@ -30,7 +30,7 @@ export default function RecipeDetailScreen() {
   const isMyRecipe = userId === recipeDetail?.postUserId;
 
   const footer = isMyRecipe ? (
-    <MyRecipeFooter recipeId={recipeDetail!!.id} />
+    <MyRecipeFooter recipeId={recipeDetail?.id} />
   ) : (
     <RecipeFooter
       recipeDetail={recipeDetail}
