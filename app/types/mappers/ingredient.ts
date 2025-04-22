@@ -17,6 +17,7 @@ const mapPickIngredientsCategory = (
   category: ResponsePickIngredientsCategory
 ): CategorizedPickIngredients => ({
   ingredientCategoryId: category.ingredientCategoryId,
+  ingredientCategoryName: category.ingredientCategoryName,
   ingredients: category.ingredients.map(mapPickIngredient),
 });
 

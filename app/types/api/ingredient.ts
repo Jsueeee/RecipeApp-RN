@@ -1,6 +1,6 @@
 export interface ResponsePickIngredient {
   ingredientId: number;
-  ingredientIconId?: number;
+  ingredientIconId: number | null;
   ingredientName: string;
 }
 
