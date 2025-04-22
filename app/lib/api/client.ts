@@ -50,11 +50,11 @@ if (process.env.EXPO_PUBLIC_ENV === "dev") {
 
   apiClient.interceptors.response.use(
     (response) => {
-      console.log("✅ API 응답:", response.data);
+      console.log("✅ API 응답:", JSON.stringify(response.data));
       return response;
     },
     (error) => {
-      console.error("❌ 응답 에러:", error.response?.data);
+      console.error("❌ 응답 에러:", JSON.stringify(error.response?.data));
       return Promise.reject(error);
     }
   );
