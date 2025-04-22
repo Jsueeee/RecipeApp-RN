@@ -17,7 +17,7 @@ export const useIngredientsQuery = ({ keyword }: Params = {}) => {
         const response = await apiClient.get<ResponsePickIngredients>(
           "/ingredients",
           {
-            params: { keyword },
+            params: keyword ? { keyword } : undefined,
           }
         );
         return response.data;
