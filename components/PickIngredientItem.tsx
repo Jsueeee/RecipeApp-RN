@@ -32,7 +32,9 @@ export function PickIngredientItem({
         )}
       </View>
 
-      <Text className="text-utility3 mt-2 text-center">{ingredientName}</Text>
+      <Text className="text-utility3 text-text-normal text-center">
+        {ingredientName}
+      </Text>
     </View>
   );
 }
