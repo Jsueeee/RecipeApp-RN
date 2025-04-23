@@ -13,7 +13,7 @@ interface Props {
 
 export const Header = ({
   title,
-  backButtonIconColor: backgroundIconColor = "fill-strong",
+  backButtonIconColor = "#3F4542",
   titleColor = "text-strong",
   onBackClick,
   className,
@@ -21,10 +21,10 @@ export const Header = ({
   return (
     <View className={clsx("w-full p-4 flex-row items-center", className)}>
       <Pressable onPress={onBackClick} className="z-10">
-        <IC_CHEVRON_LEFT width={24} height={24} color={backgroundIconColor} />
+        <IC_CHEVRON_LEFT width={24} height={24} color={backButtonIconColor} />
       </Pressable>
 
-      <Text className={clsx("flex-1 text-title4 text-center", titleColor)}>
+      <Text className={`flex-1 text-title4 text-center ${titleColor}`}>
         {title}
       </Text>
 
