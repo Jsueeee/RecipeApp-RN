@@ -98,7 +98,7 @@ export default function EditProfileImageBottomSheet({
         <CTAButton
           buttonLabel={i18n.t("profile.edit_profile_image_cta")}
           onPress={onCTAPress}
-          className="mt-5 mb-[22px]"
+          className="mt-5 mb-safe"
           disabled={!selectedImage || isPending}
           isLoading={isPending}
         />
