@@ -32,11 +32,12 @@ export const PressableScale: React.FC<PressableScaleProps> = ({
     Animated.parallel([
       Animated.spring(scaleAnim, {
         toValue: 0.97,
+        speed: 20,
         useNativeDriver: true,
       }),
       Animated.timing(opacityAnim, {
         toValue: 0.8,
-        duration: 100,
+        duration: 20,
         useNativeDriver: true,
       }),
     ]).start();
@@ -46,11 +47,12 @@ export const PressableScale: React.FC<PressableScaleProps> = ({
     Animated.parallel([
       Animated.spring(scaleAnim, {
         toValue: 1,
+        speed: 20,
         useNativeDriver: true,
       }),
       Animated.timing(opacityAnim, {
         toValue: 1,
-        duration: 100,
+        duration: 20,
         useNativeDriver: true,
       }),
     ]).start();
