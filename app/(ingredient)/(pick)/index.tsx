@@ -7,7 +7,7 @@ import {
 } from "@/app/types/domain/ingredient";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { FlatList, ScrollView, View } from "react-native";
 import { CategorizedPickIngredientsWithIconGroup } from "./components/CategorizedPickIngredientsWithIconGroup";
 import { SelectedBottomRow } from "./components/SelectedBottomRow";
@@ -37,6 +37,18 @@ export default function IngredientPickScreen() {
     );
   }, []);
 
+  const filteredIngredients = useMemo(
+    () =>
+      ingredients
+        ?.filter(
+          (category) =>
+            selectedTabIndex === 0 ||
+            category.ingredientCategoryName === TABS[selectedTabIndex]
+        )
+        .filter((category) => category.ingredients.length > 0),
+    [ingredients, selectedTabIndex]
+  );
+
   const renderItem = ({ item }: { item: CategorizedPickIngredients }) => (
     <CategorizedPickIngredientsWithIconGroup
       key={item.ingredientCategoryId}
@@ -60,7 +72,7 @@ export default function IngredientPickScreen() {
       </View>
 
       <FlatList
-        data={ingredients}
+        data={filteredIngredients}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         className="flex-1"
