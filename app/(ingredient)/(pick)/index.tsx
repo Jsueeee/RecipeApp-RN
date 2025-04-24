@@ -70,6 +70,7 @@ export default function IngredientPickScreen() {
       {selectedIngredients.length > 0 && (
         <SelectedBottomRow
           selectedIngredients={selectedIngredients}
+          onRemovePress={handleIngredientUnselect}
           onCTAPress={() => {}}
           className="absolute bottom-0 left-0 right-0"
         />

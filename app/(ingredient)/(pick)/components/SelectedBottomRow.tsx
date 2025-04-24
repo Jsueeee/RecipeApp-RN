@@ -8,12 +8,14 @@ import { FlatList } from "react-native-gesture-handler";
 
 interface Props {
   selectedIngredients: PickIngredient[];
+  onRemovePress: (ingredient: PickIngredient) => void;
   onCTAPress: () => void;
   className?: string;
 }
 
 export const SelectedBottomRow = ({
   selectedIngredients,
+  onRemovePress,
   onCTAPress,
   className,
 }: Props) => {
@@ -49,7 +51,7 @@ export const SelectedBottomRow = ({
             ingredientId={item.ingredientId}
             ingredientName={item.ingredientName}
             ingredientIconId={item.ingredientIconId}
-            onCancel={() => {}}
+            onRemovePress={() => onRemovePress(item)}
           />
         )}
         keyExtractor={(item) => item.ingredientId.toString()}

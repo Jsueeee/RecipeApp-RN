@@ -8,7 +8,7 @@ interface Props {
   ingredientId: number;
   ingredientName: string;
   ingredientIconId: number | null;
-  onCancel: () => void;
+  onRemovePress: () => void;
 }
 
 /**
@@ -19,7 +19,7 @@ export const SelectedIngredientItem = ({
   ingredientId,
   ingredientName,
   ingredientIconId,
-  onCancel,
+  onRemovePress,
 }: Props) => {
   const Icon = FoodDataManager.getImageSource(ingredientIconId);
 
@@ -31,7 +31,7 @@ export const SelectedIngredientItem = ({
         </View>
 
         <PressableScale
-          onPress={onCancel}
+          onPress={onRemovePress}
           className="absolute top-0 right-0"
           hitSlop={4}
         >
