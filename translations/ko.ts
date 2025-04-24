@@ -154,6 +154,7 @@ export default {
   },
   ingredient_pick: {
     title: "재료 선택",
+    add: "{{count}}개 담기",
   },
   settings: {
     help: "고객지원",
