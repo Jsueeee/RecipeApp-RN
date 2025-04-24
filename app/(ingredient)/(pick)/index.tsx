@@ -64,7 +64,7 @@ export default function IngredientPickScreen() {
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         className="flex-1"
-        contentContainerStyle={{ gap: 20 }}
+        contentContainerStyle={{ gap: 20, paddingBottom: 200 }}
       />
 
       {selectedIngredients.length > 0 && (
