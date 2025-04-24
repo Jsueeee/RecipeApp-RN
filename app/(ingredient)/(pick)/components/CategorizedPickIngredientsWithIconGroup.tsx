@@ -7,9 +7,9 @@ import { Text, View } from "react-native";
 interface Props {
   categoryName: string;
   ingredients: PickIngredient[];
-  selectedIngredients: number[];
-  onSelect: (id: number) => void;
-  onUnselect: (id: number) => void;
+  selectedIngredients: PickIngredient[];
+  onSelect: (ingredient: PickIngredient) => void;
+  onUnselect: (ingredient: PickIngredient) => void;
 }
 
 /**
@@ -58,9 +58,9 @@ export function CategorizedPickIngredientsWithIconGroup({
                 <PressableScale
                   key={ingredient.ingredientId}
                   onPress={() => {
-                    selectedSet.has(ingredient.ingredientId)
-                      ? onUnselect(ingredient.ingredientId)
-                      : onSelect(ingredient.ingredientId);
+                    selectedSet.has(ingredient)
+                      ? onUnselect(ingredient)
+                      : onSelect(ingredient);
                   }}
                 >
                   <PickIngredientItem
@@ -68,7 +68,7 @@ export function CategorizedPickIngredientsWithIconGroup({
                     ingredientId={ingredient.ingredientId}
                     ingredientName={ingredient.ingredientName}
                     ingredientIconId={ingredient.ingredientIconId}
-                    isSelected={selectedSet.has(ingredient.ingredientId)}
+                    isSelected={selectedSet.has(ingredient)}
                   />
                 </PressableScale>
               ))}
