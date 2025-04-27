@@ -1,7 +1,7 @@
 import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMutation";
 import { useRecommendedRecipesQuery } from "@/app/hooks/queries/useRecommendedRecipesQuery";
 import { RecipeSummary } from "@/app/types/domain/recipe";
-import { DotLoading } from "@/components/DotLoading";
+import { TealDotLoading } from "@/components/DotLoading";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import i18n from "@/lib/i18n";
@@ -83,7 +83,7 @@ export default function RecipeScreen() {
   }, [recipeList?.totalCount]);
 
   const ListFooterComponent = () =>
-    hasNextPage ? <DotLoading className="mb-20" /> : null;
+    hasNextPage ? <TealDotLoading className="mb-20" /> : null;
 
   const ItemSeparator = () => <View className="h-[1px] mx-4 bg-gray-50" />;
 

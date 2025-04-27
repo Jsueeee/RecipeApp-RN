@@ -1,6 +1,6 @@
 import React from "react";
 import { View } from "react-native";
-import { DotLoading } from "./DotLoading";
+import { TealDotLoading } from "./DotLoading";
 
 interface Props {
   className?: string;
@@ -11,7 +11,7 @@ export const DotLoadingScreen = ({ className }: Props) => {
     <View
       className={`absolute w-full h-full items-center justify-center ${className}`}
     >
-      <DotLoading className="absolute" />
+      <TealDotLoading className="absolute" />
     </View>
   );
 };

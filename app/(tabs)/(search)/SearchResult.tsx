@@ -3,7 +3,7 @@ import { useBlogRecipeScrapMutation } from "@/app/hooks/mutations/useBlogRecipeS
 import { useYoutubeRecipeScrapMutation } from "@/app/hooks/mutations/useYoutubeRecipeScrapMutation";
 import { useSearchRecipesQuery } from "@/app/hooks/queries/useSearchRecipeQuery";
 import { SearchRecipe } from "@/app/types/domain/recipe";
-import { DotLoading } from "@/components/DotLoading";
+import { TealDotLoading } from "@/components/DotLoading";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
 import { RecipeSourceTypeTabRow } from "@/components/RecipeSourceTypeTabRow";
@@ -98,7 +98,7 @@ export default function SearchResult({ keyword, className }: Props) {
   const ListFooterComponent = () => {
     if (!hasNextPage || (searchResult?.totalCnt ?? 0) < PAGE_SIZE) return null;
 
-    return <DotLoading className="mb-20" />;
+    return <TealDotLoading className="mb-20" />;
   };
 
   const ItemSeparator = () => (

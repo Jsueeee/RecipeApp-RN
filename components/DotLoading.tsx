@@ -8,11 +8,15 @@ interface Props {
   color?: string;
 }
 
-export const DotLoading = ({
-  size = 150,
-  className,
-  color = "#4BD2B0",
-}: Props) => {
+export const TealDotLoading = ({ size = 150, className }: Props) => {
+  return <DotLoading size={size} className={className} isTealColor={true} />;
+};
+
+export const WhiteDotLoading = ({ size = 150, className }: Props) => {
+  return <DotLoading size={size} className={className} isTealColor={false} />;
+};
+
+const DotLoading = ({ size = 150, className = "", isTealColor = true }) => {
   const animation = useRef<LottieView>(null);
 
   return (
@@ -24,13 +28,11 @@ export const DotLoading = ({
           width: size,
           height: size,
         }}
-        colorFilters={[
-          {
-            keypath: "**",
-            color: color,
-          },
-        ]}
-        source={require("@/assets/lottie/lottie_dot_4.json")}
+        source={
+          isTealColor
+            ? require("@/assets/lottie/lottie_dot_4_teal.json")
+            : require("@/assets/lottie/lottie_dot_4_white.json")
+        }
       />
     </View>
   );

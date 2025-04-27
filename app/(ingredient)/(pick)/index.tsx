@@ -5,6 +5,7 @@ import {
   CategorizedPickIngredients,
   PickIngredient,
 } from "@/app/types/domain/ingredient";
+import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import React, { useCallback, useMemo, useRef, useState } from "react";
@@ -20,7 +21,7 @@ export default function IngredientPickScreen() {
   const [selectedIngredients, setSelectedIngredients] = useState<
     PickIngredient[]
   >([]);
-  const { data: ingredients } = useIngredientsQuery();
+  const { data: ingredients, isLoading } = useIngredientsQuery();
 
   const handleTabSelect = useCallback((index: number) => {
     setSelectedTabIndex(index);
@@ -49,16 +50,18 @@ export default function IngredientPickScreen() {
     [ingredients, selectedTabIndex]
   );
 
-  const renderItem = ({ item }: { item: CategorizedPickIngredients }) => (
-    <CategorizedPickIngredientsWithIconGroup
-      key={item.ingredientCategoryId}
-      categoryName={item.ingredientCategoryName}
-      ingredients={item.ingredients}
-      selectedIngredients={selectedIngredients}
-      onSelect={handleIngredientSelect}
-      onUnselect={handleIngredientUnselect}
-    />
-  );
+  const renderItem = ({ item }: { item: CategorizedPickIngredients }) => {
+    return (
+      <CategorizedPickIngredientsWithIconGroup
+        key={item.ingredientCategoryId}
+        categoryName={item.ingredientCategoryName}
+        ingredients={item.ingredients}
+        selectedIngredients={selectedIngredients}
+        onSelect={handleIngredientSelect}
+        onUnselect={handleIngredientUnselect}
+      />
+    );
+  };
 
   return (
     <ScreenLayout title={i18n.t("ingredient_pick.title")} edges={["top"]}>
@@ -71,13 +74,17 @@ export default function IngredientPickScreen() {
         />
       </View>
 
-      <FlatList
-        data={filteredIngredients}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-        className="flex-1 mb-safe"
-        contentContainerStyle={{ gap: 20, paddingBottom: 200 }}
-      />
+      {isLoading ? (
+        <DotLoadingScreen />
+      ) : (
+        <FlatList
+          data={filteredIngredients}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          className="flex-1 mb-safe"
+          contentContainerStyle={{ gap: 20, paddingBottom: 200 }}
+        />
+      )}
 
       {selectedIngredients.length > 0 && (
         <SelectedBottomRow

@@ -4,7 +4,7 @@ import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMuta
 import { useYoutubeRecipeScrapMutation } from "@/app/hooks/mutations/useYoutubeRecipeScrapMutation";
 import { useScrapRecipesQuery } from "@/app/hooks/queries/useScrapRecipesQuery";
 import { RecipeSummary } from "@/app/types/domain/recipe";
-import { DotLoading } from "@/components/DotLoading";
+import { TealDotLoading } from "@/components/DotLoading";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
@@ -69,7 +69,7 @@ export default function MyScrapScreen() {
   };
 
   const ListFooterComponent = () =>
-    hasNextPage ? <DotLoading className="mb-20" /> : null;
+    hasNextPage ? <TealDotLoading className="mb-20" /> : null;
 
   const ItemSeparator = () => (
     <View className="w-full mx-4 h-[1px] bg-line-alternative" />

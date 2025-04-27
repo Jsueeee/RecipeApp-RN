@@ -2,7 +2,7 @@ import LargeRecipeListItem from "@/app/(recipe)/components/LargeRecipeListItem";
 import { EmptyRecipeTabPlaceholder } from "@/app/(tabs)/(recipe)/components/EmptyRecipeTabPlaceholder";
 import { useMyRecipeListQuery } from "@/app/hooks/queries/useMyRecipeListQuery";
 import { RecipeSummary } from "@/app/types/domain/recipe";
-import { DotLoading } from "@/components/DotLoading";
+import { TealDotLoading } from "@/components/DotLoading";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
@@ -26,7 +26,7 @@ export default function MyRecipeScreen() {
   };
 
   const ListFooterComponent = () =>
-    hasNextPage ? <DotLoading className="mb-20" /> : null;
+    hasNextPage ? <TealDotLoading className="mb-20" /> : null;
 
   const ItemSeparator = () => <View className="h-[1px] mx-4 bg-gray-50" />;
 

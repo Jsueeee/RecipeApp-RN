@@ -2,7 +2,7 @@ import { PressableScale } from "@/app/components/PressableScale";
 import clsx from "clsx";
 import React from "react";
 import { LayoutChangeEvent, Text, View } from "react-native";
-import { DotLoading } from "./DotLoading";
+import { WhiteDotLoading } from "./DotLoading";
 
 interface Props {
   buttonLabel: string;
@@ -62,7 +62,7 @@ export const CTAButton = ({
 
           {isLoading && (
             <View className="absolute inset-0 items-center justify-center">
-              <DotLoading color="#FFFFFF" />
+              <WhiteDotLoading />
             </View>
           )}
         </View>
