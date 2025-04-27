@@ -75,7 +75,7 @@ export default function IngredientPickScreen() {
         data={filteredIngredients}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
-        className="flex-1"
+        className="flex-1 mb-safe"
         contentContainerStyle={{ gap: 20, paddingBottom: 200 }}
       />
 
