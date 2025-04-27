@@ -63,6 +63,22 @@ export default function IngredientPickScreen() {
     );
   };
 
+  const renderContent = () => {
+    if (isLoading || filteredIngredients?.length === 0) {
+      return <DotLoadingScreen />;
+    }
+
+    return (
+      <FlatList
+        data={filteredIngredients}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+        className="flex-1 mb-safe"
+        contentContainerStyle={{ gap: 20, paddingBottom: 200 }}
+      />
+    );
+  };
+
   return (
     <ScreenLayout title={i18n.t("ingredient_pick.title")} edges={["top"]}>
       <View>
@@ -74,17 +90,7 @@ export default function IngredientPickScreen() {
         />
       </View>
 
-      {isLoading ? (
-        <DotLoadingScreen />
-      ) : (
-        <FlatList
-          data={filteredIngredients}
-          renderItem={renderItem}
-          showsVerticalScrollIndicator={false}
-          className="flex-1 mb-safe"
-          contentContainerStyle={{ gap: 20, paddingBottom: 200 }}
-        />
-      )}
+      {renderContent()}
 
       {selectedIngredients.length > 0 && (
         <SelectedBottomRow
