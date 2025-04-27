@@ -8,6 +8,7 @@ import {
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
+import { useFocusEffect } from "expo-router";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { FlatList, ScrollView, View } from "react-native";
 import { CategorizedPickIngredientsWithIconGroup } from "./components/CategorizedPickIngredientsWithIconGroup";
@@ -21,7 +22,10 @@ export default function IngredientPickScreen() {
   const [selectedIngredients, setSelectedIngredients] = useState<
     PickIngredient[]
   >([]);
-  const { data: ingredients, isLoading } = useIngredientsQuery();
+  const [shouldLoadData, setShouldLoadData] = useState(false);
+  const { data: ingredients, isLoading } = useIngredientsQuery({
+    enabled: shouldLoadData,
+  });
 
   const handleTabSelect = useCallback((index: number) => {
     setSelectedTabIndex(index);
@@ -37,6 +41,13 @@ export default function IngredientPickScreen() {
       prev.filter((i) => i.ingredientId !== ingredient.ingredientId)
     );
   }, []);
+
+  // 화면 전환 버벅임 때문에
+  useFocusEffect(
+    useCallback(() => {
+      setShouldLoadData(true);
+    }, [])
+  );
 
   const filteredIngredients = useMemo(
     () =>
@@ -64,7 +75,7 @@ export default function IngredientPickScreen() {
   };
 
   const renderContent = () => {
-    if (isLoading || filteredIngredients?.length === 0) {
+    if (isLoading || !shouldLoadData) {
       return <DotLoadingScreen />;
     }
 

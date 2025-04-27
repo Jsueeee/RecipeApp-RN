@@ -7,9 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 
 interface Params {
   keyword?: string;
+  enabled?: boolean;
 }
 
-export const useIngredientsQuery = ({ keyword }: Params = {}) => {
+export const useIngredientsQuery = ({ keyword, enabled }: Params = {}) => {
   return useQuery<ResponsePickIngredients, Error, CategorizedPickIngredients[]>(
     {
       queryKey: QUERY_KEYS.INGREDIENT.PICK_LIST(keyword),
@@ -24,6 +25,7 @@ export const useIngredientsQuery = ({ keyword }: Params = {}) => {
       },
       select: mapPickIngredientsResponse,
       staleTime: 1000 * 60 * 60 * 10, // 재료 추가를 하기 전에는 거의 불변
+      enabled,
     }
   );
 };
