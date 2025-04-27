@@ -31,7 +31,7 @@ export const SelectedBottomRow = ({
 
   return (
     <View
-      className={`flex-1 bg-white ${className}`}
+      className={`flex-1 bg-white pt-1 ${className}`}
       style={{
         shadowColor: "#000",
         shadowOffset: {
@@ -41,6 +41,8 @@ export const SelectedBottomRow = ({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
+        borderTopLeftRadius: 16,
+        borderTopRightRadius: 16,
       }}
     >
       <FlatList
@@ -70,7 +72,7 @@ export const SelectedBottomRow = ({
           count: selectedIngredients.length,
         })}
         onPress={onCTAPress}
-        className="px-4 mb-safe"
+        className="px-4 pt-1 mb-safe"
       />
     </View>
   );
