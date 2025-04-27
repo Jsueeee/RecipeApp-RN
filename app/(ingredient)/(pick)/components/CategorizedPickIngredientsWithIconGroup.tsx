@@ -1,7 +1,7 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import { PickIngredient } from "@/app/types/domain/ingredient";
 import { PickIngredientItem } from "@/components/PickIngredientItem";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { Text, View } from "react-native";
 
 interface Props {
@@ -29,57 +29,95 @@ interface Props {
  * 불필요한 함수 생성과 메모리 할당 감소
  * 전체적인 렌더링 성능 향상
  */
-export function CategorizedPickIngredientsWithIconGroup({
-  categoryName,
-  ingredients,
-  selectedIngredients,
-  onSelect,
-  onUnselect,
-}: Props) {
-  const selectedSet = useMemo(
-    () => new Set(selectedIngredients),
-    [selectedIngredients]
-  );
+const selectedSetCache = new Map<string, Set<number>>();
 
-  return (
-    <View className="flex-1 p-4">
-      <Text className="text-title4 text-text-strong pb-4">{categoryName}</Text>
+export const CategorizedPickIngredientsWithIconGroup = React.memo(
+  function CategorizedPickIngredientsWithIconGroup({
+    categoryName,
+    ingredients,
+    selectedIngredients,
+    onSelect,
+    onUnselect,
+  }: Props) {
+    const selectedSet = useMemo(() => {
+      const cacheKey = selectedIngredients.map((i) => i.ingredientId).join(",");
 
-      <View className="gap-4">
-        {ingredients
-          .reduce(
-            (acc, _, i) =>
-              i % 4 === 0 ? [...acc, ingredients.slice(i, i + 4)] : acc,
-            [] as PickIngredient[][]
-          )
-          .map((row, rowIndex) => (
-            <View key={rowIndex} className="flex-1 flex-row justify-between">
-              {row.map((ingredient, index) => (
-                <PressableScale
-                  key={ingredient.ingredientId}
-                  onPress={() => {
-                    selectedSet.has(ingredient)
-                      ? onUnselect(ingredient)
-                      : onSelect(ingredient);
-                  }}
-                >
-                  <PickIngredientItem
-                    key={ingredient.ingredientId}
-                    ingredientId={ingredient.ingredientId}
-                    ingredientName={ingredient.ingredientName}
-                    ingredientIconId={ingredient.ingredientIconId}
-                    isSelected={selectedSet.has(ingredient)}
-                  />
-                </PressableScale>
-              ))}
-              {Array(4 - row.length)
-                .fill(0)
-                .map((_, i) => (
-                  <View key={`empty-${i}`} className="w-[76px]" /> // TODO: 이렇게 넓이를 고정으로 주지 않고도 그리드를 만들 수 있는지 확인하기
-                ))}
-            </View>
+      if (selectedSetCache.has(cacheKey)) {
+        return selectedSetCache.get(cacheKey)!;
+      }
+
+      const set = new Set(selectedIngredients.map((i) => i.ingredientId));
+      selectedSetCache.set(cacheKey, set);
+      return set;
+    }, [selectedIngredients]);
+
+    const handlePress = useCallback(
+      (ingredient: PickIngredient) => {
+        if (selectedSet.has(ingredient.ingredientId)) {
+          onUnselect(ingredient);
+        } else {
+          onSelect(ingredient);
+        }
+      },
+      [selectedSet, onSelect, onUnselect]
+    );
+
+    const rows = useMemo(
+      () =>
+        ingredients.reduce(
+          (acc, _, i) =>
+            i % 4 === 0 ? [...acc, ingredients.slice(i, i + 4)] : acc,
+          [] as PickIngredient[][]
+        ),
+      [ingredients]
+    );
+
+    const EmptySpace = useMemo(() => <View className="w-[76px]" />, []);
+
+    const renderRow = useCallback(
+      (row: PickIngredient[]) => (
+        <View className="flex-1 flex-row justify-between">
+          {row.map((ingredient) => (
+            <PickIngredientItem
+              key={ingredient.ingredientId}
+              ingredientId={ingredient.ingredientId}
+              ingredientName={ingredient.ingredientName}
+              ingredientIconId={ingredient.ingredientIconId}
+              isSelected={selectedSet.has(ingredient.ingredientId)}
+              onPress={() => handlePress(ingredient)}
+            />
           ))}
+          {Array(4 - row.length)
+            .fill(0)
+            .map((_, i) => (
+              <React.Fragment key={`empty-${i}`}>{EmptySpace}</React.Fragment>
+            ))}
+        </View>
+      ),
+      [handlePress, selectedSet, EmptySpace]
+    );
+
+    return (
+      <View className="flex-1 p-4">
+        <Text className="text-title4 text-text-strong pb-4">
+          {categoryName}
+        </Text>
+
+        <View className="gap-4">
+          {rows.map((row, rowIndex) => (
+            <React.Fragment key={rowIndex}>{renderRow(row)}</React.Fragment>
+          ))}
+        </View>
       </View>
-    </View>
-  );
-}
+    );
+  },
+  (prevProps, nextProps) => {
+    if (prevProps.categoryName !== nextProps.categoryName) return false;
+    if (prevProps.ingredients !== nextProps.ingredients) return false;
+    if (prevProps.selectedIngredients !== nextProps.selectedIngredients)
+      return false;
+    if (prevProps.onSelect !== nextProps.onSelect) return false;
+    if (prevProps.onUnselect !== nextProps.onUnselect) return false;
+    return true;
+  }
+);
