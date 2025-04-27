@@ -3,7 +3,7 @@ import { CTAButton } from "@/components/CTAButton";
 import { SelectedIngredientItem } from "@/components/SelectedIngredientItem";
 import i18n from "@/lib/i18n";
 import React, { useEffect, useRef } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 
 interface Props {
@@ -31,7 +31,7 @@ export const SelectedBottomRow = ({
 
   return (
     <View
-      className={`flex-1 bg-white pt-1 ${className}`}
+      className={`flex-1 bg-white pt-1 pb-safe ${className}`}
       style={{
         shadowColor: "#000",
         shadowOffset: {
@@ -72,7 +72,7 @@ export const SelectedBottomRow = ({
           count: selectedIngredients.length,
         })}
         onPress={onCTAPress}
-        className="px-4 pt-1 mb-safe"
+        className={`px-4 pt-1 ${Platform.OS === "ios" ? "pb-[22px]" : ""}`}
       />
     </View>
   );
