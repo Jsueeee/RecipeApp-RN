@@ -8,6 +8,7 @@ export const QUERY_KEYS = {
   FRIDGE: {
     FRIDGES: ["fridge", "fridges"] as const,
     DETAIL: (fridgeId: number) => ["fridge", "detail", fridgeId] as const,
+    BASKET: ["fridge", "basket"] as const,
   },
   RECIPE: {
     RECOMMENDED_LIST: ["recipe", "recommended"] as const,

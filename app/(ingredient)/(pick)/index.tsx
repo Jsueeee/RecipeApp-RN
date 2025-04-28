@@ -1,5 +1,6 @@
 import { CategoryTabs } from "@/app/(tabs)/(fridge)/components/CategoryTabs";
 import { FridgeTabs } from "@/app/(tabs)/(fridge)/constants/fridgeTabs";
+import { usePostFridgeBasketMutation } from "@/app/hooks/mutations/usePostFridgeBasketMutation";
 import { useIngredientsQuery } from "@/app/hooks/queries/useMyIngredientsQuery";
 import {
   CategorizedPickIngredients,
@@ -26,6 +27,8 @@ export default function IngredientPickScreen() {
   const { data: ingredients, isLoading } = useIngredientsQuery({
     enabled: shouldLoadData,
   });
+  const { postFridgeBasket, isPostBasketPending } =
+    usePostFridgeBasketMutation();
 
   const handleTabSelect = useCallback((index: number) => {
     setSelectedTabIndex(index);
@@ -82,6 +85,14 @@ export default function IngredientPickScreen() {
     );
   };
 
+  const onAddBasketButtonPress = useCallback(() => {
+    postFridgeBasket({
+      ingredientIds: selectedIngredients.map(
+        (ingredient) => ingredient.ingredientId
+      ),
+    });
+  }, [postFridgeBasket, selectedIngredients]);
+
   return (
     <>
       <ScreenLayout title={i18n.t("ingredient_pick.title")}>
@@ -107,7 +118,8 @@ export default function IngredientPickScreen() {
         <SelectedBottomRow
           selectedIngredients={selectedIngredients}
           onRemovePress={handleIngredientUnselect}
-          onCTAPress={() => {}}
+          onCTAPress={onAddBasketButtonPress}
+          isPostBasketPending={isPostBasketPending}
           className="absolute bottom-0 left-0 right-0"
         />
       )}

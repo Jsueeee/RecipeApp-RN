@@ -10,6 +10,7 @@ interface Props {
   selectedIngredients: PickIngredient[];
   onRemovePress: (ingredient: PickIngredient) => void;
   onCTAPress: () => void;
+  isPostBasketPending: boolean;
   className?: string;
 }
 
@@ -17,6 +18,7 @@ export const SelectedBottomRow = ({
   selectedIngredients,
   onRemovePress,
   onCTAPress,
+  isPostBasketPending,
   className,
 }: Props) => {
   const flatListRef = useRef<FlatList>(null);
@@ -71,6 +73,7 @@ export const SelectedBottomRow = ({
         buttonLabel={i18n.t("ingredient_pick.add", {
           count: selectedIngredients.length,
         })}
+        isLoading={isPostBasketPending}
         onPress={onCTAPress}
         className={`px-4 pt-1 ${Platform.OS === "ios" ? "pb-[22px]" : ""}`}
       />
