@@ -115,11 +115,15 @@ export default function IngredientPickScreen() {
   const renderRightButtons = useCallback(() => {
     return [
       <View className="flex-row gap-4">
-        <PressableScale onPress={onBasketButtonPress} hitSlop={4}>
+        <PressableScale key="basket" onPress={onBasketButtonPress} hitSlop={4}>
           <BasketIcon width={24} height={24} />
         </PressableScale>
 
-        <PressableScale onPress={onCustomIngredientButtonPress} hitSlop={4}>
+        <PressableScale
+          key="custom"
+          onPress={onCustomIngredientButtonPress}
+          hitSlop={4}
+        >
           <PlusIcon width={24} height={24} />
         </PressableScale>
       </View>,
