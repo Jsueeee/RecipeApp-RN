@@ -12,7 +12,7 @@ import PlusIcon from "@/assets/images/ic_plus.svg";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { FlatList, ScrollView, View } from "react-native";
 import { CategorizedPickIngredientsWithIconGroup } from "./components/CategorizedPickIngredientsWithIconGroup";
@@ -21,6 +21,8 @@ import { SelectedBottomRow } from "./components/SelectedBottomRow";
 const TABS = Object.values(FridgeTabs);
 
 export default function IngredientPickScreen() {
+  const router = useRouter();
+
   const scrollViewRef = useRef<ScrollView>(null);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [selectedIngredients, setSelectedIngredients] = useState<
@@ -100,7 +102,7 @@ export default function IngredientPickScreen() {
    * 냉장고 바구니 화면 이동
    */
   const onBasketButtonPress = useCallback(() => {
-    console.log("basket");
+    router.push("/(fridge)/(basket)");
   }, []);
 
   /**
