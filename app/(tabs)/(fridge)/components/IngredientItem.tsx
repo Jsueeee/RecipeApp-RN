@@ -41,7 +41,7 @@ export function IngredientItem({
           {expiredAt && <View className="w-px h-4 bg-gray-200 mx-2" />}
 
           {expiredAt && (
-            <Text className="flex-1text-body3 text-text-alternative">
+            <Text className="flex-1 text-body3 text-text-alternative">
               {toConvertExpiredAt(expiredAt)}
             </Text>
           )}
