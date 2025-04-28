@@ -12,7 +12,6 @@ interface Props {
   isShowHeader?: boolean;
   isScrollEnabled?: boolean;
   onBackClick?: () => void;
-  edges?: ("top" | "bottom")[];
 }
 
 export function ScreenLayout({
@@ -22,11 +21,10 @@ export function ScreenLayout({
   footer,
   isShowHeader = true,
   isScrollEnabled = false,
-  edges,
   onBackClick,
 }: Props) {
   return (
-    <SafeAreaView className={`flex-1 bg-${backgroundColor}`} edges={edges}>
+    <SafeAreaView className={`flex-1 bg-${backgroundColor}`}>
       {isShowHeader && (
         <Header title={title} onBackClick={onBackClick ?? router.back} />
       )}
