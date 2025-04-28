@@ -7,6 +7,7 @@ interface Props {
   title: string;
   backButtonIconColor?: string;
   titleColor?: string;
+  rightButtonIcons?: React.ReactNode[];
   onBackClick: () => void;
   className?: string;
 }
@@ -15,6 +16,7 @@ export const Header = ({
   title,
   backButtonIconColor = "#3F4542",
   titleColor = "text-strong",
+  rightButtonIcons,
   onBackClick,
   className,
 }: Props) => {
@@ -24,12 +26,15 @@ export const Header = ({
         <IC_CHEVRON_LEFT width={24} height={24} color={backButtonIconColor} />
       </Pressable>
 
-      <Text className={`flex-1 text-title4 text-center ${titleColor}`}>
+      <Text
+        className={`absolute left-0 right-0 text-title4 text-center ${titleColor}`}
+      >
         {title}
       </Text>
 
-      {/* 이 자리에 right 버튼 추가 */}
-      <View className="w-6" />
+      {rightButtonIcons && (
+        <View className="absolute right-4">{rightButtonIcons}</View>
+      )}
     </View>
   );
 };

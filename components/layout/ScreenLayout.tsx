@@ -9,6 +9,7 @@ interface Props {
   children: ReactNode;
   backgroundColor?: string;
   footer?: ReactNode;
+  rightButtonIcons?: ReactNode[];
   isShowHeader?: boolean;
   isScrollEnabled?: boolean;
   onBackClick?: () => void;
@@ -19,6 +20,7 @@ export function ScreenLayout({
   children,
   backgroundColor = "white",
   footer,
+  rightButtonIcons,
   isShowHeader = true,
   isScrollEnabled = false,
   onBackClick,
@@ -26,7 +28,11 @@ export function ScreenLayout({
   return (
     <SafeAreaView className={`flex-1 bg-${backgroundColor}`}>
       {isShowHeader && (
-        <Header title={title} onBackClick={onBackClick ?? router.back} />
+        <Header
+          title={title}
+          onBackClick={onBackClick ?? router.back}
+          rightButtonIcons={rightButtonIcons}
+        />
       )}
 
       {isScrollEnabled ? (
