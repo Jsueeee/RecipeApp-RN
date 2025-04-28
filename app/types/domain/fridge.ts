@@ -38,3 +38,24 @@ export interface IngredientDetail {
   unit: string;
   freshness: string;
 }
+
+export interface FridgeBasketIngredient {
+  expiredAt: string | null;
+  freshness: FreshnessLevel;
+  fridgeBasketId: number;
+  ingredientIconId: number | null;
+  ingredientName: string;
+  quantity: number;
+  unit: string | null;
+}
+
+export interface CategorizedFridgeBasket {
+  ingredientCategoryId: number;
+  ingredientCategoryName: string;
+  fridgeBaskets: FridgeBasketIngredient[];
+}
+
+export interface FridgeBasket {
+  fridgeBasketCount: number;
+  ingredientCategories: CategorizedFridgeBasket[];
+}
