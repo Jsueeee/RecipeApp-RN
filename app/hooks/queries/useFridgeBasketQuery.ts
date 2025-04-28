@@ -10,10 +10,15 @@ export const useFridgeBasketQuery = () => {
       const response = await apiClient.get<FridgeBasket>("/fridges/basket");
       return response.data;
     },
+    select: (data) => ({
+      ...data,
+      ingredientCategories: data.ingredientCategories.filter(
+        (category) => category.fridgeBaskets.length > 0
+      ),
+    }),
   });
 
   return {
-    basketCount: data?.fridgeBasketCount,
     categorizedFridgeBaskets: data?.ingredientCategories,
     isLoading,
     isError,

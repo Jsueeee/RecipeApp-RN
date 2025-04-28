@@ -13,7 +13,7 @@ export interface Ingredient {
   expiredAt: string | null;
   freshness: FreshnessLevel;
   quantity: number;
-  unit: string;
+  unit: string | null;
 }
 
 export interface FridgeCategoryIngredients {
