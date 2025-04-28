@@ -45,7 +45,11 @@ export default function IngredientPickScreen() {
   // 화면 전환 버벅임 때문에
   useFocusEffect(
     useCallback(() => {
-      setShouldLoadData(true);
+      const timer = setTimeout(() => {
+        setShouldLoadData(true);
+      }, 100);
+
+      return () => clearTimeout(timer);
     }, [])
   );
 
@@ -62,6 +66,10 @@ export default function IngredientPickScreen() {
   );
 
   const renderItem = ({ item }: { item: CategorizedPickIngredients }) => {
+    if (isLoading || !shouldLoadData) {
+      return null;
+    }
+
     return (
       <CategorizedPickIngredientsWithIconGroup
         key={item.ingredientCategoryId}
@@ -74,34 +82,26 @@ export default function IngredientPickScreen() {
     );
   };
 
-  const renderContent = () => {
-    if (isLoading || !shouldLoadData) {
-      return <DotLoadingScreen />;
-    }
-
-    return (
-      <FlatList
-        data={filteredIngredients}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-        className="flex-1 mb-safe"
-        contentContainerStyle={{ gap: 20, paddingBottom: 200 }}
-      />
-    );
-  };
-
   return (
-    <ScreenLayout title={i18n.t("ingredient_pick.title")} edges={["top"]}>
-      <View>
-        <CategoryTabs
-          tabs={TABS}
-          selectedTabIndex={selectedTabIndex}
-          onSelectTabIndex={handleTabSelect}
-          className="bg-white w-full"
-        />
-      </View>
+    <>
+      <ScreenLayout title={i18n.t("ingredient_pick.title")}>
+        <View>
+          <CategoryTabs
+            tabs={TABS}
+            selectedTabIndex={selectedTabIndex}
+            onSelectTabIndex={handleTabSelect}
+            className="bg-white w-full"
+          />
+        </View>
 
-      {renderContent()}
+        <FlatList
+          data={filteredIngredients}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          className="flex-1"
+          contentContainerStyle={{ gap: 20, paddingBottom: 200 }}
+        />
+      </ScreenLayout>
 
       {selectedIngredients.length > 0 && (
         <SelectedBottomRow
@@ -111,6 +111,8 @@ export default function IngredientPickScreen() {
           className="absolute bottom-0 left-0 right-0"
         />
       )}
-    </ScreenLayout>
+
+      {(isLoading || !shouldLoadData) && <DotLoadingScreen />}
+    </>
   );
 }
