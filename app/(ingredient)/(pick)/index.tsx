@@ -1,11 +1,14 @@
 import { CategoryTabs } from "@/app/(tabs)/(fridge)/components/CategoryTabs";
 import { FridgeTabs } from "@/app/(tabs)/(fridge)/constants/fridgeTabs";
+import { PressableScale } from "@/app/components/PressableScale";
 import { usePostFridgeBasketMutation } from "@/app/hooks/mutations/usePostFridgeBasketMutation";
 import { useIngredientsQuery } from "@/app/hooks/queries/useMyIngredientsQuery";
 import {
   CategorizedPickIngredients,
   PickIngredient,
 } from "@/app/types/domain/ingredient";
+import BasketIcon from "@/assets/images/ic_basket.svg";
+import PlusIcon from "@/assets/images/ic_plus.svg";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
@@ -93,9 +96,40 @@ export default function IngredientPickScreen() {
     });
   }, [postFridgeBasket, selectedIngredients]);
 
+  /**
+   * 냉장고 바구니 화면 이동
+   */
+  const onBasketButtonPress = useCallback(() => {
+    console.log("basket");
+  }, []);
+
+  /**
+   * 커스텀 재료 화면 이동
+   */
+  const onCustomIngredientButtonPress = useCallback(() => {
+    console.log("custom");
+  }, []);
+
+  const renderRightButtons = useCallback(() => {
+    return [
+      <View className="flex-row gap-4">
+        <PressableScale onPress={onBasketButtonPress} hitSlop={4}>
+          <BasketIcon width={24} height={24} />
+        </PressableScale>
+
+        <PressableScale onPress={onCustomIngredientButtonPress} hitSlop={4}>
+          <PlusIcon width={24} height={24} />
+        </PressableScale>
+      </View>,
+    ];
+  }, [onAddBasketButtonPress]);
+
   return (
     <>
-      <ScreenLayout title={i18n.t("ingredient_pick.title")}>
+      <ScreenLayout
+        title={i18n.t("ingredient_pick.title")}
+        rightButtonIcons={renderRightButtons()}
+      >
         <View>
           <CategoryTabs
             tabs={TABS}
