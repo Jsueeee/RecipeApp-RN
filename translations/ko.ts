@@ -367,7 +367,7 @@ export default {
     create_cta: "저장하기",
   },
   fridge_basket: {
-    header: "재료 바구니",
+    header: "냉장고 바구니",
     cta: "저장",
     edit_header: "재료 수정",
     ingredient_name: "이름",
