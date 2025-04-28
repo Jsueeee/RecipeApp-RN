@@ -70,6 +70,7 @@ export default function MyProfileScreen() {
     <ScreenLayout
       title={i18n.t("profile.title")}
       backgroundColor="background-alternative"
+      isScrollEnabled={true}
     >
       <View className="items-center justify-center gap-4 mt-3">
         <PressableScale onPress={onProfileImageEditButtonPress}>

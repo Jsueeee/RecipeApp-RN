@@ -20,7 +20,7 @@ export function ScreenLayout({
   backgroundColor = "white",
   footer,
   isShowHeader = true,
-  isScrollEnabled = true,
+  isScrollEnabled = false,
   onBackClick,
 }: Props) {
   return (

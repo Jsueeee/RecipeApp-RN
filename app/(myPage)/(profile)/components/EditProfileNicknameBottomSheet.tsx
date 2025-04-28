@@ -80,7 +80,7 @@ export default function EditProfileNicknameBottomSheet({
         <CTAButton
           buttonLabel={i18n.t("profile.edit_profile_nickname_cta")}
           onPress={onCTAPress}
-          className="mt-5 mb-[22px]"
+          className="mt-5 mb-safe"
           disabled={!inputValue || isPending}
           isLoading={isPending}
         />

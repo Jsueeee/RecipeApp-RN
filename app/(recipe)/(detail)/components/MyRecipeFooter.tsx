@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import { View } from "react-native";
 
 interface Props {
-  recipeId: number;
+  recipeId: number | undefined;
 }
 
 export const MyRecipeFooter = ({ recipeId }: Props) => {
@@ -31,6 +31,8 @@ export const MyRecipeFooter = ({ recipeId }: Props) => {
   };
 
   const onDeleteConfirmButtonPress = () => {
+    if (!recipeId) return;
+
     setIsDeleteDialogVisible(false);
     deleteMyRecipe(recipeId);
   };

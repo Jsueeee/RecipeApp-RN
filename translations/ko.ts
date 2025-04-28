@@ -152,6 +152,10 @@ export default {
     },
     searchIngredient: "재료를 검색하세요.",
   },
+  ingredient_pick: {
+    title: "재료 선택",
+    add: "{{count}}개 담기",
+  },
   settings: {
     help: "고객지원",
     versionInfo: "버전정보",

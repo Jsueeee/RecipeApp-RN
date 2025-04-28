@@ -3,8 +3,15 @@ import {
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
-import React, { useCallback } from "react";
-import { Keyboard, Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  BackHandler,
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 interface Props {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
@@ -22,8 +29,27 @@ export default function DefaultBottomSheetModal({
   title,
   onDismiss,
 }: Props) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const backAction = () => {
+      if (isOpen) {
+        bottomSheetModalRef.current?.dismiss();
+        return true;
+      }
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [isOpen]);
+
   const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
+    setIsOpen(index !== -1);
 
     if (index === -1) {
       bottomSheetModalRef.current?.dismiss();
@@ -57,7 +83,7 @@ export default function DefaultBottomSheetModal({
       keyboardBlurBehavior="restore"
     >
       <BottomSheetScrollView
-        className="flex-1 pb-safe"
+        className="flex-1"
         keyboardShouldPersistTaps="handled"
       >
         <View className="justify-center items-center">

@@ -29,8 +29,7 @@ export default function FridgeScreen() {
   };
 
   const handleAddPress = () => {
-    // TODO: 식재료 추가 화면으로 이동
-    console.log("Add button pressed");
+    router.push("/(ingredient)/(pick)");
   };
 
   const handleTabSelect = (index: number) => {
@@ -70,6 +69,7 @@ export default function FridgeScreen() {
             tabs={TABS}
             selectedTabIndex={selectedTabIndex}
             onSelectTabIndex={handleTabSelect}
+            className="bg-gray-100"
           />
 
           <View className="px-4 flex-1">
