@@ -6,7 +6,11 @@ import { mapFridgesResponse } from "@/app/types/mappers/fridge";
 import { useQuery } from "@tanstack/react-query";
 
 export const useFridgesQuery = () => {
-  return useQuery<FridgesResponse, Error, Fridges>({
+  const { data, isLoading, isError } = useQuery<
+    FridgesResponse,
+    Error,
+    Fridges
+  >({
     queryKey: QUERY_KEYS.FRIDGE.FRIDGES,
     queryFn: async () => {
       const response = await apiClient.get<FridgesResponse>("/fridges");
@@ -14,4 +18,11 @@ export const useFridgesQuery = () => {
     },
     select: mapFridgesResponse,
   });
+
+  return {
+    basketCount: data?.basketCount,
+    fridges: data?.categories,
+    isLoading,
+    isError,
+  };
 };
