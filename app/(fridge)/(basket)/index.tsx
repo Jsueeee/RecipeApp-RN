@@ -51,19 +51,23 @@ export default function IngredientBasketScreen() {
     />
   );
 
+  const onEmptyPlaceHolderCTAClick = () => {
+    router.back();
+  };
+
   const renderContent = () => {
-    if (isLoading) {
+    if (isLoading || !categorizedFridgeBaskets) {
       return <DotLoadingScreen />;
     }
 
     if (categorizedFridgeBaskets?.length === 0) {
       return (
-        <View className="flex-1 justify-center items-center">
-          <EmptyPlaceholder
-            title={i18n.t("home.fridge_is_empty")}
-            description={i18n.t("home.fridge_is_empty_sub")}
-          />
-        </View>
+        <EmptyPlaceholder
+          title={i18n.t("fridge_basket.empty_place_holder_title")}
+          description={i18n.t("fridge_basket.empty_place_holder_desc")}
+          buttonLabel={i18n.t("fridge_basket.empty_place_holder_cta")}
+          onPress={onEmptyPlaceHolderCTAClick}
+        />
       );
     }
 
@@ -89,20 +93,22 @@ export default function IngredientBasketScreen() {
     >
       {renderContent()}
 
-      <View className="absolute bottom-0 left-0 right-0">
-        <LinearGradient
-          colors={["rgba(255,255,255,0)", "rgba(255,255,255,1)"]}
-          style={{ height: 40 }}
-        />
-
-        <View className="bg-white px-4 pb-[22px]">
-          <CTAButton
-            buttonLabel={i18n.t("fridge_basket.cta")}
-            isLoading={isPending}
-            onPress={onCTAButtonPress}
+      {categorizedFridgeBaskets && categorizedFridgeBaskets.length > 0 && (
+        <View className="absolute bottom-0 left-0 right-0">
+          <LinearGradient
+            colors={["rgba(255,255,255,0)", "rgba(255,255,255,1)"]}
+            style={{ height: 40 }}
           />
+
+          <View className="bg-white px-4 pb-[22px]">
+            <CTAButton
+              buttonLabel={i18n.t("fridge_basket.cta")}
+              isLoading={isPending}
+              onPress={onCTAButtonPress}
+            />
+          </View>
         </View>
-      </View>
+      )}
     </ScreenLayout>
   );
 }
