@@ -32,8 +32,17 @@ export default function IngredientPickScreen() {
   const { data: ingredients, isLoading } = useIngredientsQuery({
     enabled: shouldLoadData,
   });
-  const { postFridgeBasket, isPostBasketPending } =
-    usePostFridgeBasketMutation();
+  const { postFridgeBasket, isPostBasketPending } = usePostFridgeBasketMutation(
+    {
+      onSuccess: () => {
+        setSelectedIngredients([]);
+        router.push("/(fridge)/(basket)");
+      },
+      onError: (error) => {
+        console.error(error);
+      },
+    }
+  );
 
   const handleTabSelect = useCallback((index: number) => {
     setSelectedTabIndex(index);
