@@ -378,6 +378,11 @@ export default {
     empty_place_holder_title: "바구니가 비었어요",
     empty_place_holder_desc: "바구니에 재료들을 담아보세요",
     empty_place_holder_cta: "재료 담으러 가기",
+    remove: "삭제",
+    remove_dialog_title: "재료를 삭제할까요?",
+    remove_dialog_message: "삭제한 재료는 복구할 수 없어요.",
+    remove_dialog_confirm: "삭제하기",
+    remove_dialog_cancel: "닫기",
   },
   fridge_expired_date: {
     selector_hint: "입력하기",

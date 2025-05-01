@@ -42,6 +42,6 @@ export const usePatchFridgeBasketIngredientMutation = (
   return {
     patchFridgeBasketIngredient:
       patchFridgeBasketIngredientMutation.mutateAsync,
-    isPending: patchFridgeBasketIngredientMutation.isPending,
+    isPatchPending: patchFridgeBasketIngredientMutation.isPending,
   };
 };

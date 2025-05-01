@@ -30,6 +30,6 @@ export const useDeleteFridgeBasketIngredientMutation = (
   return {
     deleteFridgeBasketIngredient:
       deleteFridgeBasketIngredientMutation.mutateAsync,
-    isPending: deleteFridgeBasketIngredientMutation.isPending,
+    isDeletePending: deleteFridgeBasketIngredientMutation.isPending,
   };
 };
