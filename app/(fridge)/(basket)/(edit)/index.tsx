@@ -52,6 +52,11 @@ export default function BasketIngredientEditScreen() {
   const onCTAClick = async () => {
     if (!localData) return;
 
+    if (localData === ingredient) {
+      router.back();
+      return;
+    }
+
     try {
       await patchFridgeBasketIngredient({
         id: Number(id),
