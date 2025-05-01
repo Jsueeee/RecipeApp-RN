@@ -29,7 +29,17 @@ export default function IngredientBasketScreen() {
   });
 
   const onIngredientItemClick = (ingredient: Ingredient) => {
-    console.log(ingredient);
+    router.push({
+      pathname: "/(fridge)/(basket)/(edit)",
+      params: {
+        id: ingredient.fridgeId,
+        ingredientName: ingredient.name,
+        ingredientIconId: ingredient.ingredientIconId,
+        expiredAt: ingredient.expiredAt,
+        quantity: ingredient.quantity,
+        unit: ingredient.unit,
+      },
+    });
   };
 
   const renderItem = ({
