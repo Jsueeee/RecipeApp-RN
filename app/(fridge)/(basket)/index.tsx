@@ -1,4 +1,5 @@
 import { CategorizedIngredientsGroup } from "@/app/(tabs)/(fridge)/components/CategorizedIngredientsGroup";
+import { usePostFridgeMutation } from "@/app/hooks/mutations/usePostFridgeMutation";
 import { useFridgeBasketQuery } from "@/app/hooks/queries/useFridgeBasketQuery";
 import { CategorizedFridgeBasket, Ingredient } from "@/app/types/domain/fridge";
 import { mapFridgeBasketIngredient } from "@/app/types/mappers/fridge";
@@ -8,12 +9,24 @@ import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 
 import { FlatList, View } from "react-native";
 
 export default function IngredientBasketScreen() {
   const { categorizedFridgeBaskets, isLoading, isError } =
     useFridgeBasketQuery();
+
+  const router = useRouter();
+
+  const { postFridge, isPending } = usePostFridgeMutation({
+    onSuccess: () => {
+      router.replace("/(tabs)/(fridge)");
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
 
   const onIngredientItemClick = (ingredient: Ingredient) => {
     console.log(ingredient);
@@ -65,6 +78,10 @@ export default function IngredientBasketScreen() {
     );
   };
 
+  const onCTAButtonPress = () => {
+    postFridge();
+  };
+
   return (
     <ScreenLayout
       title={i18n.t("fridge_basket.header")}
@@ -81,9 +98,8 @@ export default function IngredientBasketScreen() {
         <View className="bg-white px-4 pb-[22px]">
           <CTAButton
             buttonLabel={i18n.t("fridge_basket.cta")}
-            onPress={() => {
-              console.log("cta");
-            }}
+            isLoading={isPending}
+            onPress={onCTAButtonPress}
           />
         </View>
       </View>
