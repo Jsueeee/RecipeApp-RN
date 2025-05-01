@@ -10,7 +10,7 @@ import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-
+import React from "react";
 import { FlatList, View } from "react-native";
 
 export default function IngredientBasketScreen() {
@@ -97,11 +97,13 @@ export default function IngredientBasketScreen() {
   };
 
   return (
-    <ScreenLayout
-      title={i18n.t("fridge_basket.header")}
-      backgroundColor="bg-alternative"
-    >
-      {renderContent()}
+    <>
+      <ScreenLayout
+        title={i18n.t("fridge_basket.header")}
+        backgroundColor="bg-alternative"
+      >
+        {renderContent()}
+      </ScreenLayout>
 
       {categorizedFridgeBaskets && categorizedFridgeBaskets.length > 0 && (
         <View className="absolute bottom-0 left-0 right-0">
@@ -110,15 +112,16 @@ export default function IngredientBasketScreen() {
             style={{ height: 40 }}
           />
 
-          <View className="bg-white px-4 pb-[22px]">
+          <View className="bg-white px-4">
             <CTAButton
               buttonLabel={i18n.t("fridge_basket.cta")}
               isLoading={isPending}
               onPress={onCTAButtonPress}
+              className="pb-safe"
             />
           </View>
         </View>
       )}
-    </ScreenLayout>
+    </>
   );
 }
