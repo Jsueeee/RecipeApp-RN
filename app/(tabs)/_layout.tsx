@@ -42,6 +42,8 @@ const TabBarButton = ({
   return (
     <Pressable
       {...props}
+      android_ripple={null}
+      android_disableSound={true}
       onPress={(e) => {
         Haptics.selectionAsync();
         props.onPress?.(e);
