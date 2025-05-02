@@ -3,11 +3,26 @@ import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import Constants from "expo-constants";
 import React from "react";
-import { Text, View } from "react-native";
+import { Linking, Text, View } from "react-native";
+import { PressableScale } from "../components/PressableScale";
 
 export default function SettingScreen() {
+  const onCSEmailPress = () => {
+    const email = "recipestorage2021@gmail.com";
+    const subject = "[레시피 저장소] 문의";
+    const body = "여기에 내용을 입력해 주세요.";
+    const url = `mailto:${email}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
+
+    Linking.openURL(url).catch((err) =>
+      console.error("이메일 열기 실패:", err)
+    );
+  };
+
   const renderCSEmail = () => {
     return (
+      <PressableScale onPress={onCSEmailPress} hitSlop={8}>
       <View className="flex-row items-center justify-between">
         <Text className="text-utility2 text-text-strong">
           {i18n.t("setting.CSEmail")}
@@ -15,6 +30,7 @@ export default function SettingScreen() {
 
         <RightArrowIcon width={20} height={20} color="#3F4542" />
       </View>
+      </PressableScale>
     );
   };
 
