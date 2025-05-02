@@ -127,7 +127,6 @@ export const styles = StyleSheet.create({
     position: "absolute",
     elevation: 0,
     shadowOpacity: 0,
-    maxWidth: 500,
     alignSelf: "center",
   },
   tabBarButton: {
