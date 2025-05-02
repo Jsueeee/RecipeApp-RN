@@ -77,7 +77,7 @@ export default function SettingScreen() {
       title={i18n.t("setting.title")}
       backgroundColor="background-alternative"
     >
-      <View className="flex-1 px-4 py-3">
+      <View className="flex-1 px-4 py-3 gap-3">
         <View className="w-full bg-white rounded-[12px] p-4 gap-7">
           {renderCSEmail()}
           {renderVersionInfo()}
