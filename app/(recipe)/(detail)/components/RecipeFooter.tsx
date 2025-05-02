@@ -20,7 +20,7 @@ export const RecipeFooter = ({
   if (!recipeDetail) return null;
 
   return (
-    <View className="flex-row w-full py-2 px-4 bg-white rounded-t-2xl border-t border-l border-r border-[#ECEFED] self-center max-w-[500px] gap-2">
+    <View className="flex-row w-full py-2 px-4 bg-white rounded-t-2xl border-t border-l border-r border-[#ECEFED] self-center gap-2">
       <PressableScale disabled={!recipeDetail} onPress={() => {}}>
         <View
           style={{ height: scrapButtonHeight, aspectRatio: 1 }}
