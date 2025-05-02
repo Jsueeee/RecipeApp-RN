@@ -1,12 +1,15 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import SettingIcon from "@/assets/images/ic_setting.svg";
 import { MainTabHeader } from "@/components/MainTabHeader";
+import { useRouter } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 
 export function MyPageHeader() {
+  const router = useRouter();
+
   const onSettingButtonPress = () => {
-    console.log("setting button press");
+    router.push("/(setting)");
   };
 
   return (
