@@ -19,6 +19,7 @@ export default function SettingScreen() {
   const { kakaoLogout } = useKaKaoLogoutMutation();
   const { googleLogout } = useGoogleLogoutMutation();
   const { naverLogout } = useNaverLogoutMutation();
+
   const onCSEmailPress = () => {
     const email = "recipestorage2021@gmail.com";
     const subject = "[레시피 저장소] 문의";
