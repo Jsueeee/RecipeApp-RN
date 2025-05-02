@@ -158,7 +158,7 @@ export default {
   },
   setting: {
     title: "설정",
-    help: "고객지원",
+    CSEmail: "문의 및 의견 보내기",
     versionInfo: "버전정보",
     newVersion: "최신버전",
     newVersionValue: "1.3.0",

@@ -27,7 +27,7 @@ export function MyProfile({
           {nickname}
         </Text>
 
-        <RightArrowIcon width={24} height={24} />
+        <RightArrowIcon width={24} height={24} color="#9FADA6" />
       </View>
     </PressableScale>
   );
