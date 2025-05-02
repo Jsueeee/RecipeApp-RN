@@ -1,12 +1,18 @@
 import RightArrowIcon from "@/assets/images/ic_arrow_right.svg";
+import { ChoiceDialog } from "@/components/ChoiceDialog";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import Constants from "expo-constants";
-import React from "react";
+import React, { useState } from "react";
 import { Linking, Text, View } from "react-native";
 import { PressableScale } from "../components/PressableScale";
+import { useLogoutMutation } from "../hooks/mutations/useLogoutMutation";
 
 export default function SettingScreen() {
+  const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
+
+  const { kakaoLogout } = useLogoutMutation();
+
   const onCSEmailPress = () => {
     const email = "recipestorage2021@gmail.com";
     const subject = "[레시피 저장소] 문의";
@@ -20,16 +26,25 @@ export default function SettingScreen() {
     );
   };
 
+  const onLogoutPress = () => {
+    setLogoutDialogVisible(true);
+  };
+
+  const onLogoutConfirmPress = async () => {
+    setLogoutDialogVisible(false);
+    await kakaoLogout();
+  };
+
   const renderCSEmail = () => {
     return (
       <PressableScale onPress={onCSEmailPress} hitSlop={8}>
-      <View className="flex-row items-center justify-between">
-        <Text className="text-utility2 text-text-strong">
-          {i18n.t("setting.CSEmail")}
-        </Text>
+        <View className="flex-row items-center justify-between">
+          <Text className="text-utility2 text-text-strong">
+            {i18n.t("setting.CSEmail")}
+          </Text>
 
-        <RightArrowIcon width={20} height={20} color="#3F4542" />
-      </View>
+          <RightArrowIcon width={20} height={20} color="#3F4542" />
+        </View>
       </PressableScale>
     );
   };
@@ -47,6 +62,16 @@ export default function SettingScreen() {
     );
   };
 
+  const renderLogoutButton = () => {
+    return (
+      <PressableScale onPress={onLogoutPress} hitSlop={8}>
+        <Text className="text-body2 text-text-strong">
+          {i18n.t("setting.logout")}
+        </Text>
+      </PressableScale>
+    );
+  };
+
   return (
     <ScreenLayout
       title={i18n.t("setting.title")}
@@ -57,7 +82,20 @@ export default function SettingScreen() {
           {renderCSEmail()}
           {renderVersionInfo()}
         </View>
+
+        <View className="w-full bg-white rounded-[12px] p-4 gap-7">
+          {renderLogoutButton()}
+        </View>
       </View>
+
+      <ChoiceDialog
+        visible={logoutDialogVisible}
+        title={i18n.t("setting.logout_dialog_title")}
+        confirmText={i18n.t("setting.logout_dialog_confirm")}
+        cancelText={i18n.t("setting.logout_dialog_cancel")}
+        onConfirm={onLogoutConfirmPress}
+        onCancel={() => setLogoutDialogVisible(false)}
+      />
     </ScreenLayout>
   );
 }
