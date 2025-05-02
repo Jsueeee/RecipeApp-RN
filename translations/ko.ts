@@ -156,7 +156,8 @@ export default {
     title: "재료 선택",
     add: "{{count}}개 담기",
   },
-  settings: {
+  setting: {
+    title: "설정",
     help: "고객지원",
     versionInfo: "버전정보",
     newVersion: "최신버전",
