@@ -172,11 +172,36 @@ export default {
     logout_dialog_cancel: "닫기",
     logout_dialog_confirm: "로그아웃",
     delete_account: "탈퇴",
-
     deleteIdSuccess: "레시피 저장소 탈퇴가 완료되었습니다.",
     thankYou: "레시피 저장소를 이용해 주셔서 감사합니다.",
     moveSignIn: "로그인화면으로 가기",
     offApp: "레시피 저장소 종료하기",
+  },
+  delete_account: {
+    title: "탈퇴 전 확인해 주세요",
+    message:
+      "레시피 저장소에서 저장한 내용은 모두 삭제되며\n이후 복구가 불가능합니다.",
+    history: "{{nickname}}님이\n그 동안 저장한 레시피에요.",
+    agree: "해당 내용에 동의합니다",
+    cta: "다음",
+  },
+  delete_account_confirm: {
+    title: "정말 탈퇴하시겠어요?",
+    message:
+      "서비스를 이용하시면서 불편하셨던 점이나\n이를 보완할 수 있는 방법을 알려주시면\n서비스 개선에 적극적으로 반영하도록 하겠습니다.",
+    option_1: "자주 사용하지 않아요",
+    option_2: "앱 오류가 있어요.",
+    option_3: "알림이 너무 자주 와요.",
+    option_4: "다른 서비스가 더 좋아요.",
+    option_5: "콘텐츠의 내용이 부족해요.",
+    option_6: "기타",
+    cta: "탈퇴하기",
+  },
+  delete_account_success: {
+    title: "탈퇴를 완료했어요",
+    message:
+      "그동안 레시피 저장소와 함께해주셔서 감사했어요.\n다시 돌아오셨을 때 더 나은 서비스의\n레시피 저장소가 되어 있을게요.",
+    cta: "닫기",
   },
   scrap: {
     scrapCancel: "스크랩이 취소되었습니다",
