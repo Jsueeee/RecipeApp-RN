@@ -10,7 +10,7 @@ import { DeleteAccountAgreeButton } from "./components/DeleteAccountAgreeButton"
 import { router } from "expo-router";
 
 export default function DeleteAccountScreen() {
-  const { data: userInfo } = useUserInfoQuery();
+  const { userInfo } = useUserInfoQuery();
   const [isAgree, setIsAgree] = useState(false);
 
   const onCTAButtonPress = () => {
