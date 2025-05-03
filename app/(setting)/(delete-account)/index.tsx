@@ -1,6 +1,7 @@
 import { ScrapItem } from "@/app/(tabs)/(myPage)/components/MyScrapSummary";
 import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
 import AlertIcon from "@/assets/images/ic_alert.svg";
+import { CTAButton } from "@/components/CTAButton";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import React, { useState } from "react";
@@ -16,10 +17,19 @@ export default function DeleteAccountScreen() {
       title={i18n.t("delete_account.app_bar_title")}
       isScrollEnabled={true}
       footer={
-        <DeleteAccountAgreeButton
-          isAgree={isAgree}
-          onPress={() => setIsAgree((prev) => !prev)}
-        />
+        <>
+          <DeleteAccountAgreeButton
+            isAgree={isAgree}
+            onPress={() => setIsAgree((prev) => !prev)}
+          />
+
+          <CTAButton
+            buttonLabel={i18n.t("delete_account.cta")}
+            onPress={() => {}}
+            disabled={!isAgree}
+            className="px-4 pb-[22px] mt-3"
+          />
+        </>
       }
     >
       <View className="flex-1 px-4">
