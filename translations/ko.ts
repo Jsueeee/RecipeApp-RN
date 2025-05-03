@@ -151,6 +151,7 @@ export default {
       etc: "기타",
     },
     searchIngredient: "재료를 검색하세요.",
+    expired_at_placeholder: "유통기한을 입력해 주세요",
   },
   ingredient_pick: {
     title: "재료 선택",
@@ -367,7 +368,7 @@ export default {
     create_cta: "저장하기",
   },
   fridge_basket: {
-    header: "재료 바구니",
+    header: "냉장고 바구니",
     cta: "저장",
     edit_header: "재료 수정",
     ingredient_name: "이름",
@@ -378,6 +379,11 @@ export default {
     empty_place_holder_title: "바구니가 비었어요",
     empty_place_holder_desc: "바구니에 재료들을 담아보세요",
     empty_place_holder_cta: "재료 담으러 가기",
+    remove: "삭제",
+    remove_dialog_title: "재료를 삭제할까요?",
+    remove_dialog_message: "삭제한 재료는 복구할 수 없어요.",
+    remove_dialog_confirm: "삭제하기",
+    remove_dialog_cancel: "닫기",
   },
   fridge_expired_date: {
     selector_hint: "입력하기",

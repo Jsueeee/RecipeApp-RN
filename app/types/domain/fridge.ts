@@ -13,7 +13,7 @@ export interface Ingredient {
   expiredAt: string | null;
   freshness: FreshnessLevel;
   quantity: number;
-  unit: string;
+  unit: string | null;
 }
 
 export interface FridgeCategoryIngredients {
@@ -37,4 +37,25 @@ export interface IngredientDetail {
   quantity: number;
   unit: string;
   freshness: string;
+}
+
+export interface FridgeBasketIngredient {
+  expiredAt: string | null;
+  freshness: FreshnessLevel;
+  fridgeBasketId: number;
+  ingredientIconId: number | null;
+  ingredientName: string;
+  quantity: number;
+  unit: string | null;
+}
+
+export interface CategorizedFridgeBasket {
+  ingredientCategoryId: number;
+  ingredientCategoryName: string;
+  fridgeBaskets: FridgeBasketIngredient[];
+}
+
+export interface FridgeBasket {
+  fridgeBasketCount: number;
+  ingredientCategories: CategorizedFridgeBasket[];
 }

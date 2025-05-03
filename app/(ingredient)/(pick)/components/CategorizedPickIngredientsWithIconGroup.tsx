@@ -2,7 +2,7 @@ import { PressableScale } from "@/app/components/PressableScale";
 import { PickIngredient } from "@/app/types/domain/ingredient";
 import { PickIngredientItem } from "@/components/PickIngredientItem";
 import React, { useCallback, useMemo, useRef } from "react";
-import { Text, View } from "react-native";
+import { Text, useWindowDimensions, View } from "react-native";
 
 interface Props {
   categoryName: string;
@@ -39,6 +39,10 @@ export const CategorizedPickIngredientsWithIconGroup = React.memo(
     onSelect,
     onUnselect,
   }: Props) {
+    const { width } = useWindowDimensions();
+
+    const ROW_COUNT = width >= 500 ? 6 : 4;
+
     const selectedSet = useMemo(() => {
       const cacheKey = selectedIngredients.map((i) => i.ingredientId).join(",");
 
@@ -66,10 +70,12 @@ export const CategorizedPickIngredientsWithIconGroup = React.memo(
       () =>
         ingredients.reduce(
           (acc, _, i) =>
-            i % 4 === 0 ? [...acc, ingredients.slice(i, i + 4)] : acc,
+            i % ROW_COUNT === 0
+              ? [...acc, ingredients.slice(i, i + ROW_COUNT)]
+              : acc,
           [] as PickIngredient[][]
         ),
-      [ingredients]
+      [ingredients, ROW_COUNT]
     );
 
     const EmptySpace = useMemo(() => <View className="w-[76px]" />, []);
@@ -87,14 +93,14 @@ export const CategorizedPickIngredientsWithIconGroup = React.memo(
               onPress={() => handlePress(ingredient)}
             />
           ))}
-          {Array(4 - row.length)
+          {Array(ROW_COUNT - row.length)
             .fill(0)
             .map((_, i) => (
               <React.Fragment key={`empty-${i}`}>{EmptySpace}</React.Fragment>
             ))}
         </View>
       ),
-      [handlePress, selectedSet, EmptySpace]
+      [handlePress, selectedSet, EmptySpace, ROW_COUNT]
     );
 
     return (

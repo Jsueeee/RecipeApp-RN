@@ -1,14 +1,18 @@
 import { CategoryTabs } from "@/app/(tabs)/(fridge)/components/CategoryTabs";
 import { FridgeTabs } from "@/app/(tabs)/(fridge)/constants/fridgeTabs";
+import { PressableScale } from "@/app/components/PressableScale";
+import { usePostFridgeBasketMutation } from "@/app/hooks/mutations/usePostFridgeBasketMutation";
 import { useIngredientsQuery } from "@/app/hooks/queries/useMyIngredientsQuery";
 import {
   CategorizedPickIngredients,
   PickIngredient,
 } from "@/app/types/domain/ingredient";
+import BasketIcon from "@/assets/images/ic_basket.svg";
+import PlusIcon from "@/assets/images/ic_plus.svg";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { FlatList, ScrollView, View } from "react-native";
 import { CategorizedPickIngredientsWithIconGroup } from "./components/CategorizedPickIngredientsWithIconGroup";
@@ -17,6 +21,8 @@ import { SelectedBottomRow } from "./components/SelectedBottomRow";
 const TABS = Object.values(FridgeTabs);
 
 export default function IngredientPickScreen() {
+  const router = useRouter();
+
   const scrollViewRef = useRef<ScrollView>(null);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [selectedIngredients, setSelectedIngredients] = useState<
@@ -26,6 +32,17 @@ export default function IngredientPickScreen() {
   const { data: ingredients, isLoading } = useIngredientsQuery({
     enabled: shouldLoadData,
   });
+  const { postFridgeBasket, isPostBasketPending } = usePostFridgeBasketMutation(
+    {
+      onSuccess: () => {
+        setSelectedIngredients([]);
+        router.push("/(fridge)/(basket)");
+      },
+      onError: (error) => {
+        console.error(error);
+      },
+    }
+  );
 
   const handleTabSelect = useCallback((index: number) => {
     setSelectedTabIndex(index);
@@ -82,9 +99,52 @@ export default function IngredientPickScreen() {
     );
   };
 
+  const onAddBasketButtonPress = useCallback(() => {
+    postFridgeBasket({
+      ingredientIds: selectedIngredients.map(
+        (ingredient) => ingredient.ingredientId
+      ),
+    });
+  }, [postFridgeBasket, selectedIngredients]);
+
+  /**
+   * 냉장고 바구니 화면 이동
+   */
+  const onBasketButtonPress = useCallback(() => {
+    router.push("/(fridge)/(basket)");
+  }, []);
+
+  /**
+   * 커스텀 재료 화면 이동
+   */
+  const onCustomIngredientButtonPress = useCallback(() => {
+    console.log("custom");
+  }, []);
+
+  const renderRightButtons = useCallback(() => {
+    return [
+      <View className="flex-row gap-4">
+        <PressableScale key="basket" onPress={onBasketButtonPress} hitSlop={4}>
+          <BasketIcon width={24} height={24} />
+        </PressableScale>
+
+        <PressableScale
+          key="custom"
+          onPress={onCustomIngredientButtonPress}
+          hitSlop={4}
+        >
+          <PlusIcon width={24} height={24} />
+        </PressableScale>
+      </View>,
+    ];
+  }, [onAddBasketButtonPress]);
+
   return (
     <>
-      <ScreenLayout title={i18n.t("ingredient_pick.title")}>
+      <ScreenLayout
+        title={i18n.t("ingredient_pick.title")}
+        rightButtonIcons={renderRightButtons()}
+      >
         <View>
           <CategoryTabs
             tabs={TABS}
@@ -107,7 +167,8 @@ export default function IngredientPickScreen() {
         <SelectedBottomRow
           selectedIngredients={selectedIngredients}
           onRemovePress={handleIngredientUnselect}
-          onCTAPress={() => {}}
+          onCTAPress={onAddBasketButtonPress}
+          isPostBasketPending={isPostBasketPending}
           className="absolute bottom-0 left-0 right-0"
         />
       )}

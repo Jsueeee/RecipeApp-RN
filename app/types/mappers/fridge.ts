@@ -1,13 +1,14 @@
 import {
-  FridgesResponse,
   FridgeIngredientCategoryResponse,
+  FridgesResponse,
   IngredientResponse,
 } from "../api/fridge";
 import {
-  Fridges,
-  FridgeCategoryIngredients,
-  Ingredient,
   FreshnessLevel,
+  FridgeBasketIngredient,
+  FridgeCategoryIngredients,
+  Fridges,
+  Ingredient,
 } from "../domain/fridge";
 
 export const mapFridgesResponse = (response: FridgesResponse): Fridges => ({
@@ -37,6 +38,22 @@ const mapFridge = (
 ): Ingredient => ({
   fridgeId: ingredient.fridgeId,
   categoryIdx,
+  categoryName,
+  name: ingredient.ingredientName,
+  ingredientIconId: ingredient.ingredientIconId,
+  expiredAt: ingredient.expiredAt,
+  freshness: ingredient.freshness as FreshnessLevel,
+  quantity: ingredient.quantity,
+  unit: ingredient.unit,
+});
+
+export const mapFridgeBasketIngredient = (
+  ingredient: FridgeBasketIngredient,
+  categoryId: number,
+  categoryName: string
+): Ingredient => ({
+  fridgeId: ingredient.fridgeBasketId,
+  categoryIdx: categoryId,
   categoryName,
   name: ingredient.ingredientName,
   ingredientIconId: ingredient.ingredientIconId,
