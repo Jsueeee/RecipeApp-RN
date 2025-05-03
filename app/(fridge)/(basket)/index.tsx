@@ -112,12 +112,12 @@ export default function IngredientBasketScreen() {
             style={{ height: 40 }}
           />
 
-          <View className="bg-white px-4">
+          <View className="bg-white px-4 pb-safe">
             <CTAButton
               buttonLabel={i18n.t("fridge_basket.cta")}
               isLoading={isPending}
               onPress={onCTAButtonPress}
-              className="pb-safe"
+              className="pb-[22px]"
             />
           </View>
         </View>
