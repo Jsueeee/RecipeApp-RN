@@ -14,17 +14,21 @@ interface Props {
   className?: string;
 }
 
-const ScrapItem = ({
+export const ScrapItem = ({
   title,
   count,
   onPress,
+  backgroundColor = "elevation-normal",
 }: {
   title: string;
   count: number;
   onPress: () => void;
+  backgroundColor?: string;
 }) => (
   <PressableScale onPress={onPress} className="flex-1">
-    <View className="gap-[2px] items-center justify-center gap-1 bg-elevation-normal rounded-[12px] px-1 py-3">
+    <View
+      className={`bg-${backgroundColor} gap-[2px] items-center justify-center gap-1 rounded-[12px] px-1 py-3`}
+    >
       <Text className="text-body4 text-text-alternative">{title}</Text>
       <Text className="text-title3 text-text-interactive">{count}</Text>
     </View>

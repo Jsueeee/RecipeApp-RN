@@ -42,6 +42,8 @@ const TabBarButton = ({
   return (
     <Pressable
       {...props}
+      android_ripple={null}
+      android_disableSound={true}
       onPress={(e) => {
         Haptics.selectionAsync();
         props.onPress?.(e);
@@ -127,7 +129,6 @@ export const styles = StyleSheet.create({
     position: "absolute",
     elevation: 0,
     shadowOpacity: 0,
-    maxWidth: 500,
     alignSelf: "center",
   },
   tabBarButton: {

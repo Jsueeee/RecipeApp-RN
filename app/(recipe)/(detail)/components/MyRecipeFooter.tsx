@@ -43,7 +43,7 @@ export const MyRecipeFooter = ({ recipeId }: Props) => {
 
   return (
     <>
-      <View className="flex-row w-full py-2 px-4 bg-white rounded-t-2xl border-t border-l border-r border-[#ECEFED] self-center max-w-[500px] gap-2">
+      <View className="flex-row w-full py-2 px-4 bg-white rounded-t-2xl border-t border-l border-r border-[#ECEFED] self-center gap-2">
         <CTAButton
           buttonLabel={i18n.t("recipe_detail.my_delete")}
           buttonLabelColor="strong-destructive"
