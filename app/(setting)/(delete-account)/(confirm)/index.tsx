@@ -1,15 +1,15 @@
 import { CTAButton } from "@/components/CTAButton";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
-import { useRef } from "react";
+import { useState } from "react";
 import { Text, View } from "react-native";
 import { DeleteAccountReasonOptions } from "./components/DeleteAccountReasonOptions";
 
 export default function DeleteAccountConfirmScreen() {
-  const selectedOption = useRef<number | null>(null);
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
   const onCTAButtonPress = () => {
-    console.log(selectedOption.current);
+    console.log(selectedOption);
   };
 
   return (
@@ -19,7 +19,7 @@ export default function DeleteAccountConfirmScreen() {
       footer={
         <CTAButton
           buttonLabel={i18n.t("delete_account_confirm.cta")}
-          disabled={selectedOption.current === null}
+          disabled={selectedOption === null}
           onPress={onCTAButtonPress}
           className="px-4 pb-[22px] mt-3"
         />
@@ -36,7 +36,7 @@ export default function DeleteAccountConfirmScreen() {
 
         <DeleteAccountReasonOptions
           onSelect={(option) => {
-            selectedOption.current = option;
+            setSelectedOption(option);
           }}
         />
       </View>
