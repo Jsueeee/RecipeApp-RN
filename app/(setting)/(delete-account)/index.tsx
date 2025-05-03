@@ -3,14 +3,25 @@ import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
 import AlertIcon from "@/assets/images/ic_alert.svg";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
-import React from "react";
+import React, { useState } from "react";
 import { Text, View } from "react-native";
+import { DeleteAccountAgreeButton } from "./components/DeleteAccountAgreeButton";
 
 export default function DeleteAccountScreen() {
   const { data: userInfo } = useUserInfoQuery();
+  const [isAgree, setIsAgree] = useState(false);
 
   return (
-    <ScreenLayout title={i18n.t("delete_account.app_bar_title")}>
+    <ScreenLayout
+      title={i18n.t("delete_account.app_bar_title")}
+      isScrollEnabled={true}
+      footer={
+        <DeleteAccountAgreeButton
+          isAgree={isAgree}
+          onPress={() => setIsAgree((prev) => !prev)}
+        />
+      }
+    >
       <View className="flex-1 px-4">
         <Text className="text-title3 text-text-strong pt-3">
           {i18n.t("delete_account.title")}
