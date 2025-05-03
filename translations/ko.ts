@@ -151,6 +151,7 @@ export default {
       etc: "기타",
     },
     searchIngredient: "재료를 검색하세요.",
+    expired_at_placeholder: "유통기한을 입력해 주세요",
   },
   ingredient_pick: {
     title: "재료 선택",

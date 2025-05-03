@@ -58,6 +58,7 @@ export default function IngredientBasketScreen() {
         )
       )}
       onIngredientItemClick={onIngredientItemClick}
+      isExpiredAtPlaceholderShow={true}
     />
   );
 

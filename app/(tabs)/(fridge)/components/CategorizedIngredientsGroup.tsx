@@ -7,12 +7,14 @@ interface Props {
   categoryName: string;
   ingredients: Ingredient[];
   onIngredientItemClick: (ingredient: Ingredient) => void;
+  isExpiredAtPlaceholderShow?: boolean;
 }
 
 export function CategorizedIngredientsGroup({
   categoryName,
   ingredients,
   onIngredientItemClick,
+  isExpiredAtPlaceholderShow = false,
 }: Props) {
   return (
     <View className="bg-white rounded-2xl p-5 mb-4">
@@ -24,6 +26,7 @@ export function CategorizedIngredientsGroup({
             key={ingredient.fridgeId}
             {...ingredient}
             onPress={() => onIngredientItemClick(ingredient)}
+            isExpiredAtPlaceholderShow={isExpiredAtPlaceholderShow}
           />
         ))}
       </View>

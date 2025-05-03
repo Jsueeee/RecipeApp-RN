@@ -1,12 +1,14 @@
 import { Ingredient } from "@/app/types/domain/fridge";
+import { toConvertExpiredAt } from "@/app/utils/DateTimeUtils";
+import { FoodDataManager } from "@/constants/IngredientManager";
+import i18n from "@/lib/i18n";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { FreshnessLabel } from "./FreshnessLabel";
-import { toConvertExpiredAt } from "@/app/utils/DateTimeUtils";
-import { FoodDataManager } from "@/constants/IngredientManager";
 
 interface Props extends Ingredient {
   onPress: () => void;
+  isExpiredAtPlaceholderShow?: boolean;
 }
 
 export function IngredientItem({
@@ -17,6 +19,7 @@ export function IngredientItem({
   freshness,
   onPress,
   ingredientIconId,
+  isExpiredAtPlaceholderShow = false,
 }: Props) {
   const Icon = FoodDataManager.getImageSource(ingredientIconId);
 
@@ -38,12 +41,20 @@ export function IngredientItem({
             {unit}
           </Text>
 
-          {expiredAt && <View className="w-px h-4 bg-gray-200 mx-2" />}
+          {(expiredAt || isExpiredAtPlaceholderShow) && (
+            <View className="w-px h-4 bg-gray-200 mx-2" />
+          )}
 
-          {expiredAt && (
+          {expiredAt ? (
             <Text className="flex-1 text-body3 text-text-alternative">
               {toConvertExpiredAt(expiredAt)}
             </Text>
+          ) : (
+            isExpiredAtPlaceholderShow && (
+              <Text className="flex-1 text-body3 text-text-alternative">
+                {i18n.t("ingredient.expired_at_placeholder")}
+              </Text>
+            )
           )}
         </View>
       </View>
