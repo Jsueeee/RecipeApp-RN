@@ -6,7 +6,7 @@ import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import i18n from "@/lib/i18n";
 import { router, Stack } from "expo-router";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { SystemBars } from "react-native-edge-to-edge";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -21,10 +21,6 @@ export default function FridgeScreen() {
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
 
   const { fridges, isLoading } = useFridgesQuery();
-
-  useEffect(() => {
-    router.push("/(setting)/(delete-account)");
-  }, []);
 
   const onIngredientItemClick = (ingredient: Ingredient) => {
     router.push({
