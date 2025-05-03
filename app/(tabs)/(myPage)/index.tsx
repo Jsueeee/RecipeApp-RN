@@ -6,6 +6,7 @@ import { MyProfile } from "./components/MyProfile";
 import { MyScrapSummary } from "./components/MyScrapSummary";
 import { MyRecipeSummary } from "./components/MyRecipeSummary";
 import { router } from "expo-router";
+
 export default function MyPageScreen() {
   const { data: userInfo } = useUserInfoQuery();
 
