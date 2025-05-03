@@ -171,14 +171,8 @@ export default {
     logout_dialog_title: "로그아웃 할까요?",
     logout_dialog_cancel: "닫기",
     logout_dialog_confirm: "로그아웃",
-    logoutSuccess: "로그아웃이 완료되었습니다.",
-    logoutConfirm: "레시피 저장소를 로그아웃 하시겠어요?",
-    deleteId: "탈퇴",
-    deleteIdDialog:
-      "탈퇴 시, 레시피 저장소에서 저장한 내용은 모두 삭제되며, 이후 복구가 불가능합니다.",
-    deleteIdConfirmDialog: "레시피저장소를 탈퇴하시겠습니까?",
-    yes: "확인",
-    no: "취소",
+    delete_account: "탈퇴",
+
     deleteIdSuccess: "레시피 저장소 탈퇴가 완료되었습니다.",
     thankYou: "레시피 저장소를 이용해 주셔서 감사합니다.",
     moveSignIn: "로그인화면으로 가기",

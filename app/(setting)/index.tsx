@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import { Linking, Text, View } from "react-native";
 import { PressableScale } from "../components/PressableScale";
 import { useLogoutMutation } from "../hooks/mutations/useLogoutMutation";
+import { router } from "expo-router";
 
 export default function SettingScreen() {
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
@@ -72,6 +73,20 @@ export default function SettingScreen() {
     );
   };
 
+  const onDeleteAccountPress = () => {
+    router.push("/(setting)/(delete-account)");
+  };
+
+  const renderDeleteAccountButton = () => {
+    return (
+      <PressableScale onPress={onDeleteAccountPress} hitSlop={8}>
+        <Text className="text-body2 text-text-strong">
+          {i18n.t("setting.delete_account")}
+        </Text>
+      </PressableScale>
+    );
+  };
+
   return (
     <ScreenLayout
       title={i18n.t("setting.title")}
@@ -85,6 +100,7 @@ export default function SettingScreen() {
 
         <View className="w-full bg-white rounded-[12px] p-4 gap-7">
           {renderLogoutButton()}
+          {renderDeleteAccountButton()}
         </View>
       </View>
 
