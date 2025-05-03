@@ -11,10 +11,9 @@ export function CheckBox({ isChecked }: Props) {
       <View
         className={`w-full h-full rounded-[6px] border-2 ${
           isChecked ? "border-[#4BD2B0]" : "border-[#E3E8E5]"
-        } items-center justify-center`}
+        } items-center justify-center
+        ${isChecked ? "bg-[#4BD2B0]" : "bg-white"}`}
       >
-        {isChecked && <View className="w-full h-full bg-teal-500 absolute" />}
-
         {isChecked && <CheckBoxIcon color="#FFFFFF" />}
       </View>
     </View>
