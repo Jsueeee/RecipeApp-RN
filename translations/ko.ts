@@ -178,6 +178,7 @@ export default {
     offApp: "레시피 저장소 종료하기",
   },
   delete_account: {
+    app_bar_title: "탈퇴",
     title: "탈퇴 전 확인해 주세요",
     message:
       "레시피 저장소에서 저장한 내용은 모두 삭제되며\n이후 복구가 불가능합니다.",
