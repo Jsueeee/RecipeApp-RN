@@ -7,10 +7,15 @@ import i18n from "@/lib/i18n";
 import React, { useState } from "react";
 import { Text, View } from "react-native";
 import { DeleteAccountAgreeButton } from "./components/DeleteAccountAgreeButton";
+import { router } from "expo-router";
 
 export default function DeleteAccountScreen() {
   const { data: userInfo } = useUserInfoQuery();
   const [isAgree, setIsAgree] = useState(false);
+
+  const onCTAButtonPress = () => {
+    router.push("/(setting)/(delete-account)/(confirm)");
+  };
 
   return (
     <ScreenLayout
@@ -25,7 +30,7 @@ export default function DeleteAccountScreen() {
 
           <CTAButton
             buttonLabel={i18n.t("delete_account.cta")}
-            onPress={() => {}}
+            onPress={onCTAButtonPress}
             disabled={!isAgree}
             className="px-4 pb-[22px] mt-3"
           />

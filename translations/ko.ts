@@ -187,6 +187,7 @@ export default {
     cta: "다음",
   },
   delete_account_confirm: {
+    app_bar_title: "탈퇴",
     title: "정말 탈퇴하시겠어요?",
     message:
       "서비스를 이용하시면서 불편하셨던 점이나\n이를 보완할 수 있는 방법을 알려주시면\n서비스 개선에 적극적으로 반영하도록 하겠습니다.",
