@@ -49,10 +49,18 @@ export default function BasketIngredientEditScreen() {
     setLocalData(ingredient);
   }, [id, ingredientName, ingredientIconId, expiredAt, quantity, unit]);
 
+  const areIngredientsEqual = (a: typeof ingredient, b: typeof ingredient) => {
+    return (
+      a.expiredAt === b.expiredAt &&
+      a.quantity === b.quantity &&
+      a.unit === b.unit
+    );
+  };
+
   const onCTAClick = async () => {
     if (!localData) return;
 
-    if (localData === ingredient) {
+    if (areIngredientsEqual(localData, ingredient)) {
       router.back();
       return;
     }
