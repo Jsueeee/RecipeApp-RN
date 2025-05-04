@@ -16,7 +16,11 @@ const TABS = Object.values(FridgeTabs);
 
 export default function CustomIngredientScreen() {
   const { categorizedIngredients, isLoading } = useMyIngredientsQuery({});
-  const { deleteIngredient, isDeleteLoading } = useDeleteMyIngredient();
+  const { deleteIngredient, isDeleteLoading } = useDeleteMyIngredient({
+    onSuccess: () => {
+      setSelectedDeleteIngredient(null);
+    },
+  });
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [selectedDeleteIngredient, setSelectedDeleteIngredient] =
     useState<PickIngredient | null>(null);
@@ -36,7 +40,6 @@ export default function CustomIngredientScreen() {
   const handleConfirmDelete = useCallback(() => {
     if (selectedDeleteIngredient !== null) {
       deleteIngredient(selectedDeleteIngredient.ingredientId);
-      setSelectedDeleteIngredient(null);
     }
   }, [selectedDeleteIngredient, deleteIngredient]);
 
@@ -89,6 +92,7 @@ export default function CustomIngredientScreen() {
         })}
         confirmText={i18n.t("custom_ingredient.delete_dialog_confirm")}
         cancelText={i18n.t("custom_ingredient.delete_dialog_cancel")}
+        isConfirmLoading={isDeleteLoading}
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
       />

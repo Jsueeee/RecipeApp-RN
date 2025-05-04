@@ -8,6 +8,7 @@ interface Props {
   message?: string;
   confirmText?: string;
   cancelText?: string;
+  isConfirmLoading?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -18,6 +19,7 @@ export function ChoiceDialog({
   message,
   confirmText,
   cancelText = i18n.t("common.close"),
+  isConfirmLoading = false,
   onConfirm,
   onCancel,
 }: Props) {
@@ -56,6 +58,7 @@ export function ChoiceDialog({
 
             <CTAButton
               buttonLabel={confirmText ?? ""}
+              isLoading={isConfirmLoading}
               onPress={onConfirm}
               className="flex-1"
             />
