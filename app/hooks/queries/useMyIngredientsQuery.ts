@@ -1,6 +1,7 @@
 import { apiClient } from "@/app/lib/api/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { ResponsePickIngredients } from "@/app/types/api/ingredient";
+import { mapPickIngredientsResponse } from "@/app/types/mappers/ingredient";
 
 import { useQuery } from "@tanstack/react-query";
 
@@ -22,17 +23,12 @@ export const useMyIngredientsQuery = ({
       );
       return response.data;
     },
-    select: (data) => ({
-      ...data,
-      ingredientCategories: data.ingredientCategories.filter(
-        (category) => category.ingredients.length > 0
-      ),
-    }),
+    select: mapPickIngredientsResponse,
     staleTime: 1000 * 60 * 60 * 10, // 재료 추가를 하기 전에는 거의 불변
   });
 
   return {
-    categorizedIngredients: data?.ingredientCategories,
+    categorizedIngredients: data,
     isLoading,
     isError,
   };
