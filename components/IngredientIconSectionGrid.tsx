@@ -17,7 +17,7 @@ interface Props {
   isNameVisible?: boolean; // 이름 보여줄건지 (ex: 아이콘만 선택할 때)
   selectedIngredients?: PickIngredient[];
   onPress?: (ingredientId: number) => void;
-  onRemoveButtonPress?: (ingredientId: number) => void;
+  onRemoveButtonPress?: (ingredient: PickIngredient) => void;
   className?: string;
 }
 
@@ -71,7 +71,7 @@ export const IngredientIconGrid = ({
             ingredientId={item.ingredientId}
             ingredientName={item.ingredientName}
             ingredientIconId={item.ingredientIconId}
-            onRemovePress={() => onRemoveButtonPress?.(item.ingredientId)}
+            onRemovePress={() => onRemoveButtonPress?.(item)}
           />
         ) : (
           <PickIngredientItem

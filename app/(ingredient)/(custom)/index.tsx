@@ -1,8 +1,11 @@
 import { CategoryTabs } from "@/app/(tabs)/(fridge)/components/CategoryTabs";
 import { FridgeTabs } from "@/app/(tabs)/(fridge)/constants/fridgeTabs";
 import { PressableScale } from "@/app/components/PressableScale";
+import { useDeleteMyIngredient } from "@/app/hooks/mutations/useDeleteMyIngredient";
 import { useMyIngredientsQuery } from "@/app/hooks/queries/useMyIngredientsQuery";
+import { PickIngredient } from "@/app/types/domain/ingredient";
 import PlusIcon from "@/assets/images/ic_plus.svg";
+import { ChoiceDialog } from "@/components/ChoiceDialog";
 import { IngredientIconGrid } from "@/components/IngredientIconSectionGrid";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
@@ -13,8 +16,10 @@ const TABS = Object.values(FridgeTabs);
 
 export default function CustomIngredientScreen() {
   const { categorizedIngredients, isLoading } = useMyIngredientsQuery({});
-
+  const { deleteIngredient, isDeleteLoading } = useDeleteMyIngredient();
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const [selectedDeleteIngredient, setSelectedDeleteIngredient] =
+    useState<PickIngredient | null>(null);
 
   const handleTabSelect = useCallback((index: number) => {
     setSelectedTabIndex(index);
@@ -24,8 +29,19 @@ export default function CustomIngredientScreen() {
     console.log("custom");
   }, []);
 
-  const handleDeleteClick = useCallback((ingredientId: number) => {
-    console.log("delete", ingredientId);
+  const handleDeleteClick = useCallback((ingredient: PickIngredient) => {
+    setSelectedDeleteIngredient(ingredient);
+  }, []);
+
+  const handleConfirmDelete = useCallback(() => {
+    if (selectedDeleteIngredient !== null) {
+      deleteIngredient(selectedDeleteIngredient.ingredientId);
+      setSelectedDeleteIngredient(null);
+    }
+  }, [selectedDeleteIngredient, deleteIngredient]);
+
+  const handleCancelDelete = useCallback(() => {
+    setSelectedDeleteIngredient(null);
   }, []);
 
   const renderRightButtons = useCallback(() => {
@@ -43,25 +59,39 @@ export default function CustomIngredientScreen() {
   }, [onCreateIngredientButtonPress]);
 
   return (
-    <ScreenLayout
-      title={i18n.t("custom_ingredient.app_bar_title")}
-      rightButtonIcons={renderRightButtons()}
-    >
-      <View>
-        <CategoryTabs
-          tabs={TABS}
-          selectedTabIndex={selectedTabIndex}
-          onSelectTabIndex={handleTabSelect}
-          className="bg-white w-full"
-        />
-      </View>
+    <>
+      <ScreenLayout
+        title={i18n.t("custom_ingredient.app_bar_title")}
+        rightButtonIcons={renderRightButtons()}
+      >
+        <View>
+          <CategoryTabs
+            tabs={TABS}
+            selectedTabIndex={selectedTabIndex}
+            onSelectTabIndex={handleTabSelect}
+            className="bg-white w-full"
+          />
+        </View>
 
-      <IngredientIconGrid
-        categorizedIngredients={categorizedIngredients ?? []}
-        isRemoveMode={true}
-        onRemoveButtonPress={handleDeleteClick}
-        className="bg-white"
+        <IngredientIconGrid
+          categorizedIngredients={categorizedIngredients ?? []}
+          isRemoveMode={true}
+          onRemoveButtonPress={handleDeleteClick}
+          className="bg-white"
+        />
+      </ScreenLayout>
+
+      <ChoiceDialog
+        visible={selectedDeleteIngredient !== null}
+        title={i18n.t("custom_ingredient.delete_dialog_title")}
+        message={i18n.t("custom_ingredient.delete_dialog_desc", {
+          ingredientName: selectedDeleteIngredient?.ingredientName,
+        })}
+        confirmText={i18n.t("custom_ingredient.delete_dialog_confirm")}
+        cancelText={i18n.t("custom_ingredient.delete_dialog_cancel")}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
       />
-    </ScreenLayout>
+    </>
   );
 }
