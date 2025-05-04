@@ -36,5 +36,6 @@ export const QUERY_KEYS = {
   },
   INGREDIENT: {
     PICK_LIST: (keyword?: string) => ["ingredients", "pick", keyword] as const,
+    MY: ["ingredients", "my"] as const,
   },
 } as const;

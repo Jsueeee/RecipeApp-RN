@@ -2,19 +2,18 @@ import { CategoryTabs } from "@/app/(tabs)/(fridge)/components/CategoryTabs";
 import { FridgeTabs } from "@/app/(tabs)/(fridge)/constants/fridgeTabs";
 import { PressableScale } from "@/app/components/PressableScale";
 import { usePostFridgeBasketMutation } from "@/app/hooks/mutations/usePostFridgeBasketMutation";
-import { useIngredientsQuery } from "@/app/hooks/queries/useMyIngredientsQuery";
+import { useIngredientsQuery } from "@/app/hooks/queries/useIngredientsQuery";
 import {
   CategorizedPickIngredients,
   PickIngredient,
 } from "@/app/types/domain/ingredient";
 import BasketIcon from "@/assets/images/ic_basket.svg";
-import PlusIcon from "@/assets/images/ic_plus.svg";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { FlatList, ScrollView, View } from "react-native";
+import { FlatList, ScrollView, Text, View } from "react-native";
 import { CategorizedPickIngredientsWithIconGroup } from "./components/CategorizedPickIngredientsWithIconGroup";
 import { SelectedBottomRow } from "./components/SelectedBottomRow";
 
@@ -118,7 +117,7 @@ export default function IngredientPickScreen() {
    * 커스텀 재료 화면 이동
    */
   const onCustomIngredientButtonPress = useCallback(() => {
-    console.log("custom");
+    router.push("/(ingredient)/(custom)");
   }, []);
 
   const renderRightButtons = useCallback(() => {
@@ -132,8 +131,11 @@ export default function IngredientPickScreen() {
           key="custom"
           onPress={onCustomIngredientButtonPress}
           hitSlop={4}
+          className="items-center justify-center"
         >
-          <PlusIcon width={24} height={24} />
+          <Text className="text-utility1">
+            {i18n.t("custom_ingredient.button")}
+          </Text>
         </PressableScale>
       </View>,
     ];
