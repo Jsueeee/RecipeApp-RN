@@ -9,7 +9,7 @@ import { ChoiceDialog } from "@/components/ChoiceDialog";
 import { IngredientIconGrid } from "@/components/IngredientIconSectionGrid";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { View } from "react-native";
 
 const TABS = Object.values(FridgeTabs);
@@ -61,6 +61,18 @@ export default function CustomIngredientScreen() {
     ];
   }, [onCreateIngredientButtonPress]);
 
+  const filteredIngredients = useMemo(
+    () =>
+      categorizedIngredients
+        ?.filter(
+          (category) =>
+            selectedTabIndex === 0 ||
+            category.ingredientCategoryName === TABS[selectedTabIndex]
+        )
+        .filter((category) => category.ingredients.length > 0),
+    [categorizedIngredients, selectedTabIndex]
+  );
+
   return (
     <>
       <ScreenLayout
@@ -77,7 +89,7 @@ export default function CustomIngredientScreen() {
         </View>
 
         <IngredientIconGrid
-          categorizedIngredients={categorizedIngredients ?? []}
+          categorizedIngredients={filteredIngredients ?? []}
           isRemoveMode={true}
           onRemoveButtonPress={handleDeleteClick}
           className="bg-white"
