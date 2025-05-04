@@ -9,8 +9,11 @@ import { IngredientCategorySelector } from "./components/IngredientCategorySelec
 import { CTAButton } from "@/components/CTAButton";
 
 export default function CustomIngredientCreateScreen() {
+  const [ingredientIconId, setIngredientIconId] = useState<number | null>(null);
   const [ingredientName, setIngredientName] = useState("");
-  const [ingredientCategory, setIngredientCategory] = useState<number>(0);
+  const [ingredientCategory, setIngredientCategory] = useState<number | null>(
+    null
+  );
 
   const onSelectIconPress = useCallback(() => {
     console.log("select icon");
@@ -29,7 +32,9 @@ export default function CustomIngredientCreateScreen() {
           <CTAButton
             buttonLabel={i18n.t("custom_ingredient.create_title")}
             disabled={
-              ingredientName.length === 0 || ingredientCategory.length === 0
+              ingredientIconId === null ||
+              ingredientName.length === 0 ||
+              ingredientCategory === null
             }
             onPress={onCTAButtonPress}
             className="px-4 pb-[22px]"
