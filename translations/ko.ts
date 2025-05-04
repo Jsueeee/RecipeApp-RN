@@ -362,7 +362,7 @@ export default {
   },
   custom_ingredient: {
     button: "MY",
-    title: "나만의 재료",
+    app_bar_title: "나만의 재료",
     create_title: "나만의 재료 만들기",
     create_button: "나만의 재료 추가하기",
     create_cta: "저장하기",
