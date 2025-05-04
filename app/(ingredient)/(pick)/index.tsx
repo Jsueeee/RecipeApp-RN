@@ -2,7 +2,7 @@ import { CategoryTabs } from "@/app/(tabs)/(fridge)/components/CategoryTabs";
 import { FridgeTabs } from "@/app/(tabs)/(fridge)/constants/fridgeTabs";
 import { PressableScale } from "@/app/components/PressableScale";
 import { usePostFridgeBasketMutation } from "@/app/hooks/mutations/usePostFridgeBasketMutation";
-import { useIngredientsQuery } from "@/app/hooks/queries/useMyIngredientsQuery";
+import { useIngredientsQuery } from "@/app/hooks/queries/useIngredientsQuery";
 import {
   CategorizedPickIngredients,
   PickIngredient,
