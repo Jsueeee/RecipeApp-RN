@@ -7,7 +7,7 @@ import i18n from "@/lib/i18n";
 import { Text, View } from "react-native";
 
 interface Props {
-  selectedCategoryId: number;
+  selectedCategoryId: number | null;
   onCategoryChanged: (value: number) => void;
 }
 
