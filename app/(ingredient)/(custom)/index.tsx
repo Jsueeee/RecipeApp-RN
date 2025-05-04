@@ -1,4 +1,5 @@
 import { PressableScale } from "@/app/components/PressableScale";
+import { useMyIngredientsQuery } from "@/app/hooks/queries/useMyIngredientsQuery";
 import PlusIcon from "@/assets/images/ic_plus.svg";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
@@ -6,6 +7,8 @@ import React, { useCallback } from "react";
 import { View } from "react-native";
 
 export default function CustomIngredientScreen() {
+  const { categorizedIngredients, isLoading } = useMyIngredientsQuery({});
+
   const onCreateIngredientButtonPress = useCallback(() => {
     console.log("custom");
   }, []);
