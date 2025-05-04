@@ -13,6 +13,7 @@ import i18n from "@/lib/i18n";
 import React, { useCallback, useMemo, useState } from "react";
 import { View } from "react-native";
 import { MyIngredientsEmptyButton } from "./components/MyIngredientsEmptyButton";
+import { router } from "expo-router";
 
 const TABS = Object.values(FridgeTabs);
 
@@ -32,7 +33,7 @@ export default function CustomIngredientScreen() {
   }, []);
 
   const onCreateIngredientButtonPress = useCallback(() => {
-    console.log("custom");
+    router.push("/(ingredient)/(custom)/(create)");
   }, []);
 
   const handleDeleteClick = useCallback((ingredient: PickIngredient) => {
