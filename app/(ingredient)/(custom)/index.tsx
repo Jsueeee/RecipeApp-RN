@@ -12,6 +12,7 @@ import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import React, { useCallback, useMemo, useState } from "react";
 import { View } from "react-native";
+import { MyIngredientsEmptyButton } from "./components/MyIngredientsEmptyButton";
 
 const TABS = Object.values(FridgeTabs);
 
@@ -74,6 +75,23 @@ export default function CustomIngredientScreen() {
     [categorizedIngredients, selectedTabIndex]
   );
 
+  const renderContent = useMemo(() => {
+    if (!isLoading && filteredIngredients?.length === 0) {
+      return (
+        <MyIngredientsEmptyButton onPress={onCreateIngredientButtonPress} />
+      );
+    }
+
+    return (
+      <IngredientIconGrid
+        categorizedIngredients={filteredIngredients ?? []}
+        isRemoveMode={true}
+        onRemoveButtonPress={handleDeleteClick}
+        className="bg-white"
+      />
+    );
+  }, [isLoading, filteredIngredients, onCreateIngredientButtonPress]);
+
   return (
     <>
       <ScreenLayout
@@ -89,12 +107,7 @@ export default function CustomIngredientScreen() {
           />
         </View>
 
-        <IngredientIconGrid
-          categorizedIngredients={filteredIngredients ?? []}
-          isRemoveMode={true}
-          onRemoveButtonPress={handleDeleteClick}
-          className="bg-white"
-        />
+        {renderContent}
       </ScreenLayout>
 
       <ChoiceDialog
