@@ -1,15 +1,18 @@
-import { FridgeTabs } from "@/app/(tabs)/(fridge)/constants/fridgeTabs";
+import {
+  CATEGORY_MAPPING,
+  FridgeTabs,
+} from "@/app/(tabs)/(fridge)/constants/fridgeTabs";
 import { PressableScale } from "@/app/components/PressableScale";
 import i18n from "@/lib/i18n";
 import { Text, View } from "react-native";
 
 interface Props {
-  selectedCategory: string;
-  onCategoryChanged: (value: string) => void;
+  selectedCategoryId: number;
+  onCategoryChanged: (value: number) => void;
 }
 
 export function IngredientCategorySelector({
-  selectedCategory,
+  selectedCategoryId,
   onCategoryChanged,
 }: Props) {
   return (
@@ -19,42 +22,48 @@ export function IngredientCategorySelector({
       </Text>
 
       <CategorySelector
-        selectedCategory={selectedCategory}
+        selectedCategoryId={selectedCategoryId}
         onCategoryChanged={onCategoryChanged}
       />
     </View>
   );
 }
 
-const CATEGORIES = Object.values(FridgeTabs);
+const CATEGORY_LIST = Object.values(FridgeTabs).filter(
+  (category) => category !== FridgeTabs.ALL
+);
 
-function CategorySelector({ selectedCategory, onCategoryChanged }: Props) {
+function CategorySelector({ selectedCategoryId, onCategoryChanged }: Props) {
   return (
     <View className="mt-3.5 flex-row flex-wrap gap-x-1.5 gap-y-2">
-      {CATEGORIES.map((category, index) => (
-        <PressableScale
-          key={category + index}
-          onPress={() => onCategoryChanged(category)}
-        >
-          <View
-            className={`rounded-[20px] px-[20px] py-[9px] border border-1 ${
-              category === selectedCategory
-                ? "bg-teal-500 border-teal-500"
-                : "bg-white border-line-normal"
-            }`}
+      {CATEGORY_LIST.map((category) => {
+        const categoryId =
+          CATEGORY_MAPPING[category as keyof typeof CATEGORY_MAPPING];
+        return (
+          <PressableScale
+            key={category}
+            onPress={() => onCategoryChanged(categoryId)}
           >
-            <Text
-              className={`text-utility2 ${
-                category === selectedCategory
-                  ? "text-white"
-                  : "text-text-alternative"
+            <View
+              className={`rounded-[20px] px-[20px] py-[9px] border border-1 ${
+                categoryId === selectedCategoryId
+                  ? "bg-teal-500 border-teal-500"
+                  : "bg-white border-line-normal"
               }`}
             >
-              {category}
-            </Text>
-          </View>
-        </PressableScale>
-      ))}
+              <Text
+                className={`text-utility2 ${
+                  categoryId === selectedCategoryId
+                    ? "text-white"
+                    : "text-text-alternative"
+                }`}
+              >
+                {category}
+              </Text>
+            </View>
+          </PressableScale>
+        );
+      })}
     </View>
   );
 }

@@ -6,13 +6,18 @@ import React, { useCallback, useState } from "react";
 import { View } from "react-native";
 import { IngredientNameInput } from "./components/IngredientNameInput";
 import { IngredientCategorySelector } from "./components/IngredientCategorySelector";
+import { CTAButton } from "@/components/CTAButton";
 
 export default function CustomIngredientCreateScreen() {
   const [ingredientName, setIngredientName] = useState("");
-  const [ingredientCategory, setIngredientCategory] = useState("");
+  const [ingredientCategory, setIngredientCategory] = useState<number>(0);
 
   const onSelectIconPress = useCallback(() => {
     console.log("select icon");
+  }, []);
+
+  const onCTAButtonPress = useCallback(() => {
+    console.log("create");
   }, []);
 
   return (
@@ -20,6 +25,16 @@ export default function CustomIngredientCreateScreen() {
       <ScreenLayout
         title={i18n.t("custom_ingredient.create_title")}
         isScrollEnabled={true}
+        footer={
+          <CTAButton
+            buttonLabel={i18n.t("custom_ingredient.create_title")}
+            disabled={
+              ingredientName.length === 0 || ingredientCategory.length === 0
+            }
+            onPress={onCTAButtonPress}
+            className="px-4 pb-[22px]"
+          />
+        }
       >
         <View className="flex-1 px-4 py-3">
           <PressableScale onPress={onSelectIconPress}>
@@ -33,7 +48,7 @@ export default function CustomIngredientCreateScreen() {
           <View className="h-3" />
 
           <IngredientCategorySelector
-            selectedCategory={ingredientCategory}
+            selectedCategoryId={ingredientCategory}
             onCategoryChanged={setIngredientCategory}
           />
 
