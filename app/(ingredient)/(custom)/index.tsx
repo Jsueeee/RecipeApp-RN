@@ -3,6 +3,7 @@ import { FridgeTabs } from "@/app/(tabs)/(fridge)/constants/fridgeTabs";
 import { PressableScale } from "@/app/components/PressableScale";
 import { useMyIngredientsQuery } from "@/app/hooks/queries/useMyIngredientsQuery";
 import PlusIcon from "@/assets/images/ic_plus.svg";
+import { IngredientIconGrid } from "@/components/IngredientIconSectionGrid";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import React, { useCallback, useState } from "react";
@@ -21,6 +22,10 @@ export default function CustomIngredientScreen() {
 
   const onCreateIngredientButtonPress = useCallback(() => {
     console.log("custom");
+  }, []);
+
+  const handleDeleteClick = useCallback((ingredientId: number) => {
+    console.log("delete", ingredientId);
   }, []);
 
   const renderRightButtons = useCallback(() => {
@@ -50,6 +55,13 @@ export default function CustomIngredientScreen() {
           className="bg-white w-full"
         />
       </View>
+
+      <IngredientIconGrid
+        categorizedIngredients={categorizedIngredients ?? []}
+        isRemoveMode={true}
+        onRemoveButtonPress={handleDeleteClick}
+        className="bg-white"
+      />
     </ScreenLayout>
   );
 }
