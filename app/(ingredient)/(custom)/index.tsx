@@ -6,6 +6,7 @@ import { useMyIngredientsQuery } from "@/app/hooks/queries/useMyIngredientsQuery
 import { PickIngredient } from "@/app/types/domain/ingredient";
 import PlusIcon from "@/assets/images/ic_plus.svg";
 import { ChoiceDialog } from "@/components/ChoiceDialog";
+import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { IngredientIconGrid } from "@/components/IngredientIconSectionGrid";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
@@ -108,6 +109,8 @@ export default function CustomIngredientScreen() {
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
       />
+
+      {isLoading && <DotLoadingScreen />}
     </>
   );
 }
