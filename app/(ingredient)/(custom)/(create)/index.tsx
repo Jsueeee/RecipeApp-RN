@@ -1,14 +1,15 @@
 import { PressableScale } from "@/app/components/PressableScale";
-import SelectIngredientIconImage from "@/assets/images/img_select_ingredient_icon.svg";
-import { ScreenLayout } from "@/components/layout/ScreenLayout";
-import i18n from "@/lib/i18n";
-import React, { useCallback, useState } from "react";
-import { View } from "react-native";
-import { IngredientNameInput } from "./components/IngredientNameInput";
-import { IngredientCategorySelector } from "./components/IngredientCategorySelector";
-import { CTAButton } from "@/components/CTAButton";
-import { PickIngredientIconBottomSheet } from "@/components/PickIngredientIconBottomSheet";
 import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
+import SelectIngredientIconImage from "@/assets/images/img_select_ingredient_icon.svg";
+import { CTAButton } from "@/components/CTAButton";
+import { ScreenLayout } from "@/components/layout/ScreenLayout";
+import { PickIngredientIconBottomSheet } from "@/components/PickIngredientIconBottomSheet";
+import { FoodDataManager } from "@/constants/IngredientManager";
+import i18n from "@/lib/i18n";
+import React, { useCallback, useMemo, useState } from "react";
+import { View } from "react-native";
+import { IngredientCategorySelector } from "./components/IngredientCategorySelector";
+import { IngredientNameInput } from "./components/IngredientNameInput";
 
 export default function CustomIngredientCreateScreen() {
   const { ref, open } = useDefaultBottomSheetModal();
@@ -18,6 +19,12 @@ export default function CustomIngredientCreateScreen() {
   const [ingredientCategory, setIngredientCategory] = useState<number | null>(
     null
   );
+
+  const Icon = useMemo(() => {
+    if (!ingredientIconId) return null;
+
+    return FoodDataManager.getImageSource(ingredientIconId);
+  }, [ingredientIconId]);
 
   const onSelectIconPress = useCallback(() => {
     open();
@@ -47,11 +54,17 @@ export default function CustomIngredientCreateScreen() {
       >
         <View className="flex-1 px-4 py-3">
           <PressableScale onPress={onSelectIconPress}>
-            <SelectIngredientIconImage
-              width={100}
-              height={100}
-              style={{ alignSelf: "center" }}
-            />
+            {ingredientIconId ? (
+              <View className="w-[100px] h-[100px] self-center">
+                {Icon && <Icon width={100} height={100} />}
+              </View>
+            ) : (
+              <SelectIngredientIconImage
+                width={100}
+                height={100}
+                style={{ alignSelf: "center" }}
+              />
+            )}
           </PressableScale>
 
           <View className="h-3" />
