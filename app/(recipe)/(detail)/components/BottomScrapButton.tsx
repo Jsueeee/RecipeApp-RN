@@ -12,10 +12,7 @@ interface Props {
   onLayout: (e: LayoutChangeEvent) => void;
 }
 
-export const BottomScrapButton = ({
-  recipeDetail,
-  onLayout,
-}: Props) => {
+export const BottomScrapButton = ({ recipeDetail, onLayout }: Props) => {
   const { addScrap, removeScrap, isLoading } = useRecipeScrapMutation();
 
   const onPress = () => {
@@ -35,9 +32,7 @@ export const BottomScrapButton = ({
           ? i18n.t("recipe_detail.bottom_remove_scrap_button")
           : i18n.t("recipe_detail.bottom_scrap_button")
       }
-      buttonLabelColor={
-        recipeDetail?.isScrap ? "primary-normal" : "text-inverse"
-      }
+      buttonLabelColor={recipeDetail?.isScrap ? "primary-normal" : "white"}
       backgroundColor={recipeDetail?.isScrap ? "white" : "primary-normal"}
       borderColor={recipeDetail?.isScrap ? "primary-normal" : undefined}
       icon={
