@@ -21,4 +21,14 @@ export const CATEGORY_MAPPING = {
   [FridgeTabs.ETC]: CATEGORY_IDS.ETC,
 } as const;
 
+export const CATEGORY_NAME_MAPPING = {
+  [CATEGORY_IDS.VEGETABLES]: "채소",
+  [CATEGORY_IDS.FRUITS]: "과일",
+  [CATEGORY_IDS.MEAT]: "육류",
+  [CATEGORY_IDS.MARINE]: "수산물",
+  [CATEGORY_IDS.SEASONING]: "조미료",
+  [CATEGORY_IDS.PROCESSED]: "가공/유제품",
+  [CATEGORY_IDS.ETC]: "기타",
+} as const;
+
 export type FridgeTabKey = keyof typeof FridgeTabs;

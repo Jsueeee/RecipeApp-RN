@@ -7,8 +7,12 @@ import { View } from "react-native";
 import { IngredientNameInput } from "./components/IngredientNameInput";
 import { IngredientCategorySelector } from "./components/IngredientCategorySelector";
 import { CTAButton } from "@/components/CTAButton";
+import { PickIngredientIconBottomSheet } from "@/components/PickIngredientIconBottomSheet";
+import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
 
 export default function CustomIngredientCreateScreen() {
+  const { ref, open } = useDefaultBottomSheetModal();
+
   const [ingredientIconId, setIngredientIconId] = useState<number | null>(null);
   const [ingredientName, setIngredientName] = useState("");
   const [ingredientCategory, setIngredientCategory] = useState<number | null>(
@@ -16,8 +20,8 @@ export default function CustomIngredientCreateScreen() {
   );
 
   const onSelectIconPress = useCallback(() => {
-    console.log("select icon");
-  }, []);
+    open();
+  }, [open]);
 
   const onCTAButtonPress = useCallback(() => {
     console.log("create");
@@ -64,6 +68,11 @@ export default function CustomIngredientCreateScreen() {
             onNameChanged={setIngredientName}
           />
         </View>
+
+        <PickIngredientIconBottomSheet
+          bottomSheetModalRef={ref}
+          onIconSelected={setIngredientIconId}
+        />
       </ScreenLayout>
     </>
   );
