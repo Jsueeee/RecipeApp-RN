@@ -378,6 +378,7 @@ export default {
     category: "카테고리",
     name: "이름",
     input_name_hint: "이름을 입력하세요",
+    select_icon: "아이콘 선택",
   },
   fridge_basket: {
     header: "냉장고 바구니",

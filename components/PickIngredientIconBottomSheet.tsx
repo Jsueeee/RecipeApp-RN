@@ -43,7 +43,7 @@ export function PickIngredientIconBottomSheet({
   return (
     <DefaultBottomSheetModal
       bottomSheetModalRef={bottomSheetModalRef}
-      title={i18n.t("profile.edit_profile_image")}
+      title={i18n.t("custom_ingredient_create.select_icon")}
       onDismiss={() => bottomSheetModalRef.current?.dismiss()}
       scrollEnabled={false}
     >
