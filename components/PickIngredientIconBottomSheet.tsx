@@ -51,6 +51,7 @@ export function PickIngredientIconBottomSheet({
         <IngredientIconGrid
           categorizedIngredients={ingredientList}
           onPress={handleIconSelected}
+          isNameVisible={false}
         />
       </View>
     </DefaultBottomSheetModal>

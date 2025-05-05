@@ -10,6 +10,7 @@ interface Props {
   ingredientIconId: number | null;
   isSelected: boolean;
   onPress: () => void;
+  isNameVisible?: boolean;
 }
 
 const iconCache = new Map<number, React.ComponentType<any>>();
@@ -21,6 +22,7 @@ const PickIngredientItem = React.memo(
     ingredientIconId,
     isSelected,
     onPress,
+    isNameVisible = true,
   }: Props) {
     const Icon = useMemo(() => {
       if (!ingredientIconId) return null;
@@ -52,9 +54,11 @@ const PickIngredientItem = React.memo(
           )}
         </View>
 
-        <Text className="text-utility3 text-text-normal text-center">
-          {ingredientName}
-        </Text>
+        {isNameVisible && (
+          <Text className="text-utility3 text-text-normal text-center">
+            {ingredientName}
+          </Text>
+        )}
       </PressableScale>
     );
   },

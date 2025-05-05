@@ -86,6 +86,7 @@ export const IngredientIconGrid = ({
                 (ingredient) => ingredient.ingredientId === item.ingredientId
               ) ?? false
             }
+            isNameVisible={isNameVisible}
             onPress={() => onPress?.(item.ingredientId)}
           />
         )
