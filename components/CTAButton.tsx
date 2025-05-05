@@ -1,5 +1,4 @@
 import { PressableScale } from "@/app/components/PressableScale";
-import clsx from "clsx";
 import React from "react";
 import { LayoutChangeEvent, Text, View } from "react-native";
 import { WhiteDotLoading } from "./DotLoading";
@@ -39,11 +38,11 @@ export const CTAButton = ({
       onLayout={onLayout}
     >
       <View
-        className={clsx(
-          "rounded-[12px]",
-          disabled ? disableBackgroundColor : `bg-${backgroundColor}`,
+        className={`rounded-[12px] ${
+          disabled ? disableBackgroundColor : `bg-${backgroundColor}`
+        } border border-1 ${
           borderColor ? `border-${borderColor}` : `border-${backgroundColor}`
-        )}
+        }`}
       >
         <View className="h-[52px] flex-row items-center justify-center py-3.5 px-4 relative">
           {!isLoading && (
