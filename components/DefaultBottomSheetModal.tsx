@@ -12,12 +12,14 @@ import {
   Text,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Props {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
   children: React.ReactNode;
   title?: string;
   onDismiss?: () => void;
+  scrollEnabled?: boolean;
 }
 
 /**
@@ -28,8 +30,10 @@ export default function DefaultBottomSheetModal({
   children,
   title,
   onDismiss,
+  scrollEnabled = true,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     const backAction = () => {
@@ -74,17 +78,27 @@ export default function DefaultBottomSheetModal({
     <BottomSheetModal
       ref={bottomSheetModalRef}
       onChange={handleSheetChanges}
-      backgroundStyle={{ backgroundColor: "white" }}
+      backgroundStyle={{
+        backgroundColor: "white",
+        borderRadius: 16,
+      }}
+      containerStyle={{
+        marginHorizontal: 10,
+        borderRadius: 16,
+      }}
       handleComponent={null}
       enableDismissOnClose={true}
       enablePanDownToClose={true}
       backdropComponent={backdropComponent}
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
+      bottomInset={insets.bottom}
     >
       <BottomSheetScrollView
         className="flex-1"
         keyboardShouldPersistTaps="handled"
+        scrollEnabled={scrollEnabled}
+        nestedScrollEnabled={true}
       >
         <View className="justify-center items-center">
           {title && (
@@ -92,7 +106,6 @@ export default function DefaultBottomSheetModal({
               {title}
             </Text>
           )}
-
           {children}
         </View>
       </BottomSheetScrollView>
