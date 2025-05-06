@@ -47,6 +47,14 @@ export default function EditProfileNicknameBottomSheet({
     <DefaultBottomSheetModal
       bottomSheetModalRef={bottomSheetModalRef}
       title={i18n.t("profile.edit_profile_nickname")}
+      footer={
+        <CTAButton
+          buttonLabel={i18n.t("profile.edit_profile_nickname_cta")}
+          onPress={onCTAPress}
+          disabled={!inputValue || isPending}
+          isLoading={isPending}
+        />
+      }
     >
       <View className="w-full px-4">
         <View className="w-full mt-[30px] flex-row justify-between items-center">
@@ -76,14 +84,6 @@ export default function EditProfileNicknameBottomSheet({
         <Text className="text-body3 text-text-assistive mt-3 self-end">
           {inputValue.length}/25
         </Text>
-
-        <CTAButton
-          buttonLabel={i18n.t("profile.edit_profile_nickname_cta")}
-          onPress={onCTAPress}
-          className="mt-5 mb-safe"
-          disabled={!inputValue || isPending}
-          isLoading={isPending}
-        />
       </View>
     </DefaultBottomSheetModal>
   );
