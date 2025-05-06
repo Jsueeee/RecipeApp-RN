@@ -63,6 +63,14 @@ export default function EditProfileImageBottomSheet({
       bottomSheetModalRef={bottomSheetModalRef}
       title={i18n.t("profile.edit_profile_image")}
       onDismiss={onDismiss}
+      footer={
+        <CTAButton
+          buttonLabel={i18n.t("profile.edit_profile_image_cta")}
+          onPress={onCTAPress}
+          disabled={!selectedImage || isPending}
+          isLoading={isPending}
+        />
+      }
     >
       <View className="px-4">
         {selectedImage && (
@@ -94,14 +102,6 @@ export default function EditProfileImageBottomSheet({
             </TouchableOpacity>
           ))}
         </View>
-
-        <CTAButton
-          buttonLabel={i18n.t("profile.edit_profile_image_cta")}
-          onPress={onCTAPress}
-          className="mt-5 mb-safe"
-          disabled={!selectedImage || isPending}
-          isLoading={isPending}
-        />
       </View>
     </DefaultBottomSheetModal>
   );

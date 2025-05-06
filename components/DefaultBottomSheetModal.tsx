@@ -1,18 +1,13 @@
 import {
   BottomSheetBackdropProps,
+  BottomSheetFooter,
+  BottomSheetFooterProps,
   BottomSheetModal,
   BottomSheetScrollView,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  BackHandler,
-  Keyboard,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { BackHandler, Keyboard, Pressable, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Props {
@@ -21,24 +16,8 @@ interface Props {
   title?: string;
   onDismiss?: () => void;
   scrollEnabled?: boolean;
+  footer?: React.ReactNode;
 }
-
-const BottomSheetContent = ({
-  title,
-  children,
-}: {
-  title?: string;
-  children: React.ReactNode;
-}) => (
-  <View className="justify-center items-center">
-    {title && (
-      <Text className="w-full text-center text-title4 text-text-strong p-4 mt-2">
-        {title}
-      </Text>
-    )}
-    {children}
-  </View>
-);
 
 /**
  * 앱 내에서 기본으로 사용할 바텀시트
@@ -49,6 +28,7 @@ export default function DefaultBottomSheetModal({
   title,
   onDismiss,
   scrollEnabled = true,
+  footer,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const insets = useSafeAreaInsets();
@@ -93,10 +73,6 @@ export default function DefaultBottomSheetModal({
   );
 
   const renderContent = () => {
-    const content = (
-      <BottomSheetContent title={title}>{children}</BottomSheetContent>
-    );
-
     if (scrollEnabled) {
       return (
         <BottomSheetScrollView
@@ -104,15 +80,26 @@ export default function DefaultBottomSheetModal({
           keyboardShouldPersistTaps="handled"
           nestedScrollEnabled={true}
         >
-          {content}
+          {children}
         </BottomSheetScrollView>
       );
     }
 
     return (
       <BottomSheetView className="justify-center items-center">
-        {content}
+        {children}
       </BottomSheetView>
+    );
+  };
+
+  const Footer = ({ animatedFooterPosition }: BottomSheetFooterProps) => {
+    return (
+      <BottomSheetFooter
+        animatedFooterPosition={animatedFooterPosition}
+        style={{ padding: 16 }}
+      >
+        {footer}
+      </BottomSheetFooter>
     );
   };
 
@@ -137,6 +124,7 @@ export default function DefaultBottomSheetModal({
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
       bottomInset={insets.bottom}
+      footerComponent={Footer}
     >
       {renderContent()}
     </BottomSheetModal>
