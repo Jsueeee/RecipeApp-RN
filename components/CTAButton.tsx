@@ -21,7 +21,7 @@ export const CTAButton = ({
   buttonLabel,
   buttonLabelColor = "white",
   backgroundColor = "primary-normal",
-  disableBackgroundColor = "bg-primary-disable",
+  disableBackgroundColor = "primary-disable",
   borderColor = undefined,
   disabled = false,
   onPress,
@@ -39,9 +39,13 @@ export const CTAButton = ({
     >
       <View
         className={`rounded-[12px] ${
-          disabled ? disableBackgroundColor : `bg-${backgroundColor}`
+          disabled ? `bg-${disableBackgroundColor}` : `bg-${backgroundColor}`
         } border border-1 ${
-          borderColor ? `border-${borderColor}` : `border-${backgroundColor}`
+          disabled
+            ? `border-${disableBackgroundColor}`
+            : borderColor
+            ? `border-${borderColor}`
+            : `border-${backgroundColor}`
         }`}
       >
         <View className="h-[52px] flex-row items-center justify-center py-3.5 px-4 relative">
