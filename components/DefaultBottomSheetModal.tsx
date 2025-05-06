@@ -7,7 +7,14 @@ import {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import React, { useCallback, useEffect, useState } from "react";
-import { BackHandler, Keyboard, Pressable, StyleSheet } from "react-native";
+import {
+  BackHandler,
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Props {
@@ -79,6 +86,8 @@ export default function DefaultBottomSheetModal({
           className="flex-1"
           keyboardShouldPersistTaps="handled"
           nestedScrollEnabled={true}
+          bounces={false}
+          alwaysBounceVertical={false}
         >
           {children}
         </BottomSheetScrollView>
@@ -103,6 +112,14 @@ export default function DefaultBottomSheetModal({
     );
   };
 
+  const Handle = () => {
+    return (
+      <View className="flex-row items-center justify-center p-4">
+        {title && <Text className="text-title4 text-text-strong">{title}</Text>}
+      </View>
+    );
+  };
+
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
@@ -115,7 +132,7 @@ export default function DefaultBottomSheetModal({
         marginHorizontal: 10,
         borderRadius: 16,
       }}
-      handleComponent={null}
+      handleComponent={Handle}
       enableDismissOnClose={true}
       enablePanDownToClose={false}
       enableOverDrag={false}
