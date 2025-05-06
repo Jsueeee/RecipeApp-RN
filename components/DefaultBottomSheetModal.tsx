@@ -2,6 +2,7 @@ import {
   BottomSheetBackdropProps,
   BottomSheetModal,
   BottomSheetScrollView,
+  BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import React, { useCallback, useEffect, useState } from "react";
 import {
@@ -21,6 +22,23 @@ interface Props {
   onDismiss?: () => void;
   scrollEnabled?: boolean;
 }
+
+const BottomSheetContent = ({
+  title,
+  children,
+}: {
+  title?: string;
+  children: React.ReactNode;
+}) => (
+  <View className="justify-center items-center">
+    {title && (
+      <Text className="w-full text-center text-title4 text-text-strong p-4 mt-2">
+        {title}
+      </Text>
+    )}
+    {children}
+  </View>
+);
 
 /**
  * 앱 내에서 기본으로 사용할 바텀시트
@@ -74,6 +92,30 @@ export default function DefaultBottomSheetModal({
     <Pressable onPress={onBackDropPress} style={[style, styles.backdrop]} />
   );
 
+  const renderContent = () => {
+    const content = (
+      <BottomSheetContent title={title}>{children}</BottomSheetContent>
+    );
+
+    if (scrollEnabled) {
+      return (
+        <BottomSheetScrollView
+          className="flex-1"
+          keyboardShouldPersistTaps="handled"
+          nestedScrollEnabled={true}
+        >
+          {content}
+        </BottomSheetScrollView>
+      );
+    }
+
+    return (
+      <BottomSheetView className="justify-center items-center">
+        {content}
+      </BottomSheetView>
+    );
+  };
+
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
@@ -88,27 +130,15 @@ export default function DefaultBottomSheetModal({
       }}
       handleComponent={null}
       enableDismissOnClose={true}
-      enablePanDownToClose={true}
+      enablePanDownToClose={false}
+      enableOverDrag={false}
+      enableContentPanningGesture={false}
       backdropComponent={backdropComponent}
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
       bottomInset={insets.bottom}
     >
-      <BottomSheetScrollView
-        className="flex-1"
-        keyboardShouldPersistTaps="handled"
-        scrollEnabled={scrollEnabled}
-        nestedScrollEnabled={true}
-      >
-        <View className="justify-center items-center">
-          {title && (
-            <Text className="w-full text-center text-title4 text-text-strong p-4 mt-2">
-              {title}
-            </Text>
-          )}
-          {children}
-        </View>
-      </BottomSheetScrollView>
+      {renderContent()}
     </BottomSheetModal>
   );
 }
