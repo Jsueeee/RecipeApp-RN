@@ -6,11 +6,14 @@ import { useMyIngredientsQuery } from "@/app/hooks/queries/useMyIngredientsQuery
 import { PickIngredient } from "@/app/types/domain/ingredient";
 import PlusIcon from "@/assets/images/ic_plus.svg";
 import { ChoiceDialog } from "@/components/ChoiceDialog";
+import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { IngredientIconGrid } from "@/components/IngredientIconSectionGrid";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import React, { useCallback, useMemo, useState } from "react";
 import { View } from "react-native";
+import { MyIngredientsEmptyButton } from "./components/MyIngredientsEmptyButton";
+import { router } from "expo-router";
 
 const TABS = Object.values(FridgeTabs);
 
@@ -30,7 +33,7 @@ export default function CustomIngredientScreen() {
   }, []);
 
   const onCreateIngredientButtonPress = useCallback(() => {
-    console.log("custom");
+    router.push("/(ingredient)/(custom)/(create)");
   }, []);
 
   const handleDeleteClick = useCallback((ingredient: PickIngredient) => {
@@ -73,6 +76,23 @@ export default function CustomIngredientScreen() {
     [categorizedIngredients, selectedTabIndex]
   );
 
+  const renderContent = useMemo(() => {
+    if (!isLoading && filteredIngredients?.length === 0) {
+      return (
+        <MyIngredientsEmptyButton onPress={onCreateIngredientButtonPress} />
+      );
+    }
+
+    return (
+      <IngredientIconGrid
+        categorizedIngredients={filteredIngredients ?? []}
+        isRemoveMode={true}
+        onRemoveButtonPress={handleDeleteClick}
+        className="bg-white"
+      />
+    );
+  }, [isLoading, filteredIngredients, onCreateIngredientButtonPress]);
+
   return (
     <>
       <ScreenLayout
@@ -88,12 +108,7 @@ export default function CustomIngredientScreen() {
           />
         </View>
 
-        <IngredientIconGrid
-          categorizedIngredients={filteredIngredients ?? []}
-          isRemoveMode={true}
-          onRemoveButtonPress={handleDeleteClick}
-          className="bg-white"
-        />
+        {renderContent}
       </ScreenLayout>
 
       <ChoiceDialog
@@ -108,6 +123,8 @@ export default function CustomIngredientScreen() {
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
       />
+
+      {isLoading && <DotLoadingScreen />}
     </>
   );
 }

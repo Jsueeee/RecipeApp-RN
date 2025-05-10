@@ -52,6 +52,7 @@ export function ChoiceDialog({
               buttonLabel={cancelText ?? ""}
               buttonLabelColor="text-text-alternative"
               backgroundColor="fill-subtle"
+              borderColor="fill-subtle"
               onPress={handleCancel}
               className="flex-1"
             />

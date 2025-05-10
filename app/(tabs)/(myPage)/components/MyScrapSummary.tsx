@@ -67,16 +67,19 @@ export function MyScrapSummary({
         <ScrapItem
           title={i18n.t("myPage.scrap_blog_title")}
           count={blogScrapCount}
+          backgroundColor="white"
           onPress={() => onScrapCountPress(RECIPE_SOURCE_TYPE.BLOG)}
         />
         <ScrapItem
           title={i18n.t("myPage.scrap_youtube_title")}
           count={youtubeScrapCount}
+          backgroundColor="white"
           onPress={() => onScrapCountPress(RECIPE_SOURCE_TYPE.YOUTUBE)}
         />
         <ScrapItem
           title={i18n.t("myPage.scrap_recipe_title")}
           count={recipeScrapCount}
+          backgroundColor="white"
           onPress={() => onScrapCountPress(RECIPE_SOURCE_TYPE.PUBLIC)}
         />
       </View>

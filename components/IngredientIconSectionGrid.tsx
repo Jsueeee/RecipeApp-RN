@@ -1,5 +1,7 @@
-import { PickIngredient } from "@/app/types/domain/ingredient";
-import { CategorizedPickIngredients } from "@/app/types/domain/ingredient/pick";
+import {
+  CategorizedPickIngredients,
+  PickIngredient,
+} from "@/app/types/domain/ingredient";
 import React, { useMemo } from "react";
 import {
   SectionList,
@@ -84,7 +86,8 @@ export const IngredientIconGrid = ({
                 (ingredient) => ingredient.ingredientId === item.ingredientId
               ) ?? false
             }
-            onPress={() => onPress?.(item.ingredientId)}
+            isNameVisible={isNameVisible}
+            onPress={() => onPress?.(item.ingredientIconId ?? -1)}
           />
         )
       )}
@@ -112,7 +115,7 @@ export const IngredientIconGrid = ({
       }}
       stickySectionHeadersEnabled={false}
       showsVerticalScrollIndicator={false}
-      scrollEnabled={true}
+      nestedScrollEnabled={true}
     />
   );
 };

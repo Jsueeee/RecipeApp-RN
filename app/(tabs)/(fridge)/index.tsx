@@ -24,7 +24,7 @@ export default function FridgeScreen() {
 
   const onIngredientItemClick = (ingredient: Ingredient) => {
     router.push({
-      pathname: "/(fridge)/(edit)",
+      pathname: "/(fridge)/(edit)/[id]",
       params: { id: ingredient.fridgeId },
     });
   };

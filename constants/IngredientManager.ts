@@ -130,6 +130,7 @@ export const CATEGORY_IDS = {
   MARINE: 4,
   SEASONING: 5,
   PROCESSED: 6,
+  ETC: 7,
 } as const;
 
 export type CategoryId = (typeof CATEGORY_IDS)[keyof typeof CATEGORY_IDS];

@@ -371,6 +371,14 @@ export default {
       "{{ingredientName}}를 나만의 재료에서 삭제 하시겠어요?\n삭제한 재료는 복구되지 않습니다.",
     delete_dialog_cancel: "닫기",
     delete_dialog_confirm: "삭제하기",
+    create_custom_ingredient_button: "나만의 재료 추가하기",
+  },
+  custom_ingredient_create: {
+    app_bar_title: "나만의 재료 만들기",
+    category: "카테고리",
+    name: "이름",
+    input_name_hint: "이름을 입력하세요",
+    select_icon: "아이콘 선택",
   },
   fridge_basket: {
     header: "냉장고 바구니",

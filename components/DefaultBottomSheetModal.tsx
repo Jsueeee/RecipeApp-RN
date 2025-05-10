@@ -1,7 +1,10 @@
 import {
   BottomSheetBackdropProps,
+  BottomSheetFooter,
+  BottomSheetFooterProps,
   BottomSheetModal,
   BottomSheetScrollView,
+  BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import React, { useCallback, useEffect, useState } from "react";
 import {
@@ -12,12 +15,15 @@ import {
   Text,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Props {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
   children: React.ReactNode;
   title?: string;
   onDismiss?: () => void;
+  scrollEnabled?: boolean;
+  footer?: React.ReactNode;
 }
 
 /**
@@ -28,8 +34,11 @@ export default function DefaultBottomSheetModal({
   children,
   title,
   onDismiss,
+  scrollEnabled = true,
+  footer,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     const backAction = () => {
@@ -70,32 +79,71 @@ export default function DefaultBottomSheetModal({
     <Pressable onPress={onBackDropPress} style={[style, styles.backdrop]} />
   );
 
+  const renderContent = () => {
+    if (scrollEnabled) {
+      return (
+        <BottomSheetScrollView
+          className="flex-1"
+          keyboardShouldPersistTaps="handled"
+          nestedScrollEnabled={true}
+          bounces={false}
+          alwaysBounceVertical={false}
+        >
+          {children}
+        </BottomSheetScrollView>
+      );
+    }
+
+    return (
+      <BottomSheetView className="justify-center items-center">
+        {children}
+      </BottomSheetView>
+    );
+  };
+
+  const Footer = ({ animatedFooterPosition }: BottomSheetFooterProps) => {
+    return (
+      <BottomSheetFooter
+        animatedFooterPosition={animatedFooterPosition}
+        style={{ padding: 16 }}
+      >
+        {footer}
+      </BottomSheetFooter>
+    );
+  };
+
+  const Handle = () => {
+    return (
+      <View className="flex-row items-center justify-center p-4">
+        {title && <Text className="text-title4 text-text-strong">{title}</Text>}
+      </View>
+    );
+  };
+
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
       onChange={handleSheetChanges}
-      backgroundStyle={{ backgroundColor: "white" }}
-      handleComponent={null}
+      backgroundStyle={{
+        backgroundColor: "white",
+        borderRadius: 16,
+      }}
+      containerStyle={{
+        marginHorizontal: 10,
+        borderRadius: 16,
+      }}
+      handleComponent={Handle}
       enableDismissOnClose={true}
-      enablePanDownToClose={true}
+      enablePanDownToClose={false}
+      enableOverDrag={false}
+      enableContentPanningGesture={false}
       backdropComponent={backdropComponent}
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
+      bottomInset={insets.bottom}
+      footerComponent={Footer}
     >
-      <BottomSheetScrollView
-        className="flex-1"
-        keyboardShouldPersistTaps="handled"
-      >
-        <View className="justify-center items-center">
-          {title && (
-            <Text className="w-full text-center text-title4 text-text-strong p-4 mt-2">
-              {title}
-            </Text>
-          )}
-
-          {children}
-        </View>
-      </BottomSheetScrollView>
+      {renderContent()}
     </BottomSheetModal>
   );
 }

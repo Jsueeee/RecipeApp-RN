@@ -13,7 +13,7 @@ export const useMyIngredientsQuery = ({
   keyword,
 }: UseMyIngredientsQueryProps) => {
   const { data, isLoading, isError } = useQuery({
-    queryKey: [QUERY_KEYS.INGREDIENT.MY, keyword],
+    queryKey: QUERY_KEYS.INGREDIENT.MY(keyword),
     queryFn: async () => {
       const response = await apiClient.get<ResponsePickIngredients>(
         "/ingredients/my",
