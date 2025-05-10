@@ -10,9 +10,16 @@ import React, { useCallback, useMemo, useState } from "react";
 import { View } from "react-native";
 import { IngredientCategorySelector } from "./components/IngredientCategorySelector";
 import { IngredientNameInput } from "./components/IngredientNameInput";
+import { usePostMyIngredientMutation } from "@/app/hooks/mutations/usePostMyIngredientMutation";
+import { router } from "expo-router";
 
 export default function CustomIngredientCreateScreen() {
   const { ref, open } = useDefaultBottomSheetModal();
+  const { postMyIngredient, isPending } = usePostMyIngredientMutation({
+    onSuccess: () => {
+      router.back();
+    },
+  });
 
   const [ingredientIconId, setIngredientIconId] = useState<number | null>(null);
   const [ingredientName, setIngredientName] = useState("");
@@ -31,8 +38,14 @@ export default function CustomIngredientCreateScreen() {
   }, [open]);
 
   const onCTAButtonPress = useCallback(() => {
-    console.log("create");
-  }, []);
+    if (!ingredientIconId || !ingredientName || !ingredientCategory) return;
+
+    postMyIngredient({
+      ingredientIconId: ingredientIconId,
+      ingredientName: ingredientName,
+      ingredientCategoryId: ingredientCategory,
+    });
+  }, [postMyIngredient, ingredientIconId, ingredientName, ingredientCategory]);
 
   return (
     <>
@@ -48,6 +61,7 @@ export default function CustomIngredientCreateScreen() {
               ingredientCategory === null
             }
             onPress={onCTAButtonPress}
+            isLoading={isPending}
             className="px-4 pb-[22px]"
           />
         }

@@ -4,10 +4,16 @@ import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { MutationCallbacks } from "@/app/types/common/mutation";
 import { useMutation } from "@tanstack/react-query";
 
-export const useDeleteMyIngredient = (callbacks?: MutationCallbacks) => {
-  const mutation = useMutation({
-    mutationFn: (ingredientId: number) =>
-      apiClient.delete(`/ingredients/${ingredientId}`),
+interface RequestPostIngredients {
+  ingredientIconId: number;
+  ingredientName: string;
+  ingredientCategoryId: number;
+}
+
+export const usePostMyIngredientMutation = (callbacks?: MutationCallbacks) => {
+  const postMyIngredientMutation = useMutation({
+    mutationFn: (data: RequestPostIngredients) =>
+      apiClient.post("/ingredients", data),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.INGREDIENT.MY(),
@@ -25,7 +31,7 @@ export const useDeleteMyIngredient = (callbacks?: MutationCallbacks) => {
   });
 
   return {
-    deleteIngredient: mutation.mutate,
-    isDeleteLoading: mutation.isPending,
+    postMyIngredient: postMyIngredientMutation.mutateAsync,
+    isPending: postMyIngredientMutation.isPending,
   };
 };
