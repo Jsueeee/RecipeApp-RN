@@ -22,7 +22,7 @@ export const CTAButton = ({
   buttonLabelColor = "white",
   backgroundColor = "primary-normal",
   disableBackgroundColor = "primary-disable",
-  borderColor = undefined,
+  borderColor = "primary-normal",
   disabled = false,
   onPress,
   icon,
