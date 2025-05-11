@@ -113,6 +113,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - naveridlogin-sdk-ios (4.2.3)
   - RCT-Folly (2024.01.01.00):
     - boost
     - DoubleConversion
@@ -1790,6 +1791,28 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNNaverLogin (4.1.2):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - naveridlogin-sdk-ios (= 4.2.3)
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNReanimated (3.16.7):
     - DoubleConversion
     - glog
@@ -2057,6 +2080,7 @@ DEPENDENCIES:
   - "RNCKakaoUser (from `../node_modules/@react-native-kakao/user`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
+  - "RNNaverLogin (from `../node_modules/@react-native-seoul/naver-login`)"
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -2073,6 +2097,7 @@ SPEC REPOS:
     - KakaoSDKCommon
     - KakaoSDKUser
     - lottie-ios
+    - naveridlogin-sdk-ios
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -2249,6 +2274,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNGoogleSignin:
     :path: "../node_modules/@react-native-google-signin/google-signin"
+  RNNaverLogin:
+    :path: "../node_modules/@react-native-seoul/naver-login"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -2292,6 +2319,7 @@ SPEC CHECKSUMS:
   KakaoSDKUser: 043bcd7e91454ebf3bf64f150c430e6f65f0a08d
   lottie-ios: a881093fab623c467d3bce374367755c272bdd59
   lottie-react-native: f6bc5e59ad94cb15984cfe5010e803532259c056
+  naveridlogin-sdk-ios: d9d46d02119d303023d7000cd5963864d5bb89e5
   RCT-Folly: 84578c8756030547307e4572ab1947de1685c599
   RCTDeprecation: 7691283dd69fed46f6653d376de6fa83aaad774c
   RCTRequired: eac044a04629288f272ee6706e31f81f3a2b4bfe
@@ -2354,6 +2382,7 @@ SPEC CHECKSUMS:
   RNCKakaoUser: 1a6b646086c3ba52db362a0c94a7567b40f18aec
   RNGestureHandler: 16ef3dc2d7ecb09f240f25df5255953c4098819b
   RNGoogleSignin: f2a5a1762650001dcefeb6b4b8ed33a94d5527e0
+  RNNaverLogin: e9006a614541aeaa3b40f1f13cea3d6edc0bd848
   RNReanimated: a2692304a6568bc656c04c8ffea812887d37436e
   RNScreens: 351f431ef2a042a1887d4d90e1c1024b8ae9d123
   RNSVG: bbbdd17e8730c0f2a9cb416e5f37be87e29ebc90
