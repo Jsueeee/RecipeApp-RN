@@ -1,8 +1,10 @@
+import { useGoogleLoginMutation } from "@/app/hooks/mutations/useGoogleLoginMutation";
 import { useLoginMutation } from "@/app/hooks/mutations/useLoginMutation";
 import { router } from "expo-router";
 
 export const useAuth = () => {
   const { kakaoLogin, isLoading, error } = useLoginMutation();
+  const { googleLogin } = useGoogleLoginMutation();
 
   const handleKakaoLogin = async () => {
     try {
@@ -23,9 +25,10 @@ export const useAuth = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      // 구글 로그인 로직
+      await googleLogin();
+      router.replace("/(tabs)");
     } catch (error) {
-      // 에러 처리
+      console.error(error);
     }
   };
 

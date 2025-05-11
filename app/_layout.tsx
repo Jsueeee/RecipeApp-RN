@@ -16,6 +16,7 @@ import "react-native-reanimated";
 import "../global.css";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -53,6 +54,12 @@ export default function RootLayout() {
 
   useEffect(() => {
     initializeKakaoSDK("3cb89516c27c020802d2b85534cda074");
+
+    GoogleSignin.configure({
+      webClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_WEB_CLIENT_ID,
+      scopes: ["email", "profile"],
+      offlineAccess: true,
+    });
   }, []);
 
   if (!loaded) {
