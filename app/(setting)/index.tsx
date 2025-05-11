@@ -6,13 +6,14 @@ import Constants from "expo-constants";
 import React, { useState } from "react";
 import { Linking, Text, View } from "react-native";
 import { PressableScale } from "../components/PressableScale";
-import { useLogoutMutation } from "../hooks/mutations/useLogoutMutation";
+import { useKaKaoLogoutMutation } from "../hooks/mutations/useKaKaoLogoutMutation";
 import { router } from "expo-router";
-
+import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
 export default function SettingScreen() {
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
 
-  const { kakaoLogout } = useLogoutMutation();
+  const { data: userInfo } = useUserInfoQuery();
+  const { kakaoLogout } = useKaKaoLogoutMutation();
 
   const onCSEmailPress = () => {
     const email = "recipestorage2021@gmail.com";

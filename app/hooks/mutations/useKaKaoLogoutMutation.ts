@@ -5,7 +5,7 @@ import { logout as logoutKakao } from "@react-native-kakao/user";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
 
-export const useLogoutMutation = (callbacks?: MutationCallbacks) => {
+export const useKaKaoLogoutMutation = (callbacks?: MutationCallbacks) => {
   const kakaoLogoutMutation = useMutation({
     mutationKey: QUERY_KEYS.AUTH.KAKAO,
     mutationFn: async () => {
