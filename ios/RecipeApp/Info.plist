@@ -34,6 +34,12 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>com.googleusercontent.apps.763399346922-hcrsr78iionca1bhmgncgoscpv8s3tuo</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
           <string>kakao3cb89516c27c020802d2b85534cda074</string>
         </array>
         <key>CFBundleURLName</key>

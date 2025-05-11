@@ -1,16 +1,15 @@
 import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { authStorage } from "@/app/lib/storage/auth";
-import { MutationCallbacks } from "@/app/types/common/mutation";
-import { logout as logoutKakao } from "@react-native-kakao/user";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
 
-export const useLogoutMutation = (callbacks?: MutationCallbacks) => {
-  const kakaoLogoutMutation = useMutation({
-    mutationKey: QUERY_KEYS.AUTH.KAKAO,
+export const useGoogleLogoutMutation = () => {
+  const googleLogoutMutation = useMutation({
+    mutationKey: QUERY_KEYS.AUTH.GOOGLE,
     mutationFn: async () => {
       try {
-        await logoutKakao();
+        await GoogleSignin.signOut();
       } catch (error) {
         console.warn("Logout API failed", error);
       }
@@ -24,8 +23,8 @@ export const useLogoutMutation = (callbacks?: MutationCallbacks) => {
   });
 
   return {
-    kakaoLogout: kakaoLogoutMutation.mutateAsync,
-    isLoading: kakaoLogoutMutation.isPending,
-    error: kakaoLogoutMutation.error,
+    googleLogout: googleLogoutMutation.mutateAsync,
+    isLoading: googleLogoutMutation.isPending,
+    error: googleLogoutMutation.error,
   };
 };
