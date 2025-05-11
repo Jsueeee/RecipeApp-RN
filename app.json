@@ -15,14 +15,16 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.recipe.android.recipeapp"
+      "bundleIdentifier": "com.recipe.android.recipeapp",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.recipe.android.recipeapp"
+      "package": "com.recipe.android.recipeapp",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -55,7 +57,8 @@
         }
       ],
       "expo-secure-store",
-      ["react-native-edge-to-edge"]
+      ["react-native-edge-to-edge"],
+      ["@react-native-google-signin/google-signin"]
     ],
     "experiments": {
       "typedRoutes": true
