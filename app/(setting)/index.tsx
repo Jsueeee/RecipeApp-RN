@@ -9,11 +9,13 @@ import { PressableScale } from "../components/PressableScale";
 import { useKaKaoLogoutMutation } from "../hooks/mutations/useKaKaoLogoutMutation";
 import { router } from "expo-router";
 import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
+import { useGoogleLogoutMutation } from "../hooks/mutations/useGoogleLogoutMutation";
 export default function SettingScreen() {
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
 
   const { data: userInfo } = useUserInfoQuery();
   const { kakaoLogout } = useKaKaoLogoutMutation();
+  const { googleLogout } = useGoogleLogoutMutation();
 
   const onCSEmailPress = () => {
     const email = "recipestorage2021@gmail.com";
@@ -34,7 +36,12 @@ export default function SettingScreen() {
 
   const onLogoutConfirmPress = async () => {
     setLogoutDialogVisible(false);
-    await kakaoLogout();
+
+    if (userInfo?.loginProvider === "KAKAO") {
+      await kakaoLogout();
+    } else if (userInfo?.loginProvider === "GOOGLE") {
+      await googleLogout();
+    }
   };
 
   const renderCSEmail = () => {
