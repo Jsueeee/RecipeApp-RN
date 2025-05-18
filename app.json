@@ -58,7 +58,13 @@
       ],
       "expo-secure-store",
       ["react-native-edge-to-edge"],
-      ["@react-native-google-signin/google-signin"]
+      ["@react-native-google-signin/google-signin"],
+      [
+        "@react-native-seoul/naver-login",
+        {
+          "urlScheme": "com.recipe.android.recipeapp"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
