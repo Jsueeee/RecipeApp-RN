@@ -4,6 +4,7 @@ export const QUERY_KEYS = {
   AUTH: {
     KAKAO: ["auth", "kakao"] as const,
     GOOGLE: ["auth", "google"] as const,
+    NAVER: ["auth", "naver"] as const,
     AUTO_LOGIN: ["auth", "autoLogin"] as const,
   },
   FRIDGE: {

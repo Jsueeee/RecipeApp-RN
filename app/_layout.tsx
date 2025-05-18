@@ -17,6 +17,7 @@ import "../global.css";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import NaverLogin from "@react-native-seoul/naver-login";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -59,6 +60,14 @@ export default function RootLayout() {
       webClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_WEB_CLIENT_ID,
       scopes: ["email", "profile"],
       offlineAccess: true,
+    });
+
+    NaverLogin.initialize({
+      appName: "레시피 저장소",
+      consumerKey: process.env.EXPO_PUBLIC_NAVER_LOGIN_CLIENT_ID ?? "",
+      consumerSecret: process.env.EXPO_PUBLIC_NAVER_LOGIN_CLIENT_SECRET ?? "",
+      serviceUrlSchemeIOS: "com.recipe.android.recipeapp",
+      disableNaverAppAuthIOS: true,
     });
   }, []);
 
