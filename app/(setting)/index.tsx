@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import { Linking, Text, View } from "react-native";
 import { PressableScale } from "../components/PressableScale";
 import { useKaKaoLogoutMutation } from "../hooks/mutations/useKaKaoLogoutMutation";
+import { useNaverLogoutMutation } from "../hooks/mutations/useNaverLogoutMutation";
 import { router } from "expo-router";
 import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
 import { useGoogleLogoutMutation } from "../hooks/mutations/useGoogleLogoutMutation";
@@ -16,7 +17,7 @@ export default function SettingScreen() {
   const { data: userInfo } = useUserInfoQuery();
   const { kakaoLogout } = useKaKaoLogoutMutation();
   const { googleLogout } = useGoogleLogoutMutation();
-
+  const { naverLogout } = useNaverLogoutMutation();
   const onCSEmailPress = () => {
     const email = "recipestorage2021@gmail.com";
     const subject = "[레시피 저장소] 문의";
@@ -41,6 +42,8 @@ export default function SettingScreen() {
       await kakaoLogout();
     } else if (userInfo?.loginProvider === "GOOGLE") {
       await googleLogout();
+    } else if (userInfo?.loginProvider === "NAVER") {
+      await naverLogout();
     }
   };
 
