@@ -323,8 +323,8 @@ export default {
     scrap_list_empty_placeholder_desc: "마음에 드는 레시피를 찾아보세요",
   },
   recipe_my_create: {
-    header_cancel: "취소",
-    header_CTA: "등록",
+    header_cancel_button: "취소",
+    header_register_button: "등록",
     title_input_hint: "제목을 입력하세요",
     description_input_hint: "설명을 입력하세요",
     cooking_time_input_hint: "소요 시간(분)을 입력하세요",
