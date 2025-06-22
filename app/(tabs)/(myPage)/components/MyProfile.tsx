@@ -15,7 +15,7 @@ export function MyProfile({
   onPress = () => {},
 }: Props) {
   return (
-    <PressableScale onPress={onPress} className="flex-1 mx-4 mt-3">
+    <PressableScale onPress={onPress} className="mx-4 mt-3">
       <View className="flex-row items-center">
         <Image
           source={{ uri: profileImage ?? "" }}
