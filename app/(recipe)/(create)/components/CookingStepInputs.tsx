@@ -8,12 +8,14 @@ interface CookingStepProps {
   stepNumber: number;
   stepDescription: string;
   onDeleteButtonPress?: (stepId: number) => void;
+  onStepDescriptionChange?: (stepDescription: string) => void;
 }
 
 const CookingStepInput: React.FC<CookingStepProps> = ({
   stepNumber,
   stepDescription,
   onDeleteButtonPress,
+  onStepDescriptionChange,
 }) => {
   return (
     <View className="w-full bg-fill-subtle rounded-[12px] p-4">
@@ -29,6 +31,7 @@ const CookingStepInput: React.FC<CookingStepProps> = ({
           className="text-body2 text-text-normal pb-4"
           placeholderTextColor={"#A9A9A9"}
           textAlignVertical="top"
+          onChangeText={(text) => onStepDescriptionChange?.(text)}
         />
 
         <TouchableOpacity
@@ -58,14 +61,19 @@ export const CookingStepInputs = ({
   className,
   onPlusButtonPress,
   onDeleteButtonPress,
+  onStepDescriptionChange,
 }: {
   stepInfo: string[];
   className?: string;
   onPlusButtonPress?: () => void;
   onDeleteButtonPress?: (stepId: number) => void;
+  onStepDescriptionChange?: (
+    stepIndex: number,
+    stepDescription: string
+  ) => void;
 }) => {
   return (
-    <View className="w-full">
+    <View className={`w-full ${className}`}>
       <Text className="text-title3 text-text-normal">
         {i18n.t("recipe_my_create.cooking_step_list_title")}
       </Text>
@@ -79,6 +87,9 @@ export const CookingStepInputs = ({
             stepNumber={index + 1}
             stepDescription={step}
             onDeleteButtonPress={() => onDeleteButtonPress?.(index)}
+            onStepDescriptionChange={(stepDescription) =>
+              onStepDescriptionChange?.(index, stepDescription)
+            }
           />
         ))}
       </View>
