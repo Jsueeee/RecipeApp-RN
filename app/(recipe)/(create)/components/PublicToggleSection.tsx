@@ -14,7 +14,7 @@ export function PublicToggleSection({
   return (
     <View>
       <View className="flex-row items-center justify-between">
-        <Text className="text-title4 text-text-normal">
+        <Text className="text-title3 text-text-normal">
           {i18n.t("recipe_my_create.public_toggle_title")}
         </Text>
 
