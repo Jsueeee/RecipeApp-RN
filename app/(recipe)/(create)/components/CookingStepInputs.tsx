@@ -1,18 +1,19 @@
-import { RecipeProcess } from "@/app/types/domain/recipe";
-import i18n from "@/lib/i18n";
-import { Text, TextInput, View } from "react-native";
-import IC_DELETE from "@/assets/images/ic_selected_cancel.svg";
-import IC_PLUS from "@/assets/images/ic_plus_bold.svg";
 import { PressableScale } from "@/app/components/PressableScale";
+import IC_PLUS from "@/assets/images/ic_plus_bold.svg";
+import IC_DELETE from "@/assets/images/ic_selected_cancel.svg";
+import i18n from "@/lib/i18n";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
 interface CookingStepProps {
   stepNumber: number;
   stepDescription: string;
+  onDeleteButtonPress?: (stepId: number) => void;
 }
 
 const CookingStepInput: React.FC<CookingStepProps> = ({
   stepNumber,
   stepDescription,
+  onDeleteButtonPress,
 }) => {
   return (
     <View className="w-full bg-fill-subtle rounded-[12px] p-4">
@@ -22,6 +23,7 @@ const CookingStepInput: React.FC<CookingStepProps> = ({
         </Text>
 
         <TextInput
+          value={stepDescription}
           placeholder={i18n.t("recipe_my_create.cooking_step_input_hint")}
           multiline
           className="text-body2 text-text-normal pb-4"
@@ -29,11 +31,13 @@ const CookingStepInput: React.FC<CookingStepProps> = ({
           textAlignVertical="top"
         />
 
-        <IC_DELETE
-          width={24}
-          height={24}
+        <TouchableOpacity
+          activeOpacity={0.8}
           style={{ position: "absolute", right: 0, top: 0 }}
-        />
+          onPress={() => onDeleteButtonPress?.(stepNumber)}
+        >
+          <IC_DELETE width={24} height={24} />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -53,10 +57,12 @@ export const CookingStepInputs = ({
   stepInfo,
   className,
   onPlusButtonPress,
+  onDeleteButtonPress,
 }: {
-  stepInfo: RecipeProcess[];
+  stepInfo: string[];
   className?: string;
   onPlusButtonPress?: () => void;
+  onDeleteButtonPress?: (stepId: number) => void;
 }) => {
   return (
     <View className="w-full">
@@ -69,9 +75,10 @@ export const CookingStepInputs = ({
       <View className="gap-y-2">
         {stepInfo.map((step, index) => (
           <CookingStepInput
-            key={step.id}
-            stepNumber={step.no}
-            stepDescription={step.description ?? ""}
+            key={index}
+            stepNumber={index + 1}
+            stepDescription={step}
+            onDeleteButtonPress={() => onDeleteButtonPress?.(index)}
           />
         ))}
       </View>
