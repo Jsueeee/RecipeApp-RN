@@ -39,13 +39,9 @@ const CookingStepInput: React.FC<CookingStepProps> = ({
   );
 };
 
-const PlusButton = () => {
+const PlusButton = ({ onPress }: { onPress: () => void }) => {
   return (
-    <PressableScale
-      onPress={() => {
-        console.log("PlusButton");
-      }}
-    >
+    <PressableScale onPress={onPress}>
       <View className="w-6 h-6 bg-primary-normal rounded-full items-center justify-center">
         <IC_PLUS width={8} height={8} color="white" />
       </View>
@@ -56,9 +52,11 @@ const PlusButton = () => {
 export const CookingStepInputs = ({
   stepInfo,
   className,
+  onPlusButtonPress,
 }: {
   stepInfo: RecipeProcess[];
   className?: string;
+  onPlusButtonPress?: () => void;
 }) => {
   return (
     <View className="w-full">
@@ -81,7 +79,7 @@ export const CookingStepInputs = ({
       <View className="h-6" />
 
       <View className="items-center">
-        <PlusButton />
+        <PlusButton onPress={() => onPlusButtonPress?.()} />
       </View>
     </View>
   );
