@@ -102,3 +102,10 @@ export interface ScrapRecipeResponse {
   viewCnt: number;
   linkUrl?: string | null;
 }
+
+export interface RecipeIngredientInput {
+  ingredientName: string;
+  ingredientIconId?: number;
+  quantity?: string;
+  unit?: string;
+}
