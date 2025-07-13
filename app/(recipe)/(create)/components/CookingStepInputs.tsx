@@ -20,9 +20,18 @@ const CookingStepInput: React.FC<CookingStepProps> = ({
   return (
     <View className="w-full bg-fill-subtle rounded-[12px] p-4">
       <View className="gap-y-2">
-        <Text className="text-title4 text-primary-strong">
-          {String(stepNumber).padStart(2, "0")}
-        </Text>
+        <View className="flex-row items-center justify-between">
+          <Text className="text-title4 text-primary-strong">
+            {String(stepNumber).padStart(2, "0")}
+          </Text>
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => onDeleteButtonPress?.(stepNumber)}
+          >
+            <IC_DELETE width={24} height={24} />
+          </TouchableOpacity>
+        </View>
 
         <TextInput
           value={stepDescription}
@@ -33,14 +42,6 @@ const CookingStepInput: React.FC<CookingStepProps> = ({
           textAlignVertical="top"
           onChangeText={(text) => onStepDescriptionChange?.(text)}
         />
-
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={{ position: "absolute", right: 0, top: 0 }}
-          onPress={() => onDeleteButtonPress?.(stepNumber)}
-        >
-          <IC_DELETE width={24} height={24} />
-        </TouchableOpacity>
       </View>
     </View>
   );
