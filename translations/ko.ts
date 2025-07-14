@@ -332,7 +332,7 @@ export default {
     cooking_step_input_hint: "과정을 입력해주세요",
     cooking_step_list_title: "이렇게 만들어요",
     cooking_ingredients_title: "필요한 재료",
-    ingredients_add_icon: "+재료 추가",
+    ingredients_add_icon: "재료 추가",
     ingredients_empty_place_holder: "재료 추가 버튼을 눌러 보세요",
     ingredients_bottom_sheet_title: "레시피 재료 추가",
     ingredients_bottom_sheet_cta: "완료",

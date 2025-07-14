@@ -1,8 +1,10 @@
+import { PressableScale } from "@/app/components/PressableScale";
 import { RecipeIngredientInput } from "@/app/types/api/recipe";
 import IC_DELETE from "@/assets/images/ic_selected_cancel.svg";
 import { FoodDataManager } from "@/constants/IngredientManager";
 import i18n from "@/lib/i18n";
 import { Pressable, Text, TouchableOpacity, View } from "react-native";
+import IC_PLUS from "@/assets/images/ic_plus_bold.svg";
 
 interface IngredientItemProps {
   item: RecipeIngredientInput;
@@ -53,6 +55,20 @@ export function IngredientItem({
   );
 }
 
+const PlusButton = ({ onPress }: { onPress: () => void }) => {
+  return (
+    <PressableScale onPress={onPress} hitSlop={10}>
+      <View className="flex-row items-center gap-x-1">
+        <IC_PLUS width={12} height={12} color="#4BD2B0" />
+
+        <Text className="text-utility2 text-primary-normal">
+          {i18n.t("recipe_my_create.ingredients_add_icon")}
+        </Text>
+      </View>
+    </PressableScale>
+  );
+};
+
 export const IngredientsSection = ({
   ingredients = [],
   onPress,
@@ -74,6 +90,10 @@ export const IngredientsSection = ({
           onDeleteButtonPress={() => onDeleteButtonPress(item)}
         />
       ))}
+
+      <View className="items-center">
+        <PlusButton onPress={() => {}} />
+      </View>
     </View>
   );
 };
