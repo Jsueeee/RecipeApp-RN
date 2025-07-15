@@ -141,7 +141,7 @@ export default function DefaultBottomSheetModal({
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
       bottomInset={insets.bottom}
-      footerComponent={Footer}
+      footerComponent={footer ? Footer : undefined}
     >
       {renderContent()}
     </BottomSheetModal>
