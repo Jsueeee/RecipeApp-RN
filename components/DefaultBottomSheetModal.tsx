@@ -1,3 +1,5 @@
+import { PressableScale } from "@/app/components/PressableScale";
+import IC_CLOSE from "@/assets/images/ic_close.svg";
 import {
   BottomSheetBackdropProps,
   BottomSheetFooter,
@@ -116,6 +118,14 @@ export default function DefaultBottomSheetModal({
     return (
       <View className="flex-row items-center justify-center p-4">
         {title && <Text className="text-title4 text-text-strong">{title}</Text>}
+
+        <PressableScale
+          onPress={() => onDismiss?.()}
+          className="absolute right-4"
+          hitSlop={10}
+        >
+          <IC_CLOSE width={24} height={24} color="#3F4542" />
+        </PressableScale>
       </View>
     );
   };

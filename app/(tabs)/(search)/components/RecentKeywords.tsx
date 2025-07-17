@@ -45,7 +45,7 @@ export function RecentKeywords({
               <Text className="text-body3 text-text-normal">{keyword}</Text>
 
               <Pressable hitSlop={6} onPress={() => onRemovePress(keyword)}>
-                <CloseIcon width={16} height={16} />
+                <CloseIcon width={16} height={16} color="#9FADA6" />
               </Pressable>
             </View>
           </PressableScale>
