@@ -31,7 +31,7 @@ export function EditQuantityMenu({ quantity, onQuantityChanged }: Props) {
   );
 }
 
-function QuantityInput({ quantity, onQuantityChanged }: Props) {
+export const QuantityInput = ({ quantity, onQuantityChanged }: Props) => {
   const handleDecrease = () => {
     if (quantity > 0.5) {
       const updateQuantity = quantity - 0.5;
@@ -80,4 +80,4 @@ function QuantityInput({ quantity, onQuantityChanged }: Props) {
       </Pressable>
     </View>
   );
-}
+};
