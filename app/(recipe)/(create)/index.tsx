@@ -1,7 +1,7 @@
 import { CookingTimeInput } from "@/app/(recipe)/(create)/components/CookingTimeInput";
 import { RecipeIngredientInput } from "@/app/types/api/recipe";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import {
   COOKING_LEVEL,
@@ -11,6 +11,8 @@ import { CookingStepInputs } from "./components/CookingStepInputs";
 import { CreateRecipeHeader } from "./components/CreateHeader";
 import { IngredientsSection } from "./components/IngredientsSection";
 import { PublicToggleSection } from "./components/PublicToggleSection";
+import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
+import { AddRecipeIngredientBottomSheet } from "./components/AddRecipeIngredientBottomSheet";
 
 export default function RecipeCreateScreen() {
   const [isPublic, setIsPublic] = useState(true);
@@ -27,6 +29,8 @@ export default function RecipeCreateScreen() {
       unit: "개",
     },
   ]);
+
+  const { ref, open } = useDefaultBottomSheetModal();
 
   const onPlusButtonPress = () => {
     setStepInfo([...stepInfo, ""]);
@@ -45,6 +49,10 @@ export default function RecipeCreateScreen() {
     newStepInfo[stepIndex] = stepDescription;
     setStepInfo(newStepInfo);
   };
+
+  const onAddIngredientButtonPress = useCallback(() => {
+    open();
+  }, [open]);
 
   return (
     <KeyboardAvoidingView
@@ -72,6 +80,7 @@ export default function RecipeCreateScreen() {
               ingredients={ingredients}
               onPress={() => {}}
               onDeleteButtonPress={() => {}}
+              onAddButtonPress={onAddIngredientButtonPress}
             />
 
             <View className="h-8" />
@@ -92,6 +101,8 @@ export default function RecipeCreateScreen() {
           </View>
         </ScrollView>
       </ScreenLayout>
+
+      <AddRecipeIngredientBottomSheet bottomSheetModalRef={ref} />
     </KeyboardAvoidingView>
   );
 }

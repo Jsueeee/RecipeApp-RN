@@ -16,6 +16,7 @@ interface Props {
   ingredients: RecipeIngredientInput[];
   onPress: (item: RecipeIngredientInput) => void;
   onDeleteButtonPress: (item: RecipeIngredientInput) => void;
+  onAddButtonPress: () => void;
 }
 
 export function IngredientItem({
@@ -73,6 +74,7 @@ export const IngredientsSection = ({
   ingredients = [],
   onPress,
   onDeleteButtonPress,
+  onAddButtonPress,
 }: Props) => {
   return (
     <View className="w-full">
@@ -92,7 +94,7 @@ export const IngredientsSection = ({
       ))}
 
       <View className="items-center">
-        <PlusButton onPress={() => {}} />
+        <PlusButton onPress={onAddButtonPress} />
       </View>
     </View>
   );
