@@ -105,7 +105,7 @@ export interface ScrapRecipeResponse {
 
 export interface RecipeIngredientInput {
   ingredientName: string;
-  ingredientIconId?: number;
+  ingredientIconId?: number | null;
   quantity?: string;
   unit?: string;
 }
