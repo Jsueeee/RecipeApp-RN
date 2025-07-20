@@ -1,7 +1,6 @@
 import { QuantityInput } from "@/app/(fridge)/(edit)/components/EditQuantityMenu";
 import { PressableScale } from "@/app/components/PressableScale";
 import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
-import { RecipeIngredientInput } from "@/app/types/api/recipe";
 import SelectIngredientIconImage from "@/assets/images/img_select_ingredient_icon.svg";
 import { CTAButton } from "@/components/CTAButton";
 import DefaultBottomSheetModal from "@/components/DefaultBottomSheetModal";
@@ -9,7 +8,7 @@ import { PickIngredientIconBottomSheet } from "@/components/PickIngredientIconBo
 import { FoodDataManager } from "@/constants/IngredientManager";
 import i18n from "@/lib/i18n";
 import { BottomSheetModal, BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useMemo } from "react";
 import { Text, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 
@@ -17,8 +16,15 @@ interface Props {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
   openBottomSheet: () => void;
   onDismiss: () => void;
-  inputIngredientInfo: RecipeIngredientInput | null;
-  onInputChanged: (ingredientInfo: RecipeIngredientInput) => void;
+  inputNameRef: React.RefObject<TextInput>;
+  inputNameValue: string;
+  inputUnitRef: React.RefObject<TextInput>;
+  inputUnitValue: string;
+  inputQuantity: number;
+  inputIconId: number | null;
+  onInputNameChanged: (name: string) => void;
+  onInputUnitChanged: (unit: string) => void;
+  onInputQuantityChanged: (quantity: number) => void;
   onIconChanged: (iconId: number | null) => void;
 }
 
@@ -29,71 +35,45 @@ export const AddRecipeIngredientBottomSheet = ({
   bottomSheetModalRef,
   openBottomSheet,
   onDismiss,
-  inputIngredientInfo,
-  onInputChanged,
+  inputNameRef,
+  inputNameValue,
+  inputUnitRef,
+  inputUnitValue,
+  inputQuantity,
+  inputIconId,
+  onInputNameChanged,
+  onInputUnitChanged,
+  onInputQuantityChanged,
   onIconChanged,
 }: Props) => {
   const { ref: pickIngredientIconRef, open: openPickIngredientIcon } =
     useDefaultBottomSheetModal();
 
-  // input 값 자음 모음 분리 현상 때문에 defaultValue 를 사용하고, inputValue, inputRef 로 관리한다
-  const inputRef = useRef<TextInput>(null);
-  const [inputValue, setInputValue] = useState(
-    inputIngredientInfo?.ingredientName
-  );
-  const unitRef = useRef<TextInput>(null);
-  const [unitValue, setUnitValue] = useState(inputIngredientInfo?.unit);
-
-  const [quantity, setQuantity] = useState(
-    Number(inputIngredientInfo?.quantity)
-  );
-
   const Icon = useMemo(() => {
-    if (!inputIngredientInfo?.ingredientIconId) return null;
+    if (!inputIconId) return null;
 
-    return FoodDataManager.getImageSource(inputIngredientInfo.ingredientIconId);
-  }, [inputIngredientInfo?.ingredientIconId]);
-
-  const onSelectIconPress = useCallback(async () => {
-    // 아이콘 선택 버튼 클릭하면 재료 입력 바텀시트 내용물 임시 저장 후 닫기
-    onInputChanged({
-      ingredientName: inputValue || "",
-      ingredientIconId: inputIngredientInfo?.ingredientIconId || null,
-      quantity: quantity.toString(),
-      unit: unitValue || "",
-    });
-    bottomSheetModalRef.current?.close(); // onDismiss 대신 단순 닫기만
-
-    // 아이콘 선택 바텀시트 열기
-    openPickIngredientIcon();
-  }, [inputValue, unitValue, quantity, inputIngredientInfo?.ingredientIconId]);
-
-  const onOpenBottomSheet = () => {
-    setInputValue(inputIngredientInfo?.ingredientName);
-    setUnitValue(inputIngredientInfo?.unit);
-    setQuantity(Number(inputIngredientInfo?.quantity));
-  };
+    return FoodDataManager.getImageSource(inputIconId);
+  }, [inputIconId]);
 
   const onCTAButtonPress = () => {
     // 재료 추가하기
   };
 
-  const disabled = inputValue?.length === 0 || quantity <= 0;
+  const disabled = inputNameValue?.length === 0 || inputQuantity <= 0;
 
   return (
     <>
       <DefaultBottomSheetModal
         bottomSheetModalRef={bottomSheetModalRef}
         title={i18n.t("recipe_my_create.ingredients_bottom_sheet_title")}
-        onOpen={onOpenBottomSheet}
         onDismiss={onDismiss}
       >
         <View className="flex-1 px-4 pt-2">
           <PressableScale
-            onPress={onSelectIconPress}
+            onPress={openPickIngredientIcon}
             className="w-[100px] h-[100px] self-center"
           >
-            {inputIngredientInfo?.ingredientIconId ? (
+            {inputIconId ? (
               <View className="w-[100px] h-[100px]">
                 {Icon && <Icon width={100} height={100} />}
               </View>
@@ -111,9 +91,9 @@ export const AddRecipeIngredientBottomSheet = ({
             </Text>
 
             <BottomSheetTextInput
-              ref={inputRef}
-              defaultValue={inputIngredientInfo?.ingredientName}
-              onChangeText={setInputValue}
+              ref={inputNameRef}
+              defaultValue={inputNameValue}
+              onChangeText={onInputNameChanged}
               className="flex-1 text-utility2 text-text-strong"
               returnKeyType="done"
               selectTextOnFocus
@@ -133,12 +113,12 @@ export const AddRecipeIngredientBottomSheet = ({
               </Text>
 
               <QuantityInput
-                quantity={quantity}
-                onQuantityChanged={setQuantity}
+                quantity={inputQuantity}
+                onQuantityChanged={onInputQuantityChanged}
               />
             </View>
 
-            {quantity <= 0 && (
+            {inputQuantity <= 0 && (
               <Text className="text-body3 text-strong-destructive ms-[100px]">
                 {i18n.t(
                   "recipe_my_create.ingredients_bottom_sheet_quantity_error"
@@ -154,9 +134,9 @@ export const AddRecipeIngredientBottomSheet = ({
             </Text>
 
             <BottomSheetTextInput
-              ref={unitRef}
-              defaultValue={inputIngredientInfo?.unit}
-              onChangeText={setUnitValue}
+              ref={inputUnitRef}
+              defaultValue={inputUnitValue}
+              onChangeText={onInputUnitChanged}
               className="flex-1 text-utility2 text-text-strong"
               returnKeyType="done"
               selectTextOnFocus

@@ -2,8 +2,9 @@ import { CookingTimeInput } from "@/app/(recipe)/(create)/components/CookingTime
 import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
 import { RecipeIngredientInput } from "@/app/types/api/recipe";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import { TextInput } from "react-native-gesture-handler";
 import { AddRecipeIngredientBottomSheet } from "./components/AddRecipeIngredientBottomSheet";
 import {
   COOKING_LEVEL,
@@ -21,30 +22,24 @@ export default function RecipeCreateScreen() {
   );
   const [cookingTime, setCookingTime] = useState<number | null>(null);
   const [stepInfo, setStepInfo] = useState([""]);
-  const [ingredients, setIngredients] = useState<RecipeIngredientInput[]>([]);
+  const [ingredients, setIngredients] = useState<RecipeIngredientInput[]>([]); // 입력이 완료된 재료들
 
+  // 재료 추가 바텀시트 관련
   const { ref, open, dismiss } = useDefaultBottomSheetModal();
-  const initialIngredientInfo = {
-    // 1개를 기본으로 가지는 재료 초기 입력 정보
-    ingredientName: "",
-    ingredientIconId: null,
-    quantity: "1",
-    unit: "",
-  };
-  // 재료 추가 바텀시트에서 입력 중인 재료 정보 (바텀시트 두개를 번갈아 열 때 재료 정보를 공유하기 위해)
-  const [inputIngredientInfo, setInputIngredientInfo] =
-    useState<RecipeIngredientInput>(initialIngredientInfo);
+  // input 값 자음 모음 분리 현상 때문에 defaultValue 를 사용하고, inputValue, inputRef 로 관리한다
+  const inputNameRef = useRef<TextInput>(null);
+  const [inputNameValue, setInputNameValue] = useState(""); // 재료 이름 입력 값
+  const inputUnitRef = useRef<TextInput>(null);
+  const [inputUnitValue, setInputUnitValue] = useState(""); // 재료 단위 입력 값
+  const [inputQuantity, setInputQuantity] = useState(1); // 재료 수량 입력 값
+  const [inputIconId, setInputIconId] = useState<number | null>(null); // 재료 아이콘 ID
 
   const onDismissAddIngredientBottomSheet = () => {
     dismiss();
-    setInputIngredientInfo(initialIngredientInfo); // 입력 정보 초기화
   };
 
   const onIconChanged = (iconId: number | null) => {
-    setInputIngredientInfo({
-      ...inputIngredientInfo,
-      ingredientIconId: iconId ?? null,
-    });
+    setInputIconId(iconId);
   };
 
   const onPlusButtonPress = () => {
@@ -66,6 +61,12 @@ export default function RecipeCreateScreen() {
   };
 
   const onAddIngredientButtonPress = useCallback(() => {
+    // 새로 재료 추가할 때 초기화 해주기
+    setInputNameValue("");
+    setInputUnitValue("");
+    setInputQuantity(1);
+    setInputIconId(null);
+
     open();
   }, [open]);
 
@@ -121,8 +122,15 @@ export default function RecipeCreateScreen() {
         bottomSheetModalRef={ref}
         openBottomSheet={open}
         onDismiss={onDismissAddIngredientBottomSheet}
-        inputIngredientInfo={inputIngredientInfo}
-        onInputChanged={setInputIngredientInfo}
+        inputNameRef={inputNameRef}
+        inputNameValue={inputNameValue}
+        inputUnitRef={inputUnitRef}
+        inputUnitValue={inputUnitValue}
+        inputQuantity={inputQuantity}
+        inputIconId={inputIconId}
+        onInputNameChanged={setInputNameValue}
+        onInputUnitChanged={setInputUnitValue}
+        onInputQuantityChanged={setInputQuantity}
         onIconChanged={onIconChanged}
       />
     </KeyboardAvoidingView>
