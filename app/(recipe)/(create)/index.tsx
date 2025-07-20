@@ -1,8 +1,10 @@
 import { CookingTimeInput } from "@/app/(recipe)/(create)/components/CookingTimeInput";
+import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
 import { RecipeIngredientInput } from "@/app/types/api/recipe";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { useCallback, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import { AddRecipeIngredientBottomSheet } from "./components/AddRecipeIngredientBottomSheet";
 import {
   COOKING_LEVEL,
   CookingLevelChips,
@@ -11,8 +13,6 @@ import { CookingStepInputs } from "./components/CookingStepInputs";
 import { CreateRecipeHeader } from "./components/CreateHeader";
 import { IngredientsSection } from "./components/IngredientsSection";
 import { PublicToggleSection } from "./components/PublicToggleSection";
-import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
-import { AddRecipeIngredientBottomSheet } from "./components/AddRecipeIngredientBottomSheet";
 
 export default function RecipeCreateScreen() {
   const [isPublic, setIsPublic] = useState(true);
@@ -21,16 +21,31 @@ export default function RecipeCreateScreen() {
   );
   const [cookingTime, setCookingTime] = useState<number | null>(null);
   const [stepInfo, setStepInfo] = useState([""]);
-  const [ingredients, setIngredients] = useState<RecipeIngredientInput[]>([
-    {
-      ingredientName: "계란",
-      ingredientIconId: 1,
-      quantity: "1",
-      unit: "개",
-    },
-  ]);
+  const [ingredients, setIngredients] = useState<RecipeIngredientInput[]>([]);
 
-  const { ref, open } = useDefaultBottomSheetModal();
+  const { ref, open, dismiss } = useDefaultBottomSheetModal();
+  const initialIngredientInfo = {
+    // 1개를 기본으로 가지는 재료 초기 입력 정보
+    ingredientName: "",
+    ingredientIconId: null,
+    quantity: "1",
+    unit: "",
+  };
+  // 재료 추가 바텀시트에서 입력 중인 재료 정보 (바텀시트 두개를 번갈아 열 때 재료 정보를 공유하기 위해)
+  const [inputIngredientInfo, setInputIngredientInfo] =
+    useState<RecipeIngredientInput>(initialIngredientInfo);
+
+  const onDismissAddIngredientBottomSheet = () => {
+    dismiss();
+    setInputIngredientInfo(initialIngredientInfo); // 입력 정보 초기화
+  };
+
+  const onIconChanged = (iconId: number | null) => {
+    setInputIngredientInfo({
+      ...inputIngredientInfo,
+      ingredientIconId: iconId ?? null,
+    });
+  };
 
   const onPlusButtonPress = () => {
     setStepInfo([...stepInfo, ""]);
@@ -102,7 +117,14 @@ export default function RecipeCreateScreen() {
         </ScrollView>
       </ScreenLayout>
 
-      <AddRecipeIngredientBottomSheet bottomSheetModalRef={ref} />
+      <AddRecipeIngredientBottomSheet
+        bottomSheetModalRef={ref}
+        openBottomSheet={open}
+        onDismiss={onDismissAddIngredientBottomSheet}
+        inputIngredientInfo={inputIngredientInfo}
+        onInputChanged={setInputIngredientInfo}
+        onIconChanged={onIconChanged}
+      />
     </KeyboardAvoidingView>
   );
 }
