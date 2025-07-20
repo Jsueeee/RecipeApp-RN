@@ -26,6 +26,7 @@ interface Props {
   onInputUnitChanged: (unit: string) => void;
   onInputQuantityChanged: (quantity: number) => void;
   onIconChanged: (iconId: number | null) => void;
+  onCTAButtonPress: () => void;
 }
 
 /**
@@ -45,6 +46,7 @@ export const AddRecipeIngredientBottomSheet = ({
   onInputUnitChanged,
   onInputQuantityChanged,
   onIconChanged,
+  onCTAButtonPress,
 }: Props) => {
   const { ref: pickIngredientIconRef, open: openPickIngredientIcon } =
     useDefaultBottomSheetModal();
@@ -54,10 +56,6 @@ export const AddRecipeIngredientBottomSheet = ({
 
     return FoodDataManager.getImageSource(inputIconId);
   }, [inputIconId]);
-
-  const onCTAButtonPress = () => {
-    // 재료 추가하기
-  };
 
   const disabled = inputNameValue?.length === 0 || inputQuantity <= 0;
 

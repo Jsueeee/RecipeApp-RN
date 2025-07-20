@@ -70,6 +70,20 @@ export default function RecipeCreateScreen() {
     open();
   }, [open]);
 
+  const onAddIngredient = useCallback(() => {
+    dismiss();
+
+    setIngredients((prev) => [
+      ...prev,
+      {
+        ingredientName: inputNameValue,
+        ingredientIconId: inputIconId,
+        quantity: inputQuantity.toString(),
+        unit: inputUnitValue,
+      },
+    ]);
+  }, [inputNameValue, inputIconId, inputQuantity, inputUnitValue]);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -132,6 +146,7 @@ export default function RecipeCreateScreen() {
         onInputUnitChanged={setInputUnitValue}
         onInputQuantityChanged={setInputQuantity}
         onIconChanged={onIconChanged}
+        onCTAButtonPress={onAddIngredient}
       />
     </KeyboardAvoidingView>
   );
