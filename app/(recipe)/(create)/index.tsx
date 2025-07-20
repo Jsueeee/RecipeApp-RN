@@ -70,7 +70,7 @@ export default function RecipeCreateScreen() {
     open();
   }, [open]);
 
-  const onAddIngredient = useCallback(() => {
+  const onAddIngredient = () => {
     dismiss();
 
     setIngredients((prev) => [
@@ -82,13 +82,25 @@ export default function RecipeCreateScreen() {
         unit: inputUnitValue,
       },
     ]);
-  }, [inputNameValue, inputIconId, inputQuantity, inputUnitValue]);
+  };
 
   const onDeleteIngredient = (item: RecipeIngredientInput) => {
     setIngredients((prev) =>
       prev.filter((i) => i.ingredientName !== item.ingredientName)
     );
   };
+
+  const onIngredientItemPress = useCallback(
+    (item: RecipeIngredientInput) => {
+      setInputNameValue(item.ingredientName);
+      setInputUnitValue(item.unit || "");
+      setInputQuantity(Number(item.quantity));
+      setInputIconId(item.ingredientIconId || null);
+
+      open();
+    },
+    [open]
+  );
 
   return (
     <KeyboardAvoidingView
@@ -114,7 +126,7 @@ export default function RecipeCreateScreen() {
 
             <IngredientsSection
               ingredients={ingredients}
-              onPress={() => {}}
+              onPress={onIngredientItemPress}
               onDeleteButtonPress={onDeleteIngredient}
               onAddButtonPress={onAddIngredientButtonPress}
             />
