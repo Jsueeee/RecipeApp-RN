@@ -23,6 +23,7 @@ interface Props {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
   children: React.ReactNode;
   title?: string;
+  onOpen?: () => void;
   onDismiss?: () => void;
   scrollEnabled?: boolean;
   footer?: React.ReactNode;
@@ -35,6 +36,7 @@ export default function DefaultBottomSheetModal({
   bottomSheetModalRef,
   children,
   title,
+  onOpen,
   onDismiss,
   scrollEnabled = true,
   footer,
@@ -66,6 +68,8 @@ export default function DefaultBottomSheetModal({
       bottomSheetModalRef.current?.dismiss();
       Keyboard.dismiss();
       onDismiss?.();
+    } else {
+      onOpen?.();
     }
   }, []);
 
