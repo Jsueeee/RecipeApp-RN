@@ -264,6 +264,7 @@ export default {
     not_in_fridge_is_empty: "냉장고에 모든 재료가 있어요\n한 번 만들어보세요!",
     in_fridge: "있는 재료",
     not_in_fridge: "없는 재료",
+    create_recipe_is_empty: "재료를 추가해 주세요",
   },
   edit_food: {
     title: "재료 수정",

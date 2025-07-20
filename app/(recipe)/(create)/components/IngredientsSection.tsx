@@ -1,10 +1,12 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import { RecipeIngredientInput } from "@/app/types/api/recipe";
+import IC_PLUS from "@/assets/images/ic_plus_bold.svg";
 import IC_DELETE from "@/assets/images/ic_selected_cancel.svg";
 import { FoodDataManager } from "@/constants/IngredientManager";
 import i18n from "@/lib/i18n";
 import { Pressable, Text, TouchableOpacity, View } from "react-native";
-import IC_PLUS from "@/assets/images/ic_plus_bold.svg";
+import { EmptyIngredientsPlaceholder } from "../../(detail)/components/EmptyIngredientsPlaceholder";
+import { IngredientFridgeType } from "../../(detail)/components/RecipeIngredients";
 
 interface IngredientItemProps {
   item: RecipeIngredientInput;
@@ -84,14 +86,22 @@ export const IngredientsSection = ({
 
       <View className="h-[10px]" />
 
-      {ingredients.map((item, index) => (
-        <IngredientItem
-          key={index}
-          item={item}
-          onPress={() => onPress(item)}
-          onDeleteButtonPress={() => onDeleteButtonPress(item)}
+      {ingredients.length === 0 ? (
+        <EmptyIngredientsPlaceholder
+          type={IngredientFridgeType.CREATE_RECIPE}
         />
-      ))}
+      ) : (
+        <>
+          {ingredients.map((item, index) => (
+            <IngredientItem
+              key={index}
+              item={item}
+              onPress={() => onPress(item)}
+              onDeleteButtonPress={() => onDeleteButtonPress(item)}
+            />
+          ))}
+        </>
+      )}
 
       <View className="items-center">
         <PlusButton onPress={onAddButtonPress} />
