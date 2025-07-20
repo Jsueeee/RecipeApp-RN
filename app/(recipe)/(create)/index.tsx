@@ -84,6 +84,12 @@ export default function RecipeCreateScreen() {
     ]);
   }, [inputNameValue, inputIconId, inputQuantity, inputUnitValue]);
 
+  const onDeleteIngredient = (item: RecipeIngredientInput) => {
+    setIngredients((prev) =>
+      prev.filter((i) => i.ingredientName !== item.ingredientName)
+    );
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -109,7 +115,7 @@ export default function RecipeCreateScreen() {
             <IngredientsSection
               ingredients={ingredients}
               onPress={() => {}}
-              onDeleteButtonPress={() => {}}
+              onDeleteButtonPress={onDeleteIngredient}
               onAddButtonPress={onAddIngredientButtonPress}
             />
 
