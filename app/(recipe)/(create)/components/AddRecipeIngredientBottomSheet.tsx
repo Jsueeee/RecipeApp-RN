@@ -53,6 +53,7 @@ export const AddRecipeIngredientBottomSheet = ({
   };
 
   return (
+    <>
     <DefaultBottomSheetModal
       bottomSheetModalRef={bottomSheetModalRef}
       title={i18n.t("recipe_my_create.ingredients_bottom_sheet_title")}
@@ -137,12 +138,25 @@ export const AddRecipeIngredientBottomSheet = ({
         </View>
 
         <CTAButton
-          buttonLabel={i18n.t("recipe_my_create.ingredients_bottom_sheet_cta")}
+            buttonLabel={i18n.t(
+              "recipe_my_create.ingredients_bottom_sheet_cta"
+            )}
           disabled={disabled}
           onPress={onCTAButtonPress}
           className="mt-5 mb-[22px]"
         />
       </View>
     </DefaultBottomSheetModal>
+
+      <PickIngredientIconBottomSheet
+        bottomSheetModalRef={pickIngredientIconRef}
+        onIconSelected={(iconId) => {
+          onIconChanged(iconId);
+
+          // 재료 입력 바텀시트 다시 열기
+          openBottomSheet();
+        }}
+      />
+    </>
   );
 };
