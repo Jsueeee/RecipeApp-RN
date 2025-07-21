@@ -1,6 +1,6 @@
 import i18n from "@/lib/i18n";
 import React from "react";
-import { TextInput, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 
 interface Props {
   title: string;
@@ -8,6 +8,9 @@ interface Props {
   onInputTitleChanged: (title: string) => void;
   onInputDescriptionChanged: (description: string) => void;
 }
+
+const MAX_TITLE_LENGTH = 100;
+const MAX_DESCRIPTION_LENGTH = 300;
 
 export const CreateRecipeTitle = ({
   title,
@@ -27,7 +30,7 @@ export const CreateRecipeTitle = ({
         selectTextOnFocus
         editable={true}
         multiline={true}
-        maxLength={100}
+        maxLength={MAX_TITLE_LENGTH}
       />
 
       <TextInput
@@ -40,8 +43,12 @@ export const CreateRecipeTitle = ({
         selectTextOnFocus
         editable={true}
         multiline={true}
-        maxLength={300}
+        maxLength={MAX_DESCRIPTION_LENGTH}
       />
+
+      <Text className="text-body3 text-text-assistive text-right">
+        {description.length}/{MAX_DESCRIPTION_LENGTH}
+      </Text>
     </View>
   );
 };
