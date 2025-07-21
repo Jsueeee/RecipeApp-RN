@@ -23,6 +23,8 @@ export interface IngredientWithIndex {
 
 export default function RecipeCreateScreen() {
   const [inputTitleValue, setInputTitleValue] = useState("");
+  const [inputDescriptionValue, setInputDescriptionValue] = useState("");
+
   const [isPublic, setIsPublic] = useState(true);
   const [selectedCookingLevel, setSelectedCookingLevel] = useState(
     COOKING_LEVEL[1].key
@@ -46,6 +48,10 @@ export default function RecipeCreateScreen() {
 
   const onInputTitleChanged = (title: string) => {
     setInputTitleValue(title);
+  };
+
+  const onInputDescriptionChanged = (description: string) => {
+    setInputDescriptionValue(description);
   };
 
   const onDismissAddIngredientBottomSheet = () => {
@@ -143,7 +149,9 @@ export default function RecipeCreateScreen() {
 
         <CreateRecipeTitle
           title={inputTitleValue}
+          description={inputDescriptionValue}
           onInputTitleChanged={onInputTitleChanged}
+          onInputDescriptionChanged={onInputDescriptionChanged}
         />
 
         <ScrollView className="flex-1">
