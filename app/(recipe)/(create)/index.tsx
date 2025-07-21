@@ -14,6 +14,7 @@ import { CookingStepInputs } from "./components/CookingStepInputs";
 import { CreateRecipeHeader } from "./components/CreateHeader";
 import { IngredientsSection } from "./components/IngredientsSection";
 import { PublicToggleSection } from "./components/PublicToggleSection";
+import { CreateRecipeTitle } from "./components/CreateRecipeTitle";
 
 export interface IngredientWithIndex {
   id: number; // 입력 재료에는 원래 id 가 없지만 리스트 관리를 위해 추가
@@ -21,6 +22,7 @@ export interface IngredientWithIndex {
 }
 
 export default function RecipeCreateScreen() {
+  const [inputTitleValue, setInputTitleValue] = useState("");
   const [isPublic, setIsPublic] = useState(true);
   const [selectedCookingLevel, setSelectedCookingLevel] = useState(
     COOKING_LEVEL[1].key
@@ -41,6 +43,10 @@ export default function RecipeCreateScreen() {
   const [inputUnitValue, setInputUnitValue] = useState(""); // 재료 단위 입력 값
   const [inputQuantity, setInputQuantity] = useState(1); // 재료 수량 입력 값
   const [inputIconId, setInputIconId] = useState<number | null>(null); // 재료 아이콘 ID
+
+  const onInputTitleChanged = (title: string) => {
+    setInputTitleValue(title);
+  };
 
   const onDismissAddIngredientBottomSheet = () => {
     dismiss();
@@ -134,6 +140,11 @@ export default function RecipeCreateScreen() {
     >
       <ScreenLayout isShowHeader={false} isScrollEnabled={false} footer={null}>
         <CreateRecipeHeader />
+
+        <CreateRecipeTitle
+          title={inputTitleValue}
+          onInputTitleChanged={onInputTitleChanged}
+        />
 
         <ScrollView className="flex-1">
           <View className="p-4">
