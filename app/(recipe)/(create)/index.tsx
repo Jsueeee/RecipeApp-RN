@@ -166,6 +166,8 @@ export default function RecipeCreateScreen() {
             onChanged={setCookingTime}
           />
 
+          <View className="h-2" />
+
           <CookingLevelChips
             cookingLevel={selectedCookingLevel}
             onChanged={setSelectedCookingLevel}
