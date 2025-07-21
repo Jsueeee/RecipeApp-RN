@@ -15,6 +15,11 @@ import { CreateRecipeHeader } from "./components/CreateHeader";
 import { IngredientsSection } from "./components/IngredientsSection";
 import { PublicToggleSection } from "./components/PublicToggleSection";
 
+export interface IngredientWithIndex {
+  id: number; // 입력 재료에는 원래 id 가 없지만 리스트 관리를 위해 추가
+  ingredient: RecipeIngredientInput;
+}
+
 export default function RecipeCreateScreen() {
   const [isPublic, setIsPublic] = useState(true);
   const [selectedCookingLevel, setSelectedCookingLevel] = useState(
@@ -22,7 +27,10 @@ export default function RecipeCreateScreen() {
   );
   const [cookingTime, setCookingTime] = useState<number | null>(null);
   const [stepInfo, setStepInfo] = useState([""]);
-  const [ingredients, setIngredients] = useState<RecipeIngredientInput[]>([]); // 입력이 완료된 재료들
+  const [ingredients, setIngredients] = useState<IngredientWithIndex[]>([]); // 입력이 완료된 재료들
+  const [selectedIngredientId, setSelectedIngredientId] = useState<
+    number | null
+  >(null); // 수정하려고 선택한 재료 id
 
   // 재료 추가 바텀시트 관련
   const { ref, open, dismiss } = useDefaultBottomSheetModal();
@@ -73,30 +81,47 @@ export default function RecipeCreateScreen() {
   const onAddIngredient = () => {
     dismiss();
 
-    setIngredients((prev) => [
-      ...prev,
-      {
-        ingredientName: inputNameValue,
-        ingredientIconId: inputIconId,
-        quantity: inputQuantity.toString(),
-        unit: inputUnitValue,
-      },
-    ]);
+    const newIngredient = {
+      ingredientName: inputNameValue,
+      ingredientIconId: inputIconId,
+      quantity: inputQuantity.toString(),
+      unit: inputUnitValue,
+    };
+
+    setIngredients((prev) => {
+      if (selectedIngredientId) {
+        // 재료 수정
+        return prev.map((i) =>
+          i.id === selectedIngredientId
+            ? { ...i, ingredient: { ...i.ingredient, ...newIngredient } }
+            : i
+        );
+      }
+
+      // 재료 추가
+      return [
+        ...prev,
+        {
+          id: Date.now(),
+          ingredient: newIngredient,
+        },
+      ];
+    });
+
+    setSelectedIngredientId(null);
   };
 
-  const onDeleteIngredient = (item: RecipeIngredientInput) => {
-    setIngredients((prev) =>
-      prev.filter((i) => i.ingredientName !== item.ingredientName)
-    );
+  const onDeleteIngredient = (item: IngredientWithIndex) => {
+    setIngredients((prev) => prev.filter((i) => i.id !== item.id));
   };
 
   const onIngredientItemPress = useCallback(
-    (item: RecipeIngredientInput) => {
-      setInputNameValue(item.ingredientName);
-      setInputUnitValue(item.unit || "");
-      setInputQuantity(Number(item.quantity));
-      setInputIconId(item.ingredientIconId || null);
-
+    ({ id, ingredient }: IngredientWithIndex) => {
+      setInputNameValue(ingredient.ingredientName);
+      setInputUnitValue(ingredient.unit || "");
+      setInputQuantity(Number(ingredient.quantity));
+      setInputIconId(ingredient.ingredientIconId || null);
+      setSelectedIngredientId(id);
       open();
     },
     [open]

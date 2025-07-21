@@ -7,6 +7,7 @@ import i18n from "@/lib/i18n";
 import { Pressable, Text, TouchableOpacity, View } from "react-native";
 import { EmptyIngredientsPlaceholder } from "../../(detail)/components/EmptyIngredientsPlaceholder";
 import { IngredientFridgeType } from "../../(detail)/components/RecipeIngredients";
+import { IngredientWithIndex } from "..";
 
 interface IngredientItemProps {
   item: RecipeIngredientInput;
@@ -15,9 +16,9 @@ interface IngredientItemProps {
 }
 
 interface Props {
-  ingredients: RecipeIngredientInput[];
-  onPress: (item: RecipeIngredientInput) => void;
-  onDeleteButtonPress: (item: RecipeIngredientInput) => void;
+  ingredients: IngredientWithIndex[];
+  onPress: (item: IngredientWithIndex) => void;
+  onDeleteButtonPress: (item: IngredientWithIndex) => void;
   onAddButtonPress: () => void;
 }
 
@@ -95,7 +96,7 @@ export const IngredientsSection = ({
           {ingredients.map((item, index) => (
             <IngredientItem
               key={index}
-              item={item}
+              item={item.ingredient}
               onPress={() => onPress(item)}
               onDeleteButtonPress={() => onDeleteButtonPress(item)}
             />
