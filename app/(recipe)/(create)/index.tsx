@@ -147,7 +147,7 @@ export default function RecipeCreateScreen() {
       <ScreenLayout isShowHeader={false} isScrollEnabled={false} footer={null}>
         <CreateRecipeHeader />
 
-        <ScrollView className="flex-1">
+        <ScrollView className="flex-1" contentContainerClassName="pb-8">
           <CreateRecipeTitle
             title={inputTitleValue}
             description={inputDescriptionValue}
