@@ -16,6 +16,7 @@ interface Props {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
   openBottomSheet: () => void;
   onDismiss: () => void;
+  isEditMode: boolean;
   inputNameRef: React.RefObject<TextInput>;
   inputNameValue: string;
   inputUnitRef: React.RefObject<TextInput>;
@@ -36,6 +37,7 @@ export const AddRecipeIngredientBottomSheet = ({
   bottomSheetModalRef,
   openBottomSheet,
   onDismiss,
+  isEditMode,
   inputNameRef,
   inputNameValue,
   inputUnitRef,
@@ -63,7 +65,11 @@ export const AddRecipeIngredientBottomSheet = ({
     <>
       <DefaultBottomSheetModal
         bottomSheetModalRef={bottomSheetModalRef}
-        title={i18n.t("recipe_my_create.ingredients_bottom_sheet_title")}
+        title={
+          isEditMode
+            ? i18n.t("recipe_my_create.ingredients_bottom_sheet_edit_title")
+            : i18n.t("recipe_my_create.ingredients_bottom_sheet_title")
+        }
         onDismiss={onDismiss}
       >
         <View className="flex-1 px-4 pt-2">
@@ -147,9 +153,11 @@ export const AddRecipeIngredientBottomSheet = ({
           </View>
 
           <CTAButton
-            buttonLabel={i18n.t(
-              "recipe_my_create.ingredients_bottom_sheet_cta"
-            )}
+            buttonLabel={
+              isEditMode
+                ? i18n.t("recipe_my_create.ingredients_bottom_sheet_edit_cta")
+                : i18n.t("recipe_my_create.ingredients_bottom_sheet_cta")
+            }
             disabled={disabled}
             onPress={onCTAButtonPress}
             className="mt-5 mb-[22px]"

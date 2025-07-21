@@ -179,6 +179,7 @@ export default function RecipeCreateScreen() {
         bottomSheetModalRef={ref}
         openBottomSheet={open}
         onDismiss={onDismissAddIngredientBottomSheet}
+        isEditMode={!!selectedIngredientId}
         inputNameRef={inputNameRef}
         inputNameValue={inputNameValue}
         inputUnitRef={inputUnitRef}
