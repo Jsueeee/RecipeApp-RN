@@ -147,14 +147,16 @@ export default function RecipeCreateScreen() {
       <ScreenLayout isShowHeader={false} isScrollEnabled={false} footer={null}>
         <CreateRecipeHeader />
 
-        <CreateRecipeTitle
-          title={inputTitleValue}
-          description={inputDescriptionValue}
-          onInputTitleChanged={onInputTitleChanged}
-          onInputDescriptionChanged={onInputDescriptionChanged}
-        />
-
         <ScrollView className="flex-1">
+          <CreateRecipeTitle
+            title={inputTitleValue}
+            description={inputDescriptionValue}
+            onInputTitleChanged={onInputTitleChanged}
+            onInputDescriptionChanged={onInputDescriptionChanged}
+          />
+
+          <View className="h-2" />
+
           <View className="p-4">
             <CookingLevelChips
               cookingLevel={selectedCookingLevel}
