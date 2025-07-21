@@ -19,7 +19,7 @@ export const CreateRecipeTitle = ({
   onInputDescriptionChanged,
 }: Props) => {
   return (
-    <View className="w-full px-4 gap-y-[22px]">
+    <View className="w-full gap-y-[22px]">
       <TextInput
         value={title}
         onChangeText={onInputTitleChanged}

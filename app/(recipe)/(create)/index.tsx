@@ -147,7 +147,11 @@ export default function RecipeCreateScreen() {
       <ScreenLayout isShowHeader={false} isScrollEnabled={false} footer={null}>
         <CreateRecipeHeader />
 
-        <ScrollView className="flex-1" contentContainerClassName="pb-8">
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="px-4 pb-[60px]"
+          showsVerticalScrollIndicator={false}
+        >
           <CreateRecipeTitle
             title={inputTitleValue}
             description={inputDescriptionValue}
@@ -157,42 +161,40 @@ export default function RecipeCreateScreen() {
 
           <View className="h-2" />
 
-          <View className="p-4">
-            <CookingLevelChips
-              cookingLevel={selectedCookingLevel}
-              onChanged={setSelectedCookingLevel}
-            />
+          <CookingTimeInput
+            cookingTime={cookingTime}
+            onChanged={setCookingTime}
+          />
 
-            <CookingTimeInput
-              cookingTime={cookingTime}
-              onChanged={setCookingTime}
-            />
+          <CookingLevelChips
+            cookingLevel={selectedCookingLevel}
+            onChanged={setSelectedCookingLevel}
+          />
 
-            <View className="h-8" />
+          <View className="h-[60px]" />
 
-            <IngredientsSection
-              ingredients={ingredients}
-              onPress={onIngredientItemPress}
-              onDeleteButtonPress={onDeleteIngredient}
-              onAddButtonPress={onAddIngredientButtonPress}
-            />
+          <IngredientsSection
+            ingredients={ingredients}
+            onPress={onIngredientItemPress}
+            onDeleteButtonPress={onDeleteIngredient}
+            onAddButtonPress={onAddIngredientButtonPress}
+          />
 
-            <View className="h-8" />
+          <View className="h-[60px]" />
 
-            <CookingStepInputs
-              stepInfo={stepInfo}
-              onPlusButtonPress={onPlusButtonPress}
-              onDeleteButtonPress={onDeleteButtonPress}
-              onStepDescriptionChange={onStepDescriptionChange}
-            />
+          <CookingStepInputs
+            stepInfo={stepInfo}
+            onPlusButtonPress={onPlusButtonPress}
+            onDeleteButtonPress={onDeleteButtonPress}
+            onStepDescriptionChange={onStepDescriptionChange}
+          />
 
-            <View className="h-8" />
+          <View className="h-[60px]" />
 
-            <PublicToggleSection
-              isPublic={isPublic}
-              onValueChange={setIsPublic}
-            />
-          </View>
+          <PublicToggleSection
+            isPublic={isPublic}
+            onValueChange={setIsPublic}
+          />
         </ScrollView>
       </ScreenLayout>
 
