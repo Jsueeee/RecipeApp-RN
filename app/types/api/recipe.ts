@@ -109,3 +109,20 @@ export interface RecipeIngredientInput {
   quantity?: string;
   unit?: string;
 }
+
+export interface RecipeProcessRequest {
+  cookingNo: number;
+  cookingDescription: string;
+  cookingImgUrl?: string;
+}
+
+export interface CreateRecipeRequest {
+  title: string;
+  introduction: string;
+  thumbnailImgUrl?: string;
+  cookingTime: number;
+  level: "EASY" | "NORMAL" | "HARD";
+  isHidden: boolean;
+  ingredients: RecipeIngredientInput[];
+  processes: RecipeProcessRequest[];
+}
