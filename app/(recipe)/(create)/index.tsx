@@ -150,86 +150,109 @@ export default function RecipeCreateScreen() {
     [open]
   );
 
+  const onCTAButtonPress = () => {
+    const recipeData = {
+      title: inputTitleValue,
+      introduction: inputDescriptionValue,
+      level: selectedCookingLevel as "EASY" | "NORMAL" | "HARD",
+      cookingTime: cookingTime || 0,
+      isHidden: isPublic,
+      ingredients: ingredients.map((item) => item.ingredient),
+      processes: stepInfo
+        .filter((step) => step.trim() !== "")
+        .map((step, index) => ({
+          cookingNo: index + 1,
+          cookingDescription: step,
+        })),
+    };
+
+    postCreateRecipe(recipeData);
+  };
+
   return (
     <>
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
-    >
-      <ScreenLayout isShowHeader={false} isScrollEnabled={false} footer={null}>
-        <CreateRecipeHeader />
-
-        <ScrollView
-          className="flex-1"
-          contentContainerClassName="px-4 pb-[60px]"
-          showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ScreenLayout
+          isShowHeader={false}
+          isScrollEnabled={false}
+          footer={null}
         >
-          <CreateRecipeTitle
-            title={inputTitleValue}
-            description={inputDescriptionValue}
-            onInputTitleChanged={onInputTitleChanged}
-            onInputDescriptionChanged={onInputDescriptionChanged}
-          />
+          <CreateRecipeHeader onCTAButtonPress={onCTAButtonPress} />
 
-          <View className="h-2" />
+          <ScrollView
+            className="flex-1"
+            contentContainerClassName="px-4 pb-[60px]"
+            showsVerticalScrollIndicator={false}
+          >
+            <CreateRecipeTitle
+              title={inputTitleValue}
+              description={inputDescriptionValue}
+              onInputTitleChanged={onInputTitleChanged}
+              onInputDescriptionChanged={onInputDescriptionChanged}
+            />
 
-          <CookingTimeInput
-            cookingTime={cookingTime}
-            onChanged={setCookingTime}
-          />
+            <View className="h-2" />
 
-          <View className="h-2" />
+            <CookingTimeInput
+              cookingTime={cookingTime}
+              onChanged={setCookingTime}
+            />
 
-          <CookingLevelChips
-            cookingLevel={selectedCookingLevel}
-            onChanged={setSelectedCookingLevel}
-          />
+            <View className="h-2" />
 
-          <View className="h-[60px]" />
+            <CookingLevelChips
+              cookingLevel={selectedCookingLevel}
+              onChanged={setSelectedCookingLevel}
+            />
 
-          <IngredientsSection
-            ingredients={ingredients}
-            onPress={onIngredientItemPress}
-            onDeleteButtonPress={onDeleteIngredient}
-            onAddButtonPress={onAddIngredientButtonPress}
-          />
+            <View className="h-[60px]" />
 
-          <View className="h-[60px]" />
+            <IngredientsSection
+              ingredients={ingredients}
+              onPress={onIngredientItemPress}
+              onDeleteButtonPress={onDeleteIngredient}
+              onAddButtonPress={onAddIngredientButtonPress}
+            />
 
-          <CookingStepInputs
-            stepInfo={stepInfo}
-            onPlusButtonPress={onPlusButtonPress}
-            onDeleteButtonPress={onDeleteButtonPress}
-            onStepDescriptionChange={onStepDescriptionChange}
-          />
+            <View className="h-[60px]" />
 
-          <View className="h-[60px]" />
+            <CookingStepInputs
+              stepInfo={stepInfo}
+              onPlusButtonPress={onPlusButtonPress}
+              onDeleteButtonPress={onDeleteButtonPress}
+              onStepDescriptionChange={onStepDescriptionChange}
+            />
 
-          <PublicToggleSection
-            isPublic={isPublic}
-            onValueChange={setIsPublic}
-          />
-        </ScrollView>
-      </ScreenLayout>
+            <View className="h-[60px]" />
 
-      <AddRecipeIngredientBottomSheet
-        bottomSheetModalRef={ref}
-        openBottomSheet={open}
-        onDismiss={onDismissAddIngredientBottomSheet}
-        isEditMode={!!selectedIngredientId}
-        inputNameRef={inputNameRef}
-        inputNameValue={inputNameValue}
-        inputUnitRef={inputUnitRef}
-        inputUnitValue={inputUnitValue}
-        inputQuantity={inputQuantity}
-        inputIconId={inputIconId}
-        onInputNameChanged={setInputNameValue}
-        onInputUnitChanged={setInputUnitValue}
-        onInputQuantityChanged={setInputQuantity}
-        onIconChanged={onIconChanged}
-        onCTAButtonPress={onAddIngredient}
-      />
-    </KeyboardAvoidingView>
+            <PublicToggleSection
+              isPublic={isPublic}
+              onValueChange={setIsPublic}
+            />
+          </ScrollView>
+        </ScreenLayout>
+
+        <AddRecipeIngredientBottomSheet
+          bottomSheetModalRef={ref}
+          openBottomSheet={open}
+          onDismiss={onDismissAddIngredientBottomSheet}
+          isEditMode={!!selectedIngredientId}
+          inputNameRef={inputNameRef}
+          inputNameValue={inputNameValue}
+          inputUnitRef={inputUnitRef}
+          inputUnitValue={inputUnitValue}
+          inputQuantity={inputQuantity}
+          inputIconId={inputIconId}
+          onInputNameChanged={setInputNameValue}
+          onInputUnitChanged={setInputUnitValue}
+          onInputQuantityChanged={setInputQuantity}
+          onIconChanged={onIconChanged}
+          onCTAButtonPress={onAddIngredient}
+        />
+      </KeyboardAvoidingView>
 
       {isPostCreateRecipePending && <DotLoadingScreen />}
     </>
