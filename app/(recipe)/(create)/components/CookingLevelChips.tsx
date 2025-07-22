@@ -13,17 +13,17 @@ interface Props {
 
 export const COOKING_LEVEL = [
   {
-    key: "easy",
+    key: "EASY",
     label: i18n.t("recipe_cooking_level.easy"),
     Icon: CookingLevel1Icon,
   },
   {
-    key: "normal",
+    key: "NORMAL",
     label: i18n.t("recipe_cooking_level.normal"),
     Icon: CookingLevel2Icon,
   },
   {
-    key: "hard",
+    key: "HARD",
     label: i18n.t("recipe_cooking_level.hard"),
     Icon: CookingLevel3Icon,
   },
