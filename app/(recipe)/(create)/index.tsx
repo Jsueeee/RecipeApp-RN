@@ -1,7 +1,10 @@
 import { CookingTimeInput } from "@/app/(recipe)/(create)/components/CookingTimeInput";
+import { usePostCreateRecipe } from "@/app/hooks/mutations/usePostCreateRecipe";
 import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
 import { RecipeIngredientInput } from "@/app/types/api/recipe";
+import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
+import { useNavigation } from "@react-navigation/native";
 import { useCallback, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
@@ -12,9 +15,9 @@ import {
 } from "./components/CookingLevelChips";
 import { CookingStepInputs } from "./components/CookingStepInputs";
 import { CreateRecipeHeader } from "./components/CreateHeader";
+import { CreateRecipeTitle } from "./components/CreateRecipeTitle";
 import { IngredientsSection } from "./components/IngredientsSection";
 import { PublicToggleSection } from "./components/PublicToggleSection";
-import { CreateRecipeTitle } from "./components/CreateRecipeTitle";
 
 export interface IngredientWithIndex {
   id: number; // 입력 재료에는 원래 id 가 없지만 리스트 관리를 위해 추가
@@ -22,6 +25,8 @@ export interface IngredientWithIndex {
 }
 
 export default function RecipeCreateScreen() {
+  const navigation = useNavigation();
+
   const [inputTitleValue, setInputTitleValue] = useState("");
   const [inputDescriptionValue, setInputDescriptionValue] = useState("");
 
@@ -45,6 +50,12 @@ export default function RecipeCreateScreen() {
   const [inputUnitValue, setInputUnitValue] = useState(""); // 재료 단위 입력 값
   const [inputQuantity, setInputQuantity] = useState(1); // 재료 수량 입력 값
   const [inputIconId, setInputIconId] = useState<number | null>(null); // 재료 아이콘 ID
+
+  const { postCreateRecipe, isPostCreateRecipePending } = usePostCreateRecipe({
+    onSuccess: () => {
+      navigation.goBack();
+    },
+  });
 
   const onInputTitleChanged = (title: string) => {
     setInputTitleValue(title);
@@ -140,6 +151,7 @@ export default function RecipeCreateScreen() {
   );
 
   return (
+    <>
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
@@ -218,5 +230,8 @@ export default function RecipeCreateScreen() {
         onCTAButtonPress={onAddIngredient}
       />
     </KeyboardAvoidingView>
+
+      {isPostCreateRecipePending && <DotLoadingScreen />}
+    </>
   );
 }
