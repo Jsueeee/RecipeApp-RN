@@ -1,6 +1,10 @@
 import { RecipeSourceType } from "@/constants/RecipeSourceType";
 
 export const QUERY_KEYS = {
+  APP: {
+    ROOT: ["app"] as const,
+    VERSION: () => [...QUERY_KEYS.APP.ROOT, "version"] as const,
+  },
   AUTH: {
     KAKAO: ["auth", "kakao"] as const,
     GOOGLE: ["auth", "google"] as const,
