@@ -2,12 +2,15 @@ import { CookingTimeInput } from "@/app/(recipe)/(create)/components/CookingTime
 import { usePostCreateRecipe } from "@/app/hooks/mutations/usePostCreateRecipe";
 import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
 import { RecipeIngredientInput } from "@/app/types/api/recipe";
+import { RecipeDraftStorage } from "@/app/utils/RecipeDraftStorage";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
+import i18n from "@/lib/i18n";
 import { useNavigation } from "@react-navigation/native";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
+import { Toast } from "toastify-react-native";
 import { AddRecipeIngredientBottomSheet } from "./components/AddRecipeIngredientBottomSheet";
 import {
   COOKING_LEVEL,
@@ -16,11 +19,9 @@ import {
 import { CookingStepInputs } from "./components/CookingStepInputs";
 import { CreateRecipeHeader } from "./components/CreateHeader";
 import { CreateRecipeTitle } from "./components/CreateRecipeTitle";
+import { DraftMyRecipeDialog } from "./components/DraftMyRecipeDialog";
 import { IngredientsSection } from "./components/IngredientsSection";
 import { PublicToggleSection } from "./components/PublicToggleSection";
-import { Toast } from "toastify-react-native";
-import i18n from "@/lib/i18n";
-import { DraftMyRecipeDialog } from "./components/DraftMyRecipeDialog";
 
 export interface IngredientWithIndex {
   id: number; // 입력 재료에는 원래 id 가 없지만 리스트 관리를 위해 추가
@@ -44,6 +45,9 @@ export default function RecipeCreateScreen() {
     number | null
   >(null); // 수정하려고 선택한 재료 id
 
+  // 임시 저장 불러오기 다이얼로그
+  const [isShowDraftDialog, setShowDraftDialog] = useState(false);
+
   // 재료 추가 바텀시트 관련
   const { ref, open, dismiss } = useDefaultBottomSheetModal();
   // input 값 자음 모음 분리 현상 때문에 defaultValue 를 사용하고, inputValue, inputRef 로 관리한다
@@ -56,6 +60,9 @@ export default function RecipeCreateScreen() {
 
   const { postCreateRecipe, isPostCreateRecipePending } = usePostCreateRecipe({
     onSuccess: () => {
+      // 레시피 생성 성공 시 임시 저장 삭제
+      RecipeDraftStorage.clearDraft();
+
       navigation.goBack();
       Toast.success(i18n.t("recipe_my_create.success_toast"));
     },
@@ -63,6 +70,74 @@ export default function RecipeCreateScreen() {
       Toast.error(i18n.t("recipe_my_create.error_toast"));
     },
   });
+
+  // 컴포넌트 마운트 시 임시 저장 확인
+  useEffect(() => {
+    const checkDraft = async () => {
+      const draftExists = await RecipeDraftStorage.hasDraft();
+      if (draftExists) {
+        setShowDraftDialog(true);
+      }
+    };
+    checkDraft();
+  }, []);
+
+  // 임시 저장 자동 저장 (입력값이 변경될 때마다)
+  useEffect(() => {
+    const saveDraft = async () => {
+      if (
+        inputTitleValue.trim() ||
+        inputDescriptionValue.trim() ||
+        ingredients.length > 0 ||
+        stepInfo.some((step) => step.trim())
+      ) {
+        await RecipeDraftStorage.saveDraft({
+          title: inputTitleValue,
+          description: inputDescriptionValue,
+          isPublic,
+          selectedCookingLevel,
+          cookingTime,
+          stepInfo,
+          ingredients,
+        });
+      }
+    };
+
+    // 디바운스 적용 (1초 후 저장)
+    const timeoutId = setTimeout(saveDraft, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [
+    inputTitleValue,
+    inputDescriptionValue,
+    isPublic,
+    selectedCookingLevel,
+    cookingTime,
+    stepInfo,
+    ingredients,
+  ]);
+
+  // 임시 저장 복원
+  const restoreDraft = async () => {
+    const draft = await RecipeDraftStorage.loadDraft();
+    if (draft) {
+      setInputTitleValue(draft.title);
+      setInputDescriptionValue(draft.description);
+      setIsPublic(draft.isPublic);
+      setSelectedCookingLevel(draft.selectedCookingLevel);
+      setCookingTime(draft.cookingTime);
+      setStepInfo(draft.stepInfo);
+      setIngredients(draft.ingredients);
+
+      Toast.success(i18n.t("recipe_my_create.draft_restored_toast"));
+    }
+    setShowDraftDialog(false);
+  };
+
+  // 불러오기 x 선택했을 경우 임시 저장 삭제
+  const ignoreDraft = () => {
+    setShowDraftDialog(false);
+    RecipeDraftStorage.clearDraft();
+  };
 
   const onInputTitleChanged = (title: string) => {
     setInputTitleValue(title);
@@ -262,9 +337,9 @@ export default function RecipeCreateScreen() {
       </KeyboardAvoidingView>
 
       <DraftMyRecipeDialog
-        visible={true}
-        onConfirm={() => {}}
-        onCancel={() => {}}
+        visible={isShowDraftDialog}
+        onConfirm={restoreDraft}
+        onCancel={ignoreDraft}
       />
 
       {isPostCreateRecipePending && <DotLoadingScreen />}
