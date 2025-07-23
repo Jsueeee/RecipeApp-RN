@@ -25,5 +25,5 @@ const config = (() => {
 })();
 
 module.exports = wrapWithReanimatedMetroConfig(
-  withNativeWind(config, { input: "./global.css" })
+  withNativeWind(config, { input: "./global.css", inlineRem: 16 })
 );
