@@ -18,6 +18,8 @@ import { CreateRecipeHeader } from "./components/CreateHeader";
 import { CreateRecipeTitle } from "./components/CreateRecipeTitle";
 import { IngredientsSection } from "./components/IngredientsSection";
 import { PublicToggleSection } from "./components/PublicToggleSection";
+import { Toast } from "toastify-react-native";
+import i18n from "@/lib/i18n";
 
 export interface IngredientWithIndex {
   id: number; // 입력 재료에는 원래 id 가 없지만 리스트 관리를 위해 추가
@@ -54,6 +56,10 @@ export default function RecipeCreateScreen() {
   const { postCreateRecipe, isPostCreateRecipePending } = usePostCreateRecipe({
     onSuccess: () => {
       navigation.goBack();
+      Toast.success(i18n.t("recipe_my_create.success_toast"));
+    },
+    onError: (error) => {
+      Toast.error(i18n.t("recipe_my_create.error_toast"));
     },
   });
 
