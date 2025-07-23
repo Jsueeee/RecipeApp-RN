@@ -1,6 +1,9 @@
 import { queryClient } from "@/app/lib/query/client";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { initializeKakaoSDK } from "@react-native-kakao/core";
+import NaverLogin from "@react-native-seoul/naver-login";
 import {
   DarkTheme,
   DefaultTheme,
@@ -12,12 +15,11 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
-import "react-native-reanimated";
-import "../global.css";
+import { Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import NaverLogin from "@react-native-seoul/naver-login";
+import "react-native-reanimated";
+import ToastManager from "toastify-react-native";
+import "../global.css";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -82,6 +84,28 @@ export default function RootLayout() {
   );
 }
 
+const toastConfig = {
+  success: (props: any) => (
+    <View className="w-[80%] px-4 py-3 bg-fill-strong rounded-[12px]">
+      <Text className="text-body2 text-text-inverse">{props.text1}</Text>
+      {props.text2 && (
+        <Text className="text-body4 text-text-inverse">{props.text2}</Text>
+      )}
+    </View>
+  ),
+  error: (
+    // TODO : 나중에 커스텀하기
+    props: any
+  ) => (
+    <View className="w-[80%] px-4 py-3 bg-fill-strong rounded-[12px]">
+      <Text className="text-body2 text-text-inverse">{props.text1}</Text>
+      {props.text2 && (
+        <Text className="text-body4 text-text-inverse">{props.text2}</Text>
+      )}
+    </View>
+  ),
+};
+
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
@@ -89,7 +113,7 @@ function RootLayoutNav() {
     <GestureHandlerRootView>
       <BottomSheetModalProvider>
         <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          value={colorScheme.colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
           <Stack
             screenOptions={{
@@ -122,6 +146,13 @@ function RootLayoutNav() {
           </Stack>
         </ThemeProvider>
       </BottomSheetModalProvider>
+
+      <ToastManager
+        config={toastConfig}
+        animationType="slide"
+        duration={1000}
+        useModal={true}
+      />
     </GestureHandlerRootView>
   );
 }
