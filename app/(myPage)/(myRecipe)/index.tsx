@@ -1,4 +1,5 @@
 import LargeRecipeListItem from "@/app/(recipe)/components/LargeRecipeListItem";
+import { CreateRecipeButton } from "@/app/(tabs)/(myPage)/components/CreateRecipeButton";
 import { EmptyRecipeTabPlaceholder } from "@/app/(tabs)/(recipe)/components/EmptyRecipeTabPlaceholder";
 import { useMyRecipeListQuery } from "@/app/hooks/queries/useMyRecipeListQuery";
 import { RecipeSummary } from "@/app/types/domain/recipe";
@@ -100,6 +101,8 @@ export default function MyRecipeScreen() {
   return (
     <ScreenLayout title={i18n.t("my_page.my_recipe")}>
       {renderContent()}
+
+      <CreateRecipeButton />
     </ScreenLayout>
   );
 }

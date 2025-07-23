@@ -8,6 +8,7 @@ import { RecipeIngredientTabRow } from "./RecipeIngredientTabRow";
 export enum IngredientFridgeType {
   IN_FRIDGE = "in_fridge",
   NOT_IN_FRIDGE = "not_in_fridge",
+  CREATE_RECIPE = "create_recipe",
 }
 
 interface Props {

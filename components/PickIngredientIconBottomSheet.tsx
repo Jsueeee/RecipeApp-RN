@@ -3,22 +3,30 @@ import { CategorizedPickIngredients } from "@/app/types/domain/ingredient";
 import { FoodDataManager } from "@/constants/IngredientManager";
 import i18n from "@/lib/i18n";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import { View } from "react-native";
 import DefaultBottomSheetModal from "./DefaultBottomSheetModal";
 import { IngredientIconGrid } from "./IngredientIconSectionGrid";
 
 interface Props {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
-  onIconSelected: (iconId: number) => void;
+  onIconSelected: (iconId: number | null) => void;
 }
 
 export function PickIngredientIconBottomSheet({
   bottomSheetModalRef,
   onIconSelected,
 }: Props) {
+  const selectedIconId = useRef<number | null>(null);
+
   const handleIconSelected = (iconId: number) => {
-    onIconSelected(iconId);
+    selectedIconId.current = iconId;
+    bottomSheetModalRef.current?.dismiss();
+  };
+
+  const onDismiss = () => {
+    onIconSelected(selectedIconId.current);
+    selectedIconId.current = null;
     bottomSheetModalRef.current?.dismiss();
   };
 
@@ -44,7 +52,7 @@ export function PickIngredientIconBottomSheet({
     <DefaultBottomSheetModal
       bottomSheetModalRef={bottomSheetModalRef}
       title={i18n.t("custom_ingredient_create.select_icon")}
-      onDismiss={() => bottomSheetModalRef.current?.dismiss()}
+      onDismiss={onDismiss}
       scrollEnabled={false}
     >
       <View className="w-full max-h-[500px]">

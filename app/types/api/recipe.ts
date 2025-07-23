@@ -102,3 +102,27 @@ export interface ScrapRecipeResponse {
   viewCnt: number;
   linkUrl?: string | null;
 }
+
+export interface RecipeIngredientInput {
+  ingredientName: string;
+  ingredientIconId?: number | null;
+  quantity?: string;
+  unit?: string;
+}
+
+export interface RecipeProcessRequest {
+  cookingNo: number;
+  cookingDescription: string;
+  cookingImgUrl?: string;
+}
+
+export interface CreateRecipeRequest {
+  title: string;
+  introduction: string;
+  thumbnailImgUrl?: string;
+  cookingTime: number;
+  level: "EASY" | "NORMAL" | "HARD";
+  isHidden: boolean;
+  ingredients: RecipeIngredientInput[];
+  processes: RecipeProcessRequest[];
+}

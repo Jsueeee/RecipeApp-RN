@@ -15,7 +15,7 @@ interface Props {
   className?: string;
 }
 
-const getCookingLevelIcon = (level: string) => {
+export const getCookingLevelIcon = (level: string) => {
   switch (level) {
     case "초보환영":
       return CookingLevel1Icon;

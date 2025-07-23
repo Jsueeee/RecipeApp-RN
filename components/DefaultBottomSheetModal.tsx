@@ -1,3 +1,5 @@
+import { PressableScale } from "@/app/components/PressableScale";
+import IC_CLOSE from "@/assets/images/ic_close.svg";
 import {
   BottomSheetBackdropProps,
   BottomSheetFooter,
@@ -21,6 +23,7 @@ interface Props {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
   children: React.ReactNode;
   title?: string;
+  onOpen?: () => void;
   onDismiss?: () => void;
   scrollEnabled?: boolean;
   footer?: React.ReactNode;
@@ -33,6 +36,7 @@ export default function DefaultBottomSheetModal({
   bottomSheetModalRef,
   children,
   title,
+  onOpen,
   onDismiss,
   scrollEnabled = true,
   footer,
@@ -64,6 +68,8 @@ export default function DefaultBottomSheetModal({
       bottomSheetModalRef.current?.dismiss();
       Keyboard.dismiss();
       onDismiss?.();
+    } else {
+      onOpen?.();
     }
   }, []);
 
@@ -116,6 +122,14 @@ export default function DefaultBottomSheetModal({
     return (
       <View className="flex-row items-center justify-center p-4">
         {title && <Text className="text-title4 text-text-strong">{title}</Text>}
+
+        <PressableScale
+          onPress={() => onDismiss?.()}
+          className="absolute right-4"
+          hitSlop={10}
+        >
+          <IC_CLOSE width={24} height={24} color="#3F4542" />
+        </PressableScale>
       </View>
     );
   };
@@ -141,7 +155,7 @@ export default function DefaultBottomSheetModal({
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
       bottomInset={insets.bottom}
-      footerComponent={Footer}
+      footerComponent={footer ? Footer : undefined}
     >
       {renderContent()}
     </BottomSheetModal>

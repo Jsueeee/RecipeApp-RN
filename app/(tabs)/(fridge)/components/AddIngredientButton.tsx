@@ -10,7 +10,7 @@ interface Props {
 export function AddIngredientButton({ onPress }: Props) {
   return (
     <PressableScale onPress={onPress} className="absolute bottom-20 right-4">
-      <View className="bg-primary-normal w-14 h-14 rounded-full items-center justify-center">
+      <View className="bg-primary-normal w-12 h-12 rounded-full items-center justify-center">
         <MaterialIcons name="add" size={24} color="white" />
       </View>
     </PressableScale>
