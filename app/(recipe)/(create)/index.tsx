@@ -20,6 +20,7 @@ import { IngredientsSection } from "./components/IngredientsSection";
 import { PublicToggleSection } from "./components/PublicToggleSection";
 import { Toast } from "toastify-react-native";
 import i18n from "@/lib/i18n";
+import { DraftMyRecipeDialog } from "./components/DraftMyRecipeDialog";
 
 export interface IngredientWithIndex {
   id: number; // 입력 재료에는 원래 id 가 없지만 리스트 관리를 위해 추가
@@ -259,6 +260,12 @@ export default function RecipeCreateScreen() {
           onCTAButtonPress={onAddIngredient}
         />
       </KeyboardAvoidingView>
+
+      <DraftMyRecipeDialog
+        visible={true}
+        onConfirm={() => {}}
+        onCancel={() => {}}
+      />
 
       {isPostCreateRecipePending && <DotLoadingScreen />}
     </>

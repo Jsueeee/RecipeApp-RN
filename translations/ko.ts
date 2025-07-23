@@ -364,6 +364,9 @@ export default {
     error_toast_time_empty: "소요 시간을 입력해 주세요",
     error_toast_ingredient_empty: "레시피 재료를 하나 이상 입력해 주세요",
     error_toast_cooking_step_empty: "만드는 과정을 한 단계 이상 입력해 주세요",
+
+    draft_dialog_title: "작성 중인 레시피가 있어요",
+    draft_dialog_desc: "임시 저장된 레시피를 불러올까요?",
   },
   recipe_cooking_level: {
     easy: "초보환영",
