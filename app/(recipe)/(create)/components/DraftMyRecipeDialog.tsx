@@ -17,6 +17,8 @@ export const DraftMyRecipeDialog = ({
       visible={visible}
       title={i18n.t("recipe_my_create.draft_dialog_title")}
       message={i18n.t("recipe_my_create.draft_dialog_desc")}
+      confirmText={i18n.t("recipe_my_create.draft_dialog_cta")}
+      cancelText={i18n.t("recipe_my_create.draft_dialog_cancel")}
       onConfirm={onConfirm}
       onCancel={onCancel}
     />
