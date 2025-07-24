@@ -122,7 +122,7 @@ export default function LoginScreen() {
         </Animated.View>
       </SafeAreaView>
 
-      <UpdateVersionDialog visible={true} />
+      <UpdateVersionDialog visible={isShowUpdateDialog} />
     </>
   );
 }
