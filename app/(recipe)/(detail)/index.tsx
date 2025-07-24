@@ -5,11 +5,12 @@ import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { Image, LayoutChangeEvent, View } from "react-native";
+import { Image, LayoutChangeEvent, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MyRecipeFooter } from "./components/MyRecipeFooter";
 import { RecipeDetailInfo } from "./components/RecipeDetailInfo";
 import { RecipeFooter } from "./components/RecipeFooter";
+import IC_MORE from "@/assets/images/ic_more.svg";
 
 export default function RecipeDetailScreen() {
   const { id } = useLocalSearchParams();
@@ -38,6 +39,8 @@ export default function RecipeDetailScreen() {
       onScrapLayout={onScrapLayout}
     />
   );
+
+  const onMoreClick = () => {};
 
   return (
     <View className="flex-1">
@@ -76,7 +79,9 @@ export default function RecipeDetailScreen() {
 
       <Header
         title={""}
+        rightButtonIcons={[<IC_MORE width={24} height={24} color="#3F4542" />]}
         onBackClick={() => router.back()}
+        onRightButtonClick={onMoreClick}
         className="absolute top-safe left-0 right-0"
       />
     </View>
