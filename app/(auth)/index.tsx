@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { Animated, View } from "react-native";
 import { SystemBars } from "react-native-edge-to-edge";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { UpdateVersionDialog } from "../components/UpdateVersionDialog";
+import { useVersionCheck } from "../hooks/useVersionCheck";
 import SplashLogo from "./components/SplashLogo";
 import { useAutoLogin } from "./hooks/useAutoLogin";
 
@@ -16,8 +18,13 @@ export default function LoginScreen() {
   const opacityAnimation = useRef(new Animated.Value(0)).current;
   const [buttonHeight, setButtonHeight] = useState(0);
 
+  const { isShowUpdateDialog } = useVersionCheck();
+
   useEffect(() => {
     const initialize = async () => {
+      // 버전 검사 완료 후 로그인 시도
+      if (isShowUpdateDialog === undefined || isShowUpdateDialog) return;
+
       if (buttonHeight === 0) return;
 
       const isAutoLoginSuccess = await checkAuth();
@@ -31,7 +38,7 @@ export default function LoginScreen() {
     };
 
     initialize();
-  }, [buttonHeight]);
+  }, [buttonHeight, isShowUpdateDialog]);
 
   const startButtonLayoutAnimation = () => {
     Animated.parallel([
@@ -56,62 +63,66 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-teal-300" edges={["top", "bottom"]}>
-      <SystemBars style="dark" />
+    <>
+      <SafeAreaView className="flex-1 bg-teal-300" edges={["top", "bottom"]}>
+        <SystemBars style="dark" />
 
-      <View className="flex-1 justify-between">
+        <View className="flex-1 justify-between">
+          <Animated.View
+            style={{
+              transform: [
+                {
+                  translateY: logoAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -(buttonHeight / 2)],
+                  }),
+                },
+              ],
+            }}
+            className="flex-1 items-center justify-center"
+          >
+            <SplashLogo />
+          </Animated.View>
+
+          <Animated.Text
+            style={{
+              transform: [
+                {
+                  translateY: logoAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -buttonHeight],
+                  }),
+                },
+              ],
+            }}
+            className="text-heading2 font-cafe24 text-white text-center mb-9"
+          >
+            {i18n.t("app.name")}
+          </Animated.Text>
+        </View>
+
         <Animated.View
           style={{
+            opacity: opacityAnimation,
             transform: [
               {
-                translateY: logoAnimation.interpolate({
+                translateY: buttonAnimation.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [0, -(buttonHeight / 2)],
+                  outputRange: [50, 0],
                 }),
               },
             ],
           }}
-          className="flex-1 items-center justify-center"
+          className="absolute bottom-0 left-0 right-0 w-full px-4 pb-6 overflow-hidden"
+          onLayout={(event) => {
+            setButtonHeight(event.nativeEvent.layout.height);
+          }}
         >
-          <SplashLogo />
+          <LoginButtonColumn />
         </Animated.View>
+      </SafeAreaView>
 
-        <Animated.Text
-          style={{
-            transform: [
-              {
-                translateY: logoAnimation.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, -buttonHeight],
-                }),
-              },
-            ],
-          }}
-          className="text-heading2 font-cafe24 text-white text-center mb-9"
-        >
-          {i18n.t("app.name")}
-        </Animated.Text>
-      </View>
-
-      <Animated.View
-        style={{
-          opacity: opacityAnimation,
-          transform: [
-            {
-              translateY: buttonAnimation.interpolate({
-                inputRange: [0, 1],
-                outputRange: [50, 0],
-              }),
-            },
-          ],
-        }}
-        className="absolute bottom-0 left-0 right-0 w-full px-4 pb-6 overflow-hidden"
-        onLayout={(event) => {
-          setButtonHeight(event.nativeEvent.layout.height);
-        }}
-      >
-        <LoginButtonColumn />
-      </Animated.View>
-    </SafeAreaView>
+      <UpdateVersionDialog visible={true} />
+    </>
   );
 }
