@@ -245,9 +245,9 @@ export default {
     cooking_step_title: "이렇게 만들어요",
     cooking_step_number: "%02d",
     popup_menu_report: "신고하기",
-    report_dialog_title: "신고하기",
+    report_dialog_title: "레시피 신고하기",
     report_dialog_desc:
-      "이 레시피를 신고하시겠어요?\n신고를 하시면 더 이상 이 레시피를 볼 수 없어요.\n부적절한 신고가 반복될 경우\n불이익이 있을 수 있으니 주의해주세요.",
+      "이 레시피를 신고하시겠어요?\n신고를 하시면 더 이상 이 레시피를 볼 수 없어요.\n부적절한 신고가 반복될 경우\n불이익이 있을 수 있으니 주의해 주세요.",
     report_dialog_cancel: "취소하기",
     report_dialog_confirm: "신고하기",
     bottom_scrap_button: "저장하기",
