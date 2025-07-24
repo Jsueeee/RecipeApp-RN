@@ -10,6 +10,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MyRecipeFooter } from "./components/MyRecipeFooter";
 import { RecipeDetailInfo } from "./components/RecipeDetailInfo";
 import { RecipeFooter } from "./components/RecipeFooter";
+import { RecipeMoreMenu } from "./components/RecipeMoreMenu";
 import IC_MORE from "@/assets/images/ic_more.svg";
 
 export default function RecipeDetailScreen() {
@@ -19,6 +20,7 @@ export default function RecipeDetailScreen() {
   const { data: recipeDetail } = useRecipeDetailQuery(Number(id));
 
   const [scrapButtonHeight, setScrapButtonHeight] = useState<number>(0);
+  const [isMoreMenuVisible, setIsMoreMenuVisible] = useState(false);
 
   const onScrapLayout = (e: LayoutChangeEvent) => {
     setScrapButtonHeight(e.nativeEvent.layout.height);
@@ -40,7 +42,25 @@ export default function RecipeDetailScreen() {
     />
   );
 
-  const onMoreClick = () => {};
+  const onMoreClick = () => {
+    setIsMoreMenuVisible(true);
+  };
+
+  const onCloseMoreMenu = () => {
+    setIsMoreMenuVisible(false);
+  };
+
+  const onReport = () => {
+    // TODO: 신고하기 기능 구현
+    console.log("신고하기");
+    setIsMoreMenuVisible(false);
+  };
+
+  const onDelete = () => {
+    // TODO: 삭제하기 기능 구현
+    console.log("삭제하기");
+    setIsMoreMenuVisible(false);
+  };
 
   return (
     <View className="flex-1">
@@ -83,6 +103,14 @@ export default function RecipeDetailScreen() {
         onBackClick={() => router.back()}
         onRightButtonClick={onMoreClick}
         className="absolute top-safe left-0 right-0"
+      />
+
+      <RecipeMoreMenu
+        visible={isMoreMenuVisible}
+        onClose={onCloseMoreMenu}
+        onReport={onReport}
+        onDelete={onDelete}
+        isMyRecipe={isMyRecipe}
       />
     </View>
   );
