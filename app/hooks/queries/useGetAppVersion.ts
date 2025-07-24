@@ -10,6 +10,6 @@ export const useGetAppVersion = () => {
   });
 
   return {
-    appVersion: data,
+    minimumAppVersion: data?.version,
   };
 };
