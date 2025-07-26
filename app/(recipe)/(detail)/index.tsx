@@ -1,3 +1,4 @@
+import { useRecipeDeleteMutation } from "@/app/hooks/mutations/useRecipeDeleteMutation";
 import { useRecipeReportMutation } from "@/app/hooks/mutations/useRecipeReportMutation";
 import { useRecipeDetailQuery } from "@/app/hooks/queries/useRecipeDetailQuery";
 import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
@@ -56,6 +57,17 @@ export default function RecipeDetailScreen() {
     },
   });
 
+  const { deleteRecipe } = useRecipeDeleteMutation({
+    onSuccess: () => {
+      Toast.success(i18n.t("recipe_detail.delete_success"));
+
+      router.back();
+    },
+    onError: () => {
+      Toast.error(i18n.t("recipe_detail.delete_error"));
+    },
+  });
+
   const isMyRecipe = userId === recipeDetail?.postUserId;
 
   const footer = isMyRecipe ? (
@@ -94,6 +106,16 @@ export default function RecipeDetailScreen() {
     if (!recipeDetail?.id) return;
 
     reportRecipe(recipeDetail.id);
+  };
+
+  const onCloseDeleteDialog = () => {
+    setIsDeleteDialogVisible(false);
+  };
+
+  const onDeleteConfirm = () => {
+    if (!recipeDetail?.id) return;
+
+    deleteRecipe(recipeDetail.id);
   };
 
   return (
