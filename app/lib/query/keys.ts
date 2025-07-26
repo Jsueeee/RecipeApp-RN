@@ -36,13 +36,14 @@ export const QUERY_KEYS = {
       params.sort,
       params.searchType,
     ],
-    MY_LIST: ["recipe", "my-list"] as const,
+    MY_LIST: () => [...QUERY_KEYS.RECIPE.ROOT, "my-list"] as const,
   },
   SEARCH: {
     POPULAR_KEYWORDS: ["search", "popularKeywords"] as const,
   },
   USER: {
-    INFO: ["user", "info"] as const,
+    ROOT: ["user"] as const,
+    INFO: () => [...QUERY_KEYS.USER.ROOT, "info"] as const,
   },
   INGREDIENT: {
     PICK_LIST: (keyword?: string) => ["ingredients", "pick", keyword] as const,

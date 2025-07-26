@@ -1,3 +1,4 @@
+import { useRecipeDeleteMutation } from "@/app/hooks/mutations/useRecipeDeleteMutation";
 import { useRecipeReportMutation } from "@/app/hooks/mutations/useRecipeReportMutation";
 import { useRecipeDetailQuery } from "@/app/hooks/queries/useRecipeDetailQuery";
 import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
@@ -13,6 +14,7 @@ import React, { useState } from "react";
 import { Image, LayoutChangeEvent, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Toast } from "toastify-react-native";
+import { DeleteRecipeDialog } from "./components/DeleteRecipeDialog";
 import { MyRecipeFooter } from "./components/MyRecipeFooter";
 import { RecipeDetailInfo } from "./components/RecipeDetailInfo";
 import { RecipeFooter } from "./components/RecipeFooter";
@@ -28,6 +30,7 @@ export default function RecipeDetailScreen() {
   const [scrapButtonHeight, setScrapButtonHeight] = useState<number>(0);
   const [isMoreMenuVisible, setIsMoreMenuVisible] = useState(false);
   const [isReportDialogVisible, setIsReportDialogVisible] = useState(false);
+  const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
 
   const onScrapLayout = (e: LayoutChangeEvent) => {
     setScrapButtonHeight(e.nativeEvent.layout.height);
@@ -51,6 +54,17 @@ export default function RecipeDetailScreen() {
     },
     onError: () => {
       Toast.error(i18n.t("recipe_detail.report_error"));
+    },
+  });
+
+  const { deleteRecipe } = useRecipeDeleteMutation({
+    onSuccess: () => {
+      Toast.success(i18n.t("recipe_detail.delete_success"));
+
+      router.back();
+    },
+    onError: () => {
+      Toast.error(i18n.t("recipe_detail.delete_error"));
     },
   });
 
@@ -80,9 +94,8 @@ export default function RecipeDetailScreen() {
   };
 
   const onDelete = () => {
-    // TODO: 삭제하기 기능 구현
-    console.log("삭제하기");
     setIsMoreMenuVisible(false);
+    setIsDeleteDialogVisible(true);
   };
 
   const onCloseReportDialog = () => {
@@ -93,6 +106,16 @@ export default function RecipeDetailScreen() {
     if (!recipeDetail?.id) return;
 
     reportRecipe(recipeDetail.id);
+  };
+
+  const onCloseDeleteDialog = () => {
+    setIsDeleteDialogVisible(false);
+  };
+
+  const onDeleteConfirm = () => {
+    if (!recipeDetail?.id) return;
+
+    deleteRecipe(recipeDetail.id);
   };
 
   return (
@@ -155,6 +178,14 @@ export default function RecipeDetailScreen() {
           visible={isReportDialogVisible}
           onClose={onCloseReportDialog}
           onConfirm={onReportConfirm}
+        />
+      )}
+
+      {isDeleteDialogVisible && (
+        <DeleteRecipeDialog
+          visible={isDeleteDialogVisible}
+          onClose={onCloseDeleteDialog}
+          onConfirm={onDeleteConfirm}
         />
       )}
     </>
