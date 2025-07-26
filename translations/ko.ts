@@ -255,7 +255,7 @@ export default {
     bottom_scrap_cancel_button: "취소하기",
     bottom_scrap_error: "다시 시도해주세요",
     report_success: "신고가 완료되었습니다",
-    report_error: "다시 시도해주세요",
+    report_error: "잠시 후 다시 시도해주세요",
     my_recipe_edit: "수정하기",
     my_recipe_delete: "삭제하기",
     delete_success: "레시피가 삭제되었습니다",

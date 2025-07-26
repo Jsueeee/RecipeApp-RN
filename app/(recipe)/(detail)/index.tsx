@@ -1,14 +1,18 @@
 import { useRecipeReportMutation } from "@/app/hooks/mutations/useRecipeReportMutation";
 import { useRecipeDetailQuery } from "@/app/hooks/queries/useRecipeDetailQuery";
 import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
+import { queryClient } from "@/app/lib/query/client";
+import { QUERY_KEYS } from "@/app/lib/query/keys";
 import IC_MORE from "@/assets/images/ic_more.svg";
 import { Header } from "@/components/Header";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
+import i18n from "@/lib/i18n";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { Image, LayoutChangeEvent, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Toast } from "toastify-react-native";
 import { MyRecipeFooter } from "./components/MyRecipeFooter";
 import { RecipeDetailInfo } from "./components/RecipeDetailInfo";
 import { RecipeFooter } from "./components/RecipeFooter";
@@ -35,10 +39,18 @@ export default function RecipeDetailScreen() {
 
   const { reportRecipe } = useRecipeReportMutation({
     onSuccess: () => {
-      console.log("신고 성공");
+      queryClient
+        .invalidateQueries({
+          queryKey: QUERY_KEYS.RECIPE.ROOT,
+        })
+        .then(() => {
+          Toast.success(i18n.t("recipe_detail.report_success"));
+
+          router.back();
+        });
     },
     onError: () => {
-      console.log("신고 실패");
+      Toast.error(i18n.t("recipe_detail.report_error"));
     },
   });
 
@@ -138,11 +150,13 @@ export default function RecipeDetailScreen() {
         />
       </View>
 
-      <ReportRecipeDialog
-        visible={isReportDialogVisible}
-        onClose={onCloseReportDialog}
-        onConfirm={onReportConfirm}
-      />
+      {isReportDialogVisible && (
+        <ReportRecipeDialog
+          visible={isReportDialogVisible}
+          onClose={onCloseReportDialog}
+          onConfirm={onReportConfirm}
+        />
+      )}
     </>
   );
 }

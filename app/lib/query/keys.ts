@@ -17,15 +17,19 @@ export const QUERY_KEYS = {
     BASKET: ["fridge", "basket"] as const,
   },
   RECIPE: {
-    RECOMMENDED_LIST: ["recipe", "recommended"] as const,
-    SCRAP_LIST: (type: RecipeSourceType) => ["recipe", "scrap", type] as const,
-    DETAIL: (recipeId: number) => ["recipe", "detail", recipeId] as const,
+    ROOT: ["recipe"] as const,
+    RECOMMENDED_LIST: () => [...QUERY_KEYS.RECIPE.ROOT, "recommended"] as const,
+    SCRAP_LIST: (type: RecipeSourceType) =>
+      [...QUERY_KEYS.RECIPE.ROOT, "scrap", type] as const,
+    DETAIL: (recipeId: number) =>
+      [...QUERY_KEYS.RECIPE.ROOT, "detail", recipeId] as const,
     SEARCH: (params: {
       keyword: string;
       size: number;
       sort: string;
       searchType: string;
     }) => [
+      ...QUERY_KEYS.RECIPE.ROOT,
       "recipe-search",
       params.keyword,
       params.size,
