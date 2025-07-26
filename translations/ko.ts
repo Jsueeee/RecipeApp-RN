@@ -259,8 +259,8 @@ export default {
     my_recipe_edit: "수정하기",
     my_recipe_delete: "삭제하기",
     delete_success: "레시피가 삭제되었습니다",
-    delete_error: "다시 시도해주세요",
-    delete_dialog_title: "레시피 삭제",
+    delete_error: "잠시 후 다시 시도해주세요",
+    delete_dialog_title: "레시피 삭제하기",
     delete_dialog_desc:
       "이 레시피를 삭제하시겠어요?\n삭제된 레시피는 복구되지 않습니다.",
     delete_dialog_cancel: "취소하기",
