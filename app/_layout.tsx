@@ -151,7 +151,7 @@ function RootLayoutNav() {
         config={toastConfig}
         animationType="slide"
         duration={1500}
-        useModal={true}
+        useModal={false}
       />
     </GestureHandlerRootView>
   );
