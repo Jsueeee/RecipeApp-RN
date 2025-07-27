@@ -1,5 +1,5 @@
-import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMutation";
 import { useBlogRecipeScrapMutation } from "@/app/hooks/mutations/useBlogRecipeScrapMutation";
+import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMutation";
 import { useYoutubeRecipeScrapMutation } from "@/app/hooks/mutations/useYoutubeRecipeScrapMutation";
 import { useSearchRecipesQuery } from "@/app/hooks/queries/useSearchRecipeQuery";
 import { SearchRecipe } from "@/app/types/domain/recipe";
@@ -13,7 +13,7 @@ import {
 } from "@/constants/RecipeSourceType";
 import i18n from "@/lib/i18n";
 import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FlatList, Linking, Text, View } from "react-native";
 import SmallRecipeListItem from "../../(recipe)/components/SmallRecipeListItem";
 
@@ -36,24 +36,13 @@ export default function SearchResult({ keyword, className }: Props) {
 
   const PAGE_SIZE = 10;
 
-  const {
-    data: searchResult,
-    isLoading,
-    fetchNextPage,
-    hasNextPage,
-    refetch,
-  } = useSearchRecipesQuery({
-    keyword,
-    size: PAGE_SIZE,
-    sort: "newest",
-    searchType: selectedTab,
-  });
-
-  useEffect(() => {
-    if (searchResult) {
-      console.log(searchResult);
-    }
-  }, [searchResult]);
+  const { recipes, totalCount, isLoading, fetchNextPage, hasNextPage } =
+    useSearchRecipesQuery({
+      keyword,
+      size: PAGE_SIZE,
+      sort: "newest",
+      searchType: selectedTab,
+    });
 
   const handleScrapButtonPress = (isScrapped: boolean, recipeId: number) => {
     switch (selectedTab) {
@@ -88,7 +77,7 @@ export default function SearchResult({ keyword, className }: Props) {
   };
 
   const onEndReached = () => {
-    if ((searchResult?.totalCnt ?? 0) < PAGE_SIZE) return;
+    if ((totalCount ?? 0) < PAGE_SIZE) return;
 
     if (hasNextPage) {
       fetchNextPage();
@@ -96,7 +85,7 @@ export default function SearchResult({ keyword, className }: Props) {
   };
 
   const ListFooterComponent = () => {
-    if (!hasNextPage || (searchResult?.totalCnt ?? 0) < PAGE_SIZE) return null;
+    if (!hasNextPage || (totalCount ?? 0) < PAGE_SIZE) return null;
 
     return <TealDotLoading className="mb-20" />;
   };
@@ -128,7 +117,7 @@ export default function SearchResult({ keyword, className }: Props) {
       <View className="flex-1 flex-row px-4 pt-5 pb-2 items-center justify-between">
         <View className="flex-row justify-center items-center gap-0.5">
           <Text className="text-title5 text-text-strong">
-            {searchResult?.totalCnt.toLocaleString()}
+            {totalCount?.toLocaleString()}
           </Text>
 
           <Text className="text-body3 text-text-alternative">
@@ -143,8 +132,6 @@ export default function SearchResult({ keyword, className }: Props) {
 
   const renderContent = () => {
     if (isLoading) return <DotLoadingScreen />;
-
-    const recipes = searchResult?.recipes;
 
     if (!recipes?.length) {
       return (
