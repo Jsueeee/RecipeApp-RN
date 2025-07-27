@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
  */
 export const useRecipeDetailQuery = (recipeId: number) => {
   return useQuery({
-    queryKey: [QUERY_KEYS.RECIPE.DETAIL, recipeId],
+    queryKey: QUERY_KEYS.RECIPE.DETAIL(recipeId),
     queryFn: async () => {
       const response = await apiClient.get<RecipeDetailResponse>(
         `/recipes/${recipeId}`

@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const usePopularKeywordsQuery = () => {
   return useQuery({
-    queryKey: QUERY_KEYS.SEARCH.POPULAR_KEYWORDS,
+    queryKey: QUERY_KEYS.SEARCH.POPULAR_KEYWORDS(),
     queryFn: async () => {
       const response = await apiClient.get<string[]>("/recipes/best-keywords");
       return response.data;

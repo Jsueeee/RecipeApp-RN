@@ -11,7 +11,7 @@ export const useFridgesQuery = () => {
     Error,
     Fridges
   >({
-    queryKey: QUERY_KEYS.FRIDGE.FRIDGES,
+    queryKey: QUERY_KEYS.FRIDGE.FRIDGES(),
     queryFn: async () => {
       const response = await apiClient.get<FridgesResponse>("/fridges");
       return response.data;
