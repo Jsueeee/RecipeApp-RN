@@ -12,12 +12,8 @@ import React from "react";
 import { FlatList, View } from "react-native";
 
 export default function MyRecipeScreen() {
-  const {
-    data: recipeList,
-    isLoading,
-    hasNextPage,
-    fetchNextPage,
-  } = useMyRecipeListQuery();
+  const { recipes, isLoading, fetchNextPage, hasNextPage } =
+    useMyRecipeListQuery();
 
   const onRecipeItemPress = (recipeId: number) => {
     router.push({
@@ -74,8 +70,6 @@ export default function MyRecipeScreen() {
 
   const renderContent = () => {
     if (isLoading) return <DotLoadingScreen />;
-
-    const recipes = recipeList?.recipes;
 
     if (!recipes?.length) return <EmptyRecipeTabPlaceholder />;
 
