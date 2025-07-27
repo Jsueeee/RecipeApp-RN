@@ -25,12 +25,8 @@ export default function MyScrapScreen() {
     type ? (type as RecipeSourceType) : RECIPE_SOURCE_TYPE.BLOG
   );
 
-  const {
-    data: recipeList,
-    isLoading,
-    hasNextPage,
-    fetchNextPage,
-  } = useScrapRecipesQuery(selectedTab);
+  const { recipes, isLoading, fetchNextPage, hasNextPage } =
+    useScrapRecipesQuery(selectedTab);
 
   const { removeScrap: removePublicScrap } = useRecipeScrapMutation();
   const { removeScrap: removeBlogScrap } = useBlogRecipeScrapMutation();
@@ -117,8 +113,6 @@ export default function MyScrapScreen() {
 
   const renderContent = () => {
     if (isLoading) return <DotLoadingScreen />;
-
-    const recipes = recipeList?.recipes;
 
     if (!recipes?.length) {
       return (
