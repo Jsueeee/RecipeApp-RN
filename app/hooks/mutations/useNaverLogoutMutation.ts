@@ -7,7 +7,7 @@ import { router } from "expo-router";
 
 export const useNaverLogoutMutation = (callbacks?: MutationCallbacks) => {
   const naverLogoutMutation = useMutation({
-    mutationKey: QUERY_KEYS.AUTH.NAVER,
+    mutationKey: QUERY_KEYS.AUTH.NAVER(),
     mutationFn: async () => {
       try {
         await NaverLogin.logout();

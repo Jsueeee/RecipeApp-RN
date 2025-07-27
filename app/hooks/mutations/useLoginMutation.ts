@@ -7,7 +7,7 @@ import { authStorage } from "@/app/lib/storage/auth";
 
 export const useLoginMutation = () => {
   const kakaoLoginMutation = useMutation({
-    mutationKey: QUERY_KEYS.AUTH.KAKAO,
+    mutationKey: QUERY_KEYS.AUTH.KAKAO(),
     mutationFn: async () => {
       const result = await login();
 

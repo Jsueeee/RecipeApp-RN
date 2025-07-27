@@ -7,7 +7,7 @@ import { router } from "expo-router";
 
 export const useKaKaoLogoutMutation = (callbacks?: MutationCallbacks) => {
   const kakaoLogoutMutation = useMutation({
-    mutationKey: QUERY_KEYS.AUTH.KAKAO,
+    mutationKey: QUERY_KEYS.AUTH.KAKAO(),
     mutationFn: async () => {
       try {
         await logoutKakao();

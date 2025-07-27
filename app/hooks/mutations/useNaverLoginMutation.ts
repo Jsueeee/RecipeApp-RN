@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 
 export const useNaverLoginMutation = () => {
   const naverLoginMutation = useMutation({
-    mutationKey: QUERY_KEYS.AUTH.NAVER,
+    mutationKey: QUERY_KEYS.AUTH.NAVER(),
     mutationFn: async () => {
       try {
         const { failureResponse, successResponse } = await NaverLogin.login();
