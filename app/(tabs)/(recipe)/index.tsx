@@ -29,6 +29,10 @@ export default function RecipeScreen() {
     isScrapped ? removeScrap(recipeId) : addScrap(recipeId);
   };
 
+  const navigateToAddRecipe = () => {
+    router.push("/(ingredient)/(pick)");
+  };
+
   const renderItem = ({
     item,
     index,
@@ -101,7 +105,9 @@ export default function RecipeScreen() {
   const renderContent = () => {
     if (isLoading) return <DotLoadingScreen />;
 
-    if (!recipes?.length) return <EmptyRecipeTabPlaceholder />;
+    if (!recipes?.length) {
+      return <EmptyRecipeTabPlaceholder onPress={navigateToAddRecipe} />;
+    }
 
     return (
       <FlatList

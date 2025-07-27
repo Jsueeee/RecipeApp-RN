@@ -4,7 +4,11 @@ import i18n from "@/lib/i18n";
 import React from "react";
 import { View } from "react-native";
 
-export const EmptyRecipeTabPlaceholder = () => {
+interface Props {
+  onPress: () => void;
+}
+
+export const EmptyRecipeTabPlaceholder = ({ onPress }: Props) => {
   return (
     <View className="flex-1">
       <MainTabHeader tab="recipe" className="mt-safe" />
@@ -14,7 +18,7 @@ export const EmptyRecipeTabPlaceholder = () => {
         title={i18n.t("recipe.recipe_empty_title")}
         description={i18n.t("recipe.recipe_empty_desc")}
         buttonLabel={i18n.t("recipe.recipe_empty_cta")}
-        onPress={() => {}}
+        onPress={onPress}
       />
     </View>
   );
