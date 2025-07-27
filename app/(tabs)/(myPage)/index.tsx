@@ -9,7 +9,7 @@ import { MyRecipeSummary } from "./components/MyRecipeSummary";
 import { MyScrapSummary } from "./components/MyScrapSummary";
 
 export default function MyPageScreen() {
-  const { data: userInfo } = useUserInfoQuery();
+  const { userInfo } = useUserInfoQuery();
 
   const onProfilePress = () => {
     router.push("/(myPage)/(profile)");
