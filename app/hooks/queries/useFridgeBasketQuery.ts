@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useFridgeBasketQuery = () => {
   const { data, isLoading, isError } = useQuery({
-    queryKey: QUERY_KEYS.FRIDGE.BASKET,
+    queryKey: QUERY_KEYS.FRIDGE.BASKET(),
     queryFn: async () => {
       const response = await apiClient.get<FridgeBasket>("/fridges/basket");
       return response.data;

@@ -136,7 +136,7 @@ export const useUpdateMyScrapCount = () => {
 
   return () => {
     queryClient.invalidateQueries({
-      queryKey: QUERY_KEYS.USER.INFO,
+      queryKey: QUERY_KEYS.USER.INFO(),
     });
   };
 };

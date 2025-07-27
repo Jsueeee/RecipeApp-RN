@@ -9,17 +9,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React, { useMemo } from "react";
 import { FlatList, Text, View } from "react-native";
-import { EmptyRecipeTabPlaceholder } from "./components/EmptyRecipeTabPlaceholder";
 import LargeRecipeListItem from "../../(recipe)/components/LargeRecipeListItem";
+import { EmptyRecipeTabPlaceholder } from "./components/EmptyRecipeTabPlaceholder";
 
 export default function RecipeScreen() {
-  const {
-    data: recipeList,
-    isLoading,
-    fetchNextPage,
-    hasNextPage,
-    refetch,
-  } = useRecommendedRecipesQuery();
+  const { recipes, totalCount, isLoading, fetchNextPage, hasNextPage } =
+    useRecommendedRecipesQuery();
 
   const { addScrap, removeScrap } = useRecipeScrapMutation();
 
@@ -32,6 +27,10 @@ export default function RecipeScreen() {
 
   const onScrapPress = (recipeId: number, isScrapped: boolean) => {
     isScrapped ? removeScrap(recipeId) : addScrap(recipeId);
+  };
+
+  const navigateToAddRecipe = () => {
+    router.push("/(ingredient)/(pick)");
   };
 
   const renderItem = ({
@@ -52,6 +51,7 @@ export default function RecipeScreen() {
         scrapCount={item.scrapCount}
         isScrapped={item.isScrapped}
         onPress={() => onRecipeItemPress(item.id)}
+        onScrapPress={() => onScrapPress(item.id, item.isScrapped)}
         className={`bg-white ${index === 0 ? "rounded-t-[16px]" : ""}`}
       />
     </View>
@@ -67,12 +67,10 @@ export default function RecipeScreen() {
 
         <Text className="px-4 pt-2 text-title4">
           <Text className="text-primary-strong">
-            {recipeList?.totalCount != null
-              ? recipeList.totalCount.toString()
-              : ""}
+            {totalCount != null ? totalCount.toString() : ""}
           </Text>
 
-          {recipeList?.totalCount != null ? (
+          {totalCount != null ? (
             <Text className="text-text-normal">
               {i18n.t("recipe.recipe_total_count_suffix")}
             </Text>
@@ -80,7 +78,7 @@ export default function RecipeScreen() {
         </Text>
       </View>
     );
-  }, [recipeList?.totalCount]);
+  }, [totalCount]);
 
   const ListFooterComponent = () =>
     hasNextPage ? <TealDotLoading className="mb-20" /> : null;
@@ -107,9 +105,9 @@ export default function RecipeScreen() {
   const renderContent = () => {
     if (isLoading) return <DotLoadingScreen />;
 
-    const recipes = recipeList?.recipes;
-
-    if (!recipes?.length) return <EmptyRecipeTabPlaceholder />;
+    if (!recipes?.length) {
+      return <EmptyRecipeTabPlaceholder onPress={navigateToAddRecipe} />;
+    }
 
     return (
       <FlatList

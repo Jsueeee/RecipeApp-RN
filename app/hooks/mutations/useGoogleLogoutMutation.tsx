@@ -6,7 +6,7 @@ import { router } from "expo-router";
 
 export const useGoogleLogoutMutation = () => {
   const googleLogoutMutation = useMutation({
-    mutationKey: QUERY_KEYS.AUTH.GOOGLE,
+    mutationKey: QUERY_KEYS.AUTH.GOOGLE(),
     mutationFn: async () => {
       try {
         await GoogleSignin.signOut();

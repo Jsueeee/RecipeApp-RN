@@ -5,7 +5,7 @@ import { QUERY_KEYS } from "@/app/lib/query/keys";
 
 export const useAutoLoginMutation = () => {
   const autoLoginMutation = useMutation({
-    mutationKey: QUERY_KEYS.AUTH.AUTO_LOGIN,
+    mutationKey: QUERY_KEYS.AUTH.AUTO_LOGIN(),
     mutationFn: async () => {
       const { data } = await apiClient.post<AutoLoginResponse>(
         "/users/auto-login"

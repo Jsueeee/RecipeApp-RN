@@ -11,7 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 
 export const useGoogleLoginMutation = () => {
   const googleLoginMutation = useMutation({
-    mutationKey: QUERY_KEYS.AUTH.GOOGLE,
+    mutationKey: QUERY_KEYS.AUTH.GOOGLE(),
     mutationFn: async () => {
       try {
         await GoogleSignin.hasPlayServices();

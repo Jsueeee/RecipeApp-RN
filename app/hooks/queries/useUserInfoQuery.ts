@@ -8,8 +8,8 @@ import { UserInfo } from "@/app/types/domain/mypage";
 export const useUserInfoQuery = <T = UserInfo>(options?: {
   select?: (data: UserInfo) => T;
 }) => {
-  return useQuery({
-    queryKey: QUERY_KEYS.USER.INFO,
+  const { data, isLoading, isError } = useQuery({
+    queryKey: QUERY_KEYS.USER.INFO(),
     queryFn: async () => {
       const response = await apiClient.get<UserInfoResponse>("/users");
       return mapUserInfoResponse(response.data);
@@ -17,4 +17,10 @@ export const useUserInfoQuery = <T = UserInfo>(options?: {
     staleTime: 1000 * 60,
     ...options,
   });
+
+  return {
+    userInfo: data,
+    isLoading,
+    isError,
+  };
 };
