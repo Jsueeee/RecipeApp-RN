@@ -47,6 +47,7 @@ export default function RecipeScreen() {
         scrapCount={item.scrapCount}
         isScrapped={item.isScrapped}
         onPress={() => onRecipeItemPress(item.id)}
+        onScrapPress={() => onScrapPress(item.id, item.isScrapped)}
         className={`bg-white ${index === 0 ? "rounded-t-[16px]" : ""}`}
       />
     </View>
