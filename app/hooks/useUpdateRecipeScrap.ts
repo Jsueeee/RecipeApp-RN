@@ -16,7 +16,7 @@ export const useUpdateRecipeListScrapState = () => {
 
   return ({ recipeId, isScrapped }: RecipeScrapUpdate) => {
     queryClient.setQueriesData(
-      { queryKey: QUERY_KEYS.RECIPE.RECOMMENDED_LIST },
+      { queryKey: QUERY_KEYS.RECIPE.RECOMMENDED_LIST() },
       (old: any) => {
         if (!old?.pages) return old;
 
@@ -51,7 +51,7 @@ export const useUpdateRecipeDetailScrapState = () => {
 
   return ({ recipeId, isScrapped }: RecipeScrapUpdate) => {
     queryClient.setQueriesData(
-      { queryKey: [QUERY_KEYS.RECIPE.DETAIL, recipeId] },
+      { queryKey: QUERY_KEYS.RECIPE.DETAIL(recipeId) },
       (old: RecipeDetailResponse) => {
         return {
           ...old,
