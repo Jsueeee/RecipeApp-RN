@@ -18,34 +18,14 @@ const RecipeViewScrapCount: React.FC<Props> = ({
   // TODO : 조회수 추후 추가 예정
 
   const animation = useRef<LottieView>(null);
-
-  const preValue = useRef(isScrapped);
+  const initialValue = useRef<boolean | null>(isScrapped);
 
   useEffect(() => {
-    // isScrapped 상태가 변경되면 애니메이션 재생
-    if (isScrapped === preValue.current) return;
-
-    // // 초기 애니메이션 상태 지정
-    // if (preValue.current === null) {
-    //   preValue.current = isScrapped;
-
-    //   animation.current?.setState({
-    //     progress: isScrapped ? 1 : 0,
-    //   });
-
-    //   return;
-    // }
-
-    console.log("isScrapped", isScrapped);
-
     if (isScrapped) {
-      animation.current?.reset();
       animation.current?.play(500, 520);
     } else {
-      animation.current?.reset();
+      animation.current?.play(10, 0);
     }
-
-    preValue.current = isScrapped;
   }, [isScrapped]);
 
   return (
@@ -56,12 +36,12 @@ const RecipeViewScrapCount: React.FC<Props> = ({
           position: "absolute",
           width: 70,
           height: 70,
-          bottom: -20,
+          bottom: -25,
           right: -20,
         }}
         loop={false}
         source={require("@/assets/lottie/lottie_like_heart.json")}
-        progress={preValue.current ? 1 : 0}
+        progress={initialValue.current ? 1 : 0}
         // TODO : 컬러는 고민 좀 해보기
         // colorFilters={[
         //   {
