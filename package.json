@@ -60,7 +60,8 @@
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "~0.19.13",
     "tailwindcss": "^3.4.17",
-    "toastify-react-native": "^7.2.3"
+    "toastify-react-native": "^7.2.3",
+    "expo-image-picker": "~16.0.6"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
