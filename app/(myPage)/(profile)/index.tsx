@@ -11,7 +11,7 @@ import EditProfileImageBottomSheet from "./components/EditProfileImageBottomShee
 import EditProfileNicknameBottomSheet from "./components/EditProfileNicknameBottomSheet";
 
 export default function MyProfileScreen() {
-  const { data: userInfo } = useUserInfoQuery();
+  const { userInfo } = useUserInfoQuery();
 
   const { ref: profileBottomSheetModalRef, open: openProfileBottomSheetModal } =
     useDefaultBottomSheetModal();

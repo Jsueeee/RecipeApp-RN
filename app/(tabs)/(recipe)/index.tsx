@@ -120,7 +120,7 @@ export default function RecipeScreen() {
         ItemSeparatorComponent={ItemSeparator}
         onEndReachedThreshold={0.5}
         className="bg-white"
-        contentContainerStyle={{ paddingBottom: 24 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
         getItemLayout={getItemLayout}
         bounces={false}
         alwaysBounceVertical={false}

@@ -39,7 +39,13 @@ apiClient.interceptors.response.use(
 if (process.env.EXPO_PUBLIC_ENV === "dev") {
   apiClient.interceptors.request.use(
     (config) => {
-      console.log("🚀 API 요청:", config.url, config.data, config.params);
+      console.log(
+        "🚀 API 요청:",
+        config.method,
+        config.url,
+        config.data,
+        config.params
+      );
       return config;
     },
     (error) => {
