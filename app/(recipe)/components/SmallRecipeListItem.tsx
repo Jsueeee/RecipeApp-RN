@@ -55,7 +55,7 @@ export default function SmallRecipeListItem({
         {thumbnail && (
           <Image
             source={{ uri: thumbnail }}
-            className="w-[84px] h-[84px] rounded-[12px] bg-gray-50"
+            className="w-[100px] h-[100px] rounded-[12px] bg-gray-50"
             resizeMode="cover"
           />
         )}
