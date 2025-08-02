@@ -31,6 +31,7 @@ import {
   mapIngredientsToIngredientWithIndexes,
 } from "./components/IngredientsSection";
 import { PublicToggleSection } from "./components/PublicToggleSection";
+import { AddRecipeThumbnail } from "./components/AddRecipeThumbnail";
 
 export default function RecipeCreateScreen() {
   const navigation = useNavigation();
@@ -368,7 +369,9 @@ export default function RecipeCreateScreen() {
       >
         <CreateRecipeHeader onCTAButtonPress={onCTAButtonPress} />
 
-        <View className="flex-1 px-4">
+        <AddRecipeThumbnail />
+
+        <View className="flex-1 px-4 pt-6 rounded-t-[16px] bg-white">
           <CreateRecipeTitle
             title={inputTitleValue}
             description={inputDescriptionValue}
