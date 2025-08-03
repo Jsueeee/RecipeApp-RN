@@ -1,13 +1,14 @@
 import { CookingTimeInput } from "@/app/(recipe)/(create)/components/CookingTimeInput";
 import { usePostCreateRecipe } from "@/app/hooks/mutations/usePostCreateRecipe";
 import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
-import { RecipeIngredientInput } from "@/app/types/api/recipe";
+import { RecipeDetail, RecipeProcess } from "@/app/types/domain/recipe";
 import { RecipeDraftStorage } from "@/app/utils/RecipeDraftStorage";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import { useNavigation } from "@react-navigation/native";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { Toast } from "toastify-react-native";
@@ -15,21 +16,35 @@ import { AddRecipeIngredientBottomSheet } from "./components/AddRecipeIngredient
 import {
   COOKING_LEVEL,
   CookingLevelChips,
+  mapLevelToCookingLevelLabel,
 } from "./components/CookingLevelChips";
 import { CookingStepInputs } from "./components/CookingStepInputs";
 import { CreateRecipeHeader } from "./components/CreateHeader";
 import { CreateRecipeTitle } from "./components/CreateRecipeTitle";
 import { DraftMyRecipeDialog } from "./components/DraftMyRecipeDialog";
-import { IngredientsSection } from "./components/IngredientsSection";
+import {
+  IngredientsSection,
+  IngredientWithIndex,
+  mapIngredientsToIngredientWithIndexes,
+} from "./components/IngredientsSection";
 import { PublicToggleSection } from "./components/PublicToggleSection";
-
-export interface IngredientWithIndex {
-  id: number; // 입력 재료에는 원래 id 가 없지만 리스트 관리를 위해 추가
-  ingredient: RecipeIngredientInput;
-}
 
 export default function RecipeCreateScreen() {
   const navigation = useNavigation();
+  const { editRecipeDetail: editRecipeDetailString } = useLocalSearchParams<{
+    editRecipeDetail?: string;
+  }>();
+
+  // 수정하기 모드로 진입했을 경우
+  const editRecipeDetail = useMemo(() => {
+    if (!editRecipeDetailString) return null;
+    try {
+      return JSON.parse(editRecipeDetailString) as RecipeDetail;
+    } catch (error) {
+      console.error("Failed to parse editRecipeDetail:", error);
+      return null;
+    }
+  }, [editRecipeDetailString]);
 
   const [inputTitleValue, setInputTitleValue] = useState("");
   const [inputDescriptionValue, setInputDescriptionValue] = useState("");
@@ -71,16 +86,21 @@ export default function RecipeCreateScreen() {
     },
   });
 
-  // 컴포넌트 마운트 시 임시 저장 확인
+  // 컴포넌트 마운트 시 임시 저장 또는 수정 모드 확인
   useEffect(() => {
     const checkDraft = async () => {
+      if (editRecipeDetail) {
+        onEditRecipeDetail();
+        return;
+      }
+
       const draftExists = await RecipeDraftStorage.hasDraft();
       if (draftExists) {
         setShowDraftDialog(true);
       }
     };
     checkDraft();
-  }, []);
+  }, [editRecipeDetailString]); // editRecipeDetail 대신 editRecipeDetailString 사용
 
   // 임시 저장 자동 저장 (입력값이 변경될 때마다)
   useEffect(() => {
@@ -132,6 +152,27 @@ export default function RecipeCreateScreen() {
     }
     setShowDraftDialog(false);
   };
+
+  // 수정 모드일 경우
+  const onEditRecipeDetail = useCallback(() => {
+    if (!editRecipeDetail) return;
+
+    setInputTitleValue(editRecipeDetail.title);
+    setInputDescriptionValue(editRecipeDetail.description || "");
+    setIsPublic(true); // TODO : 서버에서 isHidden 값을 받아오면 수정
+    setSelectedCookingLevel(
+      mapLevelToCookingLevelLabel(editRecipeDetail.level)
+    );
+    setCookingTime(editRecipeDetail.cookingTime || null);
+    setStepInfo(
+      editRecipeDetail.processes?.map(
+        (process: RecipeProcess) => process.description || ""
+      ) || [""]
+    );
+    setIngredients(
+      mapIngredientsToIngredientWithIndexes(editRecipeDetail.ingredients)
+    );
+  }, [editRecipeDetail]);
 
   // 불러오기 x 선택했을 경우 임시 저장 삭제
   const ignoreDraft = () => {

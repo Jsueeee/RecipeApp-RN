@@ -29,6 +29,21 @@ export const COOKING_LEVEL = [
   },
 ];
 
+/**
+ * 서버값이 "보통", "어려움" 처럼 라벨로 들어올 때
+ */
+export const mapLevelToCookingLevelLabel = (
+  level: string | undefined
+): string => {
+  if (!level) return COOKING_LEVEL[1].key;
+
+  const cookingLevel = COOKING_LEVEL.find(
+    (cookingLevel) => cookingLevel.label === level
+  );
+
+  return cookingLevel?.key || COOKING_LEVEL[1].key;
+};
+
 export const CookingLevelChips = ({ cookingLevel, onChanged }: Props) => {
   const selectedLevel = COOKING_LEVEL.find(
     (level) => level.key === cookingLevel

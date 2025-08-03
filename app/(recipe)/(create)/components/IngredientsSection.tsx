@@ -1,5 +1,6 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import { RecipeIngredientInput } from "@/app/types/api/recipe";
+import { RecipeIngredient } from "@/app/types/domain/recipe";
 import IC_PLUS from "@/assets/images/ic_plus_bold.svg";
 import IC_DELETE from "@/assets/images/ic_selected_cancel.svg";
 import { FoodDataManager } from "@/constants/IngredientManager";
@@ -7,7 +8,25 @@ import i18n from "@/lib/i18n";
 import { Pressable, Text, TouchableOpacity, View } from "react-native";
 import { EmptyIngredientsPlaceholder } from "../../(detail)/components/EmptyIngredientsPlaceholder";
 import { IngredientFridgeType } from "../../(detail)/components/RecipeIngredients";
-import { IngredientWithIndex } from "..";
+
+export interface IngredientWithIndex {
+  id: number; // 입력 재료에는 원래 id 가 없지만 리스트 관리를 위해 추가
+  ingredient: RecipeIngredientInput;
+}
+
+export const mapIngredientsToIngredientWithIndexes = (
+  ingredients: RecipeIngredient[]
+): IngredientWithIndex[] => {
+  return ingredients.map((ingredient, index) => ({
+    id: index,
+    ingredient: {
+      ingredientName: ingredient.name,
+      ingredientIconId: ingredient.iconId || null,
+      quantity: ingredient.quantity || "1",
+      unit: ingredient.unit || "",
+    },
+  }));
+};
 
 interface IngredientItemProps {
   item: RecipeIngredientInput;
