@@ -1,22 +1,23 @@
 import IC_CAMERA from "@/assets/images/ic_camera.svg";
-import React, { useState } from "react";
-import { Image, TouchableOpacity } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import React from "react";
+import { Image, TouchableOpacity } from "react-native";
 
-export const AddRecipeThumbnail = () => {
-  const [image, setImage] = useState<string | null>(null);
+interface Props {
+  image: string | null;
+  setImage: (image: string | null) => void;
+}
 
+export const AddRecipeThumbnail = ({ image, setImage }: Props) => {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: false,
       aspect: [1, 1],
-      quality: 1,
+      quality: 0.1,
     });
 
-    console.log(result);
-
-    if (!result.canceled) {
+    if (!result.canceled && result.assets[0]) {
       setImage(result.assets[0].uri);
     }
   };

@@ -16,6 +16,7 @@ import { TextInput } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Toast } from "toastify-react-native";
 import { AddRecipeIngredientBottomSheet } from "./components/AddRecipeIngredientBottomSheet";
+import { AddRecipeThumbnail } from "./components/AddRecipeThumbnail";
 import {
   COOKING_LEVEL,
   CookingLevelChips,
@@ -31,7 +32,6 @@ import {
   mapIngredientsToIngredientWithIndexes,
 } from "./components/IngredientsSection";
 import { PublicToggleSection } from "./components/PublicToggleSection";
-import { AddRecipeThumbnail } from "./components/AddRecipeThumbnail";
 
 export default function RecipeCreateScreen() {
   const navigation = useNavigation();
@@ -52,6 +52,8 @@ export default function RecipeCreateScreen() {
       return null;
     }
   }, [editRecipeDetailString]);
+
+  const [image, setImage] = useState<string | null>(null);
 
   const [inputTitleValue, setInputTitleValue] = useState("");
   const [inputDescriptionValue, setInputDescriptionValue] = useState("");
@@ -369,7 +371,7 @@ export default function RecipeCreateScreen() {
       >
         <CreateRecipeHeader onCTAButtonPress={onCTAButtonPress} />
 
-        <AddRecipeThumbnail />
+        <AddRecipeThumbnail image={image} setImage={setImage} />
 
         <View className="flex-1 px-4 pt-6 rounded-t-[16px] bg-white">
           <CreateRecipeTitle
