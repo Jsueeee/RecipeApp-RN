@@ -226,13 +226,13 @@ export default function RecipeDetailScreen() {
           </Reanimated.View>
         </View>
 
-          <RecipeMoreMenu
-            visible={isMoreMenuVisible}
-            onClose={onCloseMoreMenu}
-            onReport={onReportButtonPress}
-            onDelete={onDelete}
-            isMyRecipe={isMyRecipe}
-          />
+        <RecipeMoreMenu
+          visible={isMoreMenuVisible}
+          onClose={onCloseMoreMenu}
+          onReport={onReportButtonPress}
+          onDelete={onDelete}
+          isMyRecipe={isMyRecipe}
+        />
       </View>
 
       {recipeDetail?.id && (
