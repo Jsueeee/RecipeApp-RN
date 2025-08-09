@@ -5,7 +5,6 @@ export default {
     version_message:
       "원활한 서비스 이용을 위해\n최신 버전으로 업데이트해주세요",
     version_confirm: "업데이트",
-    version_cancel: "닫기",
 
     server_error_title: "서버 점검 중",
     server_error_content:
