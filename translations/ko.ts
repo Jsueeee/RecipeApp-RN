@@ -6,6 +6,12 @@ export default {
       "원활한 서비스 이용을 위해\n최신 버전으로 업데이트해주세요",
     version_confirm: "업데이트",
     version_cancel: "닫기",
+
+    server_error_title: "서버 점검 중",
+    server_error_content:
+      "지금은 서버 점검 중이에요.\n더 좋은 서비스로 곧 돌아올게요!",
+    server_error_cta: "확인",
+    server_error_cancel: "닫기",
   },
   recipeStorage: {
     main: "레시피\n저장소",
@@ -230,11 +236,6 @@ export default {
   youtube: {
     warning:
       "사용자가 많아 Youtube 가 제공하는 \n하루 검색 할당량을 초과했습니다.\n오후 4시에 다시 이용하실 수 있습니다.\n해당 문제는 협의를 통해 빠른 시간 내에 해결하도록 하겠습니다.\n불편을 드려 죄송합니다.",
-  },
-  server: {
-    error_title: "서버 점검 중",
-    error_content:
-      "지금은 서버 점검 중입니다.\n\n불편을 드려서 죄송합니다.\n더 나은 서비스를 위해 노력하는\n레시피 저장소 팀이 되겠습니다.\n\n감사합니다.",
   },
   basket: {
     pick_food_go_basket_button: "%d개 담기",
