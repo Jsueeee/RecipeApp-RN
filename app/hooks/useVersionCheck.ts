@@ -6,7 +6,7 @@ import {
 } from "../utils/VersionUtils";
 
 export const useVersionCheck = () => {
-  const { minimumAppVersion } = useGetAppVersion();
+  const { minimumAppVersion, isError } = useGetAppVersion();
   const [isShowUpdateDialog, setIsShowUpdateDialog] = useState(false);
 
   const currentVersion = getCurrentAppVersion();
@@ -22,5 +22,6 @@ export const useVersionCheck = () => {
 
   return {
     isShowUpdateDialog,
+    isErrorAppVersion: isError,
   };
 };

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Animated, View } from "react-native";
 import { SystemBars } from "react-native-edge-to-edge";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ServerErrorDialog } from "../components/ServerErrorDialog";
 import { UpdateVersionDialog } from "../components/UpdateVersionDialog";
 import { useVersionCheck } from "../hooks/useVersionCheck";
 import SplashLogo from "./components/SplashLogo";
@@ -18,12 +19,17 @@ export default function LoginScreen() {
   const opacityAnimation = useRef(new Animated.Value(0)).current;
   const [buttonHeight, setButtonHeight] = useState(0);
 
-  const { isShowUpdateDialog } = useVersionCheck();
+  const { isShowUpdateDialog, isErrorAppVersion } = useVersionCheck();
 
   useEffect(() => {
     const initialize = async () => {
       // 버전 검사 완료 후 로그인 시도
-      if (isShowUpdateDialog === undefined || isShowUpdateDialog) return;
+      if (
+        isShowUpdateDialog === undefined ||
+        isShowUpdateDialog ||
+        isErrorAppVersion
+      )
+        return;
 
       if (buttonHeight === 0) return;
 
@@ -38,7 +44,7 @@ export default function LoginScreen() {
     };
 
     initialize();
-  }, [buttonHeight, isShowUpdateDialog]);
+  }, [buttonHeight, isShowUpdateDialog, isErrorAppVersion]);
 
   const startButtonLayoutAnimation = () => {
     Animated.parallel([
@@ -123,6 +129,8 @@ export default function LoginScreen() {
       </SafeAreaView>
 
       <UpdateVersionDialog visible={isShowUpdateDialog} />
+
+      <ServerErrorDialog visible={isErrorAppVersion} />
     </>
   );
 }
