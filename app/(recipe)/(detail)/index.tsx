@@ -4,19 +4,12 @@ import { useRecipeDetailQuery } from "@/app/hooks/queries/useRecipeDetailQuery";
 import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
 import { queryClient } from "@/app/lib/query/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
-import IC_CHEVRON_LEFT from "@/assets/images/ic_chevron_left.svg";
 import IC_MORE from "@/assets/images/ic_more.svg";
 import { Header } from "@/components/Header";
 import i18n from "@/lib/i18n";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import {
-  Dimensions,
-  Image,
-  LayoutChangeEvent,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Dimensions, Image, LayoutChangeEvent, View } from "react-native";
 import Reanimated, {
   interpolate,
   useAnimatedScrollHandler,
@@ -30,6 +23,7 @@ import { MyRecipeFooter } from "./components/MyRecipeFooter";
 import { RecipeDetailInfo } from "./components/RecipeDetailInfo";
 import { RecipeFooter } from "./components/RecipeFooter";
 import { RecipeMoreMenu } from "./components/RecipeMoreMenu";
+import { RecipeTransparentHeader } from "./components/RecipeTransparentHeader";
 import { ReportRecipeDialog } from "./components/ReportRecipeDialog";
 
 export default function RecipeDetailScreen() {
@@ -196,20 +190,10 @@ export default function RecipeDetailScreen() {
         {/* 이미지 위 투명 헤더(처음 보임 → 닿을수록 사라짐) */}
         <Reanimated.View
           pointerEvents="box-none"
-          className="absolute left-4 right-4 flex-row items-center justify-between"
-          style={[{ top: insets.top + 16 }, transparentHeaderStyle]}
+          className="absolute left-0 right-0 flex-row items-center justify-between"
+          style={transparentHeaderStyle}
         >
-          <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
-            <IC_CHEVRON_LEFT width={24} height={24} color="#FFFFFF" />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={onMoreClick}
-            activeOpacity={0.8}
-            hitSlop={8}
-          >
-            <IC_MORE width={24} height={24} color="#FFFFFF" />
-          </TouchableOpacity>
+          <RecipeTransparentHeader onMoreClick={onMoreClick} />
         </Reanimated.View>
 
         {/* 화이트 헤더(닿은 뒤 일정 거리에서 0→1 등장) */}
