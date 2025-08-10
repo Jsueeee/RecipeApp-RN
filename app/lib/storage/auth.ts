@@ -19,9 +19,11 @@ export const authStorage = {
     );
     await SecureStore.setItemAsync(AUTH_KEYS.USER_ID, String(tokens.userId));
   },
-  getAccessToken: async () => {
-    return await SecureStore.getItemAsync(AUTH_KEYS.ACCESS_TOKEN);
-  },
+  getAccessToken: async () =>
+    await SecureStore.getItemAsync(AUTH_KEYS.ACCESS_TOKEN),
+  getRefreshToken: async () =>
+    await SecureStore.getItemAsync(AUTH_KEYS.REFRESH_TOKEN),
+  getUserId: async () => await SecureStore.getItemAsync(AUTH_KEYS.USER_ID),
   clear: async () => {
     await SecureStore.deleteItemAsync(AUTH_KEYS.ACCESS_TOKEN);
     await SecureStore.deleteItemAsync(AUTH_KEYS.REFRESH_TOKEN);
