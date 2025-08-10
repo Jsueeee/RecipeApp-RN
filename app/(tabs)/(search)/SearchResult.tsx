@@ -110,11 +110,12 @@ export default function SearchResult({ keyword, className }: Props) {
     />
   );
 
-  const keyExtractor = (item: SearchRecipe) => item.recipeId.toString();
+  const keyExtractor = (item: SearchRecipe) =>
+    (item.recipeId ?? item.url).toString();
 
   const ListHeaderComponent = () => {
     return (
-      <View className="flex-1 flex-row px-4 pt-5 pb-2 items-center justify-between">
+      <View className="flex-1 flex-row px-4 pt-4 pb-4 items-center justify-between bg-white">
         <View className="flex-row justify-center items-center gap-0.5">
           <Text className="text-title5 text-text-strong">
             {totalCount?.toLocaleString()}
@@ -155,6 +156,8 @@ export default function SearchResult({ keyword, className }: Props) {
         bounces={false}
         alwaysBounceVertical={false}
         showsVerticalScrollIndicator={false}
+        stickyHeaderIndices={[0]}
+        stickyHeaderHiddenOnScroll={true}
       />
     );
   };
