@@ -193,7 +193,10 @@ export default function RecipeDetailScreen() {
           className="absolute left-0 right-0 flex-row items-center justify-between"
           style={transparentHeaderStyle}
         >
-          <RecipeTransparentHeader onMoreClick={onMoreClick} />
+          <RecipeTransparentHeader
+            isMyRecipe={isMyRecipe}
+            onMoreClick={onMoreClick}
+          />
         </Reanimated.View>
 
         {/* 화이트 헤더(닿은 뒤 일정 거리에서 0→1 등장) */}
@@ -212,7 +215,9 @@ export default function RecipeDetailScreen() {
               title={recipeDetail?.title ?? ""}
               titleColor="black"
               rightButtonIcons={[
-                <IC_MORE key="more" width={24} height={24} color="#3F4542" />,
+                !isMyRecipe && (
+                  <IC_MORE key="more" width={24} height={24} color="#3F4542" />
+                ),
               ]}
               onBackClick={() => router.back()}
               onRightButtonClick={onMoreClick}

@@ -7,10 +7,11 @@ import { TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Props {
+  isMyRecipe: boolean;
   onMoreClick: () => void;
 }
 
-export const RecipeTransparentHeader = ({ onMoreClick }: Props) => {
+export const RecipeTransparentHeader = ({ isMyRecipe, onMoreClick }: Props) => {
   const insets = useSafeAreaInsets();
 
   const onBackClick = () => {
@@ -38,9 +39,15 @@ export const RecipeTransparentHeader = ({ onMoreClick }: Props) => {
           <IC_CHEVRON_LEFT width={24} height={24} color="#FFFFFF" />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={onMoreClick} activeOpacity={0.8} hitSlop={8}>
-          <IC_MORE width={24} height={24} color="#FFFFFF" />
-        </TouchableOpacity>
+        {!isMyRecipe && (
+          <TouchableOpacity
+            onPress={onMoreClick}
+            activeOpacity={0.8}
+            hitSlop={8}
+          >
+            <IC_MORE width={24} height={24} color="#FFFFFF" />
+          </TouchableOpacity>
+        )}
       </View>
     </>
   );
