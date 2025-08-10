@@ -4,14 +4,25 @@ import { useRecipeDetailQuery } from "@/app/hooks/queries/useRecipeDetailQuery";
 import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
 import { queryClient } from "@/app/lib/query/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
+import IC_CHEVRON_LEFT from "@/assets/images/ic_chevron_left.svg";
 import IC_MORE from "@/assets/images/ic_more.svg";
 import { Header } from "@/components/Header";
-import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
-import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { Image, LayoutChangeEvent, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  LayoutChangeEvent,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import Reanimated, {
+  interpolate,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Toast } from "toastify-react-native";
 import { DeleteRecipeDialog } from "./components/DeleteRecipeDialog";
@@ -23,8 +34,6 @@ import { ReportRecipeDialog } from "./components/ReportRecipeDialog";
 
 export default function RecipeDetailScreen() {
   const { id } = useLocalSearchParams();
-  const insets = useSafeAreaInsets();
-
   const { data: recipeDetail } = useRecipeDetailQuery(Number(id));
 
   const [scrapButtonHeight, setScrapButtonHeight] = useState<number>(0);
@@ -36,16 +45,12 @@ export default function RecipeDetailScreen() {
     setScrapButtonHeight(e.nativeEvent.layout.height);
   };
 
-  const { data: userId } = useUserInfoQuery({
-    select: (userInfo) => userInfo.userId,
-  });
+  const { userInfo } = useUserInfoQuery();
 
   const { reportRecipe } = useRecipeReportMutation({
     onSuccess: () => {
       queryClient
-        .invalidateQueries({
-          queryKey: QUERY_KEYS.RECIPE.ROOT,
-        })
+        .invalidateQueries({ queryKey: QUERY_KEYS.RECIPE.ROOT })
         .then(() => {
           Toast.success(i18n.t("recipe_detail.report_success"));
 
@@ -60,7 +65,6 @@ export default function RecipeDetailScreen() {
   const { deleteRecipe } = useRecipeDeleteMutation({
     onSuccess: () => {
       Toast.success(i18n.t("recipe_detail.delete_success"));
-
       router.back();
     },
     onError: () => {
@@ -68,9 +72,9 @@ export default function RecipeDetailScreen() {
     },
   });
 
-  const isMyRecipe = userId === recipeDetail?.postUserId;
+  const isMyRecipe = userInfo?.userId === recipeDetail?.postUserId;
 
-  const footer = isMyRecipe ? (
+  const Footer = isMyRecipe ? (
     <MyRecipeFooter recipeId={recipeDetail?.id} />
   ) : (
     <RecipeFooter
@@ -80,89 +84,158 @@ export default function RecipeDetailScreen() {
     />
   );
 
-  const onMoreClick = () => {
-    setIsMoreMenuVisible(true);
-  };
+  const insets = useSafeAreaInsets();
+  const { width } = Dimensions.get("window");
+  const HEADER_MAX_HEIGHT = width;
+  const TOOLBAR_HEIGHT = 56;
+  const HEADER_MIN_HEIGHT = insets.top + TOOLBAR_HEIGHT;
 
-  const onCloseMoreMenu = () => {
-    setIsMoreMenuVisible(false);
-  };
+  // Reanimated
+  const scrollY = useSharedValue(0);
+  const onScroll = useAnimatedScrollHandler({
+    onScroll: (e) => {
+      scrollY.value = e.contentOffset.y;
+    },
+  });
 
+  // 패럴랙스(자연스러운 위/당김)
+  const imageAnimatedStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(
+      scrollY.value,
+      [-120, 0, HEADER_MAX_HEIGHT],
+      [20, 0, -HEADER_MAX_HEIGHT * 0.25],
+      { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+    );
+    const scale = interpolate(
+      scrollY.value,
+      [-120, 0, HEADER_MAX_HEIGHT],
+      [1.1, 1, 1],
+      { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+    );
+    return { transform: [{ translateY }, { scale }] };
+  });
+
+  // 헤더 페이드 포인트
+  const CONTENT_OFFSET = 16; // -mt-4 보정
+  const touchPoint = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT - CONTENT_OFFSET;
+  const FADE_DISTANCE = 32;
+
+  // 투명 헤더(이미지 위) → 서서히 사라짐
+  const transparentHeaderStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(scrollY.value, [0, touchPoint], [1, 0], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    });
+    return { opacity };
+  });
+
+  // 화이트 헤더 → 서서히 나타남
+  const headerBgStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      scrollY.value,
+      [touchPoint, touchPoint + FADE_DISTANCE],
+      [0, 1],
+      { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+    );
+    return { opacity };
+  });
+  const headerContentStyle = headerBgStyle;
+
+  const onMoreClick = () => setIsMoreMenuVisible(true);
+  const onCloseMoreMenu = () => setIsMoreMenuVisible(false);
   const onReportButtonPress = () => {
     setIsMoreMenuVisible(false);
     setIsReportDialogVisible(true);
   };
-
   const onDelete = () => {
     setIsMoreMenuVisible(false);
     setIsDeleteDialogVisible(true);
   };
-
-  const onCloseReportDialog = () => {
-    setIsReportDialogVisible(false);
-  };
-
+  const onCloseReportDialog = () => setIsReportDialogVisible(false);
   const onReportConfirm = () => {
     if (!recipeDetail?.id) return;
-
     reportRecipe(recipeDetail.id);
   };
-
-  const onCloseDeleteDialog = () => {
-    setIsDeleteDialogVisible(false);
-  };
-
+  const onCloseDeleteDialog = () => setIsDeleteDialogVisible(false);
   const onDeleteConfirm = () => {
     if (!recipeDetail?.id) return;
-
     deleteRecipe(recipeDetail.id);
   };
 
   return (
     <>
-      <View className="flex-1">
-        <ScreenLayout
-          isShowHeader={false}
-          isScrollEnabled={true}
-          footer={recipeDetail ? footer : null}
+      <View className="flex-1 bg-white">
+        <Reanimated.View
+          className="absolute inset-x-0 top-0 overflow-hidden"
+          style={[{ height: HEADER_MAX_HEIGHT, width }, imageAnimatedStyle]}
         >
-          <View>
-            <Image
-              source={{ uri: recipeDetail?.thumbnail }}
-              className="w-full aspect-square bg-gray-100"
-            />
+          <Image
+            source={{ uri: recipeDetail?.thumbnail }}
+            className="w-full h-full bg-gray-100 aspect-square max-w-[500px] self-center"
+            resizeMode="cover"
+          />
+        </Reanimated.View>
 
+        <Reanimated.ScrollView
+          scrollEventThrottle={16}
+          contentContainerStyle={{
+            paddingTop: HEADER_MAX_HEIGHT,
+            paddingBottom: 100,
+          }}
+          showsVerticalScrollIndicator={false}
+          onScroll={onScroll}
+        >
+          <View className="bg-white -mt-4 rounded-t-2xl">
             <RecipeDetailInfo
-              className="relative -top-[16px] bg-white"
+              className="px-4 pt-5"
               recipeDetail={recipeDetail}
             />
           </View>
-        </ScreenLayout>
+        </Reanimated.ScrollView>
 
-        <LinearGradient
-          colors={[
-            "rgba(255,255,255,1)",
-            "rgba(255,255,255,0.8)",
-            "rgba(255,255,255,0)",
-          ]}
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            top: insets.top,
-            height: 100,
-          }}
-        />
+        {/* 이미지 위 투명 헤더(처음 보임 → 닿을수록 사라짐) */}
+        <Reanimated.View
+          pointerEvents="box-none"
+          className="absolute left-4 right-4 flex-row items-center justify-between"
+          style={[{ top: insets.top + 16 }, transparentHeaderStyle]}
+        >
+          <TouchableOpacity onPress={() => router.back()} hitSlop={8}>
+            <IC_CHEVRON_LEFT width={24} height={24} color="#FFFFFF" />
+          </TouchableOpacity>
 
-        <Header
-          title={""}
-          rightButtonIcons={[
-            <IC_MORE width={24} height={24} color="#3F4542" />,
-          ]}
-          onBackClick={() => router.back()}
-          onRightButtonClick={onMoreClick}
-          className="absolute top-safe left-0 right-0"
-        />
+          <TouchableOpacity
+            onPress={onMoreClick}
+            activeOpacity={0.8}
+            hitSlop={8}
+          >
+            <IC_MORE width={24} height={24} color="#FFFFFF" />
+          </TouchableOpacity>
+        </Reanimated.View>
+
+        {/* 화이트 헤더(닿은 뒤 일정 거리에서 0→1 등장) */}
+        <View
+          pointerEvents="box-none"
+          className="absolute inset-x-0 top-0 justify-end"
+          style={{ paddingTop: insets.top, height: HEADER_MIN_HEIGHT }}
+        >
+          <Reanimated.View
+            className="absolute inset-0 bg-white"
+            style={headerBgStyle}
+          />
+
+          <Reanimated.View style={headerContentStyle}>
+            <Header
+              title={recipeDetail?.title ?? ""}
+              titleColor="black"
+              rightButtonIcons={[
+                <IC_MORE key="more" width={24} height={24} color="#3F4542" />,
+              ]}
+              onBackClick={() => router.back()}
+              onRightButtonClick={onMoreClick}
+              className="bg-transparent"
+            />
+          </Reanimated.View>
+        </View>
 
         <RecipeMoreMenu
           visible={isMoreMenuVisible}
@@ -172,6 +245,10 @@ export default function RecipeDetailScreen() {
           isMyRecipe={isMyRecipe}
         />
       </View>
+
+      {recipeDetail?.id && (
+        <View className="absolute bottom-0 left-0 right-0">{Footer}</View>
+      )}
 
       {isReportDialogVisible && (
         <ReportRecipeDialog
