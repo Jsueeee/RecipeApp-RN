@@ -16,6 +16,7 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import { FlatList, Linking, Text, View } from "react-native";
 import SmallRecipeListItem from "../../(recipe)/components/SmallRecipeListItem";
+import * as Haptics from "expo-haptics";
 
 interface Props {
   keyword: string;
@@ -45,6 +46,8 @@ export default function SearchResult({ keyword, className }: Props) {
     });
 
   const handleScrapButtonPress = (isScrapped: boolean, recipeId: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
     switch (selectedTab) {
       case RECIPE_SOURCE_TYPE.BLOG:
         isScrapped ? removeBlogScrap(recipeId) : addBlogScrap(recipeId);
