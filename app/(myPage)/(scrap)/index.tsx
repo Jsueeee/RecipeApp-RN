@@ -17,6 +17,7 @@ import i18n from "@/lib/i18n";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { FlatList, Linking, View } from "react-native";
+import * as Haptics from "expo-haptics";
 
 export default function MyScrapScreen() {
   const { type } = useLocalSearchParams<{ type: RecipeSourceType }>();
@@ -33,6 +34,8 @@ export default function MyScrapScreen() {
   const { removeScrap: removeYoutubeScrap } = useYoutubeRecipeScrapMutation();
 
   const handleScrapButtonPress = (isScrapped: boolean, recipeId: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
     switch (selectedTab) {
       case RECIPE_SOURCE_TYPE.BLOG:
         removeBlogScrap(recipeId);

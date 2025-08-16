@@ -20,6 +20,7 @@ import {
 } from "react-native-safe-area-context";
 import LargeRecipeListItem from "../../(recipe)/components/LargeRecipeListItem";
 import { EmptyRecipeTabPlaceholder } from "./components/EmptyRecipeTabPlaceholder";
+import * as Haptics from "expo-haptics";
 
 export default function RecipeScreen() {
   const insets = useSafeAreaInsets();
@@ -36,6 +37,8 @@ export default function RecipeScreen() {
   };
 
   const onScrapPress = (recipeId: number, isScrapped: boolean) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
     isScrapped ? removeScrap(recipeId) : addScrap(recipeId);
   };
 
