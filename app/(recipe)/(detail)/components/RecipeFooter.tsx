@@ -5,6 +5,7 @@ import YoutubeIcon from "@/assets/images/ic_youtube.svg";
 import React from "react";
 import { LayoutChangeEvent, View } from "react-native";
 import { BottomScrapButton } from "./BottomScrapButton";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Props {
   recipeDetail: RecipeDetail | undefined;
@@ -19,8 +20,15 @@ export const RecipeFooter = ({
 }: Props) => {
   if (!recipeDetail) return null;
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <View className="flex-row w-full py-2 px-4 bg-white rounded-t-2xl border-t border-l border-r border-[#ECEFED] self-center gap-2">
+    <View
+      className="flex-row w-full py-2 px-4 bg-white rounded-t-2xl border-t border-l border-r border-[#ECEFED] self-center gap-2"
+      style={{
+        paddingBottom: insets.bottom,
+      }}
+    >
       <PressableScale disabled={!recipeDetail} onPress={() => {}}>
         <View
           style={{ height: scrapButtonHeight, aspectRatio: 1 }}

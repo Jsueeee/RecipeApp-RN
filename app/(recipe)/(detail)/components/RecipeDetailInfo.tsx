@@ -34,7 +34,9 @@ export const RecipeDetailInfo = ({ recipeDetail, className }: Props) => {
       className={clsx("flex-1 px-4 pt-6 rounded-t-[16px]", className)}
       style={{ transform: [{ translateY: -16 }] }}
     >
-      <Text className="text-title2 text-text-strong">{recipeDetail.title}</Text>
+      <Text className="text-title2 text-text-strong pt-4">
+        {recipeDetail.title}
+      </Text>
 
       <Text className="text-body2 text-text-alternative mt-2">
         {recipeDetail.description}

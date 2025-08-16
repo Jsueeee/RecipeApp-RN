@@ -5,6 +5,7 @@ import i18n from "@/lib/i18n";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Props {
   recipeId: number | undefined;
@@ -41,11 +42,18 @@ export const MyRecipeFooter = ({ recipeId }: Props) => {
     // TODO: 수정 화면으로 이동
   };
 
+  const insets = useSafeAreaInsets();
+
   return (
     <>
-      <View className="flex-row w-full py-2 px-4 bg-white rounded-t-2xl border-t border-l border-r border-[#ECEFED] self-center gap-2">
+      <View
+        className="flex-row w-full py-2 px-4 bg-white rounded-t-2xl border-t border-l border-r border-[#ECEFED] self-center gap-2"
+        style={{
+          paddingBottom: insets.bottom,
+        }}
+      >
         <CTAButton
-          buttonLabel={i18n.t("recipe_detail.my_delete")}
+          buttonLabel={i18n.t("recipe_detail.my_recipe_delete")}
           buttonLabelColor="strong-destructive"
           backgroundColor="white"
           onPress={onDeleteButtonPress}
@@ -53,7 +61,7 @@ export const MyRecipeFooter = ({ recipeId }: Props) => {
         />
 
         <CTAButton
-          buttonLabel={i18n.t("recipe_detail.my_edit")}
+          buttonLabel={i18n.t("recipe_detail.my_recipe_edit")}
           onPress={onEditButtonPress}
           className="flex-1"
         />
