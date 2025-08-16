@@ -32,9 +32,7 @@ export const BottomScrapButton = ({ recipeDetail, onLayout }: Props) => {
           ? i18n.t("recipe_detail.bottom_remove_scrap_button")
           : i18n.t("recipe_detail.bottom_scrap_button")
       }
-      buttonLabelColor={recipeDetail?.isScrap ? "primary-normal" : "white"}
-      backgroundColor={recipeDetail?.isScrap ? "white" : "primary-normal"}
-      borderColor={recipeDetail?.isScrap ? "primary-normal" : undefined}
+      variant={recipeDetail?.isScrap ? "border" : "active"}
       icon={
         recipeDetail?.isScrap ? (
           <HeartFillIcon width={20} height={20} color="#4BD2B0" />

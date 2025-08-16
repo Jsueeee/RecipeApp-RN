@@ -50,9 +50,7 @@ export function ChoiceDialog({
           <View className="flex-row gap-2 mt-6">
             <CTAButton
               buttonLabel={cancelText ?? ""}
-              buttonLabelColor="text-text-alternative"
-              backgroundColor="fill-subtle"
-              borderColor="fill-subtle"
+              variant="cancel"
               onPress={handleCancel}
               className="flex-1"
             />

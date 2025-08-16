@@ -54,8 +54,7 @@ export const MyRecipeFooter = ({ recipeId }: Props) => {
       >
         <CTAButton
           buttonLabel={i18n.t("recipe_detail.my_recipe_delete")}
-          buttonLabelColor="strong-destructive"
-          backgroundColor="white"
+          variant="danger"
           onPress={onDeleteButtonPress}
           className="w-[120px]"
         />
