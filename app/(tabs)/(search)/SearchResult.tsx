@@ -13,7 +13,7 @@ import {
 } from "@/constants/RecipeSourceType";
 import i18n from "@/lib/i18n";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { FlatList, Linking, Text, View } from "react-native";
 import SmallRecipeListItem from "../../(recipe)/components/SmallRecipeListItem";
 import * as Haptics from "expo-haptics";
@@ -97,20 +97,25 @@ export default function SearchResult({ keyword, className }: Props) {
     <View className="w-full mx-4 h-[1px] bg-line-alternative" />
   );
 
-  const renderItem = ({ item }: { item: SearchRecipe }) => (
-    <SmallRecipeListItem
-      keyword={keyword}
-      recipeId={item.recipeId}
-      title={item.title}
-      thumbnail={item.thumbnail}
-      postUserName={item.postUserName}
-      postDate={item.postDate}
-      viewCount={item.viewCount}
-      scrapCount={item.scrapCount}
-      isScrapped={item.isScrapped}
-      onScrapButtonPress={handleScrapButtonPress}
-      onPress={() => onRecipePress(item)}
-    />
+  const renderItem = useMemo(
+    () =>
+      ({ item }: { item: SearchRecipe }) =>
+        (
+          <SmallRecipeListItem
+            keyword={keyword}
+            recipeId={item.recipeId}
+            title={item.title}
+            thumbnail={item.thumbnail}
+            postUserName={item.postUserName}
+            postDate={item.postDate}
+            viewCount={item.viewCount}
+            scrapCount={item.scrapCount}
+            isScrapped={item.isScrapped}
+            onScrapButtonPress={handleScrapButtonPress}
+            onPress={() => onRecipePress(item)}
+          />
+        ),
+    [keyword, handleScrapButtonPress, onRecipePress]
   );
 
   const keyExtractor = (item: SearchRecipe) =>
