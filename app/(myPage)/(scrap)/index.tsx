@@ -15,8 +15,9 @@ import {
 } from "@/constants/RecipeSourceType";
 import i18n from "@/lib/i18n";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { FlatList, Linking, View } from "react-native";
+import * as Haptics from "expo-haptics";
 
 export default function MyScrapScreen() {
   const { type } = useLocalSearchParams<{ type: RecipeSourceType }>();
@@ -33,6 +34,8 @@ export default function MyScrapScreen() {
   const { removeScrap: removeYoutubeScrap } = useYoutubeRecipeScrapMutation();
 
   const handleScrapButtonPress = (isScrapped: boolean, recipeId: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
     switch (selectedTab) {
       case RECIPE_SOURCE_TYPE.BLOG:
         removeBlogScrap(recipeId);
@@ -79,36 +82,24 @@ export default function MyScrapScreen() {
     }
   };
 
-  const getItemLayout = (
-    data: ArrayLike<RecipeSummary> | null | undefined,
-    index: number
-  ) => ({
-    length: 164,
-    offset: 164 * index,
-    index,
-  });
-
-  const renderItem = ({
-    item,
-    index,
-  }: {
-    item: RecipeSummary;
-    index: number;
-  }) => (
-    <View className="bg-white">
-      <SmallRecipeListItem
-        recipeId={item.id}
-        title={item.title}
-        thumbnail={item.thumbnail}
-        postUserName={item.postUserName ?? null}
-        postDate={item.postDate}
-        viewCount={item.viewCount}
-        scrapCount={item.scrapCount}
-        isScrapped={item.isScrapped}
-        onScrapButtonPress={handleScrapButtonPress}
-        onPress={() => onRecipeItemPress(item)}
-      />
-    </View>
+  const renderItem = useCallback(
+    ({ item }: { item: RecipeSummary }) => (
+      <View className="bg-white">
+        <SmallRecipeListItem
+          recipeId={item.id}
+          title={item.title}
+          thumbnail={item.thumbnail}
+          postUserName={item.postUserName ?? null}
+          postDate={item.postDate}
+          viewCount={item.viewCount}
+          scrapCount={item.scrapCount}
+          isScrapped={item.isScrapped}
+          onScrapButtonPress={handleScrapButtonPress}
+          onPress={() => onRecipeItemPress(item)}
+        />
+      </View>
+    ),
+    [handleScrapButtonPress, onRecipeItemPress]
   );
 
   const renderContent = () => {
@@ -134,7 +125,6 @@ export default function MyScrapScreen() {
         onEndReachedThreshold={0.5}
         className="bg-white"
         contentContainerStyle={{ paddingBottom: 24 }}
-        getItemLayout={getItemLayout}
         bounces={false}
         alwaysBounceVertical={false}
         showsVerticalScrollIndicator={false}

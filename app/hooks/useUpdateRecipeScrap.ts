@@ -72,9 +72,7 @@ export const useUpdateSearchRecipeListScrapState = () => {
   return ({ recipeId, isScrapped }: RecipeScrapUpdate) => {
     queryClient.setQueriesData(
       {
-        predicate: (query) =>
-          Array.isArray(query.queryKey) &&
-          query.queryKey[0] === "recipe-search",
+        predicate: (query) => query.queryKey.includes("recipe-search"),
       },
       (old: any) => {
         if (!old?.pages) return old;

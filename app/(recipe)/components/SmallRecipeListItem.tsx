@@ -20,7 +20,7 @@ interface Props {
 /**
  * 검색 결과 레시피 아이템
  */
-export default function SmallRecipeListItem({
+const SmallRecipeListItem = ({
   keyword,
   recipeId,
   title,
@@ -32,7 +32,7 @@ export default function SmallRecipeListItem({
   isScrapped,
   onScrapButtonPress = () => {},
   onPress = () => {},
-}: Props) {
+}: Props) => {
   const highlightKeyword = (text: string) => {
     if (!keyword) return text;
 
@@ -110,4 +110,6 @@ export default function SmallRecipeListItem({
       </View>
     </PressableScale>
   );
-}
+};
+
+export default React.memo(SmallRecipeListItem);

@@ -1,6 +1,7 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import { usePopularKeywordsQuery } from "@/app/hooks/queries/usePopularKeywordsQuery";
 import { useRecentSearch } from "@/app/hooks/useRecentSearch";
+import { queryClient } from "@/app/lib/query/client";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import i18n from "@/lib/i18n";
 import React, { useCallback, useRef, useState } from "react";
@@ -33,9 +34,14 @@ export default function SearchScreen() {
   }, []);
 
   const handleSearch = useCallback(
-    (searchKeyword: string = keyword) => {
+    async (searchKeyword: string = keyword) => {
       if (searchKeyword.trim()) {
         Keyboard.dismiss();
+
+        await queryClient.resetQueries({
+          predicate: (query) => query.queryKey.includes("recipe-search"),
+        });
+
         addSearch(searchKeyword);
         setIsSearchResultShow(true);
       }
