@@ -14,11 +14,11 @@ export const usePostCreateRecipe = (callbacks: MutationCallbacks) => {
       apiClient.post("/recipes", params),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.RECIPE.MY_LIST,
+        queryKey: QUERY_KEYS.RECIPE.MY_LIST(),
       });
 
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.RECIPE.MY_LIST,
+        queryKey: QUERY_KEYS.RECIPE.MY_LIST(),
       });
 
       callbacks.onSuccess?.();

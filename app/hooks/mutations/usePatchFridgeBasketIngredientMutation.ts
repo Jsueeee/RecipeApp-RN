@@ -17,7 +17,7 @@ export const usePatchFridgeBasketIngredientMutation = (
   callbacks?: MutationCallbacks
 ) => {
   const patchFridgeBasketIngredientMutation = useMutation({
-    mutationKey: QUERY_KEYS.FRIDGE.BASKET,
+    mutationKey: QUERY_KEYS.FRIDGE.BASKET(),
     mutationFn: async ({
       id,
       body,
@@ -29,7 +29,7 @@ export const usePatchFridgeBasketIngredientMutation = (
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.FRIDGE.BASKET,
+        queryKey: QUERY_KEYS.FRIDGE.BASKET(),
       });
 
       callbacks?.onSuccess?.();

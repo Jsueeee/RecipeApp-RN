@@ -6,19 +6,19 @@ import { useMutation } from "@tanstack/react-query";
 
 export const usePostFridgeMutation = (callbacks?: MutationCallbacks) => {
   const postFridgeMutation = useMutation({
-    mutationKey: QUERY_KEYS.FRIDGE.FRIDGES,
+    mutationKey: QUERY_KEYS.FRIDGE.FRIDGES(),
     mutationFn: () => apiClient.post("/fridges"),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.FRIDGE.FRIDGES,
+        queryKey: QUERY_KEYS.FRIDGE.FRIDGES(),
       });
 
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.FRIDGE.BASKET,
+        queryKey: QUERY_KEYS.FRIDGE.BASKET(),
       });
 
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.RECIPE.RECOMMENDED_LIST,
+        queryKey: QUERY_KEYS.RECIPE.RECOMMENDED_LIST(),
       });
 
       callbacks?.onSuccess?.();

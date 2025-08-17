@@ -14,7 +14,7 @@ export const usePatchFridgeMutation = () => {
     },
     onSuccess: (_, variables) => {
       // 냉장고 목록 무효화
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FRIDGE.FRIDGES });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FRIDGE.FRIDGES() });
       // 재료 상세 무효화
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.FRIDGE.DETAIL(variables.fridgeId),

@@ -13,13 +13,13 @@ interface RequestPostFridgeBasket {
  */
 export const usePostFridgeBasketMutation = (callbacks?: MutationCallbacks) => {
   const postFridgeBasketMutation = useMutation({
-    mutationKey: QUERY_KEYS.FRIDGE.BASKET,
+    mutationKey: QUERY_KEYS.FRIDGE.BASKET(),
     mutationFn: async (params: RequestPostFridgeBasket) => {
       await apiClient.post("/fridges/basket", params);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.FRIDGE.BASKET,
+        queryKey: QUERY_KEYS.FRIDGE.BASKET(),
       });
 
       callbacks?.onSuccess?.();
