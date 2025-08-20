@@ -8,11 +8,6 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/images/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.recipe.android.recipeapp",
@@ -63,6 +58,18 @@
         "@react-native-seoul/naver-login",
         {
           "urlScheme": "com.recipe.android.recipeapp"
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#9FE5D3",
+          "image": "./assets/images/splash-icon.png",
+          "dark": {
+            "image": "./assets/images/splash-icon.png",
+            "backgroundColor": "#9FE5D3"
+          },
+          "imageWidth": 200
         }
       ]
     ],
