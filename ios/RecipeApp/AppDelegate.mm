@@ -2,6 +2,7 @@
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
+#import <NaverThirdPartyLogin/NaverThirdPartyLoginConnection.h>
 #import <RNCKakaoUser/RNCKakaoUserUtil.h>
 
 @implementation AppDelegate
@@ -33,6 +34,10 @@
 
 // Linking API
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+  if ([url.scheme isEqualToString:@"com.recipe.android.recipeapp"]) {
+    return [[NaverThirdPartyLoginConnection getSharedInstance] application:application openURL:url options:options];
+  }
+
         if([RNCKakaoUserUtil isKakaoTalkLoginUrl:url]) { return [RNCKakaoUserUtil handleOpenUrl:url]; }
         
   return [super application:application openURL:url options:options] || [RCTLinkingManager application:application openURL:url options:options];
