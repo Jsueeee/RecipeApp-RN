@@ -37,6 +37,7 @@ export default {
     with_KAKAO: "카카오로 로그인",
     with_NAVER: "네이버로 로그인",
     with_GOOGLE: "구글로 로그인",
+    with_APPLE: "애플로 로그인",
   },
   category: {
     youtube: "유튜브",
