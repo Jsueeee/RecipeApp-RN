@@ -1,5 +1,5 @@
 import i18n from "@/lib/i18n";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { Image, Platform, Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";
 
 enum LoginMethod {
@@ -43,8 +43,28 @@ const DefaultLoginButton = ({ method, onClick: onPress }: Props) => {
 export default function LoginButtonColumn() {
   const { handleKakaoLogin, handleNaverLogin, handleGoogleLogin } = useAuth();
 
+  // 플랫폼별 설정
+  const isIOS = Platform.OS === "ios";
+  const buttonHeight = 52; // p-4(16*2) + 텍스트(20) = 약 52px // TODO : 텍스트 크기 고정 고려하기
+  const gap = 8;
+  const totalHeight = 4 * buttonHeight + 3 * gap; // 4개 버튼 + 3개 간격의 고정 높이
+
   return (
-    <View className="w-full max-w-[500px] mx-auto px-4 pb-6 gap-2 mb-8 ">
+    <View
+      className="w-full max-w-[500px]"
+      style={{
+        gap: gap,
+        height: totalHeight,
+      }}
+    >
+      {isIOS ? (
+        <DefaultLoginButton
+          method={LoginMethod.KAKAO} // TODO : 애플 로그인으로 변경
+          onClick={handleKakaoLogin}
+        />
+      ) : (
+        <View className="h-[52px]" />
+      )}
       <DefaultLoginButton
         method={LoginMethod.KAKAO}
         onClick={handleKakaoLogin}
