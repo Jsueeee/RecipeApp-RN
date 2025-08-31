@@ -19,7 +19,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.0</string>
+    <string>2.0.0</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -38,22 +38,20 @@
         </array>
       </dict>
       <dict>
+        <key>CFBundleURLName</key>
+        <string>naver</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>com.recipe.android.recipeapp</string>
+        </array>
+      </dict>
+      <dict>
         <key>CFBundleURLSchemes</key>
         <array>
           <string>kakao3cb89516c27c020802d2b85534cda074</string>
         </array>
         <key>CFBundleURLName</key>
         <string>Kakao</string>
-      </dict>
-      <dict>
-		<key>CFBundleTypeRole</key>
-		<string>Editor</string>
-		<key>CFBundleURLName</key>
-		<string>naver</string>
-		<key>CFBundleURLSchemes</key>
-        <array>
-          <string>com.recipe.android.recipeapp</string>
-        </array>
       </dict>
     </array>
     <key>CFBundleVersion</key>

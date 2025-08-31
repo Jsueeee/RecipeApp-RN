@@ -82,10 +82,13 @@ if (process.env.EXPO_PUBLIC_ENV === "dev") {
     (config) => {
       console.log(
         "🚀 API 요청:",
-        config.method,
-        config.url,
-        config.data,
-        config.params
+        `\nmethod: ${config.method}`,
+        `\nbaseURL: ${config.baseURL}`,
+        `\nurl: ${config.url}`,
+        `\ndata: ${JSON.stringify(config.data)}`,
+        `\nparams: ${JSON.stringify(config.params)}`,
+        `\nheaders: ${JSON.stringify(config.headers)}`,
+        `\nAuthorization: ${config.headers.Authorization}`
       );
       return config;
     },
