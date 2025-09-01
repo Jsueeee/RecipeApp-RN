@@ -4,13 +4,13 @@ import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetMod
 import { RecipeDetail, RecipeProcess } from "@/app/types/domain/recipe";
 import { RecipeDraftStorage } from "@/app/utils/RecipeDraftStorage";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
-import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import { Keyboard, Platform, ScrollView, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Toast } from "toastify-react-native";
 import { AddRecipeIngredientBottomSheet } from "./components/AddRecipeIngredientBottomSheet";
 import {
@@ -34,6 +34,9 @@ export default function RecipeCreateScreen() {
   const { editRecipeDetail: editRecipeDetailString } = useLocalSearchParams<{
     editRecipeDetail?: string;
   }>();
+
+  // 키보드 높이 상태 추가
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   // 수정하기 모드로 진입했을 경우
   const editRecipeDetail = useMemo(() => {
@@ -85,6 +88,26 @@ export default function RecipeCreateScreen() {
       Toast.error(i18n.t("recipe_my_create.error_toast"));
     },
   });
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      (e) => {
+        setKeyboardHeight(e.endCoordinates.height);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardHeight(0);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener?.remove();
+      keyboardDidHideListener?.remove();
+    };
+  }, []);
 
   // 컴포넌트 마운트 시 임시 저장 또는 수정 모드 확인
   useEffect(() => {
@@ -294,89 +317,88 @@ export default function RecipeCreateScreen() {
   };
 
   return (
-    <>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+    <SafeAreaView className="flex-1 bg-white">
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: keyboardHeight > 0 ? keyboardHeight + 20 : 60,
+        }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+        overScrollMode="never"
+        automaticallyAdjustKeyboardInsets={Platform.OS === "ios"}
+        keyboardDismissMode="interactive"
       >
-        <ScreenLayout
-          isShowHeader={false}
-          isScrollEnabled={false}
-          footer={null}
-        >
-          <CreateRecipeHeader onCTAButtonPress={onCTAButtonPress} />
+        <CreateRecipeHeader onCTAButtonPress={onCTAButtonPress} />
 
-          <ScrollView
-            className="flex-1"
-            contentContainerClassName="px-4 pb-[60px]"
-            showsVerticalScrollIndicator={false}
-          >
-            <CreateRecipeTitle
-              title={inputTitleValue}
-              description={inputDescriptionValue}
-              onInputTitleChanged={onInputTitleChanged}
-              onInputDescriptionChanged={onInputDescriptionChanged}
-            />
+        <View className="flex-1 px-4">
+          <CreateRecipeTitle
+            title={inputTitleValue}
+            description={inputDescriptionValue}
+            onInputTitleChanged={onInputTitleChanged}
+            onInputDescriptionChanged={onInputDescriptionChanged}
+          />
 
-            <View className="h-2" />
+          <View className="h-2" />
 
-            <CookingTimeInput
-              cookingTime={cookingTime}
-              onChanged={setCookingTime}
-            />
+          <CookingTimeInput
+            cookingTime={cookingTime}
+            onChanged={setCookingTime}
+          />
 
-            <View className="h-2" />
+          <View className="h-2" />
 
-            <CookingLevelChips
-              cookingLevel={selectedCookingLevel}
-              onChanged={setSelectedCookingLevel}
-            />
+          <CookingLevelChips
+            cookingLevel={selectedCookingLevel}
+            onChanged={setSelectedCookingLevel}
+          />
 
-            <View className="h-[60px]" />
+          <View className="h-[60px]" />
 
-            <IngredientsSection
-              ingredients={ingredients}
-              onPress={onIngredientItemPress}
-              onDeleteButtonPress={onDeleteIngredient}
-              onAddButtonPress={onAddIngredientButtonPress}
-            />
+          <IngredientsSection
+            ingredients={ingredients}
+            onPress={onIngredientItemPress}
+            onDeleteButtonPress={onDeleteIngredient}
+            onAddButtonPress={onAddIngredientButtonPress}
+          />
 
-            <View className="h-[60px]" />
+          <View className="h-[60px]" />
 
-            <CookingStepInputs
-              stepInfo={stepInfo}
-              onPlusButtonPress={onPlusButtonPress}
-              onDeleteButtonPress={onDeleteButtonPress}
-              onStepDescriptionChange={onStepDescriptionChange}
-            />
+          <CookingStepInputs
+            stepInfo={stepInfo}
+            onPlusButtonPress={onPlusButtonPress}
+            onDeleteButtonPress={onDeleteButtonPress}
+            onStepDescriptionChange={onStepDescriptionChange}
+          />
 
-            <View className="h-[60px]" />
+          <View className="h-[60px]" />
 
-            <PublicToggleSection
-              isPublic={isPublic}
-              onValueChange={setIsPublic}
-            />
-          </ScrollView>
-        </ScreenLayout>
+          <PublicToggleSection
+            isPublic={isPublic}
+            onValueChange={setIsPublic}
+          />
+        </View>
+      </ScrollView>
 
-        <AddRecipeIngredientBottomSheet
-          bottomSheetModalRef={ref}
-          openBottomSheet={open}
-          onDismiss={onDismissAddIngredientBottomSheet}
-          isEditMode={!!selectedIngredientId}
-          inputNameRef={inputNameRef}
-          inputNameValue={inputNameValue}
-          inputUnitRef={inputUnitRef}
-          inputUnitValue={inputUnitValue}
-          inputQuantity={inputQuantity}
-          inputIconId={inputIconId}
-          onInputNameChanged={setInputNameValue}
-          onInputUnitChanged={setInputUnitValue}
-          onInputQuantityChanged={setInputQuantity}
-          onIconChanged={onIconChanged}
-          onCTAButtonPress={onAddIngredient}
-        />
-      </KeyboardAvoidingView>
+      <AddRecipeIngredientBottomSheet
+        bottomSheetModalRef={ref}
+        openBottomSheet={open}
+        onDismiss={onDismissAddIngredientBottomSheet}
+        isEditMode={!!selectedIngredientId}
+        inputNameRef={inputNameRef}
+        inputNameValue={inputNameValue}
+        inputUnitRef={inputUnitRef}
+        inputUnitValue={inputUnitValue}
+        inputQuantity={inputQuantity}
+        inputIconId={inputIconId}
+        onInputNameChanged={setInputNameValue}
+        onInputUnitChanged={setInputUnitValue}
+        onInputQuantityChanged={setInputQuantity}
+        onIconChanged={onIconChanged}
+        onCTAButtonPress={onAddIngredient}
+      />
 
       <DraftMyRecipeDialog
         visible={isShowDraftDialog}
@@ -385,6 +407,6 @@ export default function RecipeCreateScreen() {
       />
 
       {isPostCreateRecipePending && <DotLoadingScreen />}
-    </>
+    </SafeAreaView>
   );
 }
