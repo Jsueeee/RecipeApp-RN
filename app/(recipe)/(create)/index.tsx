@@ -172,6 +172,7 @@ export default function RecipeCreateScreen() {
     setIngredients(
       mapIngredientsToIngredientWithIndexes(editRecipeDetail.ingredients)
     );
+    setIsPublic(editRecipeDetail.isHidden);
   }, [editRecipeDetail]);
 
   // 불러오기 x 선택했을 경우 임시 저장 삭제
