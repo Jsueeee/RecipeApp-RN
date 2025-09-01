@@ -31,6 +31,7 @@ export interface RecipeDetail {
   postUserId?: number;
   postUserName?: string;
   isReported: boolean;
+  isHidden: boolean;
   ingredients: RecipeIngredient[];
   processes: RecipeProcess[];
 }

@@ -33,6 +33,7 @@ export interface RecipeDetailResponse {
   postUserId?: number;
   postUserName?: string;
   isReported: boolean;
+  isHidden: boolean;
 }
 
 export interface RecipeIngredientResponse {
