@@ -8,11 +8,22 @@ import { RecipeDetail, RecipeProcess } from "@/app/types/domain/recipe";
 import { RecipeDraftStorage } from "@/app/utils/RecipeDraftStorage";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import i18n from "@/lib/i18n";
-import { useNavigation } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Keyboard, Platform, ScrollView, View } from "react-native";
+import {
+  Dimensions,
+  Keyboard,
+  LayoutChangeEvent,
+  Platform,
+  View,
+} from "react-native";
 import { TextInput } from "react-native-gesture-handler";
+import Reanimated, {
+  interpolate,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Toast } from "toastify-react-native";
 import { AddRecipeIngredientBottomSheet } from "./components/AddRecipeIngredientBottomSheet";
@@ -34,13 +45,41 @@ import {
 import { PublicToggleSection } from "./components/PublicToggleSection";
 
 export default function RecipeCreateScreen() {
-  const navigation = useNavigation();
   const { editRecipeDetail: editRecipeDetailString } = useLocalSearchParams<{
     editRecipeDetail?: string;
   }>();
 
   // 키보드 높이 상태 추가
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  // 애니메이션 관련 상태
+  const { width } = Dimensions.get("window");
+  const HEADER_MAX_HEIGHT = width;
+
+  // Reanimated
+  const scrollY = useSharedValue(0);
+  const onScroll = useAnimatedScrollHandler({
+    onScroll: (e) => {
+      scrollY.value = e.contentOffset.y;
+    },
+  });
+
+  // 패럴랙스(자연스러운 위/당김)
+  const imageAnimatedStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(
+      scrollY.value,
+      [-120, 0, HEADER_MAX_HEIGHT],
+      [20, 0, HEADER_MAX_HEIGHT * 0.25],
+      { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+    );
+    const scale = interpolate(
+      scrollY.value,
+      [-120, 0, HEADER_MAX_HEIGHT],
+      [1.1, 1, 1],
+      { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+    );
+    return { transform: [{ translateY }, { scale }] };
+  });
 
   // 수정하기 모드로 진입했을 경우
   const editRecipeDetail = useMemo(() => {
@@ -81,6 +120,7 @@ export default function RecipeCreateScreen() {
   const [inputUnitValue, setInputUnitValue] = useState(""); // 재료 단위 입력 값
   const [inputQuantity, setInputQuantity] = useState(1); // 재료 수량 입력 값
   const [inputIconId, setInputIconId] = useState<number | null>(null); // 재료 아이콘 ID
+  const [headerHeight, setHeaderHeight] = useState(0); // 헤더 높이
 
   const { postCreateRecipe, isPostCreateRecipePending } = usePostCreateRecipe({
     onSuccess: () => {
@@ -354,74 +394,92 @@ export default function RecipeCreateScreen() {
     }
   };
 
+  const onHeaderLayout = (event: LayoutChangeEvent) => {
+    setHeaderHeight(event.nativeEvent.layout.height);
+  };
+
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <ScrollView
-        className="flex-1"
+    <SafeAreaView className="flex-1 bg-white" edges={["bottom"]}>
+      <CreateRecipeHeader
+        onCTAButtonPress={onCTAButtonPress}
+        onLayout={onHeaderLayout}
+      />
+
+      <Reanimated.ScrollView
+        scrollEventThrottle={16}
         contentContainerStyle={{
-          flexGrow: 1,
           paddingBottom: keyboardHeight > 0 ? keyboardHeight + 20 : 60,
         }}
-        keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
+        onScroll={onScroll}
+        keyboardShouldPersistTaps="handled"
         bounces={false}
         overScrollMode="never"
         automaticallyAdjustKeyboardInsets={Platform.OS === "ios"}
         keyboardDismissMode="interactive"
-        stickyHeaderIndices={[0]}
       >
-        <CreateRecipeHeader onCTAButtonPress={onCTAButtonPress} />
+        <View className="bg-white rounded-t-2xl">
+          <Reanimated.View
+            style={[
+              {
+                height: HEADER_MAX_HEIGHT,
+                width,
+              },
+              imageAnimatedStyle,
+            ]}
+          >
+            <AddRecipeThumbnail image={image} setImage={setImage} />
+          </Reanimated.View>
 
-        <AddRecipeThumbnail image={image} setImage={setImage} />
+          <View className="px-4 -mt-4 bg-white rounded-t-2xl pt-4">
+            <CreateRecipeTitle
+              title={inputTitleValue}
+              description={inputDescriptionValue}
+              onInputTitleChanged={onInputTitleChanged}
+              onInputDescriptionChanged={onInputDescriptionChanged}
+            />
 
-        <View className="flex-1 px-4 pt-6 rounded-t-[16px] bg-white mt-[-16px]">
-          <CreateRecipeTitle
-            title={inputTitleValue}
-            description={inputDescriptionValue}
-            onInputTitleChanged={onInputTitleChanged}
-            onInputDescriptionChanged={onInputDescriptionChanged}
-          />
+            <View className="h-2" />
 
-          <View className="h-2" />
+            <CookingTimeInput
+              cookingTime={cookingTime}
+              onChanged={setCookingTime}
+            />
 
-          <CookingTimeInput
-            cookingTime={cookingTime}
-            onChanged={setCookingTime}
-          />
+            <View className="h-2" />
 
-          <View className="h-2" />
+            <CookingLevelChips
+              cookingLevel={selectedCookingLevel}
+              onChanged={setSelectedCookingLevel}
+            />
 
-          <CookingLevelChips
-            cookingLevel={selectedCookingLevel}
-            onChanged={setSelectedCookingLevel}
-          />
+            <View className="h-[60px]" />
 
-          <View className="h-[60px]" />
+            <IngredientsSection
+              ingredients={ingredients}
+              onPress={onIngredientItemPress}
+              onDeleteButtonPress={onDeleteIngredient}
+              onAddButtonPress={onAddIngredientButtonPress}
+            />
 
-          <IngredientsSection
-            ingredients={ingredients}
-            onPress={onIngredientItemPress}
-            onDeleteButtonPress={onDeleteIngredient}
-            onAddButtonPress={onAddIngredientButtonPress}
-          />
+            <View className="h-[60px]" />
 
-          <View className="h-[60px]" />
+            <CookingStepInputs
+              stepInfo={stepInfo}
+              onPlusButtonPress={onPlusButtonPress}
+              onDeleteButtonPress={onDeleteButtonPress}
+              onStepDescriptionChange={onStepDescriptionChange}
+            />
 
-          <CookingStepInputs
-            stepInfo={stepInfo}
-            onPlusButtonPress={onPlusButtonPress}
-            onDeleteButtonPress={onDeleteButtonPress}
-            onStepDescriptionChange={onStepDescriptionChange}
-          />
+            <View className="h-[60px]" />
 
-          <View className="h-[60px]" />
-
-          <PublicToggleSection
-            isPublic={isPublic}
-            onValueChange={setIsPublic}
-          />
+            <PublicToggleSection
+              isPublic={isPublic}
+              onValueChange={setIsPublic}
+            />
+          </View>
         </View>
-      </ScrollView>
+      </Reanimated.ScrollView>
 
       <AddRecipeIngredientBottomSheet
         bottomSheetModalRef={ref}
