@@ -368,12 +368,13 @@ export default function RecipeCreateScreen() {
         overScrollMode="never"
         automaticallyAdjustKeyboardInsets={Platform.OS === "ios"}
         keyboardDismissMode="interactive"
+        stickyHeaderIndices={[0]}
       >
         <CreateRecipeHeader onCTAButtonPress={onCTAButtonPress} />
 
         <AddRecipeThumbnail image={image} setImage={setImage} />
 
-        <View className="flex-1 px-4 pt-6 rounded-t-[16px] bg-white">
+        <View className="flex-1 px-4 pt-6 rounded-t-[16px] bg-white mt-[-16px]">
           <CreateRecipeTitle
             title={inputTitleValue}
             description={inputDescriptionValue}

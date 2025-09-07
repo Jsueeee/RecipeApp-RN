@@ -13,7 +13,7 @@ export const CreateRecipeHeader = ({ onCTAButtonPress }: Props) => {
   };
 
   return (
-    <View className="flex-row items-center justify-between px-4 py-2">
+    <View className="flex-row items-center justify-between px-4 py-2 bg-white">
       <PressableScale onPress={onCancelButtonPress} hitSlop={10}>
         <Text className="text-title4 text-text-normal">
           {i18n.t("recipe_my_create.header_cancel_button")}
