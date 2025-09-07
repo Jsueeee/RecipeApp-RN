@@ -1,12 +1,15 @@
 import { CookingTimeInput } from "@/app/(recipe)/(create)/components/CookingTimeInput";
+import { usePatchRecipeMutation } from "@/app/hooks/mutations/usePatchRecipeMutation";
 import { usePostCreateRecipe } from "@/app/hooks/mutations/usePostCreateRecipe";
 import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
+import { queryClient } from "@/app/lib/query/client";
+import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { RecipeDetail, RecipeProcess } from "@/app/types/domain/recipe";
 import { RecipeDraftStorage } from "@/app/utils/RecipeDraftStorage";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import i18n from "@/lib/i18n";
 import { useNavigation } from "@react-navigation/native";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Keyboard, Platform, ScrollView, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
@@ -81,8 +84,28 @@ export default function RecipeCreateScreen() {
       // 레시피 생성 성공 시 임시 저장 삭제
       RecipeDraftStorage.clearDraft();
 
-      navigation.goBack();
+      router.dismiss();
+
       Toast.success(i18n.t("recipe_my_create.success_toast"));
+
+      router.push({
+        pathname: "/(myPage)/(myRecipe)",
+      });
+    },
+    onError: (error) => {
+      Toast.error(i18n.t("recipe_my_create.error_toast"));
+    },
+  });
+
+  const { patchRecipe } = usePatchRecipeMutation({
+    onSuccess: async () => {
+      router.dismiss();
+
+      if (!editRecipeDetail) return;
+
+      await queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.RECIPE.DETAIL(editRecipeDetail.id),
+      });
     },
     onError: (error) => {
       Toast.error(i18n.t("recipe_my_create.error_toast"));
@@ -313,7 +336,14 @@ export default function RecipeCreateScreen() {
         })),
     };
 
-    postCreateRecipe(recipeData);
+    if (editRecipeDetail) {
+      patchRecipe({
+        params: recipeData,
+        recipeId: editRecipeDetail.id,
+      });
+    } else {
+      postCreateRecipe(recipeData);
+    }
   };
 
   return (

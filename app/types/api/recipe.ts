@@ -127,3 +127,5 @@ export interface CreateRecipeRequest {
   ingredients: RecipeIngredientInput[];
   processes: RecipeProcessRequest[];
 }
+
+export interface PatchRecipeRequest extends CreateRecipeRequest {}
