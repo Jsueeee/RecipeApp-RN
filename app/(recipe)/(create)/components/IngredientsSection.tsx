@@ -36,7 +36,7 @@ interface IngredientItemProps {
 
 interface Props {
   ingredients: IngredientWithIndex[];
-  onPress: (item: IngredientWithIndex) => void;
+  onPress: (item: IngredientWithIndex, index: number) => void;
   onDeleteButtonPress: (item: IngredientWithIndex) => void;
   onAddButtonPress: () => void;
 }
@@ -116,7 +116,7 @@ export const IngredientsSection = ({
             <IngredientItem
               key={index}
               item={item.ingredient}
-              onPress={() => onPress(item)}
+              onPress={() => onPress(item, index)}
               onDeleteButtonPress={() => onDeleteButtonPress(item)}
             />
           ))}

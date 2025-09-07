@@ -62,9 +62,9 @@ export default function RecipeCreateScreen() {
   const [cookingTime, setCookingTime] = useState<number | null>(null);
   const [stepInfo, setStepInfo] = useState([""]);
   const [ingredients, setIngredients] = useState<IngredientWithIndex[]>([]); // 입력이 완료된 재료들
-  const [selectedIngredientId, setSelectedIngredientId] = useState<
+  const [selectedIngredientIndex, setSelectedIngredientIndex] = useState<
     number | null
-  >(null); // 수정하려고 선택한 재료 id
+  >(null); // 수정하려고 선택한 재료 인덱스
 
   // 임시 저장 불러오기 다이얼로그
   const [isShowDraftDialog, setShowDraftDialog] = useState(false);
@@ -282,13 +282,17 @@ export default function RecipeCreateScreen() {
     };
 
     setIngredients((prev) => {
-      if (selectedIngredientId) {
+      if (selectedIngredientIndex !== null) {
         // 재료 수정
-        return prev.map((i) =>
-          i.id === selectedIngredientId
-            ? { ...i, ingredient: { ...i.ingredient, ...newIngredient } }
-            : i
-        );
+        const newIngredients = [...prev];
+        newIngredients[selectedIngredientIndex] = {
+          ...newIngredients[selectedIngredientIndex],
+          ingredient: {
+            ...newIngredients[selectedIngredientIndex].ingredient,
+            ...newIngredient,
+          },
+        };
+        return newIngredients;
       }
 
       // 재료 추가
@@ -301,7 +305,7 @@ export default function RecipeCreateScreen() {
       ];
     });
 
-    setSelectedIngredientId(null);
+    setSelectedIngredientIndex(null);
   };
 
   const onDeleteIngredient = (item: IngredientWithIndex) => {
@@ -309,12 +313,13 @@ export default function RecipeCreateScreen() {
   };
 
   const onIngredientItemPress = useCallback(
-    ({ id, ingredient }: IngredientWithIndex) => {
+    ({ id, ingredient }: IngredientWithIndex, index: number) => {
       setInputNameValue(ingredient.ingredientName);
       setInputUnitValue(ingredient.unit || "");
       setInputQuantity(Number(ingredient.quantity));
       setInputIconId(ingredient.ingredientIconId || null);
-      setSelectedIngredientId(id);
+      setSelectedIngredientIndex(index);
+      console.log("💗 index", index);
       open();
     },
     [open]
@@ -416,7 +421,7 @@ export default function RecipeCreateScreen() {
         bottomSheetModalRef={ref}
         openBottomSheet={open}
         onDismiss={onDismissAddIngredientBottomSheet}
-        isEditMode={!!selectedIngredientId}
+        isEditMode={selectedIngredientIndex !== null}
         inputNameRef={inputNameRef}
         inputNameValue={inputNameValue}
         inputUnitRef={inputUnitRef}
