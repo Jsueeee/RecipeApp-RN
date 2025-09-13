@@ -240,6 +240,7 @@ export default {
     pick_food_go_basket_button: "%d개 담기",
   },
   recipe_detail: {
+    author_profile: "의 레시피",
     scrap_count: "저장 {{count}}",
     cooking_time: "{{cookingTime}}분",
     cooking_step_title: "이렇게 만들어요",
