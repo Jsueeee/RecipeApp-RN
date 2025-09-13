@@ -1,4 +1,5 @@
 import { useDeleteMyRecipeMutation } from "@/app/hooks/mutations/useDeleteMyRecipeMutation";
+import { RecipeDetail } from "@/app/types/domain/recipe";
 import { ChoiceDialog } from "@/components/ChoiceDialog";
 import { CTAButton } from "@/components/CTAButton";
 import i18n from "@/lib/i18n";
@@ -9,9 +10,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Props {
   recipeId: number | undefined;
+  recipeDetail: RecipeDetail | undefined;
 }
 
-export const MyRecipeFooter = ({ recipeId }: Props) => {
+export const MyRecipeFooter = ({ recipeId, recipeDetail }: Props) => {
   const { deleteMyRecipe } = useDeleteMyRecipeMutation({
     onSuccess: () => {
       router.back();
@@ -39,7 +41,14 @@ export const MyRecipeFooter = ({ recipeId }: Props) => {
   };
 
   const onEditButtonPress = () => {
-    // TODO: 수정 화면으로 이동
+    if (!recipeDetail) return;
+
+    router.push({
+      pathname: "/(recipe)/(create)",
+      params: {
+        editRecipeDetail: JSON.stringify(recipeDetail),
+      },
+    });
   };
 
   const insets = useSafeAreaInsets();

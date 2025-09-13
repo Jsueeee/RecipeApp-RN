@@ -60,6 +60,7 @@ export const mapRecipeDetailResponse = (
   postUserId: response.postUserId,
   postUserName: response.postUserName,
   isReported: response.isReported,
+  isHidden: response.isHidden,
   ingredients: response.recipeIngredients.map(mapRecipeIngredientResponse),
   processes: response.recipeProcesses.map(mapRecipeProcessResponse),
 });

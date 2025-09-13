@@ -11,11 +11,11 @@ export const useDeleteMyRecipeMutation = (callbacks?: MutationCallbacks) => {
       callbacks?.onSuccess?.();
 
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.USER.INFO,
+        queryKey: QUERY_KEYS.USER.INFO(),
       });
 
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.RECIPE.MY_LIST,
+        queryKey: QUERY_KEYS.RECIPE.MY_LIST(),
       });
     },
     onError: (error) => {
