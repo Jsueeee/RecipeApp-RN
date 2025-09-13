@@ -2,14 +2,18 @@ import { PressableScale } from "@/app/components/PressableScale";
 import i18n from "@/lib/i18n";
 import { router } from "expo-router";
 import { LayoutChangeEvent, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Props {
   onCTAButtonPress: () => void;
   onLayout: (event: LayoutChangeEvent) => void;
+  isUploading?: boolean;
 }
 
-export const CreateRecipeHeader = ({ onCTAButtonPress, onLayout }: Props) => {
+export const CreateRecipeHeader = ({
+  onCTAButtonPress,
+  onLayout,
+  isUploading = false,
+}: Props) => {
   const onCancelButtonPress = () => {
     router.back();
   };
@@ -25,8 +29,12 @@ export const CreateRecipeHeader = ({ onCTAButtonPress, onLayout }: Props) => {
         </Text>
       </PressableScale>
 
-      <PressableScale onPress={onCTAButtonPress}>
-        <View className="px-3 py-2 bg-primary-normal rounded-[20px]">
+      <PressableScale onPress={onCTAButtonPress} disabled={isUploading}>
+        <View
+          className={`px-3 py-2 rounded-[20px] ${
+            true ? "bg-primary-disable" : "bg-primary-normal"
+          }`}
+        >
           <Text className="text-title4 text-white">
             {i18n.t("recipe_my_create.header_register_button")}
           </Text>
