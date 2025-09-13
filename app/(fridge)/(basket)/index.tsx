@@ -101,7 +101,7 @@ export default function IngredientBasketScreen() {
     <>
       <ScreenLayout
         title={i18n.t("fridge_basket.header")}
-        backgroundColor="bg-alternative"
+        backgroundColor="background-alternative"
       >
         {renderContent()}
       </ScreenLayout>
