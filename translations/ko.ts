@@ -241,6 +241,7 @@ export default {
   },
   recipe_detail: {
     author_profile: "의 레시피",
+    author_profile_default: "의 추천 레시피",
     scrap_count: "저장 {{count}}",
     cooking_time: "{{cookingTime}}분",
     cooking_step_title: "이렇게 만들어요",
