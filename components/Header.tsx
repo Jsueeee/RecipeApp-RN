@@ -24,7 +24,7 @@ export const Header = ({
 }: Props) => {
   return (
     <View className={clsx("w-full p-4 flex-row items-center", className)}>
-      <TouchableOpacity onPress={onBackClick} className="z-10">
+      <TouchableOpacity onPress={onBackClick} className="z-10" hitSlop={10}>
         <IC_CHEVRON_LEFT width={24} height={24} color={backButtonIconColor} />
       </TouchableOpacity>
 
