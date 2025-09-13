@@ -28,7 +28,7 @@ export const RecipeAuthorProfile = ({
         )}
       </View>
 
-      <Text className="text-title5">
+      <Text className="text-title5 flex-1">
         <Text className="text-text-normal">
           {nickname ? nickname : i18n.t("app.name")}
         </Text>
