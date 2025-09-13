@@ -32,7 +32,7 @@ export const CreateRecipeHeader = ({
       <PressableScale onPress={onCTAButtonPress} disabled={isUploading}>
         <View
           className={`px-3 py-2 rounded-[20px] ${
-            true ? "bg-primary-disable" : "bg-primary-normal"
+            isUploading ? "bg-primary-disable" : "bg-primary-normal"
           }`}
         >
           <Text className="text-title4 text-white">
