@@ -1,6 +1,7 @@
 import { CookingTimeInput } from "@/app/(recipe)/(create)/components/CookingTimeInput";
 import { usePatchRecipeMutation } from "@/app/hooks/mutations/usePatchRecipeMutation";
 import { usePostCreateRecipe } from "@/app/hooks/mutations/usePostCreateRecipe";
+import { useUploadFileMutation } from "@/app/hooks/mutations/useUploadFileMutation";
 import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
 import { queryClient } from "@/app/lib/query/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
@@ -122,6 +123,9 @@ export default function RecipeCreateScreen() {
   const [inputIconId, setInputIconId] = useState<number | null>(null); // 재료 아이콘 ID
   const [headerHeight, setHeaderHeight] = useState(0); // 헤더 높이
 
+  const { mutateAsync: uploadFile, isPending: isUploadFilePending } =
+    useUploadFileMutation();
+
   const { postCreateRecipe, isPostCreateRecipePending } = usePostCreateRecipe({
     onSuccess: () => {
       // 레시피 생성 성공 시 임시 저장 삭제
@@ -208,6 +212,7 @@ export default function RecipeCreateScreen() {
           cookingTime,
           stepInfo,
           ingredients,
+          thumbnail: image,
         });
       }
     };
@@ -263,6 +268,7 @@ export default function RecipeCreateScreen() {
       mapIngredientsToIngredientWithIndexes(editRecipeDetail.ingredients)
     );
     setIsPublic(editRecipeDetail.isHidden);
+    setImage(editRecipeDetail.thumbnail || null);
   }, [editRecipeDetail]);
 
   // 불러오기 x 선택했을 경우 임시 저장 삭제
@@ -369,13 +375,27 @@ export default function RecipeCreateScreen() {
     [open]
   );
 
-  const onCTAButtonPress = () => {
+  const onCTAButtonPress = async () => {
+    let finalImageUrl = image;
+
+    // 업로드된 이미지가 아닌 경우
+    if (finalImageUrl && !finalImageUrl.startsWith("https")) {
+      try {
+        finalImageUrl = await uploadFile(finalImageUrl);
+      } catch (error) {
+        Toast.error(i18n.t("recipe_my_create.error_toast"));
+        console.error("이미지 업로드 실패:", error);
+        return; // 업로드 실패 시 레시피 생성 중단
+      }
+    }
+
     const recipeData = {
       title: inputTitleValue,
       introduction: inputDescriptionValue,
       level: selectedCookingLevel as "EASY" | "NORMAL" | "HARD",
       cookingTime: cookingTime || 0,
       isHidden: isPublic,
+      thumbnailImgUrl: finalImageUrl || undefined,
       ingredients: ingredients.map((item) => item.ingredient),
       processes: stepInfo
         .filter((step) => step.trim() !== "")
@@ -404,6 +424,7 @@ export default function RecipeCreateScreen() {
       <CreateRecipeHeader
         onCTAButtonPress={onCTAButtonPress}
         onLayout={onHeaderLayout}
+        isUploading={isUploadFilePending}
       />
 
       <Reanimated.ScrollView
@@ -506,7 +527,9 @@ export default function RecipeCreateScreen() {
         onCancel={ignoreDraft}
       />
 
-      {isPostCreateRecipePending && <DotLoadingScreen />}
+      {(isPostCreateRecipePending || isUploadFilePending) && (
+        <DotLoadingScreen />
+      )}
     </SafeAreaView>
   );
 }
