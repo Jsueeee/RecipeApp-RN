@@ -42,6 +42,7 @@ const mapRecommendedRecipeResponse = (
   ingredientMatchRate: recipe.ingredientsMatchRate,
   linkUrl: recipe.linkUrl,
   postUserName: recipe.postUserName,
+  postUserProfileImage: recipe.postUserProfileImage,
 });
 
 export const mapRecipeDetailResponse = (
@@ -59,6 +60,7 @@ export const mapRecipeDetailResponse = (
   viewCount: response.viewCnt,
   postUserId: response.postUserId,
   postUserName: response.postUserName,
+  postUserProfileImage: response.postUserProfileImage,
   isReported: response.isReported,
   isHidden: response.isHidden,
   ingredients: response.recipeIngredients.map(mapRecipeIngredientResponse),

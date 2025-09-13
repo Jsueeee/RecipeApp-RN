@@ -15,6 +15,7 @@ export interface RecipeSummary {
   ingredientMatchRate: number;
   linkUrl?: string | null;
   postUserName?: string;
+  postUserProfileImage?: string;
 }
 
 export interface RecipeDetail {
@@ -30,6 +31,7 @@ export interface RecipeDetail {
   viewCount: number;
   postUserId?: number;
   postUserName?: string;
+  postUserProfileImage?: string;
   isReported: boolean;
   isHidden: boolean;
   ingredients: RecipeIngredient[];

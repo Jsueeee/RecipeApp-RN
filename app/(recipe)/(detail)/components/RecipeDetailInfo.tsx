@@ -5,6 +5,7 @@ import { Text, View } from "react-native";
 import { RecipeCookInfo } from "./RecipeCookInfo";
 import { IngredientFridgeType, RecipeIngredients } from "./RecipeIngredients";
 import { CookingSteps } from "./CookingSteps";
+import { RecipeAuthorProfile } from "./RecipeAuthorProfile";
 
 interface Props {
   recipeDetail: RecipeDetail | undefined;
@@ -42,11 +43,17 @@ export const RecipeDetailInfo = ({ recipeDetail, className }: Props) => {
         {recipeDetail.description}
       </Text>
 
+      <RecipeAuthorProfile
+        profileImage={recipeDetail.postUserProfileImage}
+        nickname={recipeDetail.postUserName}
+        className="mt-5"
+      />
+
       <RecipeCookInfo
         scrapCount={recipeDetail.scrapCount}
         cookingTime={recipeDetail.cookingTime}
         cookingLevel={recipeDetail.level}
-        className="mt-5"
+        className="mt-7"
       />
 
       <RecipeIngredients

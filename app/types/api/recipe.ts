@@ -11,6 +11,7 @@ export interface RecommendedRecipeResponse {
   isUserScrap: boolean;
   postDate: string;
   postUserName?: string;
+  postUserProfileImage?: string;
   recipeId: number;
   recipeName: string;
   scrapCnt: number;
@@ -32,6 +33,7 @@ export interface RecipeDetailResponse {
   viewCnt: number;
   postUserId?: number;
   postUserName?: string;
+  postUserProfileImage?: string;
   isReported: boolean;
   isHidden: boolean;
 }
