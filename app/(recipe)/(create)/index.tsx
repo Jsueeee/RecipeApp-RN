@@ -122,6 +122,7 @@ export default function RecipeCreateScreen() {
   const [inputQuantity, setInputQuantity] = useState(1); // 재료 수량 입력 값
   const [inputIconId, setInputIconId] = useState<number | null>(null); // 재료 아이콘 ID
   const [headerHeight, setHeaderHeight] = useState(0); // 헤더 높이
+  const [isLoading, setIsLoading] = useState(false);
 
   const { mutateAsync: uploadFile, isPending: isUploadFilePending } =
     useUploadFileMutation();
@@ -376,6 +377,8 @@ export default function RecipeCreateScreen() {
   );
 
   const onCTAButtonPress = async () => {
+    setIsLoading(true);
+
     let finalImageUrl = image;
 
     // 업로드된 이미지가 아닌 경우
@@ -406,13 +409,15 @@ export default function RecipeCreateScreen() {
     };
 
     if (editRecipeDetail) {
-      patchRecipe({
+      await patchRecipe({
         params: recipeData,
         recipeId: editRecipeDetail.id,
       });
     } else {
-      postCreateRecipe(recipeData);
+      await postCreateRecipe(recipeData);
     }
+
+    setIsLoading(false);
   };
 
   const onHeaderLayout = (event: LayoutChangeEvent) => {
@@ -527,7 +532,7 @@ export default function RecipeCreateScreen() {
         onCancel={ignoreDraft}
       />
 
-      {(isPostCreateRecipePending || isUploadFilePending) && (
+      {(isPostCreateRecipePending || isUploadFilePending || isLoading) && (
         <DotLoadingScreen />
       )}
     </SafeAreaView>
