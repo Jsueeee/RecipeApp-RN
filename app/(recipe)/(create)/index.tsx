@@ -236,6 +236,7 @@ export default function RecipeCreateScreen() {
       setCookingTime(draft.cookingTime);
       setStepInfo(draft.stepInfo);
       setIngredients(draft.ingredients);
+      setImage(draft.thumbnail);
 
       Toast.success(i18n.t("recipe_my_create.draft_restored_toast"));
     }
