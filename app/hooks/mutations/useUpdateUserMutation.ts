@@ -8,13 +8,13 @@ export const useUpdateUserMutation = (callbacks?: MutationCallbacks) => {
   const queryClient = useQueryClient();
 
   const updateUserInfoMutation = useMutation({
-    mutationKey: QUERY_KEYS.USER.INFO,
+    mutationKey: QUERY_KEYS.USER.INFO(),
     mutationFn: async (params: RequestUpdateUserInfo) => {
       await apiClient.patch("/users", params);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.USER.INFO,
+        queryKey: QUERY_KEYS.USER.INFO(),
       });
       callbacks?.onSuccess?.();
     },
