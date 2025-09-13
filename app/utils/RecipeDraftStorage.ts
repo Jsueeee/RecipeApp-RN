@@ -13,6 +13,7 @@ export interface RecipeDraft {
     ingredient: RecipeIngredientInput;
   }>;
   lastSavedAt: number;
+  thumbnail: string | null;
 }
 
 const DRAFT_STORAGE_KEY = "recipe_draft";
