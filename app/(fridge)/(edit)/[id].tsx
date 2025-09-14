@@ -77,11 +77,9 @@ export default function IngredientEditScreen() {
     }
   };
 
-  if (!ingredient) return null;
-
   return (
     <ScreenLayout
-      title={ingredient.ingredientName}
+      title={ingredient?.ingredientName ?? ""}
       isScrollEnabled={true}
       footer={
         <View className="fixed bottom-0 left-0 right-0 px-4 pb-[22px]">
@@ -106,7 +104,7 @@ export default function IngredientEditScreen() {
         <View className="h-3" />
 
         <EditQuantityMenu
-          quantity={localData?.quantity ?? 0}
+          quantity={localData?.quantity ?? 1}
           onQuantityChanged={(quantity) => updateLocalData({ quantity })}
         />
 
