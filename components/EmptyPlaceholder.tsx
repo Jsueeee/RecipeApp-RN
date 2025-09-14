@@ -19,7 +19,7 @@ export function EmptyPlaceholder({
   className = "",
 }: Props) {
   return (
-    <View className={`flex-1 items-center justify-center ${className}`}>
+    <View className={`flex-1 items-center justify-center ${className} pb-safe`}>
       <IC_CRYING_ONION width={80} height={80} />
 
       <Text className="text-title3 text-text-strong mt-4 text-center">
@@ -32,6 +32,7 @@ export function EmptyPlaceholder({
 
       {buttonLabel && (
         <CTAButton
+          variant="small"
           buttonLabel={buttonLabel}
           onPress={() => onPress?.()}
           className="mt-4"
