@@ -20,6 +20,7 @@ import {
   SearchRecipe,
   SearchRecipeResult,
 } from "../domain/recipe";
+import { escapeHtml } from "../../utils/HtmlUtils";
 
 export const mapRecommendedRecipesResponse = (
   response: RecommendedRecipesResponse
@@ -32,8 +33,8 @@ const mapRecommendedRecipeResponse = (
   recipe: RecommendedRecipeResponse
 ): RecipeSummary => ({
   id: recipe.recipeId,
-  title: recipe.recipeName,
-  description: recipe.introduction ?? "",
+  title: escapeHtml(recipe.recipeName),
+  description: escapeHtml(recipe.introduction ?? ""),
   thumbnail: recipe.thumbnailImgUrl,
   isScrapped: recipe.isUserScrap,
   viewCount: recipe.viewCnt,
@@ -49,8 +50,8 @@ export const mapRecipeDetailResponse = (
   response: RecipeDetailResponse
 ): RecipeDetail => ({
   id: response.recipeId,
-  title: response.recipeName,
-  description: response.introduction,
+  title: escapeHtml(response.recipeName),
+  description: escapeHtml(response.introduction),
   thumbnail: response.thumbnailImgUrl,
   cookingTime: response.cookingTime,
   link: response.linkUrl,
@@ -82,7 +83,7 @@ const mapRecipeProcessResponse = (
 ): RecipeProcess => ({
   id: response.recipeProcessId,
   no: response.recipeProcessNo,
-  description: response.recipeProcessDescription,
+  description: escapeHtml(response.recipeProcessDescription),
   imageUrl: response.recipeProcessImgUrl,
 });
 
@@ -97,8 +98,8 @@ const mapSearchRecipeItemResponse = (
   response: SearchRecipeItemResponse
 ): SearchRecipe => ({
   recipeId: response.recipeId,
-  title: response.recipeName,
-  description: response.introduction,
+  title: escapeHtml(response.recipeName),
+  description: escapeHtml(response.introduction),
   thumbnail: response.thumbnailImgUrl,
   postUserName: response.postUserName,
   postDate: response.postDate,
@@ -117,8 +118,8 @@ export const mapMyRecipesResponse = (
 
 const mapMyRecipeResponse = (recipe: MyRecipeResponse): RecipeSummary => ({
   id: recipe.recipeId,
-  title: recipe.recipeName,
-  description: recipe.introduction ?? "",
+  title: escapeHtml(recipe.recipeName),
+  description: escapeHtml(recipe.introduction ?? ""),
   thumbnail: recipe.thumbnailImgUrl,
   isScrapped: recipe.isUserScrap,
   viewCount: recipe.viewCnt,
@@ -140,8 +141,8 @@ const mapScrapRecipeResponse = (
   recipe: ScrapRecipeResponse
 ): RecipeSummary => ({
   id: recipe.recipeId,
-  title: recipe.recipeName,
-  description: recipe.introduction ?? "",
+  title: escapeHtml(recipe.recipeName),
+  description: escapeHtml(recipe.introduction ?? ""),
   thumbnail: recipe.thumbnailImgUrl,
   isScrapped: recipe.isUserScrap,
   viewCount: recipe.viewCnt,
