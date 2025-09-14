@@ -29,10 +29,6 @@ export default function FridgeScreen() {
     });
   };
 
-  const handleAddPress = () => {
-    router.push("/(ingredient)/(pick)");
-  };
-
   const handleTabSelect = (index: number) => {
     setSelectedTabIndex(index);
     scrollViewRef.current?.scrollTo({ y: 0, animated: true });
@@ -106,7 +102,7 @@ export default function FridgeScreen() {
           <View className="px-4 flex-1">{renderContent()}</View>
         </ScrollView>
 
-        <AddIngredientButton onPress={handleAddPress} />
+        <AddIngredientButton />
       </View>
     </SafeAreaView>
   );
