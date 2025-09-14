@@ -57,7 +57,7 @@ export const IngredientIconGrid = ({
     }));
 
   const renderSectionHeader = ({ section }: { section: IngredientSection }) => (
-    <View className="px-4 pt-4">
+    <View className="pt-4">
       <Text className="text-title4 text-text-strong">{section.title}</Text>
     </View>
   );
