@@ -11,8 +11,6 @@ interface Props {
   onRemovePress: () => void;
 }
 
-const iconCache = new Map<number, React.ComponentType<any>>();
-
 export const RemoveIngredientItem = React.memo(
   function RemoveIngredientItem({
     ingredientId,
