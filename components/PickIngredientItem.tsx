@@ -13,8 +13,6 @@ interface Props {
   isNameVisible?: boolean;
 }
 
-const iconCache = new Map<number, React.ComponentType<any>>();
-
 const PickIngredientItem = React.memo(
   function PickIngredientItem({
     ingredientId,
@@ -24,19 +22,10 @@ const PickIngredientItem = React.memo(
     onPress,
     isNameVisible = true,
   }: Props) {
-    const Icon = useMemo(() => {
-      if (!ingredientIconId) return null;
-
-      if (iconCache.has(ingredientIconId)) {
-        return iconCache.get(ingredientIconId)!;
-      }
-
-      const icon = FoodDataManager.getImageSource(ingredientIconId);
-      if (icon) {
-        iconCache.set(ingredientIconId, icon);
-      }
-      return icon;
-    }, [ingredientIconId]);
+    const Icon = useMemo(
+      () => FoodDataManager.getImageSource(ingredientIconId),
+      [ingredientIconId]
+    );
 
     return (
       <PressableScale
