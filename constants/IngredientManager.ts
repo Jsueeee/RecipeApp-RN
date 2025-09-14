@@ -114,6 +114,7 @@ import IC_INGREDIENTS_223 from "@/assets/images/ic_ingredient_223.svg";
 import IC_INGREDIENTS_224 from "@/assets/images/ic_ingredient_224.svg";
 import { FC } from "react";
 import { SvgProps } from "react-native-svg";
+import IC_INGREDIENT_NULL from "@/assets/images/ic_ingredient_null.svg";
 
 interface FoodIcon {
   readonly iconId: number;
@@ -980,8 +981,10 @@ class FoodDataManager {
     return this.categoryMap[categoryId] ?? [];
   }
 
-  static getImageSource(iconId: number | null | undefined): FC<SvgProps> | null {
-    return this.iconMap.get(iconId ?? -1)?.imageSource ?? null;
+  static getImageSource(
+    iconId: number | null | undefined
+  ): FC<SvgProps> | null {
+    return this.iconMap.get(iconId ?? -1)?.imageSource ?? IC_INGREDIENT_NULL;
   }
 
   static getName(iconId: number | null): string {

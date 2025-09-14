@@ -20,19 +20,10 @@ export const RemoveIngredientItem = React.memo(
     ingredientIconId,
     onRemovePress,
   }: Props) {
-    const Icon = useMemo(() => {
-      if (!ingredientIconId) return null;
-
-      if (iconCache.has(ingredientIconId)) {
-        return iconCache.get(ingredientIconId)!;
-      }
-
-      const icon = FoodDataManager.getImageSource(ingredientIconId);
-      if (icon) {
-        iconCache.set(ingredientIconId, icon);
-      }
-      return icon;
-    }, [ingredientIconId]);
+    const Icon = useMemo(
+      () => FoodDataManager.getImageSource(ingredientIconId),
+      [ingredientIconId]
+    );
 
     return (
       <View key={ingredientId} className="items-center w-[76px]">
