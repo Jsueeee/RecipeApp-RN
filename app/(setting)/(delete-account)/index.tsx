@@ -8,7 +8,6 @@ import { router } from "expo-router";
 import React, { useState } from "react";
 import { Text, View } from "react-native";
 import { DeleteAccountAgreeButton } from "./components/DeleteAccountAgreeButton";
-import { router } from "expo-router";
 
 export default function DeleteAccountScreen() {
   const { userInfo } = useUserInfoQuery();
