@@ -1,10 +1,10 @@
 import LargeRecipeListItem from "@/app/(recipe)/components/LargeRecipeListItem";
 import { CreateRecipeButton } from "@/app/(tabs)/(myPage)/components/CreateRecipeButton";
-import { EmptyRecipeTabPlaceholder } from "@/app/(tabs)/(recipe)/components/EmptyRecipeTabPlaceholder";
 import { useMyRecipeListQuery } from "@/app/hooks/queries/useMyRecipeListQuery";
 import { RecipeSummary } from "@/app/types/domain/recipe";
 import { TealDotLoading } from "@/components/DotLoading";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
+import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import { router } from "expo-router";
@@ -71,7 +71,13 @@ export default function MyRecipeScreen() {
   const renderContent = () => {
     if (isLoading) return <DotLoadingScreen />;
 
-    if (!recipes?.length) return <EmptyRecipeTabPlaceholder />;
+    if (!recipes?.length)
+      return (
+        <EmptyPlaceholder
+          title={i18n.t("myPage.create_recipe_empty_title")}
+          description={i18n.t("myPage.create_recipe_empty_desc")}
+        />
+      );
 
     return (
       <FlatList

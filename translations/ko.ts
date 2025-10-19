@@ -91,8 +91,10 @@ export default {
     pleaseEnterTitle: "제목을 입력해주세요",
     pleaseEnterContent: "내용을 입력해주세요",
     myRecipeSaveComplete: "레시피 저장이 완료되었습니다",
-    myRecipeCreate: "나만의 레시피를 작성해보세요!",
-    myRecipeCreatePlease: "레시피 작성하기",
+
+    create_recipe_empty_title: "나만의 레시피가 없어요",
+    create_recipe_empty_desc:
+      "아래 작성하기 버튼을 눌러\n나만의 레시피를 모아 보세요!",
   },
   media: {
     capture_new_image: "카메라",
