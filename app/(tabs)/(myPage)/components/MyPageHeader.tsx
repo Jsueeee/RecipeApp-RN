@@ -13,7 +13,7 @@ export function MyPageHeader() {
   };
 
   return (
-    <View className="flex-1 flex-row justify-between">
+    <View className="flex-row justify-between">
       <MainTabHeader tab="myPage" />
 
       <PressableScale
