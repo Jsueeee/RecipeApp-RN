@@ -158,7 +158,7 @@ export default function RecipeDetailScreen() {
 
   return (
     <>
-      <View className="flex-1 bg-gray-100">
+      <View className="flex-1 bg-white">
         <Reanimated.View
           className="absolute inset-x-0 top-0 overflow-hidden"
           style={[
@@ -168,7 +168,7 @@ export default function RecipeDetailScreen() {
         >
           <Image
             source={{ uri: recipeDetail?.thumbnail }}
-            className="w-full h-full self-center"
+            className="w-full h-full self-center bg-gray-100"
             resizeMode="cover"
           />
         </Reanimated.View>
@@ -179,10 +179,12 @@ export default function RecipeDetailScreen() {
             paddingTop: HEADER_MAX_HEIGHT,
             paddingBottom: 100,
           }}
+          bounces={false}
+          overScrollMode="never"
           showsVerticalScrollIndicator={false}
           onScroll={onScroll}
         >
-          <View className="bg-white -mt-4 rounded-t-2xl pb-[100px]">
+          <View className="bg-white -mt-4 rounded-t-2xl pb-[50px]">
             <RecipeDetailInfo
               className="px-4 pt-5"
               recipeDetail={recipeDetail}
