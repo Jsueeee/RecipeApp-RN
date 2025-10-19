@@ -73,26 +73,34 @@ export function MyRecipeSummary({ recipes = [], className }: Props) {
       </View>
 
       <View className="mt-[18px]">
-        <View className="flex-row gap-2">
-          {[0, 1, 2].map((index) => (
-            <ThumbnailItem
-              key={index}
-              recipe={recipes[index]}
-              onPress={onRecipeItemPress}
-            />
-          ))}
-        </View>
+        {recipes.length > 0 ? (
+          <>
+            <View className="flex-row gap-2">
+              {[0, 1, 2].map((index) => (
+                <ThumbnailItem
+                  key={index}
+                  recipe={recipes[index]}
+                  onPress={onRecipeItemPress}
+                />
+              ))}
+            </View>
 
-        {recipes.length > 3 && (
-          <View className="flex-row gap-2 mt-2">
-            {[3, 4, 5].map((index) => (
-              <ThumbnailItem
-                key={index}
-                recipe={recipes[index]}
-                onPress={onRecipeItemPress}
-              />
-            ))}
-          </View>
+            {recipes.length > 3 && (
+              <View className="flex-row gap-2 mt-2">
+                {[3, 4, 5].map((index) => (
+                  <ThumbnailItem
+                    key={index}
+                    recipe={recipes[index]}
+                    onPress={onRecipeItemPress}
+                  />
+                ))}
+              </View>
+            )}
+          </>
+        ) : (
+          <Text className="text-body2 text-text-assistive text-center mx-4 my-[30px]">
+            {i18n.t(`myPage.my_recipe_empty_placeholder`)}
+          </Text>
         )}
       </View>
     </View>
