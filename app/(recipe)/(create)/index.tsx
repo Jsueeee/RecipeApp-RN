@@ -54,8 +54,7 @@ export default function RecipeCreateScreen() {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   // 애니메이션 관련 상태
-  const { width } = Dimensions.get("window");
-  const HEADER_MAX_HEIGHT = width;
+  const HEADER_MAX_HEIGHT = 350;
 
   // Reanimated
   const scrollY = useSharedValue(0);
@@ -450,7 +449,7 @@ export default function RecipeCreateScreen() {
             style={[
               {
                 height: HEADER_MAX_HEIGHT,
-                width,
+                width: "100%",
               },
               imageAnimatedStyle,
             ]}

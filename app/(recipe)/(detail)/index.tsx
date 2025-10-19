@@ -79,7 +79,7 @@ export default function RecipeDetailScreen() {
   );
 
   const insets = useSafeAreaInsets();
-  const HEADER_MAX_HEIGHT = 400;
+  const HEADER_MAX_HEIGHT = 350;
   const TOOLBAR_HEIGHT = 56;
   const HEADER_MIN_HEIGHT = insets.top + TOOLBAR_HEIGHT;
 

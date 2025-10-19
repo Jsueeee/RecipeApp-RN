@@ -25,7 +25,7 @@ export const AddRecipeThumbnail = ({ image, setImage }: Props) => {
   return (
     <TouchableOpacity
       activeOpacity={0.7}
-      className="w-full max-w-[500px] aspect-square bg-gray-100 items-center justify-center"
+      className="w-full h-full bg-gray-100 items-center justify-center"
       onPress={pickImage}
     >
       {image ? (
