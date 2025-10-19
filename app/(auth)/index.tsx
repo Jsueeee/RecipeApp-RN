@@ -97,7 +97,7 @@ export default function LoginScreen() {
 
   return (
     <>
-      <SafeAreaView className="flex-1 bg-teal-300" edges={["top", "bottom"]}>
+      <SafeAreaView className="flex-1 bg-teal-300">
         <SystemBars style="dark" />
         <View className="flex-1 items-center justify-center">
           <SplashParallax entrance={entrance} lift={lift} liftDistance={150} />
@@ -115,7 +115,7 @@ export default function LoginScreen() {
               },
             ],
           }}
-          className="absolute bottom-0 left-0 right-0 w-full px-4 pb-6 mb-4 overflow-hidden items-center"
+          className="absolute bottom-0 left-0 right-0 w-full px-4 pb-6 mb-safe overflow-hidden items-center"
           onLayout={(e) => setButtonHeight(e.nativeEvent.layout.height)}
         >
           <LoginButtonColumn />
