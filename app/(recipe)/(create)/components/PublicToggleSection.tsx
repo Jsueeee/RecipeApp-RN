@@ -1,4 +1,4 @@
-import { View, Text, Switch } from "react-native";
+import { View, Text, Switch, Platform } from "react-native";
 import AlertIcon from "@/assets/images/ic_alert_desc.svg";
 import i18n from "@/lib/i18n";
 
@@ -23,7 +23,14 @@ export function PublicToggleSection({
           thumbColor={"#FFFFFF"}
           onValueChange={onValueChange}
           value={isPublic}
-          style={{ transform: [{ scale: 0.8 }] }}
+          style={{
+            transform: [
+              {
+                scale: Platform.OS === "ios" ? 0.8 : 1.3,
+              },
+            ],
+            marginRight: Platform.OS === "ios" ? 0 : 4,
+          }}
         />
       </View>
 
