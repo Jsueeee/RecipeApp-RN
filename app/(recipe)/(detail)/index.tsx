@@ -79,7 +79,6 @@ export default function RecipeDetailScreen() {
   );
 
   const insets = useSafeAreaInsets();
-  const { width } = Dimensions.get("window");
   const HEADER_MAX_HEIGHT = 400;
   const TOOLBAR_HEIGHT = 56;
   const HEADER_MIN_HEIGHT = insets.top + TOOLBAR_HEIGHT;
@@ -176,7 +175,7 @@ export default function RecipeDetailScreen() {
         <Reanimated.ScrollView
           scrollEventThrottle={16}
           contentContainerStyle={{
-            paddingTop: HEADER_MAX_HEIGHT,
+            paddingTop: HEADER_MAX_HEIGHT - 16,
             paddingBottom: 100,
           }}
           bounces={false}
@@ -184,7 +183,7 @@ export default function RecipeDetailScreen() {
           showsVerticalScrollIndicator={false}
           onScroll={onScroll}
         >
-          <View className="bg-white -mt-4 rounded-t-2xl pb-[50px]">
+          <View className="bg-white rounded-t-2xl pb-[50px]">
             <RecipeDetailInfo
               className="px-4 pt-5"
               recipeDetail={recipeDetail}
