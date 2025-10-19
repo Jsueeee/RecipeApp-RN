@@ -179,7 +179,7 @@ export default function RecipeDetailScreen() {
           showsVerticalScrollIndicator={false}
           onScroll={onScroll}
         >
-          <View className="bg-white -mt-4 rounded-t-2xl">
+          <View className="bg-white -mt-4 rounded-t-2xl pb-[100px]">
             <RecipeDetailInfo
               className="px-4 pt-5"
               recipeDetail={recipeDetail}
