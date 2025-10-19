@@ -9,10 +9,10 @@ import {
   Animated,
   Keyboard,
   LayoutChangeEvent,
-  SafeAreaView,
   Text,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { SearchBar } from "./components/SearchBar";
 import { SearchKeywords } from "./components/SearchKeywords";
 import SearchResult from "./SearchResult";
