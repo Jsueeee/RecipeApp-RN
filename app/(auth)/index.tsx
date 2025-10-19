@@ -115,7 +115,7 @@ export default function LoginScreen() {
               },
             ],
           }}
-          className="absolute bottom-0 left-0 right-0 w-full px-4 pb-6 mb-4 overflow-hidden"
+          className="absolute bottom-0 left-0 right-0 w-full px-4 pb-6 mb-4 overflow-hidden items-center"
           onLayout={(e) => setButtonHeight(e.nativeEvent.layout.height)}
         >
           <LoginButtonColumn />

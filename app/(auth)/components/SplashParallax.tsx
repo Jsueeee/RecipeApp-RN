@@ -1,5 +1,5 @@
 import i18n from "@/lib/i18n";
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import {
   Animated,
   StyleSheet,
@@ -49,7 +49,15 @@ type Props = {
 };
 
 const SplashParallax = memo(({ entrance, lift, liftDistance }: Props) => {
-  const { width: W, height: H } = useWindowDimensions();
+  const windowDimensions = useWindowDimensions();
+  const [layoutSize, setLayoutSize] = useState({
+    width: windowDimensions.width,
+    height: windowDimensions.height,
+  });
+
+  const W = layoutSize.width;
+  const H = layoutSize.height;
+
   // const scale = W / 360; // Figma 프레임 기준 폭: 360px // TODO : 일단 1로 고정. 디바이스 테스트 해보기
   const scale = 1;
 
@@ -99,6 +107,10 @@ const SplashParallax = memo(({ entrance, lift, liftDistance }: Props) => {
     <Animated.View
       style={[styles.stage, { transform: [{ translateY: groupTY }] }]}
       pointerEvents="none"
+      onLayout={(e) => {
+        const { width, height } = e.nativeEvent.layout;
+        setLayoutSize({ width, height });
+      }}
     >
       {/* 타이틀 */}
       <Animated.View
@@ -107,6 +119,7 @@ const SplashParallax = memo(({ entrance, lift, liftDistance }: Props) => {
           {
             top: tomatoCY + FIGMA.title.offsetY * scale,
             left: 0,
+            right: 0,
             width: W,
             transform: [
               { translateY: appearShift(0.35) },
