@@ -80,7 +80,7 @@ export default function RecipeDetailScreen() {
 
   const insets = useSafeAreaInsets();
   const { width } = Dimensions.get("window");
-  const HEADER_MAX_HEIGHT = width;
+  const HEADER_MAX_HEIGHT = 400;
   const TOOLBAR_HEIGHT = 56;
   const HEADER_MIN_HEIGHT = insets.top + TOOLBAR_HEIGHT;
 
@@ -158,14 +158,17 @@ export default function RecipeDetailScreen() {
 
   return (
     <>
-      <View className="flex-1 bg-white">
+      <View className="flex-1 bg-gray-100">
         <Reanimated.View
           className="absolute inset-x-0 top-0 overflow-hidden"
-          style={[{ height: HEADER_MAX_HEIGHT, width }, imageAnimatedStyle]}
+          style={[
+            { height: HEADER_MAX_HEIGHT, width: "100%" },
+            imageAnimatedStyle,
+          ]}
         >
           <Image
             source={{ uri: recipeDetail?.thumbnail }}
-            className="w-full h-full bg-gray-100 aspect-square max-w-[500px] self-center"
+            className="w-full h-full self-center"
             resizeMode="cover"
           />
         </Reanimated.View>
