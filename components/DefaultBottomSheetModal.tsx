@@ -126,7 +126,10 @@ export default function DefaultBottomSheetModal({
         {title && <Text className="text-title4 text-text-strong">{title}</Text>}
 
         <PressableScale
-          onPress={() => onDismiss?.()}
+          onPress={() => {
+            bottomSheetModalRef.current?.dismiss();
+            onDismiss?.();
+          }}
           className="absolute right-4"
           hitSlop={10}
         >
