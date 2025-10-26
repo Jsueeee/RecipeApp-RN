@@ -11,9 +11,11 @@ import { PressableScale } from "../components/PressableScale";
 import { useGoogleLogoutMutation } from "../hooks/mutations/useGoogleLogoutMutation";
 import { useKaKaoLogoutMutation } from "../hooks/mutations/useKaKaoLogoutMutation";
 import { useNaverLogoutMutation } from "../hooks/mutations/useNaverLogoutMutation";
+import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 
 export default function SettingScreen() {
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { userInfo } = useUserInfoQuery();
   const { kakaoLogout } = useKaKaoLogoutMutation();
@@ -38,6 +40,7 @@ export default function SettingScreen() {
   };
 
   const onLogoutConfirmPress = async () => {
+    setIsLoading(true);
     setLogoutDialogVisible(false);
 
     if (userInfo?.loginProvider === "KAKAO") {
@@ -125,6 +128,8 @@ export default function SettingScreen() {
         onConfirm={onLogoutConfirmPress}
         onCancel={() => setLogoutDialogVisible(false)}
       />
+
+      {isLoading && <DotLoadingScreen />}
     </ScreenLayout>
   );
 }
