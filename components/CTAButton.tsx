@@ -9,7 +9,8 @@ type ButtonVariant =
   | "danger"
   | "cancel"
   | "border"
-  | "small";
+  | "small"
+  | "loading";
 
 interface Props {
   buttonLabel: string;
@@ -22,9 +23,17 @@ interface Props {
   isLoading?: boolean;
 }
 
-const getButtonStyles = (variant: ButtonVariant, disabled: boolean) => {
+const getButtonStyles = (
+  variant: ButtonVariant,
+  disabled: boolean,
+  isLoading: boolean
+) => {
   if (disabled) {
     variant = "inactive";
+  }
+
+  if (isLoading) {
+    variant = "loading";
   }
 
   switch (variant) {
@@ -88,6 +97,16 @@ const getButtonStyles = (variant: ButtonVariant, disabled: boolean) => {
         horizontalPadding: "px-3",
         height: "h-[44px]",
       };
+    case "loading":
+      return {
+        backgroundColor: "bg-primary-normal",
+        borderColor: "border-primary-normal",
+        textColor: "text-text-inverse",
+        textStyle: "text-title5",
+        verticalPadding: "py-3.5",
+        horizontalPadding: "px-4",
+        height: "h-[52px]",
+      };
     default:
       return {
         backgroundColor: "bg-primary-normal",
@@ -111,7 +130,7 @@ export const CTAButton = ({
   onLayout,
   isLoading = false,
 }: Props) => {
-  const styles = getButtonStyles(variant, disabled);
+  const styles = getButtonStyles(variant, disabled, isLoading);
 
   return (
     <PressableScale
