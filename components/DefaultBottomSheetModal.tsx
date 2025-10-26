@@ -94,6 +94,8 @@ export default function DefaultBottomSheetModal({
           nestedScrollEnabled={true}
           bounces={false}
           alwaysBounceVertical={false}
+          // expo 54 이후 gorhom/bottom-sheet 에서 버그가 있어서 임시 처리
+          contentContainerStyle={{ paddingBottom: 80 }}
         >
           {children}
         </BottomSheetScrollView>
