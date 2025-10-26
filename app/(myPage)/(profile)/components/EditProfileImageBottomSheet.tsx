@@ -5,6 +5,7 @@ import i18n from "@/lib/i18n";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useState } from "react";
 import { Image, TouchableOpacity, View } from "react-native";
+import * as Haptics from "expo-haptics";
 
 interface Props {
   currentImageUrl: string | null | undefined;
@@ -43,6 +44,7 @@ export default function EditProfileImageBottomSheet({
 
   const handleImageSelect = (imageUrl: string) => {
     setSelectedImage(imageUrl);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   const onCTAPress = () => {
@@ -90,7 +92,7 @@ export default function EditProfileImageBottomSheet({
               onPress={() => handleImageSelect(iconUrl)}
               className={`w-[22%] aspect-square mb-5 rounded-[25px] ${
                 selectedImage === iconUrl
-                  ? "border-2 border-primary-normal"
+                  ? "border-2 border-primary-normal overflow-hidden"
                   : ""
               }`}
             >
