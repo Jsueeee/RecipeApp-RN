@@ -10,7 +10,7 @@ import * as Haptics from "expo-haptics";
 interface Props {
   currentImageUrl: string | null | undefined;
   currentNickname: string;
-  bottomSheetModalRef: React.RefObject<BottomSheetModal>;
+  bottomSheetModalRef: React.RefObject<BottomSheetModal | null>;
 }
 
 const iconList = [

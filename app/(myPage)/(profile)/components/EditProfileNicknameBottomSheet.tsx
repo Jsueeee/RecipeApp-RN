@@ -11,7 +11,7 @@ import { TextInput } from "react-native-gesture-handler";
 interface Props {
   currentImageUrl: string;
   currentNickname: string;
-  bottomSheetModalRef: React.RefObject<BottomSheetModal>;
+  bottomSheetModalRef: React.RefObject<BottomSheetModal | null>;
 }
 
 export default function EditProfileNicknameBottomSheet({
