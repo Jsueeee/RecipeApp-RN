@@ -42,6 +42,7 @@ export default function DefaultBottomSheetModal({
   footer,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
@@ -61,6 +62,19 @@ export default function DefaultBottomSheetModal({
     return () => backHandler.remove();
   }, [isOpen]);
 
+  useEffect(() => {
+    const showSub = Keyboard.addListener("keyboardDidShow", () =>
+      setKeyboardVisible(true)
+    );
+    const hideSub = Keyboard.addListener("keyboardDidHide", () =>
+      setKeyboardVisible(false)
+    );
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
   const handleSheetChanges = useCallback((index: number) => {
     setIsOpen(index !== -1);
 
@@ -74,6 +88,10 @@ export default function DefaultBottomSheetModal({
   }, []);
 
   const onBackDropPress = () => {
+    if (keyboardVisible) {
+      Keyboard.dismiss();
+      return;
+    }
     bottomSheetModalRef.current?.dismiss();
     Keyboard.dismiss();
   };
@@ -159,6 +177,7 @@ export default function DefaultBottomSheetModal({
       backdropComponent={backdropComponent}
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
+      enableBlurKeyboardOnGesture={true}
       bottomInset={insets.bottom}
       footerComponent={footer ? Footer : undefined}
     >

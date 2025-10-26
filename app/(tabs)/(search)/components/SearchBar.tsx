@@ -1,6 +1,7 @@
 import SearchBarIcon from "@/assets/images/ic_search_bar.svg";
 import i18n from "@/lib/i18n";
-import React from "react";
+import { useFocusEffect } from "expo-router";
+import React, { useCallback, useRef } from "react";
 import { TextInput, View } from "react-native";
 
 interface Props {
@@ -20,12 +21,28 @@ export const SearchBar: React.FC<Props> = ({
   onFocus,
   onBlur,
 }) => {
+  const inputRef = useRef<TextInput>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      const id = requestAnimationFrame(() => {
+        inputRef.current?.focus();
+      });
+
+      return () => {
+        inputRef.current?.blur();
+        cancelAnimationFrame(id);
+      };
+    }, [])
+  );
+
   return (
     <View className={className}>
       <View className="flex-row items-center bg-[#F1F3F2] rounded-[12px] py-2.5 px-3 gap-1">
         <SearchBarIcon width={20} height={20} />
 
         <TextInput
+          ref={inputRef}
           value={keyword}
           onChangeText={onValueChange}
           className="flex-1 text-utility2 text-text-strong p-0"
@@ -33,9 +50,9 @@ export const SearchBar: React.FC<Props> = ({
           placeholderTextColor="#BAC4BF"
           returnKeyType="search"
           selectTextOnFocus
-          selectionColor="transparent"
+          selectionColor="#BAC4BF"
+          cursorColor="#BAC4BF"
           editable={true}
-          caretHidden={true}
           onSubmitEditing={() => {
             onSearch(keyword);
           }}

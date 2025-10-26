@@ -67,8 +67,10 @@ export default function EditProfileNicknameBottomSheet({
             placeholderTextColor="#BAC4BF"
             returnKeyType="done"
             selectTextOnFocus
-            selectionColor="transparent"
+            selectionColor="#BAC4BF"
+            cursorColor="#BAC4BF"
             editable={true}
+            autoFocus
           />
 
           <TouchableOpacity
