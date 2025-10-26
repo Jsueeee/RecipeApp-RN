@@ -17,6 +17,7 @@ import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
 import { Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SystemBars } from "react-native-edge-to-edge";
 import "react-native-reanimated";
 import ToastManager from "toastify-react-native";
 import "../global.css";
@@ -110,7 +111,8 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <GestureHandlerRootView>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SystemBars style="auto" />
       <BottomSheetModalProvider>
         <ThemeProvider
           value={colorScheme.colorScheme === "dark" ? DarkTheme : DefaultTheme}

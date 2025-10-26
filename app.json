@@ -11,7 +11,8 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.recipe.android.recipeapp",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "appleTeamId": "S7TUXRR3LP"
     },
     "android": {
       "adaptiveIcon": {
@@ -52,8 +53,20 @@
         }
       ],
       "expo-secure-store",
-      ["react-native-edge-to-edge"],
-      ["@react-native-google-signin/google-signin"],
+      [
+        "react-native-edge-to-edge",
+        {
+          "android": {
+            "enforceNavigationBarContrast": false
+          }
+        }
+      ],
+      [
+        "react-native-edge-to-edge"
+      ],
+      [
+        "@react-native-google-signin/google-signin"
+      ],
       [
         "@react-native-seoul/naver-login",
         {
