@@ -1,4 +1,5 @@
 import i18n from "@/lib/i18n";
+import React from "react";
 import { Image, Platform, Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";
 
@@ -6,6 +7,7 @@ enum LoginMethod {
   KAKAO = "KAKAO",
   NAVER = "NAVER",
   GOOGLE = "GOOGLE",
+  APPLE = "APPLE",
 }
 
 interface Props {
@@ -22,6 +24,8 @@ const DefaultLoginButton = ({ method, onClick: onPress }: Props) => {
         return require("@/assets/images/ic_login_naver.png");
       case LoginMethod.GOOGLE:
         return require("@/assets/images/ic_login_google.png");
+      case LoginMethod.APPLE:
+        return require("@/assets/images/ic_login_apple.png");
     }
   };
 
@@ -31,7 +35,11 @@ const DefaultLoginButton = ({ method, onClick: onPress }: Props) => {
       className="w-full rounded-xl bg-teal-200 p-4"
     >
       <View className="flex-row items-center justify-center">
-        <Image source={getIcon()} className="w-5 h-5 absolute left-4" />
+        <Image
+          source={getIcon()}
+          className="w-5 h-5 absolute left-4"
+          resizeMode="contain"
+        />
         <Text className="text-title5 text-gray-800 text-center flex-1">
           {i18n.t(`login.with_${method}`)}
         </Text>
@@ -41,7 +49,12 @@ const DefaultLoginButton = ({ method, onClick: onPress }: Props) => {
 };
 
 export default function LoginButtonColumn() {
-  const { handleKakaoLogin, handleNaverLogin, handleGoogleLogin } = useAuth();
+  const {
+    handleKakaoLogin,
+    handleNaverLogin,
+    handleGoogleLogin,
+    handleAppleLogin,
+  } = useAuth();
 
   // 플랫폼별 설정
   const isIOS = Platform.OS === "ios";
@@ -55,12 +68,15 @@ export default function LoginButtonColumn() {
       style={{
         gap: gap,
         height: totalHeight,
+        alignItems: "center",
+        flexDirection: "column",
+        justifyContent: "space-between",
       }}
     >
       {isIOS ? (
         <DefaultLoginButton
-          method={LoginMethod.KAKAO} // TODO : 애플 로그인으로 변경
-          onClick={handleKakaoLogin}
+          method={LoginMethod.APPLE} // TODO : 애플 로그인으로 변경
+          onClick={handleAppleLogin}
         />
       ) : (
         <View className="h-[52px]" />
