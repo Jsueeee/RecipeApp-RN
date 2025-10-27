@@ -10,6 +10,7 @@ export const QUERY_KEYS = {
     KAKAO: () => [...QUERY_KEYS.AUTH.ROOT, "kakao"] as const,
     GOOGLE: () => [...QUERY_KEYS.AUTH.ROOT, "google"] as const,
     NAVER: () => [...QUERY_KEYS.AUTH.ROOT, "naver"] as const,
+    APPLE: () => [...QUERY_KEYS.AUTH.ROOT, "apple"] as const,
     AUTO_LOGIN: () => [...QUERY_KEYS.AUTH.ROOT, "autoLogin"] as const,
   },
   FRIDGE: {
