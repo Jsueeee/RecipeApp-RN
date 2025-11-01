@@ -6,9 +6,11 @@ import { SystemBars } from "react-native-edge-to-edge";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ServerErrorDialog } from "../components/ServerErrorDialog";
 import { UpdateVersionDialog } from "../components/UpdateVersionDialog";
+import { useDefaultBottomSheetModal } from "../hooks/useDefaultBottomSheetModal";
 import { useVersionCheck } from "../hooks/useVersionCheck";
 import SplashParallax from "./components/SplashParallax";
 import { useAutoLogin } from "./hooks/useAutoLogin";
+import { OptionalLoginBottomSheet } from "./components/OptionalLoginBottomSheet";
 
 const DUR = {
   ENTRANCE: 1000, // 등장(요구사항 유지: 1초)
@@ -32,6 +34,9 @@ export default function LoginScreen() {
   const [buttonHeight, setButtonHeight] = useState(0);
 
   const { isShowUpdateDialog, isErrorAppVersion } = useVersionCheck();
+
+  const { ref: bottomSheetModalRef, open: openBottomSheetModal } =
+    useDefaultBottomSheetModal();
 
   // 1) 처음 진입 시 1초 동안 "스르륵 등장"
   useEffect(() => {
@@ -118,9 +123,11 @@ export default function LoginScreen() {
           className="absolute bottom-0 left-0 right-0 w-full px-4 pb-6 mb-safe overflow-hidden items-center"
           onLayout={(e) => setButtonHeight(e.nativeEvent.layout.height)}
         >
-          <LoginButtonColumn />
+          <LoginButtonColumn onPressOptionalLogin={openBottomSheetModal} />
         </Animated.View>
       </SafeAreaView>
+
+      <OptionalLoginBottomSheet bottomSheetModalRef={bottomSheetModalRef} />
 
       <UpdateVersionDialog visible={isShowUpdateDialog} />
       <ServerErrorDialog visible={isErrorAppVersion} />

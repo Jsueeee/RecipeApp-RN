@@ -2,8 +2,9 @@ import i18n from "@/lib/i18n";
 import React from "react";
 import { Image, Platform, Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";
+import { PressableScale } from "@/app/components/PressableScale";
 
-enum LoginMethod {
+export enum LoginMethod {
   KAKAO = "KAKAO",
   NAVER = "NAVER",
   GOOGLE = "GOOGLE",
@@ -12,10 +13,15 @@ enum LoginMethod {
 
 interface Props {
   method: LoginMethod;
+  isOptional?: boolean;
   onClick: () => void;
 }
 
-const DefaultLoginButton = ({ method, onClick: onPress }: Props) => {
+export const DefaultLoginButton = ({
+  method,
+  isOptional = false,
+  onClick: onPress,
+}: Props) => {
   const getIcon = () => {
     switch (method) {
       case LoginMethod.KAKAO:
@@ -30,9 +36,17 @@ const DefaultLoginButton = ({ method, onClick: onPress }: Props) => {
   };
 
   return (
-    <TouchableOpacity
+    <PressableScale
       onPress={onPress}
-      className="w-full rounded-xl bg-teal-200 p-4"
+      style={{
+        width: "100%",
+        padding: 16,
+        backgroundColor: isOptional ? "white" : "#BFEDE2",
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: isOptional ? "#ECEFED" : "#BFEDE2",
+      }}
+      pressedStyle={{ backgroundColor: isOptional ? "#F7F8F7" : "#30C09C" }}
     >
       <View className="flex-row items-center justify-center">
         <Image
@@ -44,11 +58,17 @@ const DefaultLoginButton = ({ method, onClick: onPress }: Props) => {
           {i18n.t(`login.with_${method}`)}
         </Text>
       </View>
-    </TouchableOpacity>
+    </PressableScale>
   );
 };
 
-export default function LoginButtonColumn() {
+interface LoginButtonColumnProps {
+  onPressOptionalLogin: () => void;
+}
+
+export default function LoginButtonColumn({
+  onPressOptionalLogin,
+}: LoginButtonColumnProps) {
   const {
     handleKakaoLogin,
     handleNaverLogin,
@@ -60,7 +80,7 @@ export default function LoginButtonColumn() {
   const isIOS = Platform.OS === "ios";
   const buttonHeight = 52; // p-4(16*2) + 텍스트(20) = 약 52px // TODO : 텍스트 크기 고정 고려하기
   const gap = 8;
-  const totalHeight = 4 * buttonHeight + 3 * gap; // 4개 버튼 + 3개 간격의 고정 높이
+  const totalHeight = 3 * buttonHeight + 2 * gap; // 3개 버튼 + 2개 간격의 고정 높이
 
   return (
     <View
@@ -74,25 +94,37 @@ export default function LoginButtonColumn() {
       }}
     >
       {isIOS ? (
-        <DefaultLoginButton
-          method={LoginMethod.APPLE} // TODO : 애플 로그인으로 변경
-          onClick={handleAppleLogin}
-        />
+        <View className="w-full gap-2">
+          <DefaultLoginButton
+            method={LoginMethod.KAKAO}
+            onClick={handleKakaoLogin}
+          />
+          <DefaultLoginButton
+            method={LoginMethod.GOOGLE}
+            onClick={handleGoogleLogin}
+          />
+        </View>
       ) : (
-        <View className="h-[52px]" />
+        <View className="w-full gap-2">
+          <DefaultLoginButton
+            method={LoginMethod.GOOGLE}
+            onClick={handleGoogleLogin}
+          />
+          <DefaultLoginButton
+            method={LoginMethod.KAKAO}
+            onClick={handleKakaoLogin}
+          />
+        </View>
       )}
-      <DefaultLoginButton
-        method={LoginMethod.KAKAO}
-        onClick={handleKakaoLogin}
-      />
-      <DefaultLoginButton
-        method={LoginMethod.NAVER}
-        onClick={handleNaverLogin}
-      />
-      <DefaultLoginButton
-        method={LoginMethod.GOOGLE}
-        onClick={handleGoogleLogin}
-      />
+
+      <TouchableOpacity
+        onPress={onPressOptionalLogin}
+        className="h-[52px] items-center justify-center px-4"
+      >
+        <Text className="text-body2 text-text-normal underline">
+          {i18n.t("login.optional_login_button")}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
