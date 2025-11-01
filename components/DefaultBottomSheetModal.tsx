@@ -113,7 +113,7 @@ export default function DefaultBottomSheetModal({
           bounces={false}
           alwaysBounceVertical={false}
           // expo 54 이후 gorhom/bottom-sheet 에서 버그가 있어서 임시 처리
-          contentContainerStyle={{ paddingBottom: 80 }}
+          contentContainerStyle={{ paddingBottom: footer ? 80 : 0 }}
         >
           {children}
         </BottomSheetScrollView>
