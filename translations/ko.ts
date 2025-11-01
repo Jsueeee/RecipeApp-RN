@@ -38,6 +38,8 @@ export default {
     with_NAVER: "Naver로 로그인",
     with_GOOGLE: "Google로 로그인",
     with_APPLE: "Apple로 로그인",
+
+    optional_login_button: "다른 방법으로 로그인하기",
   },
   category: {
     youtube: "유튜브",
