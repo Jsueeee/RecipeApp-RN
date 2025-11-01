@@ -1,19 +1,28 @@
+import { PressableScale } from "@/app/components/PressableScale";
 import i18n from "@/lib/i18n";
-import { Image, Platform, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";
+import { Pressable } from "react-native-gesture-handler";
 
-enum LoginMethod {
+export enum LoginMethod {
   KAKAO = "KAKAO",
   NAVER = "NAVER",
   GOOGLE = "GOOGLE",
+  APPLE = "APPLE",
 }
 
 interface Props {
   method: LoginMethod;
+  isOptional?: boolean;
   onClick: () => void;
 }
 
-const DefaultLoginButton = ({ method, onClick: onPress }: Props) => {
+export const DefaultLoginButton = ({
+  method,
+  isOptional = false,
+  onClick: onPress,
+}: Props) => {
   const getIcon = () => {
     switch (method) {
       case LoginMethod.KAKAO:
@@ -22,32 +31,56 @@ const DefaultLoginButton = ({ method, onClick: onPress }: Props) => {
         return require("@/assets/images/ic_login_naver.png");
       case LoginMethod.GOOGLE:
         return require("@/assets/images/ic_login_google.png");
+      case LoginMethod.APPLE:
+        return require("@/assets/images/ic_login_apple.png");
     }
   };
 
   return (
-    <TouchableOpacity
+    <PressableScale
       onPress={onPress}
-      className="w-full rounded-xl bg-teal-200 p-4"
+      style={{
+        width: "100%",
+        padding: 16,
+        backgroundColor: isOptional ? "white" : "#BFEDE2",
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: isOptional ? "#ECEFED" : "#BFEDE2",
+      }}
+      pressedStyle={{ backgroundColor: isOptional ? "#F7F8F7" : "#DFF6F0" }}
     >
       <View className="flex-row items-center justify-center">
-        <Image source={getIcon()} className="w-5 h-5 absolute left-4" />
+        <Image
+          source={getIcon()}
+          className="w-5 h-5 absolute left-4"
+          resizeMode="contain"
+        />
         <Text className="text-title5 text-gray-800 text-center flex-1">
           {i18n.t(`login.with_${method}`)}
         </Text>
       </View>
-    </TouchableOpacity>
+    </PressableScale>
   );
 };
 
-export default function LoginButtonColumn() {
-  const { handleKakaoLogin, handleNaverLogin, handleGoogleLogin } = useAuth();
+interface LoginButtonColumnProps {
+  onPressOptionalLogin: () => void;
+}
+
+export default function LoginButtonColumn({
+  onPressOptionalLogin,
+}: LoginButtonColumnProps) {
+  const {
+    handleKakaoLogin,
+    handleNaverLogin,
+    handleGoogleLogin,
+    handleAppleLogin,
+  } = useAuth();
 
   // 플랫폼별 설정
-  const isIOS = Platform.OS === "ios";
   const buttonHeight = 52; // p-4(16*2) + 텍스트(20) = 약 52px // TODO : 텍스트 크기 고정 고려하기
-  const gap = 8;
-  const totalHeight = 4 * buttonHeight + 3 * gap; // 4개 버튼 + 3개 간격의 고정 높이
+  const gap = 12;
+  const totalHeight = 3 * buttonHeight + 2 * gap; // 3개 버튼 + 2개 간격의 고정 높이
 
   return (
     <View
@@ -55,28 +88,35 @@ export default function LoginButtonColumn() {
       style={{
         gap: gap,
         height: totalHeight,
+        alignItems: "center",
+        flexDirection: "column",
+        justifyContent: "space-between",
       }}
     >
-      {isIOS ? (
+      <View className="w-full gap-3">
         <DefaultLoginButton
-          method={LoginMethod.KAKAO} // TODO : 애플 로그인으로 변경
+          method={LoginMethod.GOOGLE}
+          onClick={handleGoogleLogin}
+        />
+        <DefaultLoginButton
+          method={LoginMethod.KAKAO}
           onClick={handleKakaoLogin}
         />
-      ) : (
-        <View className="h-[52px]" />
-      )}
-      <DefaultLoginButton
-        method={LoginMethod.KAKAO}
-        onClick={handleKakaoLogin}
-      />
-      <DefaultLoginButton
-        method={LoginMethod.NAVER}
-        onClick={handleNaverLogin}
-      />
-      <DefaultLoginButton
-        method={LoginMethod.GOOGLE}
-        onClick={handleGoogleLogin}
-      />
+      </View>
+
+      <PressableScale
+        onPress={onPressOptionalLogin}
+        style={{
+          paddingHorizontal: 10,
+          paddingVertical: 6,
+          borderRadius: 8,
+        }}
+        pressedStyle={{ backgroundColor: "#0000001A" }}
+      >
+        <Text className="text-body2 text-text-normal">
+          {i18n.t("login.optional_login_button")}
+        </Text>
+      </PressableScale>
     </View>
   );
 }

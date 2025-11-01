@@ -12,7 +12,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.recipe.android.recipeapp",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "appleTeamId": "S7TUXRR3LP"
+      "appleTeamId": "S7TUXRR3LP",
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
@@ -61,12 +62,8 @@
           }
         }
       ],
-      [
-        "react-native-edge-to-edge"
-      ],
-      [
-        "@react-native-google-signin/google-signin"
-      ],
+      ["react-native-edge-to-edge"],
+      ["@react-native-google-signin/google-signin"],
       [
         "@react-native-seoul/naver-login",
         {
@@ -84,7 +81,8 @@
           },
           "imageWidth": 200
         }
-      ]
+      ],
+      ["expo-apple-authentication"]
     ],
     "experiments": {
       "typedRoutes": true
