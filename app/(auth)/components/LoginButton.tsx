@@ -3,6 +3,7 @@ import i18n from "@/lib/i18n";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";
+import { Pressable } from "react-native-gesture-handler";
 
 export enum LoginMethod {
   KAKAO = "KAKAO",
@@ -103,14 +104,19 @@ export default function LoginButtonColumn({
         />
       </View>
 
-      <TouchableOpacity
+      <PressableScale
         onPress={onPressOptionalLogin}
-        className="h-[52px] items-center justify-center px-4"
+        style={{
+          paddingHorizontal: 10,
+          paddingVertical: 6,
+          borderRadius: 8,
+        }}
+        pressedStyle={{ backgroundColor: "#0000001A" }}
       >
         <Text className="text-body2 text-text-normal">
           {i18n.t("login.optional_login_button")}
         </Text>
-      </TouchableOpacity>
+      </PressableScale>
     </View>
   );
 }
