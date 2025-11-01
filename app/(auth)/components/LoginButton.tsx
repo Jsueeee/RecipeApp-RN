@@ -1,8 +1,8 @@
+import { PressableScale } from "@/app/components/PressableScale";
 import i18n from "@/lib/i18n";
 import React from "react";
-import { Image, Platform, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";
-import { PressableScale } from "@/app/components/PressableScale";
 
 export enum LoginMethod {
   KAKAO = "KAKAO",
@@ -77,9 +77,8 @@ export default function LoginButtonColumn({
   } = useAuth();
 
   // 플랫폼별 설정
-  const isIOS = Platform.OS === "ios";
   const buttonHeight = 52; // p-4(16*2) + 텍스트(20) = 약 52px // TODO : 텍스트 크기 고정 고려하기
-  const gap = 8;
+  const gap = 12;
   const totalHeight = 3 * buttonHeight + 2 * gap; // 3개 버튼 + 2개 간격의 고정 높이
 
   return (
@@ -93,35 +92,22 @@ export default function LoginButtonColumn({
         justifyContent: "space-between",
       }}
     >
-      {isIOS ? (
-        <View className="w-full gap-2">
-          <DefaultLoginButton
-            method={LoginMethod.KAKAO}
-            onClick={handleKakaoLogin}
-          />
-          <DefaultLoginButton
-            method={LoginMethod.GOOGLE}
-            onClick={handleGoogleLogin}
-          />
-        </View>
-      ) : (
-        <View className="w-full gap-2">
-          <DefaultLoginButton
-            method={LoginMethod.GOOGLE}
-            onClick={handleGoogleLogin}
-          />
-          <DefaultLoginButton
-            method={LoginMethod.KAKAO}
-            onClick={handleKakaoLogin}
-          />
-        </View>
-      )}
+      <View className="w-full gap-3">
+        <DefaultLoginButton
+          method={LoginMethod.GOOGLE}
+          onClick={handleGoogleLogin}
+        />
+        <DefaultLoginButton
+          method={LoginMethod.KAKAO}
+          onClick={handleKakaoLogin}
+        />
+      </View>
 
       <TouchableOpacity
         onPress={onPressOptionalLogin}
         className="h-[52px] items-center justify-center px-4"
       >
-        <Text className="text-body2 text-text-normal underline">
+        <Text className="text-body2 text-text-normal">
           {i18n.t("login.optional_login_button")}
         </Text>
       </TouchableOpacity>
