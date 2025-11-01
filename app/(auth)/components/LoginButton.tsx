@@ -46,7 +46,7 @@ export const DefaultLoginButton = ({
         borderWidth: 1,
         borderColor: isOptional ? "#ECEFED" : "#BFEDE2",
       }}
-      pressedStyle={{ backgroundColor: isOptional ? "#F7F8F7" : "#30C09C" }}
+      pressedStyle={{ backgroundColor: isOptional ? "#F7F8F7" : "#DFF6F0" }}
     >
       <View className="flex-row items-center justify-center">
         <Image
