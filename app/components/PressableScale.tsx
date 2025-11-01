@@ -11,6 +11,7 @@ interface PressableScaleProps {
   children: React.ReactNode;
   className?: string;
   style?: ViewStyle;
+  pressedStyle?: ViewStyle;
   disabled?: boolean;
   hitSlop?: number;
   onLayout?: (e: LayoutChangeEvent) => void;
@@ -21,6 +22,7 @@ export const PressableScale: React.FC<PressableScaleProps> = ({
   children,
   className,
   style,
+  pressedStyle,
   disabled = false,
   hitSlop = 0,
   onLayout,
@@ -68,17 +70,20 @@ export const PressableScale: React.FC<PressableScaleProps> = ({
       hitSlop={hitSlop}
       onLayout={onLayout}
     >
-      <Animated.View
-        style={[
-          style,
-          {
-            transform: [{ scale: scaleAnim }],
-            opacity: opacityAnim,
-          },
-        ]}
-      >
-        {children}
-      </Animated.View>
+      {({ pressed }) => (
+        <Animated.View
+          style={[
+            style,
+            {
+              transform: [{ scale: scaleAnim }],
+              opacity: opacityAnim,
+            },
+            pressed && pressedStyle,
+          ]}
+        >
+          {children}
+        </Animated.View>
+      )}
     </Pressable>
   );
 };
