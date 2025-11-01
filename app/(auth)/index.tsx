@@ -105,7 +105,7 @@ export default function LoginScreen() {
       <SafeAreaView className="flex-1 bg-teal-300">
         <SystemBars style="dark" />
         <View className="flex-1 items-center justify-center">
-          <SplashParallax entrance={entrance} lift={lift} liftDistance={150} />
+          <SplashParallax entrance={entrance} lift={lift} liftDistance={100} />
         </View>
 
         <Animated.View
