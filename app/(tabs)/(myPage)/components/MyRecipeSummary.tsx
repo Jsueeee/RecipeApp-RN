@@ -65,7 +65,11 @@ export function MyRecipeSummary({ recipes = [], className }: Props) {
           {i18n.t("myPage.my_recipe_title")}
         </Text>
 
-        <PressableScale onPress={onAllViewPress}>
+        <PressableScale
+          onPress={onAllViewPress}
+          style={{ paddingHorizontal: 6, paddingVertical: 4, borderRadius: 6 }}
+          pressedStyle={{ backgroundColor: "#0000001A" }}
+        >
           <Text className="text-body3 text-text-alternative">
             {i18n.t("myPage.all_view")}
           </Text>
