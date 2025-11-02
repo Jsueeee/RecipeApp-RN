@@ -11,6 +11,7 @@ import { useVersionCheck } from "../hooks/useVersionCheck";
 import SplashParallax from "./components/SplashParallax";
 import { useAutoLogin } from "./hooks/useAutoLogin";
 import { OptionalLoginBottomSheet } from "./components/OptionalLoginBottomSheet";
+import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 
 const DUR = {
   ENTRANCE: 1000, // 등장(요구사항 유지: 1초)
@@ -32,6 +33,8 @@ export default function LoginScreen() {
   const buttonOpacity = useRef(new Animated.Value(0)).current;
 
   const [buttonHeight, setButtonHeight] = useState(0);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const { isShowUpdateDialog, isErrorAppVersion } = useVersionCheck();
 
@@ -123,14 +126,22 @@ export default function LoginScreen() {
           className="absolute bottom-0 left-0 right-0 w-full px-4 pb-6 mb-safe overflow-hidden items-center"
           onLayout={(e) => setButtonHeight(e.nativeEvent.layout.height)}
         >
-          <LoginButtonColumn onPressOptionalLogin={openBottomSheetModal} />
+          <LoginButtonColumn
+            onPressOptionalLogin={openBottomSheetModal}
+            setIsLoading={setIsLoading}
+          />
         </Animated.View>
       </SafeAreaView>
 
-      <OptionalLoginBottomSheet bottomSheetModalRef={bottomSheetModalRef} />
+      <OptionalLoginBottomSheet
+        bottomSheetModalRef={bottomSheetModalRef}
+        setIsLoading={setIsLoading}
+      />
 
       <UpdateVersionDialog visible={isShowUpdateDialog} />
       <ServerErrorDialog visible={isErrorAppVersion} />
+
+      {isLoading && <DotLoadingScreen isShowDim={true} />}
     </>
   );
 }

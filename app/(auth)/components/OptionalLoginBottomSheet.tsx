@@ -8,11 +8,27 @@ import { DefaultLoginButton, LoginMethod } from "./LoginButton";
 
 interface Props {
   bottomSheetModalRef: React.RefObject<BottomSheetModal | null>;
+  setIsLoading: (isLoading: boolean) => void;
 }
 
-export const OptionalLoginBottomSheet = ({ bottomSheetModalRef }: Props) => {
+export const OptionalLoginBottomSheet = ({
+  bottomSheetModalRef,
+  setIsLoading,
+}: Props) => {
   const { handleAppleLogin, handleNaverLogin } = useAuth();
   const isIOS = Platform.OS === "ios";
+
+  const onPressLogin = (loginMethod: LoginMethod) => {
+    setIsLoading(true);
+    switch (loginMethod) {
+      case LoginMethod.NAVER:
+        handleNaverLogin();
+        break;
+      case LoginMethod.APPLE:
+        handleAppleLogin();
+        break;
+    }
+  };
 
   return (
     <DefaultBottomSheetModal
@@ -25,14 +41,14 @@ export const OptionalLoginBottomSheet = ({ bottomSheetModalRef }: Props) => {
           <DefaultLoginButton
             method={LoginMethod.APPLE}
             isOptional={true}
-            onClick={handleAppleLogin}
+            onClick={() => onPressLogin(LoginMethod.APPLE)}
           />
         )}
 
         <DefaultLoginButton
           method={LoginMethod.NAVER}
           isOptional={true}
-          onClick={handleNaverLogin}
+          onClick={() => onPressLogin(LoginMethod.NAVER)}
         />
       </View>
     </DefaultBottomSheetModal>
