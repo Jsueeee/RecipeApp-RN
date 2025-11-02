@@ -71,7 +71,7 @@ export default function LoginButtonColumn({
   onPressOptionalLogin,
   setIsLoading,
 }: LoginButtonColumnProps) {
-  const { handleKakaoLogin, handleGoogleLogin } = useAuth();
+  const { handleKakaoLogin, handleGoogleLogin } = useAuth({ setIsLoading });
 
   // 플랫폼별 설정
   const buttonHeight = 52; // p-4(16*2) + 텍스트(20) = 약 52px // TODO : 텍스트 크기 고정 고려하기

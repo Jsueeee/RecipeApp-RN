@@ -18,11 +18,12 @@ export const OptionalLoginBottomSheet = ({
   bottomSheetModalRef,
   setIsLoading,
 }: Props) => {
-  const { handleAppleLogin, handleNaverLogin } = useAuth();
+  const { handleAppleLogin, handleNaverLogin } = useAuth({ setIsLoading });
   const isIOS = Platform.OS === "ios";
 
   const onPressLogin = (loginMethod: LoginMethod) => {
     setIsLoading(true);
+
     switch (loginMethod) {
       case LoginMethod.NAVER:
         handleNaverLogin();

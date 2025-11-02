@@ -4,7 +4,11 @@ import { useLoginMutation } from "@/app/hooks/mutations/useLoginMutation";
 import { useNaverLoginMutation } from "@/app/hooks/mutations/useNaverLoginMutation";
 import { router } from "expo-router";
 
-export const useAuth = () => {
+interface Props {
+  setIsLoading: (isLoading: boolean) => void;
+}
+
+export const useAuth = ({ setIsLoading }: Props) => {
   const { kakaoLogin, isLoading, error } = useLoginMutation();
   const { googleLogin } = useGoogleLoginMutation();
   const { naverLogin } = useNaverLoginMutation();
@@ -16,6 +20,7 @@ export const useAuth = () => {
       router.replace("/(tabs)");
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
     }
   };
 
@@ -25,6 +30,7 @@ export const useAuth = () => {
       router.replace("/(tabs)");
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
     }
   };
 
@@ -34,6 +40,7 @@ export const useAuth = () => {
       router.replace("/(tabs)");
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
     }
   };
 
@@ -43,6 +50,7 @@ export const useAuth = () => {
       router.replace("/(tabs)");
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
     }
   };
 
