@@ -11,7 +11,7 @@ interface Props {
 }
 
 export const OptionalLoginBottomSheet = ({ bottomSheetModalRef }: Props) => {
-  const { handleAppleLogin, handleKakaoLogin } = useAuth();
+  const { handleAppleLogin, handleNaverLogin } = useAuth();
   const isIOS = Platform.OS === "ios";
 
   return (
@@ -32,7 +32,7 @@ export const OptionalLoginBottomSheet = ({ bottomSheetModalRef }: Props) => {
         <DefaultLoginButton
           method={LoginMethod.NAVER}
           isOptional={true}
-          onClick={handleKakaoLogin}
+          onClick={handleNaverLogin}
         />
       </View>
     </DefaultBottomSheetModal>
