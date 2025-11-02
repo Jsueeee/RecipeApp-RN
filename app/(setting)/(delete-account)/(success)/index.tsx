@@ -2,14 +2,26 @@ import IC_TOMATO from "@/assets/images/ic_tomato.svg";
 import { CTAButton } from "@/components/CTAButton";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
-import { Text, View } from "react-native";
-import { router } from "expo-router";
+import { BackHandler, Text, View } from "react-native";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 
 export default function DeleteAccountSuccessScreen() {
   const onCTAButtonPress = () => {
     router.dismissAll();
     router.replace("/(auth)");
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => true;
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress
+      );
+      return () => subscription.remove();
+    }, [])
+  );
 
   return (
     <ScreenLayout isShowHeader={false}>
