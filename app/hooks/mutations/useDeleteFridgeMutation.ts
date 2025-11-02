@@ -11,7 +11,7 @@ export const useDeleteFridgeMutation = () => {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FRIDGE.FRIDGES });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FRIDGE.FRIDGES() });
     },
   });
 };
