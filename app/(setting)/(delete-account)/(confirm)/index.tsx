@@ -14,7 +14,7 @@ export default function DeleteAccountConfirmScreen() {
   const { deleteAccount } = useDeleteAccountMutation({
     onSuccess: () => {
       router.dismissAll();
-      router.replace("/(setting)/(delete-account)/success"); // 탈퇴 성공 화면으로 이동
+      router.replace("/(setting)/(delete-account)/(success)"); // 탈퇴 성공 화면으로 이동
     },
     onError: () => {
       Toast.error(i18n.t("delete_account_confirm.error"));
