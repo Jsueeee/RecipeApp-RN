@@ -12,6 +12,7 @@ import { useGoogleLogoutMutation } from "../hooks/mutations/useGoogleLogoutMutat
 import { useKaKaoLogoutMutation } from "../hooks/mutations/useKaKaoLogoutMutation";
 import { useNaverLogoutMutation } from "../hooks/mutations/useNaverLogoutMutation";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
+import { useAppleLogoutMutation } from "../hooks/mutations/useAppleLogoutMutation";
 
 export default function SettingScreen() {
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
@@ -21,6 +22,7 @@ export default function SettingScreen() {
   const { kakaoLogout } = useKaKaoLogoutMutation();
   const { googleLogout } = useGoogleLogoutMutation();
   const { naverLogout } = useNaverLogoutMutation();
+  const { appleLogout } = useAppleLogoutMutation();
 
   const onCSEmailPress = () => {
     const email = "recipestorage2021@gmail.com";
@@ -49,6 +51,8 @@ export default function SettingScreen() {
       await googleLogout();
     } else if (userInfo?.loginProvider === "NAVER") {
       await naverLogout();
+    } else if (userInfo?.loginProvider === "APPLE") {
+      await appleLogout();
     }
   };
 
