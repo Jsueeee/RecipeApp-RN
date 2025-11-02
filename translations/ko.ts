@@ -216,6 +216,8 @@ export default {
     option_5: "콘텐츠의 내용이 부족해요.",
     option_6: "기타",
     cta: "탈퇴하기",
+
+    error: "탈퇴 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.",
   },
   delete_account_success: {
     title: "탈퇴를 완료했어요",
