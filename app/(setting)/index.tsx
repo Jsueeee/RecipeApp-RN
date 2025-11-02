@@ -1,23 +1,29 @@
+import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
 import RightArrowIcon from "@/assets/images/ic_arrow_right.svg";
 import { ChoiceDialog } from "@/components/ChoiceDialog";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import Constants from "expo-constants";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import { Linking, Text, View } from "react-native";
 import { PressableScale } from "../components/PressableScale";
+import { useGoogleLogoutMutation } from "../hooks/mutations/useGoogleLogoutMutation";
 import { useKaKaoLogoutMutation } from "../hooks/mutations/useKaKaoLogoutMutation";
 import { useNaverLogoutMutation } from "../hooks/mutations/useNaverLogoutMutation";
-import { router } from "expo-router";
-import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
-import { useGoogleLogoutMutation } from "../hooks/mutations/useGoogleLogoutMutation";
+import { DotLoadingScreen } from "@/components/DotLoadingScreen";
+import { useAppleLogoutMutation } from "../hooks/mutations/useAppleLogoutMutation";
+
 export default function SettingScreen() {
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { data: userInfo } = useUserInfoQuery();
+  const { userInfo } = useUserInfoQuery();
   const { kakaoLogout } = useKaKaoLogoutMutation();
   const { googleLogout } = useGoogleLogoutMutation();
   const { naverLogout } = useNaverLogoutMutation();
+  const { appleLogout } = useAppleLogoutMutation();
+
   const onCSEmailPress = () => {
     const email = "recipestorage2021@gmail.com";
     const subject = "[레시피 저장소] 문의";
@@ -36,6 +42,7 @@ export default function SettingScreen() {
   };
 
   const onLogoutConfirmPress = async () => {
+    setIsLoading(true);
     setLogoutDialogVisible(false);
 
     if (userInfo?.loginProvider === "KAKAO") {
@@ -44,6 +51,8 @@ export default function SettingScreen() {
       await googleLogout();
     } else if (userInfo?.loginProvider === "NAVER") {
       await naverLogout();
+    } else if (userInfo?.loginProvider === "APPLE") {
+      await appleLogout();
     }
   };
 
@@ -123,6 +132,8 @@ export default function SettingScreen() {
         onConfirm={onLogoutConfirmPress}
         onCancel={() => setLogoutDialogVisible(false)}
       />
+
+      {isLoading && <DotLoadingScreen />}
     </ScreenLayout>
   );
 }

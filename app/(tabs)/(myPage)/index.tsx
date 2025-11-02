@@ -8,6 +8,7 @@ import { MyProfile } from "./components/MyProfile";
 import { MyRecipeSummary } from "./components/MyRecipeSummary";
 import { MyScrapSummary } from "./components/MyScrapSummary";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { MyPageHeader } from "./components/MyPageHeader";
 
 export default function MyPageScreen() {
   const { userInfo } = useUserInfoQuery();
@@ -24,7 +25,7 @@ export default function MyPageScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
         >
-          <MainTabHeader tab="myPage" />
+          <MyPageHeader />
 
           <MyProfile
             profileImage={userInfo?.profileImageUrl}

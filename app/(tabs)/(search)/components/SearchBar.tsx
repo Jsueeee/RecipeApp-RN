@@ -1,8 +1,8 @@
 import SearchBarIcon from "@/assets/images/ic_search_bar.svg";
 import i18n from "@/lib/i18n";
 import { useFocusEffect } from "expo-router";
-import React, { useCallback, useRef } from "react";
-import { TextInput, View } from "react-native";
+import React, { useCallback, useEffect, useRef } from "react";
+import { Keyboard, TextInput, View } from "react-native";
 
 interface Props {
   keyword: string;
@@ -35,6 +35,20 @@ export const SearchBar: React.FC<Props> = ({
       };
     }, [])
   );
+
+  // 키보드 내려올 때
+  useEffect(() => {
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        inputRef.current?.blur();
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener?.remove();
+    };
+  }, []);
 
   return (
     <View className={className}>

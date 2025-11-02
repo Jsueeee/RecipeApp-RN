@@ -50,6 +50,7 @@ export const QUERY_KEYS = {
   USER: {
     ROOT: ["user"] as const,
     INFO: () => [...QUERY_KEYS.USER.ROOT, "info"] as const,
+    DELETE_ACCOUNT: () => [...QUERY_KEYS.USER.ROOT, "delete-account"] as const,
   },
   INGREDIENT: {
     ROOT: ["ingredients"] as const,

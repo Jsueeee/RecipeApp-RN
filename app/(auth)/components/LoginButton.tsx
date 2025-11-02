@@ -1,9 +1,8 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import i18n from "@/lib/i18n";
 import React from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";
-import { Pressable } from "react-native-gesture-handler";
 
 export enum LoginMethod {
   KAKAO = "KAKAO",
@@ -65,22 +64,32 @@ export const DefaultLoginButton = ({
 
 interface LoginButtonColumnProps {
   onPressOptionalLogin: () => void;
+  setIsLoading: (isLoading: boolean) => void;
 }
 
 export default function LoginButtonColumn({
   onPressOptionalLogin,
+  setIsLoading,
 }: LoginButtonColumnProps) {
-  const {
-    handleKakaoLogin,
-    handleNaverLogin,
-    handleGoogleLogin,
-    handleAppleLogin,
-  } = useAuth();
+  const { handleKakaoLogin, handleGoogleLogin } = useAuth();
 
   // 플랫폼별 설정
   const buttonHeight = 52; // p-4(16*2) + 텍스트(20) = 약 52px // TODO : 텍스트 크기 고정 고려하기
   const gap = 12;
   const totalHeight = 3 * buttonHeight + 2 * gap; // 3개 버튼 + 2개 간격의 고정 높이
+
+  const onPressLogin = (loginMethod: LoginMethod) => {
+    setIsLoading(true);
+
+    switch (loginMethod) {
+      case LoginMethod.KAKAO:
+        handleKakaoLogin();
+        break;
+      case LoginMethod.GOOGLE:
+        handleGoogleLogin();
+        break;
+    }
+  };
 
   return (
     <View
@@ -96,11 +105,11 @@ export default function LoginButtonColumn({
       <View className="w-full gap-3">
         <DefaultLoginButton
           method={LoginMethod.GOOGLE}
-          onClick={handleGoogleLogin}
+          onClick={() => onPressLogin(LoginMethod.GOOGLE)}
         />
         <DefaultLoginButton
           method={LoginMethod.KAKAO}
-          onClick={handleKakaoLogin}
+          onClick={() => onPressLogin(LoginMethod.KAKAO)}
         />
       </View>
 

@@ -11,13 +11,13 @@ export const useDeleteFridgeBasketIngredientMutation = (
   callbacks?: MutationCallbacks
 ) => {
   const deleteFridgeBasketIngredientMutation = useMutation({
-    mutationKey: QUERY_KEYS.FRIDGE.BASKET,
+    mutationKey: QUERY_KEYS.FRIDGE.BASKET(),
     mutationFn: async (id: number) => {
       await apiClient.delete(`/fridges/basket/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.FRIDGE.BASKET,
+        queryKey: QUERY_KEYS.FRIDGE.BASKET(),
       });
 
       callbacks?.onSuccess?.();

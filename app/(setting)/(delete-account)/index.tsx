@@ -4,13 +4,13 @@ import AlertIcon from "@/assets/images/ic_alert.svg";
 import { CTAButton } from "@/components/CTAButton";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import { Text, View } from "react-native";
 import { DeleteAccountAgreeButton } from "./components/DeleteAccountAgreeButton";
-import { router } from "expo-router";
 
 export default function DeleteAccountScreen() {
-  const { data: userInfo } = useUserInfoQuery();
+  const { userInfo } = useUserInfoQuery();
   const [isAgree, setIsAgree] = useState(false);
 
   const onCTAButtonPress = () => {

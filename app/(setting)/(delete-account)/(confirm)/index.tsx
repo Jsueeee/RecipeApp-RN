@@ -1,15 +1,39 @@
+import { useDeleteAccountMutation } from "@/app/hooks/mutations/useDeleteAccountMutation";
+import { authStorage } from "@/app/lib/storage/auth";
 import { CTAButton } from "@/components/CTAButton";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
+import { router } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";
+import { Toast } from "toastify-react-native";
 import { DeleteAccountReasonOptions } from "./components/DeleteAccountReasonOptions";
 
 export default function DeleteAccountConfirmScreen() {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
+  const { deleteAccount } = useDeleteAccountMutation({
+    onSuccess: () => {
+      authStorage.clear().then(() => {
+        router.dismissAll();
+        router.replace("/(setting)/(delete-account)/(success)"); // 탈퇴 성공 화면으로 이동
+      });
+    },
+    onError: () => {
+      Toast.error(i18n.t("delete_account_confirm.error"));
+    },
+  });
+
   const onCTAButtonPress = () => {
-    console.log(selectedOption);
+    if (selectedOption === null) return;
+
+    const selectedOptionText = i18n.t(
+      `delete_account_confirm.option_${selectedOption}`
+    );
+
+    deleteAccount({
+      withdrawalReason: selectedOptionText,
+    });
   };
 
   return (
