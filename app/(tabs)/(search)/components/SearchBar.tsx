@@ -1,8 +1,8 @@
 import SearchBarIcon from "@/assets/images/ic_search_bar.svg";
 import i18n from "@/lib/i18n";
-import { useFocusEffect } from "expo-router";
-import React, { useCallback, useEffect, useRef } from "react";
-import { Keyboard, TextInput, View } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
+import React, { useEffect, useRef } from "react";
+import { InteractionManager, Keyboard, TextInput, View } from "react-native";
 
 interface Props {
   keyword: string;
@@ -22,19 +22,21 @@ export const SearchBar: React.FC<Props> = ({
   onBlur,
 }) => {
   const inputRef = useRef<TextInput>(null);
+  const isFocused = useIsFocused();
 
-  useFocusEffect(
-    useCallback(() => {
-      const id = requestAnimationFrame(() => {
-        inputRef.current?.focus();
-      });
+  useEffect(() => {
+    if (!isFocused) return;
 
-      return () => {
-        inputRef.current?.blur();
-        cancelAnimationFrame(id);
-      };
-    }, [])
-  );
+    const task = InteractionManager.runAfterInteractions(() => {
+      const t = setTimeout(() => inputRef.current?.focus(), 150);
+      return () => clearTimeout(t);
+    });
+
+    return () => {
+      task.cancel();
+      inputRef.current?.blur();
+    };
+  }, [isFocused]);
 
   // 키보드 내려올 때
   useEffect(() => {
