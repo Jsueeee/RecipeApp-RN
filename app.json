@@ -82,7 +82,16 @@
           "imageWidth": 200
         }
       ],
-      ["expo-apple-authentication"]
+      ["expo-apple-authentication"],
+      "react-native-google-mobile-ads",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
