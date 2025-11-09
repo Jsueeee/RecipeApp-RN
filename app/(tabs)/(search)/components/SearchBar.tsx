@@ -25,6 +25,8 @@ export const SearchBar: React.FC<Props> = ({
   const isFocused = useIsFocused();
 
   useEffect(() => {
+    if (keyword.trim()) return; // 검색어 없을 때만
+
     if (!isFocused) return;
 
     const task = InteractionManager.runAfterInteractions(() => {
