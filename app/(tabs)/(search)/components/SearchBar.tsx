@@ -78,6 +78,8 @@ export const SearchBar: React.FC<Props> = ({
             onFocus?.();
           }}
           onBlur={() => {
+            if (keyword.trim()) return;
+
             onBlur?.();
           }}
           style={{ flex: 1 }}
