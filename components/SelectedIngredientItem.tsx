@@ -24,7 +24,7 @@ export const SelectedIngredientItem = ({
   const Icon = FoodDataManager.getImageSource(ingredientIconId);
 
   return (
-    <View key={ingredientId} className="items-center flex-1">
+    <View key={ingredientId} className="items-center">
       <View className="px-2">
         <View className="w-[46px] h-[46px] justify-center items-center">
           {Icon && <Icon width={46} height={46} />}

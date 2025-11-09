@@ -22,13 +22,16 @@ export const SelectedBottomRow = ({
   className,
 }: Props) => {
   const flatListRef = useRef<FlatList>(null);
+  const preLength = useRef(selectedIngredients.length);
 
   useEffect(() => {
-    if (selectedIngredients.length > 0) {
-      setTimeout(() => {
+    if (selectedIngredients.length > preLength.current) {
+      requestAnimationFrame(() => {
         flatListRef.current?.scrollToEnd({ animated: true });
-      }, 100);
+      });
     }
+
+    preLength.current = selectedIngredients.length;
   }, [selectedIngredients.length]);
 
   return (
