@@ -42,7 +42,6 @@ export default function IngredientPickScreen() {
     {
       onSuccess: () => {
         setSelectedIngredients([]);
-        router.dismissAll();
         router.push("/(fridge)/(basket)");
       },
       onError: (error) => {
