@@ -52,12 +52,8 @@ export default function CustomIngredientScreen() {
 
   const renderRightButtons = useCallback(() => {
     return [
-      <View className="flex-row gap-4">
-        <PressableScale
-          key="custom"
-          onPress={onCreateIngredientButtonPress}
-          hitSlop={4}
-        >
+      <View key="ic_plus" className="flex-row gap-4">
+        <PressableScale onPress={onCreateIngredientButtonPress} hitSlop={4}>
           <PlusIcon width={24} height={24} />
         </PressableScale>
       </View>,
