@@ -29,17 +29,6 @@ export default function MyProfileScreen() {
     openNicknameBottomSheetModal();
   };
 
-  const loginProviderText = useMemo(() => {
-    switch (userInfo?.loginProvider.toLowerCase()) {
-      case "kakao":
-        return i18n.t("profile.loginProviderKakao");
-      case "naver":
-        return i18n.t("profile.loginProviderNaver");
-      case "google":
-        return i18n.t("profile.loginProviderGoogle");
-    }
-  }, [userInfo?.loginProvider]);
-
   const loginProviderIcon = useMemo(() => {
     switch (userInfo?.loginProvider.toLowerCase()) {
       case "kakao":
@@ -104,12 +93,14 @@ export default function MyProfileScreen() {
 
       <View className="w-full flex-row items-center px-4 mt-7">
         <Text className="text-title5 text-text-normal mr-[34px]">
-          {i18n.t("profile.loginProvider")}
+          {i18n.t("profile.login_provider")}
         </Text>
 
         {loginProviderIcon}
         <Text className="text-body2 text-text-strong ml-1.5">
-          {loginProviderText}
+          {i18n.t(
+            `profile.login_provider_${userInfo?.loginProvider.toLowerCase()}`
+          )}
         </Text>
       </View>
 
