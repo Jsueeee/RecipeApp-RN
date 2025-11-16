@@ -16,7 +16,8 @@ import {
 import i18n from "@/lib/i18n";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { FlatList, Linking, View } from "react-native";
+import { Linking, View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import * as Haptics from "expo-haptics";
 
 export default function MyScrapScreen() {
@@ -115,7 +116,7 @@ export default function MyScrapScreen() {
     }
 
     return (
-      <FlatList
+      <FlashList
         data={recipes}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
@@ -123,7 +124,6 @@ export default function MyScrapScreen() {
         onEndReached={onEndReached}
         ItemSeparatorComponent={ItemSeparator}
         onEndReachedThreshold={0.5}
-        className="bg-white"
         contentContainerStyle={{ paddingBottom: 24 }}
         bounces={false}
         alwaysBounceVertical={false}
