@@ -17,6 +17,15 @@ import { SelectedBottomRow } from "./components/SelectedBottomRow";
 
 const TABS = Object.values(FridgeTabs);
 
+type SectionRow =
+  | { type: "header"; key: string; title: string }
+  | {
+      type: "row";
+      key: string;
+      items: PickIngredient[];
+      addBottomGap?: boolean;
+    };
+
 export default function IngredientPickScreen() {
   const router = useRouter();
 
@@ -83,15 +92,6 @@ export default function IngredientPickScreen() {
     [ingredients, selectedTabIndex]
   );
 
-  type SectionRow =
-    | { type: "header"; key: string; title: string }
-    | {
-        type: "row";
-        key: string;
-        items: PickIngredient[];
-        addBottomGap?: boolean;
-      };
-
   const { width } = useWindowDimensions();
   const ROW_COUNT = width >= 500 ? 6 : 4;
 
@@ -108,8 +108,10 @@ export default function IngredientPickScreen() {
     return chunks;
   };
 
-  const flatData = useMemo(() => {
+  /** flatData 구성 & (ingredientId -> flat index) 매핑 */
+  const { flatData, ingredientRowIndexMap } = useMemo(() => {
     const data: SectionRow[] = [];
+    const indexMap = new Map<number, number>(); // ingredientId -> flat index
 
     (filteredIngredients ?? []).forEach((category, categoryIndex, all) => {
       data.push({
@@ -123,16 +125,22 @@ export default function IngredientPickScreen() {
         const isLastRowInCategory = rowIndex === rows.length - 1;
         const addBottomGap =
           isLastRowInCategory && categoryIndex < all.length - 1;
-        data.push({
+
+        const rowItem: SectionRow = {
           type: "row",
           key: `r:${category.ingredientCategoryId}:${rowIndex}`,
           items: rowItems,
           addBottomGap,
+        };
+        data.push(rowItem);
+
+        rowItems.forEach((ing) => {
+          indexMap.set(ing.ingredientId, data.length - 1);
         });
       });
     });
 
-    return data;
+    return { flatData: data, ingredientRowIndexMap: indexMap };
   }, [filteredIngredients, ROW_COUNT]);
 
   const toggleIngredient = useCallback(
@@ -194,19 +202,15 @@ export default function IngredientPickScreen() {
     });
   }, [postFridgeBasket, selectedIngredients]);
 
-  /**
-   * 냉장고 바구니 화면 이동
-   */
+  /** 냉장고 바구니 화면 이동 */
   const onBasketButtonPress = useCallback(() => {
     router.push("/(fridge)/(basket)");
-  }, []);
+  }, [router]);
 
-  /**
-   * 커스텀 재료 화면 이동
-   */
+  /** 커스텀 재료 화면 이동 */
   const onCustomIngredientButtonPress = useCallback(() => {
     router.push("/(ingredient)/(custom)");
-  }, []);
+  }, [router]);
 
   const renderRightButtons = useCallback(() => {
     return [
@@ -227,7 +231,7 @@ export default function IngredientPickScreen() {
         </PressableScale>
       </View>,
     ];
-  }, [onAddBasketButtonPress]);
+  }, [onBasketButtonPress, onCustomIngredientButtonPress]);
 
   return (
     <>
@@ -252,6 +256,7 @@ export default function IngredientPickScreen() {
           keyExtractor={(item) => item.key}
           contentContainerStyle={{ paddingBottom: 200 }}
           style={{ flex: 1 }}
+          getItemType={(item) => (item.type === "header" ? "header" : "row")}
         />
       </ScreenLayout>
 
