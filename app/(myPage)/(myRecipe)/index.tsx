@@ -7,9 +7,10 @@ import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
+import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
 import React from "react";
-import { FlatList, View } from "react-native";
+import { View } from "react-native";
 
 export default function MyRecipeScreen() {
   const { recipes, isLoading, fetchNextPage, hasNextPage } =
@@ -34,15 +35,6 @@ export default function MyRecipeScreen() {
       fetchNextPage();
     }
   };
-
-  const getItemLayout = (
-    data: ArrayLike<RecipeSummary> | null | undefined,
-    index: number
-  ) => ({
-    length: 164,
-    offset: 164 * index,
-    index,
-  });
 
   const renderItem = ({
     item,
@@ -80,7 +72,7 @@ export default function MyRecipeScreen() {
       );
 
     return (
-      <FlatList
+      <FlashList
         data={recipes}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
@@ -88,9 +80,7 @@ export default function MyRecipeScreen() {
         onEndReached={onEndReached}
         ItemSeparatorComponent={ItemSeparator}
         onEndReachedThreshold={0.5}
-        className="bg-white"
         contentContainerStyle={{ paddingBottom: 24 }}
-        getItemLayout={getItemLayout}
         bounces={false}
         alwaysBounceVertical={false}
         showsVerticalScrollIndicator={false}

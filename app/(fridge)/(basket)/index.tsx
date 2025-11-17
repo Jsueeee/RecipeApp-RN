@@ -8,10 +8,11 @@ import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
+import { FlashList } from "@shopify/flash-list";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
-import { FlatList, View } from "react-native";
+import { View } from "react-native";
 
 export default function IngredientBasketScreen() {
   const { categorizedFridgeBaskets, isLoading, isError } =
@@ -83,12 +84,17 @@ export default function IngredientBasketScreen() {
     }
 
     return (
-      <FlatList
+      <FlashList
         data={categorizedFridgeBaskets}
         renderItem={renderItem}
+        keyExtractor={(item) => item.ingredientCategoryId.toString()}
         showsVerticalScrollIndicator={false}
-        className="flex-1 pt-3 px-4"
-        contentContainerStyle={{ paddingBottom: 60 }}
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          paddingTop: 12,
+          paddingHorizontal: 16,
+          paddingBottom: 100,
+        }}
       />
     );
   };

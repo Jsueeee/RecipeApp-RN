@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
-import { FlatList, Pressable, Text, ViewToken } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import { FlashList, FlashListRef } from "@shopify/flash-list";
 import clsx from "clsx";
 
 interface Props {
@@ -15,7 +16,7 @@ export function CategoryTabs({
   onSelectTabIndex,
   className,
 }: Props) {
-  const flatListRef = useRef<FlatList>(null);
+  const flatListRef = useRef<FlashListRef<string>>(null);
 
   const handleTabPress = (index: number) => {
     onSelectTabIndex(index);
@@ -48,14 +49,15 @@ export function CategoryTabs({
   );
 
   return (
-    <FlatList
-      ref={flatListRef}
-      data={tabs}
-      renderItem={renderItem}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      className={className}
-      contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
-    />
+    <View className={className}>
+      <FlashList
+        ref={flatListRef}
+        data={tabs}
+        renderItem={renderItem}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+      />
+    </View>
   );
 }

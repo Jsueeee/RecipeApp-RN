@@ -52,13 +52,11 @@ const SmallRecipeListItem = ({
   return (
     <PressableScale onPress={onPress}>
       <View className="flex-row px-4 py-5">
-        {thumbnail && (
-          <Image
-            source={{ uri: thumbnail }}
-            className="w-[100px] h-[100px] rounded-[12px] bg-gray-50"
-            resizeMode="cover"
-          />
-        )}
+        <Image
+          source={{ uri: thumbnail ?? "" }}
+          className="w-[100px] h-[100px] rounded-[12px] bg-gray-50"
+          resizeMode="cover"
+        />
 
         <View className="flex-1 ml-4">
           <View className="flex-1">

@@ -2,7 +2,7 @@ import SearchBarIcon from "@/assets/images/ic_search_bar.svg";
 import i18n from "@/lib/i18n";
 import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useRef } from "react";
-import { InteractionManager, Keyboard, TextInput, View } from "react-native";
+import { Keyboard, TextInput, View } from "react-native";
 
 interface Props {
   keyword: string;
@@ -25,15 +25,14 @@ export const SearchBar: React.FC<Props> = ({
   const isFocused = useIsFocused();
 
   useEffect(() => {
+    if (keyword.trim()) return; // 검색어 없을 때만
+
     if (!isFocused) return;
 
-    const task = InteractionManager.runAfterInteractions(() => {
-      const t = setTimeout(() => inputRef.current?.focus(), 150);
-      return () => clearTimeout(t);
-    });
+    const timer = setTimeout(() => inputRef.current?.focus(), 300);
 
     return () => {
-      task.cancel();
+      clearTimeout(timer);
       inputRef.current?.blur();
     };
   }, [isFocused]);
@@ -76,6 +75,8 @@ export const SearchBar: React.FC<Props> = ({
             onFocus?.();
           }}
           onBlur={() => {
+            if (keyword.trim()) return;
+
             onBlur?.();
           }}
           style={{ flex: 1 }}
