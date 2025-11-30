@@ -54,7 +54,7 @@ const SmallRecipeListItem = ({
       <View className="flex-row px-4 py-5">
         <Image
           source={{ uri: thumbnail ?? "" }}
-          className="w-[100px] h-[100px] rounded-[12px] bg-gray-50"
+          className="w-[120px] h-[120px] rounded-[12px] bg-gray-50"
           resizeMode="cover"
         />
 
