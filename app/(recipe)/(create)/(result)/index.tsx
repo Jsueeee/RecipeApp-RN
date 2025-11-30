@@ -138,7 +138,7 @@ export default function CreateRecipeResultScreen() {
                 </View>
 
                 <NativeAsset assetType={NativeAssetType.CALL_TO_ACTION}>
-                  <TouchableOpacity className="bg-fill-normal px-4 py-3 rounded-[8px] self-end">
+                  <TouchableOpacity className="bg-fill-normal px-3 py-2 rounded-[8px] self-end">
                     <Text className="text-caption1 font-bold text-white">
                       {nativeAd.callToAction}
                     </Text>
