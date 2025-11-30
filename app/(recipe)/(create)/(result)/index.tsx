@@ -4,7 +4,7 @@ import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Animated, Text, TouchableOpacity, View } from "react-native";
 import {
   NativeAd,
   NativeAdView,
@@ -17,6 +17,44 @@ import {
 export default function CreateRecipeResultScreen() {
   const nativeAdRef = useRef<NativeAd | null>(null);
   const [loaded, setLoaded] = useState(false);
+
+  const anim1 = useRef(new Animated.Value(0)).current;
+  const anim2 = useRef(new Animated.Value(0)).current;
+  const anim3 = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (loaded) {
+      Animated.stagger(200, [
+        Animated.timing(anim1, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(anim2, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(anim3, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [loaded]);
+
+  const getAnimStyle = (anim: Animated.Value) => ({
+    opacity: anim,
+    transform: [
+      {
+        translateY: anim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [20, 0],
+        }),
+      },
+    ],
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -110,16 +148,25 @@ export default function CreateRecipeResultScreen() {
             </View>
           </NativeAdView>
 
-          <Text className="text-heading1 text-text-normal self-center">
+          <Animated.Text
+            className="text-heading1 text-text-normal self-center"
+            style={getAnimStyle(anim1)}
+          >
             볶음 우동
-          </Text>
-          <Text className="text-heading1 text-text-normal self-center">
+          </Animated.Text>
+          <Animated.Text
+            className="text-heading1 text-text-normal self-center"
+            style={getAnimStyle(anim2)}
+          >
             레시피 완성!
-          </Text>
+          </Animated.Text>
 
-          <Text className="text-body1 text-text-assistive self-center mt-4">
-            10번째 레시피 완성을 축하드려요🎉
-          </Text>
+          <Animated.Text
+            className="text-body1 text-text-assistive self-center mt-4"
+            style={getAnimStyle(anim3)}
+          >
+            10번째 레시피 완성을 축하드려요 🎉
+          </Animated.Text>
 
           <View className="flex-1" />
 
