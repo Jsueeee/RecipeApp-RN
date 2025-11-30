@@ -72,6 +72,17 @@ export default function RootLayout() {
       serviceUrlSchemeIOS: "com.recipe.android.recipeapp",
       disableNaverAppAuthIOS: true,
     });
+
+    mobileAds()
+      .setRequestConfiguration({
+        testDeviceIdentifiers: ["EMULATOR"],
+      })
+      .then(() => {
+        mobileAds().initialize();
+      })
+      .catch((error) => {
+        console.error("Request configuration error", error);
+    });
   }, []);
 
   if (!loaded) {
