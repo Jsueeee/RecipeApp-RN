@@ -136,7 +136,7 @@ export default function RecipeCreateScreen() {
       Toast.success(i18n.t("recipe_my_create.success_toast"));
 
       router.push({
-        pathname: "/(myPage)/(myRecipe)",
+        pathname: "/(recipe)/(create)/(result)",
       });
     },
     onError: (error) => {
