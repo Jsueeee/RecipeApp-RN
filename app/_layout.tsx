@@ -16,8 +16,9 @@ import * as SplashScreen from "expo-splash-screen";
 import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
 import { Text, View } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SystemBars } from "react-native-edge-to-edge";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import mobileAds from "react-native-google-mobile-ads";
 import "react-native-reanimated";
 import ToastManager from "toastify-react-native";
 import "../global.css";
@@ -82,7 +83,7 @@ export default function RootLayout() {
       })
       .catch((error) => {
         console.error("Request configuration error", error);
-    });
+      });
   }, []);
 
   if (!loaded) {
@@ -98,7 +99,7 @@ export default function RootLayout() {
 
 const toastConfig = {
   success: (props: any) => (
-    <View className="w-[80%] px-4 py-3 bg-fill-strong rounded-[12px]">
+    <View className="w-[80%] px-4 py-4 bg-fill-strong rounded-[12px]">
       <Text className="text-body2 text-text-inverse">{props.text1}</Text>
       {props.text2 && (
         <Text className="text-body4 text-text-inverse">{props.text2}</Text>
@@ -109,7 +110,7 @@ const toastConfig = {
     // TODO : 나중에 커스텀하기
     props: any
   ) => (
-    <View className="w-[80%] px-4 py-3 bg-fill-strong rounded-[12px]">
+    <View className="w-[80%] px-4 py-4 bg-fill-strong rounded-[12px]">
       <Text className="text-body2 text-text-inverse">{props.text1}</Text>
       {props.text2 && (
         <Text className="text-body4 text-text-inverse">{props.text2}</Text>
