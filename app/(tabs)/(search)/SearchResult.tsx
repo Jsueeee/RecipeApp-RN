@@ -26,7 +26,7 @@ import {
 import { Linking, Text, View } from "react-native";
 import { NativeAd, TestIds } from "react-native-google-mobile-ads";
 import SmallRecipeListItem from "../../(recipe)/components/SmallRecipeListItem";
-import { NativeAdListItem } from "./components/NativeAdListItem";
+import { NativeAdListItem } from "@/components/NativeAdListItem";
 
 interface Props {
   keyword: string;
@@ -39,7 +39,7 @@ export default function SearchResult({ keyword, className }: Props) {
   );
 
   // 리스트에 광고 아이템을 삽입하기 위한 인터벌
-  const AD_INTERVAL = 5;
+  const AD_INTERVAL = 4;
 
   const { addScrap: addPublicScrap, removeScrap: removePublicScrap } =
     useRecipeScrapMutation();

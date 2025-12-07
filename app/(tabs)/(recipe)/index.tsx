@@ -4,10 +4,13 @@ import { RecipeSummary } from "@/app/types/domain/recipe";
 import { TealDotLoading } from "@/components/DotLoading";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { MainTabHeader } from "@/components/MainTabHeader";
+import { NativeAdListItem } from "@/components/NativeAdListItem";
 import i18n from "@/lib/i18n";
+import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Text, View } from "react-native";
+import { NativeAd, TestIds } from "react-native-google-mobile-ads";
 import Reanimated, {
   interpolate,
   useAnimatedScrollHandler,
@@ -20,7 +23,6 @@ import {
 } from "react-native-safe-area-context";
 import LargeRecipeListItem from "../../(recipe)/components/LargeRecipeListItem";
 import { EmptyRecipeTabPlaceholder } from "./components/EmptyRecipeTabPlaceholder";
-import * as Haptics from "expo-haptics";
 
 export default function RecipeScreen() {
   const insets = useSafeAreaInsets();
@@ -28,6 +30,35 @@ export default function RecipeScreen() {
     useRecommendedRecipesQuery();
 
   const { addScrap, removeScrap } = useRecipeScrapMutation();
+
+  // 리스트에 광고 아이템을 삽입하기 위한 인터벌
+  const AD_INTERVAL = 4;
+  // 광고 캐싱을 위한 Refs
+  const adsCache = useRef<NativeAd[]>([]);
+  const [adsLoadedCount, setAdsLoadedCount] = useState(0); // 리렌더링 트리거용
+
+  // 필요한 광고 수만큼 로드
+  useEffect(() => {
+    if (!recipes) return;
+
+    const adsNeeded = Math.floor(recipes.length / AD_INTERVAL);
+    const currentAds = adsCache.current.length;
+
+    if (adsNeeded > currentAds) {
+      const loadAds = async () => {
+        for (let i = currentAds; i < adsNeeded; i++) {
+          try {
+            const ad = await NativeAd.createForAdRequest(TestIds.NATIVE);
+            adsCache.current.push(ad);
+            setAdsLoadedCount((prev) => prev + 1);
+          } catch (e) {
+            console.error("Ad load failed", e);
+          }
+        }
+      };
+      loadAds();
+    }
+  }, [recipes?.length]);
 
   const onRecipeItemPress = (recipeId: number) => {
     router.push({
@@ -76,31 +107,71 @@ export default function RecipeScreen() {
 
   const headerContentStyle = headerBgStyle;
 
-  const renderItem = ({
-    item,
-    index,
-  }: {
-    item: RecipeSummary;
-    index: number;
-  }) => (
-    <Reanimated.View
-      className={index === 0 ? "bg-background-alternative" : "bg-white"}
-    >
-      <LargeRecipeListItem
-        recipeId={item.id}
-        title={item.title}
-        thumbnail={item.thumbnail}
-        description={item.description}
-        ingredientMatchRate={item.ingredientMatchRate}
-        viewCount={item.viewCount}
-        scrapCount={item.scrapCount}
-        isScrapped={item.isScrapped}
-        onPress={() => onRecipeItemPress(item.id)}
-        onScrapPress={() => onScrapPress(item.id, item.isScrapped)}
-        className={`bg-white ${index === 0 ? "rounded-t-[16px]" : ""}`}
-      />
-    </Reanimated.View>
-  );
+  type ListItem =
+    | { type: "recipe"; data: RecipeSummary }
+    | { type: "ad"; id: string; ad?: NativeAd };
+
+  const interleavedData: ListItem[] = useMemo(() => {
+    if (!recipes || recipes.length === 0) return [];
+    const result: ListItem[] = [];
+    let adIndex = 0;
+
+    for (let i = 0; i < recipes.length; i++) {
+      const recipe = recipes[i];
+      result.push({ type: "recipe", data: recipe });
+
+      if ((i + 1) % AD_INTERVAL === 0) {
+        // 캐시된 광고가 있으면 할당
+        const ad = adsCache.current[adIndex];
+        result.push({
+          type: "ad",
+          id: `ad-${adIndex}`,
+          ad: ad,
+        });
+        adIndex++;
+      }
+    }
+    return result;
+  }, [recipes, adsLoadedCount]);
+
+  const renderItem = ({ item, index }: { item: ListItem; index: number }) => {
+    if (item.type === "ad") {
+      if (!item.ad) return null;
+
+      return (
+        <View
+          style={{
+            height: 164,
+            justifyContent: "center",
+            backgroundColor: "white",
+          }}
+        >
+          <NativeAdListItem nativeAd={item.ad} />
+        </View>
+      );
+    }
+
+    const recipe = item.data;
+    return (
+      <Reanimated.View
+        className={index === 0 ? "bg-background-alternative" : "bg-white"}
+      >
+        <LargeRecipeListItem
+          recipeId={recipe.id}
+          title={recipe.title}
+          thumbnail={recipe.thumbnail}
+          description={recipe.description}
+          ingredientMatchRate={recipe.ingredientMatchRate}
+          viewCount={recipe.viewCount}
+          scrapCount={recipe.scrapCount}
+          isScrapped={recipe.isScrapped}
+          onPress={() => onRecipeItemPress(recipe.id)}
+          onScrapPress={() => onScrapPress(recipe.id, recipe.isScrapped)}
+          className={`bg-white ${index === 0 ? "rounded-t-[16px]" : ""}`}
+        />
+      </Reanimated.View>
+    );
+  };
 
   const CountText = () => {
     return (
@@ -138,14 +209,15 @@ export default function RecipeScreen() {
 
   const ItemSeparator = () => <View className="h-[1px] mx-4 bg-gray-50" />;
 
-  const keyExtractor = (item: RecipeSummary) => item.id.toString();
+  const keyExtractor = (item: ListItem) =>
+    item.type === "ad" ? item.id : item.data.id.toString();
 
   const onEndReached = () => {
     if (hasNextPage) fetchNextPage();
   };
 
   const getItemLayout = (
-    _data: ArrayLike<RecipeSummary> | null | undefined,
+    _data: ArrayLike<ListItem> | null | undefined,
     index: number
   ) => ({ length: 164, offset: 164 * index, index });
 
@@ -156,8 +228,8 @@ export default function RecipeScreen() {
     }
 
     return (
-      <Reanimated.FlatList
-        data={recipes}
+      <Reanimated.FlatList<ListItem>
+        data={interleavedData}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         ListHeaderComponent={ListHeaderComponent}
@@ -175,6 +247,7 @@ export default function RecipeScreen() {
         onScroll={onScroll}
         scrollEventThrottle={16}
         getItemLayout={getItemLayout}
+        extraData={adsLoadedCount}
       />
     );
   };
