@@ -11,13 +11,7 @@ import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import i18n from "@/lib/i18n";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  Dimensions,
-  Keyboard,
-  LayoutChangeEvent,
-  Platform,
-  View,
-} from "react-native";
+import { Keyboard, LayoutChangeEvent, Platform, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Reanimated, {
   interpolate,
@@ -136,10 +130,11 @@ export default function RecipeCreateScreen() {
       Toast.success(i18n.t("recipe_my_create.success_toast"));
 
       router.push({
-        pathname: "/(myPage)/(myRecipe)",
+        pathname: "/(recipe)/(create)/(result)",
       });
     },
     onError: (error) => {
+      setIsLoading(false);
       Toast.error(i18n.t("recipe_my_create.error_toast"));
     },
   });
@@ -155,6 +150,7 @@ export default function RecipeCreateScreen() {
       });
     },
     onError: (error) => {
+      setIsLoading(false);
       Toast.error(i18n.t("recipe_my_create.error_toast"));
     },
   });
@@ -198,6 +194,9 @@ export default function RecipeCreateScreen() {
   // 임시 저장 자동 저장 (입력값이 변경될 때마다)
   useEffect(() => {
     const saveDraft = async () => {
+      // 수정 모드일 경우 임시 저장 하지 않음
+      if (editRecipeDetail) return;
+
       if (
         inputTitleValue.trim() ||
         inputDescriptionValue.trim() ||
@@ -385,6 +384,7 @@ export default function RecipeCreateScreen() {
       try {
         finalImageUrl = await uploadFile(finalImageUrl);
       } catch (error) {
+        setIsLoading(false);
         Toast.error(i18n.t("recipe_my_create.error_toast"));
         console.error("이미지 업로드 실패:", error);
         return; // 업로드 실패 시 레시피 생성 중단

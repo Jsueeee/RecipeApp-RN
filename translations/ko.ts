@@ -390,6 +390,9 @@ export default {
 
     draft_restored_toast: "임시 저장된 레시피를 불러왔어요",
   },
+  recipe_my_create_result: {
+    cta: "나만의 레시피 보러 가기",
+  },
   recipe_cooking_level: {
     easy: "초보환영",
     normal: "보통",

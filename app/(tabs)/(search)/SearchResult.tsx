@@ -15,9 +15,18 @@ import i18n from "@/lib/i18n";
 import { FlashList } from "@shopify/flash-list";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import React, { useCallback, useMemo, useState } from "react";
+import {
+  default as React,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Linking, Text, View } from "react-native";
+import { NativeAd, TestIds } from "react-native-google-mobile-ads";
 import SmallRecipeListItem from "../../(recipe)/components/SmallRecipeListItem";
+import { NativeAdListItem } from "@/components/NativeAdListItem";
 
 interface Props {
   keyword: string;
@@ -28,6 +37,9 @@ export default function SearchResult({ keyword, className }: Props) {
   const [selectedTab, setSelectedTab] = useState<RecipeSourceType>(
     RECIPE_SOURCE_TYPE.BLOG
   );
+
+  // 리스트에 광고 아이템을 삽입하기 위한 인터벌
+  const AD_INTERVAL = 4;
 
   const { addScrap: addPublicScrap, removeScrap: removePublicScrap } =
     useRecipeScrapMutation();
@@ -45,6 +57,33 @@ export default function SearchResult({ keyword, className }: Props) {
       sort: "newest",
       searchType: selectedTab,
     });
+
+  // 광고 캐싱을 위한 Refs
+  const adsCache = useRef<NativeAd[]>([]);
+  const [adsLoadedCount, setAdsLoadedCount] = useState(0); // 리렌더링 트리거용
+
+  // 필요한 광고 수만큼 로드
+  useEffect(() => {
+    if (!recipes) return;
+
+    const adsNeeded = Math.floor(recipes.length / AD_INTERVAL);
+    const currentAds = adsCache.current.length;
+
+    if (adsNeeded > currentAds) {
+      const loadAds = async () => {
+        for (let i = currentAds; i < adsNeeded; i++) {
+          try {
+            const ad = await NativeAd.createForAdRequest(TestIds.NATIVE);
+            adsCache.current.push(ad);
+            setAdsLoadedCount((prev) => prev + 1);
+          } catch (e) {
+            console.error("Ad load failed", e);
+          }
+        }
+      };
+      loadAds();
+    }
+  }, [recipes?.length]);
 
   const handleScrapButtonPress = (isScrapped: boolean, recipeId: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -98,30 +137,70 @@ export default function SearchResult({ keyword, className }: Props) {
   };
 
   const ItemSeparator = () => (
-    <View className="w-full mx-4 h-[1px] bg-line-alternative" />
+    <View className="w-full h-[1px] bg-line-alternative" />
   );
 
+  type ListItem =
+    | { type: "recipe"; data: SearchRecipe }
+    | { type: "ad"; id: string; ad?: NativeAd };
+
+  const interleavedData: ListItem[] = useMemo(() => {
+    if (!recipes || recipes.length === 0) return [];
+    const result: ListItem[] = [];
+    let adIndex = 0;
+
+    for (let i = 0; i < recipes.length; i++) {
+      const recipe = recipes[i];
+      result.push({ type: "recipe", data: recipe });
+
+      if ((i + 1) % AD_INTERVAL === 0) {
+        // 캐시된 광고가 있으면 할당
+        const ad = adsCache.current[adIndex];
+        result.push({
+          type: "ad",
+          id: `ad-${adIndex}`,
+          ad: ad,
+        });
+        adIndex++;
+      }
+    }
+    return result;
+  }, [recipes, adsLoadedCount]); // adsLoadedCount 변경 시 리스트 갱신
+
   const renderItem = useCallback(
-    ({ item }: { item: SearchRecipe }) => (
-      <SmallRecipeListItem
-        keyword={keyword}
-        recipeId={item.recipeId}
-        title={item.title}
-        thumbnail={item.thumbnail}
-        postUserName={item.postUserName}
-        postDate={item.postDate}
-        viewCount={item.viewCount}
-        scrapCount={item.scrapCount}
-        isScrapped={item.isScrapped}
-        onScrapButtonPress={handleScrapButtonPress}
-        onPress={() => onRecipePress(item)}
-      />
-    ),
+    ({ item }: { item: ListItem }) => {
+      if (item.type === "ad") {
+        // 광고 객체가 준비되었을 때만 렌더링
+        if (item.ad) {
+          return <NativeAdListItem nativeAd={item.ad} />;
+        }
+
+        return null;
+      }
+      const data = item.data;
+      return (
+        <SmallRecipeListItem
+          keyword={keyword}
+          recipeId={data.recipeId}
+          title={data.title}
+          thumbnail={data.thumbnail}
+          postUserName={data.postUserName}
+          postDate={data.postDate}
+          viewCount={data.viewCount}
+          scrapCount={data.scrapCount}
+          isScrapped={data.isScrapped}
+          onScrapButtonPress={handleScrapButtonPress}
+          onPress={() => onRecipePress(data)}
+        />
+      );
+    },
     [keyword, handleScrapButtonPress, onRecipePress]
   );
 
-  const keyExtractor = (item: SearchRecipe) =>
-    (item.recipeId ?? item.url).toString();
+  const keyExtractor = (item: ListItem) =>
+    item.type === "ad"
+      ? item.id
+      : (item.data.recipeId ?? item.data.url).toString();
 
   const ListHeaderComponent = useMemo(() => {
     return (
@@ -157,8 +236,8 @@ export default function SearchResult({ keyword, className }: Props) {
     if (isLoading) return <DotLoadingScreen />;
 
     return (
-      <FlashList<SearchRecipe>
-        data={recipes}
+      <FlashList<ListItem>
+        data={interleavedData}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         scrollEventThrottle={16}
@@ -172,6 +251,7 @@ export default function SearchResult({ keyword, className }: Props) {
         ListEmptyComponent={ListEmptyComponent}
         contentContainerStyle={{ paddingBottom: 100, flexGrow: 1 }}
         style={{ flex: 1 }}
+        extraData={adsLoadedCount}
       />
     );
   };

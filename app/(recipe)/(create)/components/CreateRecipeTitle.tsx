@@ -29,7 +29,7 @@ export const CreateRecipeTitle = ({
         returnKeyType="done"
         selectTextOnFocus
         editable={true}
-        multiline={true}
+        multiline={false}
         maxLength={MAX_TITLE_LENGTH}
       />
 

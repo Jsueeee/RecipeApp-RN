@@ -82,7 +82,23 @@
           "imageWidth": 200
         }
       ],
-      ["expo-apple-authentication"]
+      ["expo-apple-authentication"],
+      "react-native-google-mobile-ads",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-2611426405819679~9602354001",
+          "iosAppId": "ca-app-pub-2611426405819679~6618341289"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
