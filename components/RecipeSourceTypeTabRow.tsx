@@ -1,10 +1,10 @@
 import { RecipeSourceType } from "@/constants/RecipeSourceType";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
+  LayoutChangeEvent,
   Text,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from "react-native";
 
@@ -20,8 +20,8 @@ export function RecipeSourceTypeTabRow({
   onTabSelected,
 }: Props) {
   const indicatorPosition = useRef(new Animated.Value(0)).current;
-  const { width } = useWindowDimensions();
-  const tabWidth = width / tabs.length;
+  const [containerWidth, setContainerWidth] = useState(0);
+  const tabWidth = containerWidth / tabs.length;
 
   useEffect(() => {
     const selectedIndex = tabs.indexOf(selectedTab);
@@ -33,7 +33,12 @@ export function RecipeSourceTypeTabRow({
   }, [selectedTab, tabs]);
 
   return (
-    <View className="w-full bg-white mt-2">
+    <View
+      className="w-full bg-white mt-2"
+      onLayout={(e: LayoutChangeEvent) =>
+        setContainerWidth(e.nativeEvent.layout.width)
+      }
+    >
       <View className="flex-row border-b border-gray-100">
         {tabs.map((tab) => (
           <TouchableOpacity
@@ -50,21 +55,23 @@ export function RecipeSourceTypeTabRow({
             </Text>
           </TouchableOpacity>
         ))}
-        <Animated.View
-          className="absolute bottom-0 h-0.5 bg-gray-800 rounded-lg"
-          style={{
-            width: tabWidth - 32,
-            marginHorizontal: 16,
-            transform: [
-              {
-                translateX: indicatorPosition.interpolate({
-                  inputRange: [0, tabs.length - 1],
-                  outputRange: [0, (tabs.length - 1) * tabWidth],
-                }),
-              },
-            ],
-          }}
-        />
+        {containerWidth > 0 && (
+          <Animated.View
+            className="absolute bottom-0 h-0.5 bg-gray-800 rounded-lg"
+            style={{
+              width: tabWidth - 32,
+              marginHorizontal: 16,
+              transform: [
+                {
+                  translateX: indicatorPosition.interpolate({
+                    inputRange: [0, tabs.length - 1],
+                    outputRange: [0, (tabs.length - 1) * tabWidth],
+                  }),
+                },
+              ],
+            }}
+          />
+        )}
       </View>
     </View>
   );
