@@ -4,7 +4,7 @@ import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Animated, Text, TouchableOpacity, View } from "react-native";
+import { Animated, Text, View } from "react-native";
 import {
   NativeAd,
   NativeAdView,
@@ -90,7 +90,7 @@ export default function CreateRecipeResultScreen() {
   };
 
   return (
-    <ScreenLayout>
+    <ScreenLayout onBackClick={router.back}>
       {nativeAd && loaded ? (
         <>
           <NativeAdView
@@ -99,6 +99,7 @@ export default function CreateRecipeResultScreen() {
               width: "100%",
               backgroundColor: "white",
               alignContent: "center",
+              alignItems: "center",
             }}
           >
             <View className="px-4 py-5 h-[450px] gap-4">
@@ -137,13 +138,13 @@ export default function CreateRecipeResultScreen() {
                   </NativeAsset>
                 </View>
 
-                <NativeAsset assetType={NativeAssetType.CALL_TO_ACTION}>
+                {/* <NativeAsset assetType={NativeAssetType.CALL_TO_ACTION}>
                   <TouchableOpacity className="bg-fill-normal px-3 py-2 rounded-[8px] self-end">
                     <Text className="text-caption1 font-bold text-white">
                       {nativeAd.callToAction}
                     </Text>
                   </TouchableOpacity>
-                </NativeAsset>
+                </NativeAsset> */}
               </View>
             </View>
           </NativeAdView>
