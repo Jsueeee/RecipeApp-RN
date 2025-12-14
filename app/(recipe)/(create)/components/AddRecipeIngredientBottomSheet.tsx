@@ -1,16 +1,26 @@
 import { QuantityInput } from "@/app/(fridge)/(edit)/components/EditQuantityMenu";
+import { CATEGORY_NAME_MAPPING } from "@/app/(tabs)/(fridge)/constants/fridgeTabs";
 import { PressableScale } from "@/app/components/PressableScale";
-import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
+import { CategorizedPickIngredients } from "@/app/types/domain/ingredient";
 import SelectIngredientIconImage from "@/assets/images/img_select_ingredient_icon.svg";
 import { CTAButton } from "@/components/CTAButton";
 import DefaultBottomSheetModal from "@/components/DefaultBottomSheetModal";
-import { PickIngredientIconBottomSheet } from "@/components/PickIngredientIconBottomSheet";
+import { IngredientIconGrid } from "@/components/IngredientIconSectionGrid";
 import { FoodDataManager } from "@/constants/IngredientManager";
 import i18n from "@/lib/i18n";
-import { BottomSheetModal, BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import React, { useMemo } from "react";
-import { Text, View } from "react-native";
+import {
+  BottomSheetModal,
+  BottomSheetScrollView,
+  BottomSheetTextInput,
+} from "@gorhom/bottom-sheet";
+import React, { useMemo, useState } from "react";
+import { Text, useWindowDimensions, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 interface Props {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
@@ -50,8 +60,59 @@ export const AddRecipeIngredientBottomSheet = ({
   onIconChanged,
   onCTAButtonPress,
 }: Props) => {
-  const { ref: pickIngredientIconRef, open: openPickIngredientIcon } =
-    useDefaultBottomSheetModal();
+  const { width, height } = useWindowDimensions();
+  const PAGE_WIDTH = width - 20; // DefaultBottomSheetModal marginHorizontal: 10 * 2
+  const ICON_PICKER_HEIGHT = height * 0.7;
+  const [step, setStep] = useState<"form" | "icon">("form");
+  const translateX = useSharedValue(0);
+
+  const ingredientList = useMemo(() => {
+    return Object.entries(FoodDataManager.getGroupedFoodList()).map(
+      ([categoryId, ingredients]) =>
+        ({
+          ingredientCategoryId: Number(categoryId),
+          ingredientCategoryName:
+            CATEGORY_NAME_MAPPING[
+              Number(categoryId) as keyof typeof CATEGORY_NAME_MAPPING
+            ],
+          ingredients: ingredients.map((ingredient) => ({
+            ingredientId: ingredient.ingredientId,
+            ingredientName: ingredient.name,
+            ingredientIconId: ingredient.iconId,
+          })),
+        } as CategorizedPickIngredients)
+    );
+  }, []);
+
+  const goToIconPicker = () => {
+    setStep("icon");
+    translateX.value = withTiming(-PAGE_WIDTH, { duration: 300 });
+  };
+
+  const backToForm = () => {
+    setStep("form");
+    translateX.value = withTiming(0, { duration: 300 });
+  };
+
+  const handleIconSelected = (iconId: number) => {
+    onIconChanged(iconId);
+    backToForm();
+  };
+
+  const handleDismiss = () => {
+    onDismiss();
+    // Reset after animation
+    setTimeout(() => {
+      setStep("form");
+      translateX.value = 0;
+    }, 300);
+  };
+
+  const containerStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: translateX.value }],
+    };
+  });
 
   const Icon = useMemo(() => {
     if (!inputIconId) return null;
@@ -62,118 +123,136 @@ export const AddRecipeIngredientBottomSheet = ({
   const disabled = inputNameValue?.length === 0 || inputQuantity <= 0;
 
   return (
-    <>
-      <DefaultBottomSheetModal
-        bottomSheetModalRef={bottomSheetModalRef}
-        title={
-          isEditMode
-            ? i18n.t("recipe_my_create.ingredients_bottom_sheet_edit_title")
-            : i18n.t("recipe_my_create.ingredients_bottom_sheet_title")
-        }
-        onDismiss={onDismiss}
+    <DefaultBottomSheetModal
+      bottomSheetModalRef={bottomSheetModalRef}
+      title={
+        step === "icon"
+          ? i18n.t("custom_ingredient_create.select_icon")
+          : isEditMode
+          ? i18n.t("recipe_my_create.ingredients_bottom_sheet_edit_title")
+          : i18n.t("recipe_my_create.ingredients_bottom_sheet_title")
+      }
+      onDismiss={handleDismiss}
+      onBack={step === "icon" ? backToForm : undefined}
+      scrollEnabled={false}
+      contentStyle={{ flex: 1, alignItems: "flex-start", overflow: "hidden" }}
+    >
+      <Animated.View
+        style={[
+          { flexDirection: "row", width: PAGE_WIDTH * 2 },
+          containerStyle,
+        ]}
       >
-        <View className="flex-1 px-4 pt-2">
-          <PressableScale
-            onPress={openPickIngredientIcon}
-            className="w-[100px] h-[100px] self-center"
+        <View style={{ width: PAGE_WIDTH }}>
+          <BottomSheetScrollView
+            contentContainerStyle={{ paddingHorizontal: 16 }}
           >
-            {inputIconId ? (
-              <View className="w-[100px] h-[100px]">
-                {Icon && <Icon width={100} height={100} />}
+            <View className="pt-2">
+              <PressableScale
+                onPress={goToIconPicker}
+                className="w-[100px] h-[100px] self-center"
+              >
+                {inputIconId ? (
+                  <View className="w-[100px] h-[100px]">
+                    {Icon && <Icon width={100} height={100} />}
+                  </View>
+                ) : (
+                  <SelectIngredientIconImage width={100} height={100} />
+                )}
+              </PressableScale>
+
+              <View className="h-3" />
+
+              {/* 이름 입력 */}
+              <View className="w-full flex-row items-center">
+                <Text className="text-title5 text-text-alternative w-[100px] py-[18px]">
+                  {i18n.t("recipe_my_create.ingredients_bottom_sheet_name")}
+                </Text>
+
+                <BottomSheetTextInput
+                  ref={inputNameRef}
+                  defaultValue={inputNameValue}
+                  onChangeText={onInputNameChanged}
+                  className="flex-1 text-utility2 text-text-strong"
+                  returnKeyType="done"
+                  selectTextOnFocus
+                  editable={true}
+                  placeholder={i18n.t(
+                    "recipe_my_create.ingredients_bottom_sheet_name_hint"
+                  )}
+                  placeholderTextColor="#9FADA6"
+                />
               </View>
-            ) : (
-              <SelectIngredientIconImage width={100} height={100} />
-            )}
-          </PressableScale>
 
-          <View className="h-3" />
+              {/* 수량 입력 */}
+              <View className="w-full flex-column">
+                <View className="w-full flex-row items-center">
+                  <Text className="text-title5 text-text-alternative w-[100px]">
+                    {i18n.t(
+                      "recipe_my_create.ingredients_bottom_sheet_quantity"
+                    )}
+                  </Text>
 
-          {/* 이름 입력 */}
-          <View className="w-full flex-row items-center">
-            <Text className="text-title5 text-text-alternative w-[100px] py-[18px]">
-              {i18n.t("recipe_my_create.ingredients_bottom_sheet_name")}
-            </Text>
+                  <QuantityInput
+                    quantity={inputQuantity}
+                    onQuantityChanged={onInputQuantityChanged}
+                  />
+                </View>
 
-            <BottomSheetTextInput
-              ref={inputNameRef}
-              defaultValue={inputNameValue}
-              onChangeText={onInputNameChanged}
-              className="flex-1 text-utility2 text-text-strong"
-              returnKeyType="done"
-              selectTextOnFocus
-              editable={true}
-              placeholder={i18n.t(
-                "recipe_my_create.ingredients_bottom_sheet_name_hint"
-              )}
-              placeholderTextColor="#9FADA6"
-            />
-          </View>
+                {inputQuantity <= 0 && (
+                  <Text className="text-body3 text-strong-destructive ms-[100px]">
+                    {i18n.t(
+                      "recipe_my_create.ingredients_bottom_sheet_quantity_error"
+                    )}
+                  </Text>
+                )}
+              </View>
 
-          {/* 수량 입력 */}
-          <View className="w-full flex-column">
-            <View className="w-full flex-row items-center">
-              <Text className="text-title5 text-text-alternative w-[100px]">
-                {i18n.t("recipe_my_create.ingredients_bottom_sheet_quantity")}
-              </Text>
+              {/* 단위 입력 */}
+              <View className="w-full flex-row items-center">
+                <Text className="text-title5 text-text-alternative w-[100px] py-[18px]">
+                  {i18n.t("recipe_my_create.ingredients_bottom_sheet_unit")}
+                </Text>
 
-              <QuantityInput
-                quantity={inputQuantity}
-                onQuantityChanged={onInputQuantityChanged}
+                <BottomSheetTextInput
+                  ref={inputUnitRef}
+                  defaultValue={inputUnitValue}
+                  onChangeText={onInputUnitChanged}
+                  className="flex-1 text-utility2 text-text-strong"
+                  returnKeyType="done"
+                  selectTextOnFocus
+                  editable={true}
+                  placeholder={i18n.t(
+                    "recipe_my_create.ingredients_bottom_sheet_unit_hint"
+                  )}
+                  placeholderTextColor="#9FADA6"
+                />
+              </View>
+
+              <CTAButton
+                buttonLabel={
+                  isEditMode
+                    ? i18n.t(
+                        "recipe_my_create.ingredients_bottom_sheet_edit_cta"
+                      )
+                    : i18n.t("recipe_my_create.ingredients_bottom_sheet_cta")
+                }
+                disabled={disabled}
+                onPress={onCTAButtonPress}
+                className="mt-5 mb-[22px]"
               />
             </View>
+          </BottomSheetScrollView>
+        </View>
 
-            {inputQuantity <= 0 && (
-              <Text className="text-body3 text-strong-destructive ms-[100px]">
-                {i18n.t(
-                  "recipe_my_create.ingredients_bottom_sheet_quantity_error"
-                )}
-              </Text>
-            )}
-          </View>
-
-          {/* 단위 입력 */}
-          <View className="w-full flex-row items-center">
-            <Text className="text-title5 text-text-alternative w-[100px] py-[18px]">
-              {i18n.t("recipe_my_create.ingredients_bottom_sheet_unit")}
-            </Text>
-
-            <BottomSheetTextInput
-              ref={inputUnitRef}
-              defaultValue={inputUnitValue}
-              onChangeText={onInputUnitChanged}
-              className="flex-1 text-utility2 text-text-strong"
-              returnKeyType="done"
-              selectTextOnFocus
-              editable={true}
-              placeholder={i18n.t(
-                "recipe_my_create.ingredients_bottom_sheet_unit_hint"
-              )}
-              placeholderTextColor="#9FADA6"
-            />
-          </View>
-
-          <CTAButton
-            buttonLabel={
-              isEditMode
-                ? i18n.t("recipe_my_create.ingredients_bottom_sheet_edit_cta")
-                : i18n.t("recipe_my_create.ingredients_bottom_sheet_cta")
-            }
-            disabled={disabled}
-            onPress={onCTAButtonPress}
-            className="mt-5 mb-[22px]"
+        <View style={{ width: PAGE_WIDTH, height: ICON_PICKER_HEIGHT }}>
+          <IngredientIconGrid
+            categorizedIngredients={ingredientList}
+            onPress={handleIconSelected}
+            isNameVisible={false}
           />
         </View>
-      </DefaultBottomSheetModal>
-
-      <PickIngredientIconBottomSheet
-        bottomSheetModalRef={pickIngredientIconRef}
-        onIconSelected={(iconId) => {
-          onIconChanged(iconId);
-
-          // 재료 입력 바텀시트 다시 열기
-          openBottomSheet();
-        }}
-      />
-    </>
+      </Animated.View>
+    </DefaultBottomSheetModal>
   );
 };

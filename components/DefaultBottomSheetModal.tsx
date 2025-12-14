@@ -1,5 +1,6 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import IC_CLOSE from "@/assets/images/ic_close.svg";
+import IC_CHEVRON_LEFT from "@/assets/images/ic_chevron_left.svg";
 import {
   BottomSheetBackdropProps,
   BottomSheetFooter,
@@ -13,9 +14,11 @@ import {
   BackHandler,
   Keyboard,
   Pressable,
+  StyleProp,
   StyleSheet,
   Text,
   View,
+  ViewStyle,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -27,6 +30,8 @@ interface Props {
   onDismiss?: () => void;
   scrollEnabled?: boolean;
   footer?: React.ReactNode;
+  onBack?: () => void;
+  contentStyle?: StyleProp<ViewStyle>;
 }
 
 /**
@@ -40,6 +45,8 @@ export default function DefaultBottomSheetModal({
   onDismiss,
   scrollEnabled = true,
   footer,
+  onBack,
+  contentStyle,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
@@ -121,7 +128,10 @@ export default function DefaultBottomSheetModal({
     }
 
     return (
-      <BottomSheetView className="justify-center items-center">
+      <BottomSheetView
+        className="justify-center items-center"
+        style={contentStyle}
+      >
         {children}
       </BottomSheetView>
     );
@@ -141,6 +151,15 @@ export default function DefaultBottomSheetModal({
   const Handle = () => {
     return (
       <View className="flex-row items-center justify-center p-4">
+        {onBack && (
+          <PressableScale
+            onPress={onBack}
+            className="absolute left-4"
+            hitSlop={10}
+          >
+            <IC_CHEVRON_LEFT width={24} height={24} color="#3F4542" />
+          </PressableScale>
+        )}
         {title && <Text className="text-title4 text-text-strong">{title}</Text>}
 
         <PressableScale
