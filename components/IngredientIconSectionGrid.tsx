@@ -117,6 +117,10 @@ export const IngredientIconGrid = ({
       stickySectionHeadersEnabled={false}
       showsVerticalScrollIndicator={false}
       nestedScrollEnabled={true}
+      initialNumToRender={2}
+      maxToRenderPerBatch={2}
+      windowSize={3}
+      removeClippedSubviews={true}
     />
   );
 };

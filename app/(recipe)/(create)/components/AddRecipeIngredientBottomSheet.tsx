@@ -13,8 +13,13 @@ import {
   BottomSheetScrollView,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import React, { useMemo, useState } from "react";
-import { Text, useWindowDimensions, View } from "react-native";
+import React, { useMemo, useState, useEffect } from "react";
+import {
+  Text,
+  useWindowDimensions,
+  View,
+  InteractionManager,
+} from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
@@ -64,7 +69,17 @@ export const AddRecipeIngredientBottomSheet = ({
   const PAGE_WIDTH = width - 20; // DefaultBottomSheetModal marginHorizontal: 10 * 2
   const ICON_PICKER_HEIGHT = height * 0.7;
   const [step, setStep] = useState<"form" | "icon">("form");
+  const [showIconPicker, setShowIconPicker] = useState(false);
   const translateX = useSharedValue(0);
+
+  useEffect(() => {
+    // 바텀시트 열림 애니메이션 등이 끝난 후(인터랙션 가능 시점)에 아이콘 리스트를 렌더링
+    const task = InteractionManager.runAfterInteractions(() => {
+      setShowIconPicker(true);
+    });
+
+    return () => task.cancel();
+  }, []);
 
   const ingredientList = useMemo(() => {
     return Object.entries(FoodDataManager.getGroupedFoodList()).map(
@@ -137,122 +152,126 @@ export const AddRecipeIngredientBottomSheet = ({
       scrollEnabled={false}
       contentStyle={{ flex: 1, alignItems: "flex-start", overflow: "hidden" }}
     >
-      <Animated.View
-        style={[
-          { flexDirection: "row", width: PAGE_WIDTH * 2 },
-          containerStyle,
-        ]}
-      >
-        <View style={{ width: PAGE_WIDTH }}>
-          <BottomSheetScrollView
-            contentContainerStyle={{ paddingHorizontal: 16 }}
-          >
-            <View className="pt-2">
-              <PressableScale
-                onPress={goToIconPicker}
-                className="w-[100px] h-[100px] self-center"
-              >
-                {inputIconId ? (
-                  <View className="w-[100px] h-[100px]">
-                    {Icon && <Icon width={100} height={100} />}
-                  </View>
-                ) : (
-                  <SelectIngredientIconImage width={100} height={100} />
-                )}
-              </PressableScale>
-
-              <View className="h-3" />
-
-              {/* 이름 입력 */}
-              <View className="w-full flex-row items-center">
-                <Text className="text-title5 text-text-alternative w-[100px] py-[18px]">
-                  {i18n.t("recipe_my_create.ingredients_bottom_sheet_name")}
-                </Text>
-
-                <BottomSheetTextInput
-                  ref={inputNameRef}
-                  defaultValue={inputNameValue}
-                  onChangeText={onInputNameChanged}
-                  className="flex-1 text-utility2 text-text-strong"
-                  returnKeyType="done"
-                  selectTextOnFocus
-                  editable={true}
-                  placeholder={i18n.t(
-                    "recipe_my_create.ingredients_bottom_sheet_name_hint"
+      <View style={{ width: PAGE_WIDTH * 2, flexDirection: "row" }}>
+        <Animated.View
+          style={[
+            { flexDirection: "row", width: PAGE_WIDTH * 2 },
+            containerStyle,
+          ]}
+        >
+          <View style={{ width: PAGE_WIDTH }}>
+            <BottomSheetScrollView
+              contentContainerStyle={{ paddingHorizontal: 16 }}
+            >
+              <View className="pt-2">
+                <PressableScale
+                  onPress={goToIconPicker}
+                  className="w-[100px] h-[100px] self-center"
+                >
+                  {inputIconId ? (
+                    <View className="w-[100px] h-[100px]">
+                      {Icon && <Icon width={100} height={100} />}
+                    </View>
+                  ) : (
+                    <SelectIngredientIconImage width={100} height={100} />
                   )}
-                  placeholderTextColor="#9FADA6"
-                />
-              </View>
+                </PressableScale>
 
-              {/* 수량 입력 */}
-              <View className="w-full flex-column">
+                <View className="h-3" />
+
+                {/* 이름 입력 */}
                 <View className="w-full flex-row items-center">
-                  <Text className="text-title5 text-text-alternative w-[100px]">
-                    {i18n.t(
-                      "recipe_my_create.ingredients_bottom_sheet_quantity"
-                    )}
+                  <Text className="text-title5 text-text-alternative w-[100px] py-[18px]">
+                    {i18n.t("recipe_my_create.ingredients_bottom_sheet_name")}
                   </Text>
 
-                  <QuantityInput
-                    quantity={inputQuantity}
-                    onQuantityChanged={onInputQuantityChanged}
+                  <BottomSheetTextInput
+                    ref={inputNameRef}
+                    defaultValue={inputNameValue}
+                    onChangeText={onInputNameChanged}
+                    className="flex-1 text-utility2 text-text-strong"
+                    returnKeyType="done"
+                    selectTextOnFocus
+                    editable={true}
+                    placeholder={i18n.t(
+                      "recipe_my_create.ingredients_bottom_sheet_name_hint"
+                    )}
+                    placeholderTextColor="#9FADA6"
                   />
                 </View>
 
-                {inputQuantity <= 0 && (
-                  <Text className="text-body3 text-strong-destructive ms-[100px]">
-                    {i18n.t(
-                      "recipe_my_create.ingredients_bottom_sheet_quantity_error"
-                    )}
-                  </Text>
-                )}
-              </View>
+                {/* 수량 입력 */}
+                <View className="w-full flex-column">
+                  <View className="w-full flex-row items-center">
+                    <Text className="text-title5 text-text-alternative w-[100px]">
+                      {i18n.t(
+                        "recipe_my_create.ingredients_bottom_sheet_quantity"
+                      )}
+                    </Text>
 
-              {/* 단위 입력 */}
-              <View className="w-full flex-row items-center">
-                <Text className="text-title5 text-text-alternative w-[100px] py-[18px]">
-                  {i18n.t("recipe_my_create.ingredients_bottom_sheet_unit")}
-                </Text>
+                    <QuantityInput
+                      quantity={inputQuantity}
+                      onQuantityChanged={onInputQuantityChanged}
+                    />
+                  </View>
 
-                <BottomSheetTextInput
-                  ref={inputUnitRef}
-                  defaultValue={inputUnitValue}
-                  onChangeText={onInputUnitChanged}
-                  className="flex-1 text-utility2 text-text-strong"
-                  returnKeyType="done"
-                  selectTextOnFocus
-                  editable={true}
-                  placeholder={i18n.t(
-                    "recipe_my_create.ingredients_bottom_sheet_unit_hint"
+                  {inputQuantity <= 0 && (
+                    <Text className="text-body3 text-strong-destructive ms-[100px]">
+                      {i18n.t(
+                        "recipe_my_create.ingredients_bottom_sheet_quantity_error"
+                      )}
+                    </Text>
                   )}
-                  placeholderTextColor="#9FADA6"
+                </View>
+
+                {/* 단위 입력 */}
+                <View className="w-full flex-row items-center">
+                  <Text className="text-title5 text-text-alternative w-[100px] py-[18px]">
+                    {i18n.t("recipe_my_create.ingredients_bottom_sheet_unit")}
+                  </Text>
+
+                  <BottomSheetTextInput
+                    ref={inputUnitRef}
+                    defaultValue={inputUnitValue}
+                    onChangeText={onInputUnitChanged}
+                    className="flex-1 text-utility2 text-text-strong"
+                    returnKeyType="done"
+                    selectTextOnFocus
+                    editable={true}
+                    placeholder={i18n.t(
+                      "recipe_my_create.ingredients_bottom_sheet_unit_hint"
+                    )}
+                    placeholderTextColor="#9FADA6"
+                  />
+                </View>
+
+                <CTAButton
+                  buttonLabel={
+                    isEditMode
+                      ? i18n.t(
+                          "recipe_my_create.ingredients_bottom_sheet_edit_cta"
+                        )
+                      : i18n.t("recipe_my_create.ingredients_bottom_sheet_cta")
+                  }
+                  disabled={disabled}
+                  onPress={onCTAButtonPress}
+                  className="mt-5 mb-[22px]"
                 />
               </View>
+            </BottomSheetScrollView>
+          </View>
 
-              <CTAButton
-                buttonLabel={
-                  isEditMode
-                    ? i18n.t(
-                        "recipe_my_create.ingredients_bottom_sheet_edit_cta"
-                      )
-                    : i18n.t("recipe_my_create.ingredients_bottom_sheet_cta")
-                }
-                disabled={disabled}
-                onPress={onCTAButtonPress}
-                className="mt-5 mb-[22px]"
+          <View style={{ width: PAGE_WIDTH, height: ICON_PICKER_HEIGHT }}>
+            {showIconPicker && (
+              <IngredientIconGrid
+                categorizedIngredients={ingredientList}
+                onPress={handleIconSelected}
+                isNameVisible={false}
               />
-            </View>
-          </BottomSheetScrollView>
-        </View>
-
-        <View style={{ width: PAGE_WIDTH, height: ICON_PICKER_HEIGHT }}>
-          <IngredientIconGrid
-            categorizedIngredients={ingredientList}
-            onPress={handleIconSelected}
-            isNameVisible={false}
-          />
-        </View>
-      </Animated.View>
+            )}
+          </View>
+        </Animated.View>
+      </View>
     </DefaultBottomSheetModal>
   );
 };
