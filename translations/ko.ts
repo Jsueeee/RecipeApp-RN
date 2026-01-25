@@ -374,7 +374,7 @@ export default {
     public_toggle_desc:
       "레시피를 공개하면 다른 유저에게 내 레시피가 추천됩니다\n맛있는 내 레시피를 모두와 공유해보세요! ",
     public_toggle_warning:
-      "부적절한 내용을 포함할 경우 불이익이 있을 수 있습니다",
+      "레시피 외의 부적절한 내용을 포함할 경우 불이익이 있을 수 있습니다",
     success_toast: "레시피가 등록되었습니다",
     error_toast: "잠시 후 다시 시도해 주세요",
     error_toast_title_empty: "레시피 이름을 입력해 주세요",
