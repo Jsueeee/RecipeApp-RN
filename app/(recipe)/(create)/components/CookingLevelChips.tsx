@@ -49,14 +49,14 @@ export const CookingLevelChips = ({ cookingLevel, onChanged }: Props) => {
     (level) => level.key === cookingLevel
   );
   const selectedBgClassName = "bg-gray-50";
-  const selectedTextClassName = "text-utility4 text-primary-normal";
-  const unselectedTextClassName = "text-body4 text-text-assistive";
+  const selectedTextClassName = "text-utility3 text-primary-normal";
+  const unselectedTextClassName = "text-body3 text-text-assistive";
   const SelectedIcon = selectedLevel?.Icon;
 
   return (
-    <View className="flex-row gap-x-1">
+    <View className="flex-row gap-x-2">
       {/* Icon */}
-      {SelectedIcon && <SelectedIcon width={24} height={24} />}
+      {SelectedIcon && <SelectedIcon width={26} height={26} />}
 
       {/* Level */}
       {COOKING_LEVEL.map((level) => (

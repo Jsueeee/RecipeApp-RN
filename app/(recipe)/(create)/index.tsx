@@ -95,7 +95,7 @@ export default function RecipeCreateScreen() {
   const [selectedCookingLevel, setSelectedCookingLevel] = useState(
     COOKING_LEVEL[1].key
   );
-  const [cookingTime, setCookingTime] = useState<number | null>(null);
+  const [cookingTime, setCookingTime] = useState<number>(10);
   const [stepInfo, setStepInfo] = useState([""]);
   const [ingredients, setIngredients] = useState<IngredientWithIndex[]>([]); // 입력이 완료된 재료들
   const [selectedIngredientIndex, setSelectedIngredientIndex] = useState<
