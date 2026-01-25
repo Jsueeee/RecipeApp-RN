@@ -1,6 +1,6 @@
+import type { ReissueTokenResponse } from "@/app/types/api/auth";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { authStorage } from "../storage/auth";
-import type { ReissueTokenResponse } from "@/app/types/api/auth";
 
 export const apiClient = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_BASE_URL,
@@ -22,7 +22,7 @@ apiClient.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 apiClient.interceptors.response.use(
@@ -40,7 +40,7 @@ apiClient.interceptors.response.use(
 
     // 토큰 재발급 요청 자체에서의 에러는 전파
     const isReissueEndpoint = (originalConfig.url || "").includes(
-      "/users/token-reissue"
+      "/users/token-reissue",
     );
     if (isReissueEndpoint) {
       return Promise.reject(error);
@@ -73,13 +73,14 @@ apiClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 // 개발 환경에서만 요청/응답 로깅
 if (process.env.EXPO_PUBLIC_ENV === "dev") {
   apiClient.interceptors.request.use(
-    (config) => {
+    async (config) => {
+      const storedAccessToken = await authStorage.getAccessToken();
       console.log(
         "🚀 API 요청:",
         `\nmethod: ${config.method}`,
@@ -88,14 +89,16 @@ if (process.env.EXPO_PUBLIC_ENV === "dev") {
         `\ndata: ${JSON.stringify(config.data)}`,
         `\nparams: ${JSON.stringify(config.params)}`,
         `\nheaders: ${JSON.stringify(config.headers)}`,
-        `\nAuthorization: ${config.headers.Authorization}`
+        `\nAuthorization: ${
+          config.headers.Authorization ?? storedAccessToken ?? "undefined"
+        }`,
       );
       return config;
     },
     (error) => {
       console.error("❌ 요청 에러:", error);
       return Promise.reject(error);
-    }
+    },
   );
 
   apiClient.interceptors.response.use(
@@ -106,7 +109,7 @@ if (process.env.EXPO_PUBLIC_ENV === "dev") {
     (error) => {
       console.error("❌ 응답 에러:", JSON.stringify(error.response?.data));
       return Promise.reject(error);
-    }
+    },
   );
 }
 
@@ -119,6 +122,11 @@ async function refreshAccessToken(): Promise<void> {
   const userId = await authStorage.getUserId();
 
   if (!refreshToken || !userId) {
+    console.log("🚨 Missing refresh token or userId", {
+      hasRefreshToken: !!refreshToken,
+      userId,
+    });
+    await authStorage.clear();
     throw new Error("Missing refresh token or userId");
   }
 
@@ -134,7 +142,7 @@ async function refreshAccessToken(): Promise<void> {
     {
       userId: Number(userId),
       refreshToken,
-    }
+    },
   );
 
   await authStorage.setTokens({
