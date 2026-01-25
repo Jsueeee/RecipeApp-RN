@@ -15,7 +15,7 @@ export interface IngredientWithIndex {
 }
 
 export const mapIngredientsToIngredientWithIndexes = (
-  ingredients: RecipeIngredient[]
+  ingredients: RecipeIngredient[],
 ): IngredientWithIndex[] => {
   return ingredients.map((ingredient, index) => ({
     id: index,
@@ -80,7 +80,12 @@ export function IngredientItem({
 
 const PlusButton = ({ onPress }: { onPress: () => void }) => {
   return (
-    <PressableScale onPress={onPress} hitSlop={10}>
+    <PressableScale
+      onPress={onPress}
+      hitSlop={10}
+      style={{ paddingHorizontal: 8, paddingVertical: 6, borderRadius: 6 }}
+      pressedStyle={{ backgroundColor: "#0000000A" }}
+    >
       <View className="flex-row items-center gap-x-1">
         <IC_PLUS width={12} height={12} color="#4BD2B0" />
 
