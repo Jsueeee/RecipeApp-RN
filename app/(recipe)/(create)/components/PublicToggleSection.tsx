@@ -38,7 +38,7 @@ export function PublicToggleSection({
         {i18n.t("recipe_my_create.public_toggle_desc")}
       </Text>
 
-      <View className="flex-row items-center mt-2">
+      <View className="flex-row items-center mt-5">
         <AlertIcon width={14} height={14} />
 
         <Text className="text-body4 text-red-400 ml-1 flex-1">
