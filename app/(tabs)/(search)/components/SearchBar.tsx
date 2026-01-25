@@ -60,7 +60,7 @@ export const SearchBar: React.FC<Props> = ({
           ref={inputRef}
           value={keyword}
           onChangeText={onValueChange}
-          className="flex-1 text-utility2 text-text-strong p-0"
+          className="flex-1 text-utility2 min-h-[20px] leading-[17px] p-0"
           placeholder={i18n.t("search.search_bar_hint")}
           placeholderTextColor="#BAC4BF"
           returnKeyType="search"
@@ -79,7 +79,6 @@ export const SearchBar: React.FC<Props> = ({
 
             onBlur?.();
           }}
-          style={{ flex: 1 }}
         />
       </View>
     </View>

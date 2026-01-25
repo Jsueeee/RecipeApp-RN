@@ -36,7 +36,7 @@ export const CreateRecipeTitle = ({
       <TextInput
         value={description}
         onChangeText={onInputDescriptionChanged}
-        className="text-body1 text-text-normal"
+        className="text-body1 min-h-[20px] leading-[17px] p-0"
         placeholder={i18n.t("recipe_my_create.description_input_hint")}
         placeholderTextColor="#B2BDB8"
         returnKeyType="done"

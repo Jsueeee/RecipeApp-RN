@@ -24,7 +24,7 @@ function NameInput({ name, onNameChanged }: Props) {
       <TextInput
         value={name}
         onChangeText={onNameChanged}
-        className="flex-1 text-utility2 text-text-strong"
+        className="flex-1 text-utility2 min-h-[20px] leading-[17px] p-0"
         returnKeyType="done"
         selectTextOnFocus
         editable={true}

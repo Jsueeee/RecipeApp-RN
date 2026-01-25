@@ -27,7 +27,7 @@ function UnitInput({ unit, onUnitChanged }: Props) {
       <TextInput
         value={unit}
         onChangeText={onUnitChanged}
-        className="flex-1 text-utility2 text-text-strong"
+        className="flex-1 text-utility2 min-h-[20px] leading-[17px] p-0"
         returnKeyType="done"
         selectTextOnFocus
         editable={true}
