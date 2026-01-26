@@ -66,13 +66,13 @@ export function NativeAdListItem({ nativeAd }: Props) {
               </Text>
             </NativeAsset>
 
-            <NativeAsset assetType={NativeAssetType.CALL_TO_ACTION}>
+            {/* <NativeAsset assetType={NativeAssetType.CALL_TO_ACTION}>
               <TouchableOpacity className="bg-primary-normal px-2 py-1.5 rounded-[8px]">
                 <Text className="text-caption1 font-bold text-white">
                   {nativeAd.callToAction}
                 </Text>
               </TouchableOpacity>
-            </NativeAsset>
+            </NativeAsset> */}
           </View>
         </View>
       </View>
