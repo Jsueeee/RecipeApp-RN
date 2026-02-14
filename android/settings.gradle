@@ -31,7 +31,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
 }
 expoAutolinking.useExpoModules()
 
-rootProject.name = 'RecipeApp'
+rootProject.name = '레시피 저장소'
 
 expoAutolinking.useExpoVersionCatalog()
 
