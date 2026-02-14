@@ -84,6 +84,8 @@ export default function CreateRecipeResultScreen() {
   const nativeAd = nativeAdRef.current;
 
   const onPressCTAButton = () => {
+    router.dismiss();
+
     router.push({
       pathname: "/(myPage)/(myRecipe)",
     });
