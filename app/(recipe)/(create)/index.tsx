@@ -3,6 +3,7 @@ import { usePatchRecipeMutation } from "@/app/hooks/mutations/usePatchRecipeMuta
 import { usePostCreateRecipe } from "@/app/hooks/mutations/usePostCreateRecipe";
 import { useUploadFileMutation } from "@/app/hooks/mutations/useUploadFileMutation";
 import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
+import { useKeyboardAwareScroll } from "@/app/hooks/useKeyboardAwareScroll";
 import { queryClient } from "@/app/lib/query/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { RecipeDetail, RecipeProcess } from "@/app/types/domain/recipe";
@@ -11,7 +12,7 @@ import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import i18n from "@/lib/i18n";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Keyboard, LayoutChangeEvent, Platform, View } from "react-native";
+import { LayoutChangeEvent, Platform, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Reanimated, {
   interpolate,
@@ -44,8 +45,7 @@ export default function RecipeCreateScreen() {
     editRecipeDetail?: string;
   }>();
 
-  // 키보드 높이 상태 추가
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const scrollViewRef = useRef<Reanimated.ScrollView>(null);
 
   // 애니메이션 관련 상태
   const HEADER_MAX_HEIGHT = 350;
@@ -58,19 +58,24 @@ export default function RecipeCreateScreen() {
     },
   });
 
+  const { keyboardHeight, handleInputFocus } = useKeyboardAwareScroll(
+    scrollViewRef,
+    scrollY,
+  );
+
   // 패럴랙스(자연스러운 위/당김)
   const imageAnimatedStyle = useAnimatedStyle(() => {
     const translateY = interpolate(
       scrollY.value,
       [-120, 0, HEADER_MAX_HEIGHT],
       [20, 0, HEADER_MAX_HEIGHT * 0.25],
-      { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+      { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
     );
     const scale = interpolate(
       scrollY.value,
       [-120, 0, HEADER_MAX_HEIGHT],
       [1.1, 1, 1],
-      { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+      { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
     );
     return { transform: [{ translateY }, { scale }] };
   });
@@ -93,7 +98,7 @@ export default function RecipeCreateScreen() {
 
   const [isPublic, setIsPublic] = useState(true);
   const [selectedCookingLevel, setSelectedCookingLevel] = useState(
-    COOKING_LEVEL[1].key
+    COOKING_LEVEL[1].key,
   );
   const [cookingTime, setCookingTime] = useState<number>(10);
   const [stepInfo, setStepInfo] = useState([""]);
@@ -154,26 +159,6 @@ export default function RecipeCreateScreen() {
       Toast.error(i18n.t("recipe_my_create.error_toast"));
     },
   });
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      (e) => {
-        setKeyboardHeight(e.endCoordinates.height);
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setKeyboardHeight(0);
-      }
-    );
-
-    return () => {
-      keyboardDidShowListener?.remove();
-      keyboardDidHideListener?.remove();
-    };
-  }, []);
 
   // 컴포넌트 마운트 시 임시 저장 또는 수정 모드 확인
   useEffect(() => {
@@ -255,16 +240,16 @@ export default function RecipeCreateScreen() {
     setInputDescriptionValue(editRecipeDetail.description || "");
     setIsPublic(true); // TODO : 서버에서 isHidden 값을 받아오면 수정
     setSelectedCookingLevel(
-      mapLevelToCookingLevelLabel(editRecipeDetail.level)
+      mapLevelToCookingLevelLabel(editRecipeDetail.level),
     );
     setCookingTime(editRecipeDetail.cookingTime || null);
     setStepInfo(
       editRecipeDetail.processes?.map(
-        (process: RecipeProcess) => process.description || ""
-      ) || [""]
+        (process: RecipeProcess) => process.description || "",
+      ) || [""],
     );
     setIngredients(
-      mapIngredientsToIngredientWithIndexes(editRecipeDetail.ingredients)
+      mapIngredientsToIngredientWithIndexes(editRecipeDetail.ingredients),
     );
     setIsPublic(editRecipeDetail.isHidden);
     setImage(editRecipeDetail.thumbnail || null);
@@ -303,7 +288,7 @@ export default function RecipeCreateScreen() {
 
   const onStepDescriptionChange = (
     stepIndex: number,
-    stepDescription: string
+    stepDescription: string,
   ) => {
     const newStepInfo = [...stepInfo];
     newStepInfo[stepIndex] = stepDescription;
@@ -371,7 +356,7 @@ export default function RecipeCreateScreen() {
       console.log("💗 index", index);
       open();
     },
-    [open]
+    [open],
   );
 
   const onCTAButtonPress = async () => {
@@ -432,6 +417,7 @@ export default function RecipeCreateScreen() {
       />
 
       <Reanimated.ScrollView
+        ref={scrollViewRef}
         scrollEventThrottle={16}
         contentContainerStyle={{
           paddingBottom: keyboardHeight > 0 ? keyboardHeight + 20 : 60,
@@ -441,7 +427,6 @@ export default function RecipeCreateScreen() {
         keyboardShouldPersistTaps="handled"
         bounces={false}
         overScrollMode="never"
-        automaticallyAdjustKeyboardInsets={Platform.OS === "ios"}
         keyboardDismissMode="interactive"
       >
         <View className="bg-white rounded-t-2xl">
@@ -463,6 +448,7 @@ export default function RecipeCreateScreen() {
               description={inputDescriptionValue}
               onInputTitleChanged={onInputTitleChanged}
               onInputDescriptionChanged={onInputDescriptionChanged}
+              onFocus={handleInputFocus}
             />
 
             <View className="h-2" />
@@ -470,6 +456,7 @@ export default function RecipeCreateScreen() {
             <CookingTimeInput
               cookingTime={cookingTime}
               onChanged={setCookingTime}
+              onFocus={handleInputFocus}
             />
 
             <View className="h-2" />
@@ -495,6 +482,7 @@ export default function RecipeCreateScreen() {
               onPlusButtonPress={onPlusButtonPress}
               onDeleteButtonPress={onDeleteButtonPress}
               onStepDescriptionChange={onStepDescriptionChange}
+              onStepFocus={handleInputFocus}
             />
 
             <View className="h-[60px]" />

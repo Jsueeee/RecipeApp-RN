@@ -7,6 +7,7 @@ interface Props {
   description: string;
   onInputTitleChanged: (title: string) => void;
   onInputDescriptionChanged: (description: string) => void;
+  onFocus?: () => void;
 }
 
 const MAX_TITLE_LENGTH = 100;
@@ -17,6 +18,7 @@ export const CreateRecipeTitle = ({
   description,
   onInputTitleChanged,
   onInputDescriptionChanged,
+  onFocus,
 }: Props) => {
   return (
     <View className="w-full gap-y-[22px]">
@@ -31,6 +33,7 @@ export const CreateRecipeTitle = ({
         editable={true}
         multiline={false}
         maxLength={MAX_TITLE_LENGTH}
+        onFocus={onFocus}
       />
 
       <TextInput
@@ -44,6 +47,7 @@ export const CreateRecipeTitle = ({
         editable={true}
         multiline={true}
         maxLength={MAX_DESCRIPTION_LENGTH}
+        onFocus={onFocus}
       />
 
       <Text className="text-body3 text-text-assistive text-right">

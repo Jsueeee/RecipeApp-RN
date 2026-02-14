@@ -9,6 +9,7 @@ interface CookingStepProps {
   stepDescription: string;
   onDeleteButtonPress?: (stepId: number) => void;
   onStepDescriptionChange?: (stepDescription: string) => void;
+  onFocus?: () => void;
 }
 
 const CookingStepInput: React.FC<CookingStepProps> = ({
@@ -16,6 +17,7 @@ const CookingStepInput: React.FC<CookingStepProps> = ({
   stepDescription,
   onDeleteButtonPress,
   onStepDescriptionChange,
+  onFocus,
 }) => {
   return (
     <View className="w-full bg-fill-subtle rounded-[12px] p-4">
@@ -41,6 +43,7 @@ const CookingStepInput: React.FC<CookingStepProps> = ({
           placeholderTextColor={"#A9A9A9"}
           textAlignVertical="top"
           onChangeText={(text) => onStepDescriptionChange?.(text)}
+          onFocus={onFocus}
         />
       </View>
     </View>
@@ -63,6 +66,7 @@ export const CookingStepInputs = ({
   onPlusButtonPress,
   onDeleteButtonPress,
   onStepDescriptionChange,
+  onStepFocus,
 }: {
   stepInfo: string[];
   className?: string;
@@ -72,6 +76,7 @@ export const CookingStepInputs = ({
     stepIndex: number,
     stepDescription: string
   ) => void;
+  onStepFocus?: (stepIndex: number) => void;
 }) => {
   return (
     <View className={`w-full ${className}`}>
@@ -91,6 +96,7 @@ export const CookingStepInputs = ({
             onStepDescriptionChange={(stepDescription) =>
               onStepDescriptionChange?.(index, stepDescription)
             }
+            onFocus={() => onStepFocus?.(index)}
           />
         ))}
       </View>

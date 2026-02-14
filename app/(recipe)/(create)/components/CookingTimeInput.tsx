@@ -5,9 +5,10 @@ import { Platform, StyleSheet, Text, TextInput, View } from "react-native";
 interface Props {
   cookingTime: number | null;
   onChanged: (time: number) => void;
+  onFocus?: () => void;
 }
 
-export const CookingTimeInput = ({ cookingTime, onChanged }: Props) => (
+export const CookingTimeInput = ({ cookingTime, onChanged, onFocus }: Props) => (
   <View className="flex-row items-center">
     <CookingTimeIcon width={26} height={26} />
 
@@ -22,6 +23,7 @@ export const CookingTimeInput = ({ cookingTime, onChanged }: Props) => (
           keyboardType="number-pad"
           placeholder="10"
           placeholderTextColor="#9FADA6"
+          onFocus={onFocus}
         />
       </View>
 
