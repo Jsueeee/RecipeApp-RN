@@ -54,7 +54,7 @@ const RecipeViewScrapCount: React.FC<Props> = ({
         e.stopPropagation();
         onScrapClick();
       }}
-      className="w-[40px] h-[40px] absolute bottom-[-8px] right-[-2px] z-10 border items-center justify-center"
+      className="w-[40px] h-[40px] absolute bottom-[-8px] right-[-2px] z-10 items-center justify-center"
     >
       <LottieView
         ref={animationRef}

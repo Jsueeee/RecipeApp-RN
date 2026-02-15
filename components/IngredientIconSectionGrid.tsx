@@ -102,6 +102,7 @@ export const IngredientIconGrid = ({
 
   return (
     <SectionList<PickIngredient[], IngredientSection>
+      style={{ flex: 1 }}
       sections={sections}
       keyExtractor={(row, index) =>
         row.map((i) => i.ingredientId).join("-") + index
@@ -110,12 +111,16 @@ export const IngredientIconGrid = ({
       renderSectionHeader={renderSectionHeader}
       contentContainerStyle={{
         gap: 16,
-        paddingBottom: 36,
+        paddingBottom: 100,
         paddingHorizontal: 16,
       }}
       stickySectionHeadersEnabled={false}
       showsVerticalScrollIndicator={false}
       nestedScrollEnabled={true}
+      initialNumToRender={2}
+      maxToRenderPerBatch={2}
+      windowSize={3}
+      removeClippedSubviews={true}
     />
   );
 };

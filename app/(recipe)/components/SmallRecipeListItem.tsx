@@ -40,12 +40,12 @@ const SmallRecipeListItem = ({
 
     return parts.map((part, i) =>
       part.toLowerCase() === keyword.toLowerCase() ? (
-        <Text key={i} className="text-primary-normal">
+        <Text key={i} className="text-body2 text-primary-normal">
           {part}
         </Text>
       ) : (
         <Text key={i}>{part}</Text>
-      )
+      ),
     );
   };
 
@@ -61,14 +61,14 @@ const SmallRecipeListItem = ({
         <View className="flex-1 ml-4">
           <View className="flex-1">
             <Text
-              className="text-base text-gray-900"
+              className="text-body2 text-text-normal"
               numberOfLines={2}
               ellipsizeMode="tail"
             >
               {highlightKeyword(title)}
             </Text>
 
-            <View className="flex-row items-center mt-1 flex-1">
+            <View className="flex-row mt-1 flex-1">
               {postUserName && (
                 <Text
                   className="text-body4 text-text-assistive flex-shrink"

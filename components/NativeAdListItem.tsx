@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import {
   NativeAd,
   NativeAdView,
@@ -34,13 +34,12 @@ export function NativeAdListItem({ nativeAd }: Props) {
           <View>
             <View className="flex-row items-center gap-2 mb-1">
               <View className="bg-gray-100 px-1.5 py-0.5 rounded">
-                <Text className="text-[10px] font-bold text-gray-500">AD</Text>
+                <Text className="text-utility5 font-bold text-gray-500">
+                  AD
+                </Text>
               </View>
               <NativeAsset assetType={NativeAssetType.HEADLINE}>
-                <Text
-                  className="text-base font-bold text-gray-900"
-                  numberOfLines={1}
-                >
+                <Text className="text-body2 text-text-normal" numberOfLines={1}>
                   {nativeAd.headline}
                 </Text>
               </NativeAsset>
