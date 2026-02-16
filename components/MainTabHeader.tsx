@@ -18,7 +18,7 @@ const formatToKoreanDate = (date: Date): string => {
 
 export function MainTabHeader({ tab, className }: Props) {
   return (
-    <View className={`px-4 py-[14px] ${className}`}>
+    <View className={`px-4 pb-[14px] ${className}`}>
       <Text className="text-body3 text-teal-600">
         {tab === "home" ? formatToKoreanDate(new Date()) : ""}
       </Text>
