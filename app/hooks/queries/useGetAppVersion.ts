@@ -7,6 +7,8 @@ export const useGetAppVersion = () => {
     queryKey: QUERY_KEYS.APP.VERSION(),
     queryFn: () => apiClient.get("/app/version"),
     select: (data) => data.data,
+    gcTime: 0,
+    staleTime: 0,
   });
 
   return {
