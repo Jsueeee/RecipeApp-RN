@@ -96,7 +96,7 @@ export default function CreateRecipeResultScreen() {
 
   return (
     <ScreenLayout onBackClick={router.back}>
-      {nativeAd && loaded ? (
+      {nativeAd && loaded && !isLoading ? (
         <>
           <NativeAdView
             nativeAd={nativeAd}
@@ -108,14 +108,14 @@ export default function CreateRecipeResultScreen() {
             }}
           >
             <View className="px-4 py-5 h-[450px] gap-4">
-              <View className="w-full max-w-[384px] rounded-[12px] bg-gray-50 overflow-hidden mr-4">
+              <View className="w-full max-w-[384px] rounded-[12px] bg-gray-50 overflow-hidden mr-4 items-center">
                 <NativeMediaView
                   resizeMode="cover"
                   style={{ width: "100%", aspectRatio: 4 / 3 }}
                 />
               </View>
 
-              <View className="justify-between gap-4">
+              <View className="justify-between gap-4 px-4">
                 <View>
                   <View className="flex-row items-center gap-2 mb-1">
                     <View className="bg-gray-100 px-1.5 py-0.5 rounded">
