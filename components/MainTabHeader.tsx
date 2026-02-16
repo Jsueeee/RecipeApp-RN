@@ -1,7 +1,7 @@
 import { MainTab } from "@/app/(tabs)/MainTab";
 import i18n from "@/lib/i18n";
 import React from "react";
-import { Text, View } from "react-native";
+import { Platform, Text, View } from "react-native";
 
 interface Props {
   tab: MainTab;
@@ -18,7 +18,9 @@ const formatToKoreanDate = (date: Date): string => {
 
 export function MainTabHeader({ tab, className }: Props) {
   return (
-    <View className={`px-4 pb-[14px] ${className}`}>
+    <View
+      className={`px-4 pb-[14px] ${className} ${Platform.OS === "android" ? "pt-2" : ""}`}
+    >
       <Text className="text-body3 text-teal-600">
         {tab === "home" ? formatToKoreanDate(new Date()) : ""}
       </Text>
