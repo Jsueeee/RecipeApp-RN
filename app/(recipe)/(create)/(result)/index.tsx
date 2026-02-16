@@ -1,3 +1,4 @@
+import { useMyRecipeListQuery } from "@/app/hooks/queries/useMyRecipeListQuery";
 import { CTAButton } from "@/components/CTAButton";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
@@ -21,6 +22,8 @@ export default function CreateRecipeResultScreen() {
   const anim1 = useRef(new Animated.Value(0)).current;
   const anim2 = useRef(new Animated.Value(0)).current;
   const anim3 = useRef(new Animated.Value(0)).current;
+
+  const { recipes, totalCount, isLoading } = useMyRecipeListQuery();
 
   useEffect(() => {
     if (loaded) {
@@ -155,7 +158,7 @@ export default function CreateRecipeResultScreen() {
             className="text-heading1 text-text-normal self-center"
             style={getAnimStyle(anim1)}
           >
-            볶음 우동
+            {recipes?.[0]?.title}
           </Animated.Text>
           <Animated.Text
             className="text-heading1 text-text-normal self-center"
@@ -168,7 +171,7 @@ export default function CreateRecipeResultScreen() {
             className="text-body1 text-text-assistive self-center mt-4"
             style={getAnimStyle(anim3)}
           >
-            10번째 레시피 완성을 축하드려요 🎉
+            {totalCount}번째 레시피 완성을 축하드려요 🎉
           </Animated.Text>
 
           <View className="flex-1" />

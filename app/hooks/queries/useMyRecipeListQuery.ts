@@ -42,6 +42,7 @@ export const useMyRecipeListQuery = () => {
 
   return {
     recipes: data?.recipes,
+    totalCount: data?.totalCount,
     isLoading,
     isError,
     fetchNextPage,
