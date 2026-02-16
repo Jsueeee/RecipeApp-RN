@@ -2,6 +2,7 @@ import { PressableScale } from "@/app/components/PressableScale";
 import { usePopularKeywordsQuery } from "@/app/hooks/queries/usePopularKeywordsQuery";
 import { useRecentSearch } from "@/app/hooks/useRecentSearch";
 import { queryClient } from "@/app/lib/query/client";
+import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import i18n from "@/lib/i18n";
 import React, { useCallback, useRef, useState } from "react";
@@ -27,7 +28,7 @@ export default function SearchScreen() {
 
   const { recentSearches, addSearch, removeSearch, clearAllSearches } =
     useRecentSearch();
-  const { data: popularKeywords = [] } = usePopularKeywordsQuery();
+  const { popularKeywords, isLoading } = usePopularKeywordsQuery();
 
   const onHeaderLayout = useCallback((event: LayoutChangeEvent) => {
     headerHeight.current = event.nativeEvent.layout.height - 16; // top margin 16px
@@ -46,7 +47,7 @@ export default function SearchScreen() {
         setIsSearchResultShow(true);
       }
     },
-    [addSearch, keyword]
+    [addSearch, keyword],
   );
 
   const animateOnFocus = useCallback(() => {
@@ -81,78 +82,87 @@ export default function SearchScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <Animated.View
-        onLayout={onHeaderLayout}
-        style={{
-          opacity: headerAnimation,
-          transform: [
-            {
-              translateY: headerAnimation.interpolate({
-                inputRange: [0, 1],
-                outputRange: [(headerHeight.current || 50) * -1, 0],
-              }),
-            },
-          ],
-        }}
-      >
-        <MainTabHeader tab="search" />
-      </Animated.View>
-
-      <Animated.View
-        className="flex-1"
-        style={{
-          transform: [
-            {
-              translateY: searchBarAnimation.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, (headerHeight.current || 50) * -1],
-              }),
-            },
-          ],
-        }}
-      >
-        <View className="flex-row gap-[3px] px-4">
-          <SearchBar
-            keyword={keyword}
-            onValueChange={setKeyword}
-            onSearch={handleSearch}
-            className="flex-1"
-            onFocus={animateOnFocus}
-            onBlur={animateOnBlur}
-          />
-
-          {/* 취소 버튼 */}
-          <PressableScale
-            onPress={() => {
-              setKeyword("");
-              animateOnBlur();
-              setIsSearchResultShow(false);
+      {isLoading ? (
+        <DotLoadingScreen />
+      ) : (
+        <>
+          <Animated.View
+            onLayout={onHeaderLayout}
+            style={{
+              opacity: headerAnimation,
+              transform: [
+                {
+                  translateY: headerAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [(headerHeight.current || 50) * -1, 0],
+                  }),
+                },
+              ],
             }}
-            disabled={keyword.length === 0}
-            className="p-2.5"
           >
-            <Text className="text-body2 text-text-strong">
-              {i18n.t("search.search_cancel")}
-            </Text>
-          </PressableScale>
-        </View>
+            <MainTabHeader tab="search" />
+          </Animated.View>
 
-        {isSearchResultShow ? (
-          <SearchResult keyword={keyword} className="w-full h-full bg-white" />
-        ) : (
-          <SearchKeywords
-            recentKeywords={recentSearches}
-            popularKeywords={popularKeywords}
-            onKeywordPress={(keyword) => {
-              animateOnFocus();
-              setKeyword(keyword);
-              handleSearch(keyword);
+          <Animated.View
+            className="flex-1"
+            style={{
+              transform: [
+                {
+                  translateY: searchBarAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, (headerHeight.current || 50) * -1],
+                  }),
+                },
+              ],
             }}
-            onResetPress={clearAllSearches}
-            onRemovePress={removeSearch}
-          />
-        )}
-      </Animated.View>
+          >
+            <View className="flex-row gap-[3px] px-4">
+              <SearchBar
+                keyword={keyword}
+                onValueChange={setKeyword}
+                onSearch={handleSearch}
+                className="flex-1"
+                onFocus={animateOnFocus}
+                onBlur={animateOnBlur}
+              />
+
+              {/* 취소 버튼 */}
+              <PressableScale
+                onPress={() => {
+                  setKeyword("");
+                  animateOnBlur();
+                  setIsSearchResultShow(false);
+                }}
+                disabled={keyword.length === 0}
+                className="p-2.5"
+              >
+                <Text className="text-body2 text-text-strong">
+                  {i18n.t("search.search_cancel")}
+                </Text>
+              </PressableScale>
+            </View>
+
+            {isSearchResultShow ? (
+              <SearchResult
+                keyword={keyword}
+                className="w-full h-full bg-white"
+              />
+            ) : (
+              <SearchKeywords
+                recentKeywords={recentSearches}
+                popularKeywords={popularKeywords}
+                onKeywordPress={(keyword) => {
+                  animateOnFocus();
+                  setKeyword(keyword);
+                  handleSearch(keyword);
+                }}
+                onResetPress={clearAllSearches}
+                onRemovePress={removeSearch}
+              />
+            )}
+          </Animated.View>
+        </>
+      )}
     </SafeAreaView>
   );
 }

@@ -5,7 +5,7 @@ import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import i18n from "@/lib/i18n";
-import { router, Stack } from "expo-router";
+import { router } from "expo-router";
 import React, { useMemo, useRef, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { SystemBars } from "react-native-edge-to-edge";
@@ -80,8 +80,6 @@ export default function FridgeScreen() {
     <SafeAreaView className="flex-1 bg-background-alternative">
       <View className="flex-1">
         <SystemBars style="dark" />
-
-        <Stack.Screen options={{ headerShown: false }} />
 
         <ScrollView
           ref={scrollViewRef}

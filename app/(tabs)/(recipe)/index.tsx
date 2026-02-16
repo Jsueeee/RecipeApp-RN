@@ -92,7 +92,7 @@ export default function RecipeScreen() {
       scrollY.value,
       [touchPoint, touchPoint + FADE_DISTANCE],
       [0, 1],
-      { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+      { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
     );
     return { opacity };
   });
@@ -218,7 +218,7 @@ export default function RecipeScreen() {
 
   const getItemLayout = (
     _data: ArrayLike<ListItem> | null | undefined,
-    index: number
+    index: number,
   ) => ({ length: 164, offset: 164 * index, index });
 
   const renderContent = () => {

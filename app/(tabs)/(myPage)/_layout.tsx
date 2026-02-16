@@ -1,14 +1,6 @@
-import { Stack } from "expo-router";
+import { Slot } from "expo-router";
 import React from "react";
 
 export default function MyPageLayout() {
-  return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="index" />
-    </Stack>
-  );
+  return <Slot />;
 }
