@@ -12,7 +12,7 @@ import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import i18n from "@/lib/i18n";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { LayoutChangeEvent, Platform, View } from "react-native";
+import { LayoutChangeEvent, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Reanimated, {
   interpolate,
@@ -176,7 +176,7 @@ export default function RecipeCreateScreen() {
     checkDraft();
   }, [editRecipeDetailString]); // editRecipeDetail 대신 editRecipeDetailString 사용
 
-  // 임시 저장 자동 저장 (입력값이 변경될 때마다)
+  // 임시 저장: 입력 변경 시 저장, 화면 나갈 때(언마운트) 한 번 더 저장
   useEffect(() => {
     const saveDraft = async () => {
       // 수정 모드일 경우 임시 저장 하지 않음
@@ -203,7 +203,11 @@ export default function RecipeCreateScreen() {
 
     // 디바운스 적용 (1초 후 저장)
     const timeoutId = setTimeout(saveDraft, 1000);
-    return () => clearTimeout(timeoutId);
+    return () => {
+      clearTimeout(timeoutId);
+
+      saveDraft();
+    };
   }, [
     inputTitleValue,
     inputDescriptionValue,
@@ -212,6 +216,8 @@ export default function RecipeCreateScreen() {
     cookingTime,
     stepInfo,
     ingredients,
+    image,
+    editRecipeDetail,
   ]);
 
   // 임시 저장 복원
