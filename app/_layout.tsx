@@ -99,7 +99,7 @@ export default function RootLayout() {
 
 const toastConfig = {
   success: (props: any) => (
-    <View className="w-[80%] px-4 py-4 bg-fill-strong rounded-[12px]">
+    <View className="w-[80%] px-4 py-4 bg-fill-strong rounded-[12px] mt-[20px]">
       <Text className="text-body2 text-text-inverse">{props.text1}</Text>
       {props.text2 && (
         <Text className="text-body4 text-text-inverse">{props.text2}</Text>
@@ -108,7 +108,7 @@ const toastConfig = {
   ),
   error: (
     // TODO : 나중에 커스텀하기
-    props: any
+    props: any,
   ) => (
     <View className="w-[80%] px-4 py-4 bg-fill-strong rounded-[12px]">
       <Text className="text-body2 text-text-inverse">{props.text1}</Text>
