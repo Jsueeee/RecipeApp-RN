@@ -39,3 +39,6 @@ yarn-error.*
 .env*
 !.env.example
 .env*.local
+
+# Cursor / Claude
+CLAUDE.md
