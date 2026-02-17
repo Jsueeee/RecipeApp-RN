@@ -35,7 +35,7 @@ interface Props {
 
 export default function SearchResult({ keyword, className }: Props) {
   const [selectedTab, setSelectedTab] = useState<RecipeSourceType>(
-    RECIPE_SOURCE_TYPE.BLOG
+    RECIPE_SOURCE_TYPE.BLOG,
   );
 
   // 리스트에 광고 아이템을 삽입하기 위한 인터벌
@@ -119,7 +119,7 @@ export default function SearchResult({ keyword, className }: Props) {
           break;
       }
     },
-    [selectedTab]
+    [selectedTab],
   );
 
   const onEndReached = useCallback(() => {
@@ -180,6 +180,7 @@ export default function SearchResult({ keyword, className }: Props) {
       const data = item.data;
       return (
         <SmallRecipeListItem
+          key={data.recipeId}
           keyword={keyword}
           recipeId={data.recipeId}
           title={data.title}
@@ -194,7 +195,7 @@ export default function SearchResult({ keyword, className }: Props) {
         />
       );
     },
-    [keyword, handleScrapButtonPress, onRecipePress]
+    [keyword, handleScrapButtonPress, onRecipePress],
   );
 
   const keyExtractor = (item: ListItem) =>
