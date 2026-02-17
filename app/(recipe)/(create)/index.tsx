@@ -414,12 +414,32 @@ export default function RecipeCreateScreen() {
     setHeaderHeight(event.nativeEvent.layout.height);
   };
 
+  const isCTAButtonDisabled = useMemo(() => {
+    return (
+      inputTitleValue.trim() === "" ||
+      inputDescriptionValue.trim() === "" ||
+      ingredients.length === 0 ||
+      stepInfo.some((step) => step.trim() === "") ||
+      cookingTime === 0 ||
+      isUploadFilePending ||
+      isLoading
+    );
+  }, [
+    inputTitleValue,
+    inputDescriptionValue,
+    ingredients,
+    stepInfo,
+    cookingTime,
+    isUploadFilePending,
+    isLoading,
+  ]);
+
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["bottom"]}>
       <CreateRecipeHeader
         onCTAButtonPress={onCTAButtonPress}
         onLayout={onHeaderLayout}
-        isUploading={isUploadFilePending}
+        isDisabled={isCTAButtonDisabled}
       />
 
       <Reanimated.ScrollView

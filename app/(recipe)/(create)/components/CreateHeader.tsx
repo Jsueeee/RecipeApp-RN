@@ -6,13 +6,13 @@ import { LayoutChangeEvent, Text, View } from "react-native";
 interface Props {
   onCTAButtonPress: () => void;
   onLayout: (event: LayoutChangeEvent) => void;
-  isUploading?: boolean;
+  isDisabled?: boolean;
 }
 
 export const CreateRecipeHeader = ({
   onCTAButtonPress,
   onLayout,
-  isUploading = false,
+  isDisabled = false,
 }: Props) => {
   const onCancelButtonPress = () => {
     router.back();
@@ -29,10 +29,10 @@ export const CreateRecipeHeader = ({
         </Text>
       </PressableScale>
 
-      <PressableScale onPress={onCTAButtonPress} disabled={isUploading}>
+      <PressableScale onPress={onCTAButtonPress} disabled={isDisabled}>
         <View
           className={`px-3 py-2 rounded-[20px] ${
-            isUploading ? "bg-primary-disable" : "bg-primary-normal"
+            isDisabled ? "bg-primary-disable" : "bg-primary-normal"
           }`}
         >
           <Text className="text-title4 text-white">
