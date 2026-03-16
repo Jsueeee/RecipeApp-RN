@@ -1,5 +1,6 @@
 import type { ReissueTokenResponse } from "@/app/types/api/auth";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+import { router } from "expo-router";
 import { authStorage } from "../storage/auth";
 
 export const apiClient = axios.create({
@@ -38,11 +39,11 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // 토큰 재발급 요청 자체에서의 에러는 전파
-    const isReissueEndpoint = (originalConfig.url || "").includes(
-      "/users/token-reissue",
+    // 인증 관련 엔드포인트는 토큰 재발급 시도 없이 바로 전파
+    const isAuthEndpoint = /\/users\/(token-reissue|auto-login)/.test(
+      originalConfig.url || "",
     );
-    if (isReissueEndpoint) {
+    if (isAuthEndpoint) {
       return Promise.reject(error);
     }
 
@@ -122,11 +123,10 @@ async function refreshAccessToken(): Promise<void> {
   const userId = await authStorage.getUserId();
 
   if (!refreshToken || !userId) {
-    console.log("🚨 Missing refresh token or userId", {
-      hasRefreshToken: !!refreshToken,
-      userId,
-    });
     await authStorage.clear();
+
+    router.replace("/(auth)");
+
     throw new Error("Missing refresh token or userId");
   }
 
