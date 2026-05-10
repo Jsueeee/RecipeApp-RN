@@ -39,11 +39,11 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // 인증 관련 엔드포인트는 토큰 재발급 시도 없이 바로 전파
-    const isAuthEndpoint = /\/users\/(token-reissue|auto-login)/.test(
+    // 토큰 재발급 요청 자체에서의 에러는 전파 (재발급 무한루프 방지)
+    const isReissueEndpoint = /\/users\/token-reissue/.test(
       originalConfig.url || "",
     );
-    if (isAuthEndpoint) {
+    if (isReissueEndpoint) {
       return Promise.reject(error);
     }
 
