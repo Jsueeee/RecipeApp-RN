@@ -138,7 +138,6 @@ export const STEPS: ReadonlyArray<StepConfig> = [
     trigger: { type: "auto-or-tap", delayMs: 5000 },
     spotlightPadding: 2,
     spotlightHorizontalInset: 12,
-    spotlightVerticalInset: 4,
     blocksTouches: true,
   },
   {
