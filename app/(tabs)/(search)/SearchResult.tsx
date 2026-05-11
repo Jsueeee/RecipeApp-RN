@@ -2,6 +2,7 @@ import { useBlogRecipeScrapMutation } from "@/app/hooks/mutations/useBlogRecipeS
 import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMutation";
 import { useYoutubeRecipeScrapMutation } from "@/app/hooks/mutations/useYoutubeRecipeScrapMutation";
 import { useSearchRecipesQuery } from "@/app/hooks/queries/useSearchRecipeQuery";
+import { TutorialAnchor } from "@/app/tutorial";
 import { SearchRecipe } from "@/app/types/domain/recipe";
 import { TealDotLoading } from "@/components/DotLoading";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
@@ -259,11 +260,13 @@ export default function SearchResult({ keyword, className }: Props) {
 
   return (
     <View className={`${className}`}>
-      <RecipeSourceTypeTabRow
-        tabs={Object.values(RECIPE_SOURCE_TYPE)}
-        selectedTab={selectedTab}
-        onTabSelected={setSelectedTab}
-      />
+      <TutorialAnchor id="search-result-source-tabs">
+        <RecipeSourceTypeTabRow
+          tabs={Object.values(RECIPE_SOURCE_TYPE)}
+          selectedTab={selectedTab}
+          onTabSelected={setSelectedTab}
+        />
+      </TutorialAnchor>
 
       {ListHeaderComponent}
 

@@ -2,6 +2,7 @@ import { PressableScale } from "@/app/components/PressableScale";
 import { usePopularKeywordsQuery } from "@/app/hooks/queries/usePopularKeywordsQuery";
 import { useRecentSearch } from "@/app/hooks/useRecentSearch";
 import { queryClient } from "@/app/lib/query/client";
+import { useTutorial } from "@/app/tutorial";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import i18n from "@/lib/i18n";
@@ -19,6 +20,7 @@ import { SearchKeywords } from "./components/SearchKeywords";
 import SearchResult from "./SearchResult";
 
 export default function SearchScreen() {
+  const { state } = useTutorial();
   const [keyword, setKeyword] = useState("");
   const headerAnimation = useRef(new Animated.Value(1)).current;
   const searchBarAnimation = useRef(new Animated.Value(0)).current;
@@ -29,6 +31,7 @@ export default function SearchScreen() {
   const { recentSearches, addSearch, removeSearch, clearAllSearches } =
     useRecentSearch();
   const { popularKeywords, isLoading } = usePopularKeywordsQuery();
+  const isTutorialVisible = state.phase !== "idle" && state.phase !== "done";
 
   const onHeaderLayout = useCallback((event: LayoutChangeEvent) => {
     headerHeight.current = event.nativeEvent.layout.height - 16; // top margin 16px
@@ -121,6 +124,7 @@ export default function SearchScreen() {
                 keyword={keyword}
                 onValueChange={setKeyword}
                 onSearch={handleSearch}
+                disableAutoFocus={isTutorialVisible}
                 className="flex-1"
                 onFocus={animateOnFocus}
                 onBlur={animateOnBlur}

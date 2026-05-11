@@ -9,6 +9,7 @@ interface Props {
   onValueChange: (value: string) => void;
   onSearch: (keyword: string) => void;
   className?: string;
+  disableAutoFocus?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
 }
@@ -18,6 +19,7 @@ export const SearchBar: React.FC<Props> = ({
   onValueChange,
   onSearch,
   className,
+  disableAutoFocus = false,
   onFocus,
   onBlur,
 }) => {
@@ -28,6 +30,7 @@ export const SearchBar: React.FC<Props> = ({
     if (keyword.trim()) return; // 검색어 없을 때만
 
     if (!isFocused) return;
+    if (disableAutoFocus) return;
 
     const timer = setTimeout(() => inputRef.current?.focus(), 300);
 
@@ -35,7 +38,7 @@ export const SearchBar: React.FC<Props> = ({
       clearTimeout(timer);
       inputRef.current?.blur();
     };
-  }, [isFocused]);
+  }, [disableAutoFocus, isFocused, keyword]);
 
   // 키보드 내려올 때
   useEffect(() => {

@@ -1,11 +1,13 @@
+import { TutorialAnchor, useTutorial } from "@/app/tutorial";
+import type { AnchorId } from "@/app/tutorial";
 import FridgeIcon from "@/assets/images/ic_nav_fridge.svg";
 import MyPageIcon from "@/assets/images/ic_nav_my_page.svg";
 import RecipeIcon from "@/assets/images/ic_nav_recipe.svg";
 import SearchIcon from "@/assets/images/ic_nav_search.svg";
 import i18n from "@/lib/i18n";
 import * as Haptics from "expo-haptics";
-import { Tabs } from "expo-router";
-import React from "react";
+import { router, Tabs } from "expo-router";
+import React, { useEffect } from "react";
 import {
   Pressable,
   PressableProps,
@@ -55,6 +57,42 @@ const TabBarButton = ({
   );
 };
 
+const AnchoredTabBarButton = ({
+  anchorId,
+  children,
+  onNavigate,
+  style,
+  ...props
+}: {
+  anchorId: AnchorId;
+  children?: React.ReactNode;
+  onNavigate: () => void;
+  style?: StyleProp<ViewStyle>;
+} & Omit<PressableProps, "style">) => {
+  const { registerAnchorAction } = useTutorial();
+
+  useEffect(() => {
+    registerAnchorAction(anchorId, onNavigate);
+  }, [anchorId, onNavigate, registerAnchorAction]);
+
+  return (
+    <TutorialAnchor id={anchorId} style={[styles.tabBarButton, style]}>
+      <Pressable
+        {...props}
+        android_ripple={null}
+        android_disableSound={true}
+        onPress={(e) => {
+          Haptics.selectionAsync();
+          props.onPress?.(e);
+        }}
+        style={styles.tabAnchorButton}
+      >
+        {children}
+      </Pressable>
+    </TutorialAnchor>
+  );
+};
+
 export default function TabLayout() {
   return (
     <Tabs
@@ -88,6 +126,13 @@ export default function TabLayout() {
           tabBarLabel: ({ focused }) => (
             <TabBarLabel focused={focused} label="bottom_tab.recipe" />
           ),
+          tabBarButton: (props) => (
+            <AnchoredTabBarButton
+              {...props}
+              anchorId="tab-recipe"
+              onNavigate={() => router.navigate("/(tabs)/(recipe)")}
+            />
+          ),
         }}
       />
       <Tabs.Screen
@@ -99,6 +144,13 @@ export default function TabLayout() {
           tabBarLabel: ({ focused }) => (
             <TabBarLabel focused={focused} label="bottom_tab.search" />
           ),
+          tabBarButton: (props) => (
+            <AnchoredTabBarButton
+              {...props}
+              anchorId="tab-search"
+              onNavigate={() => router.navigate("/(tabs)/(search)")}
+            />
+          ),
         }}
       />
       <Tabs.Screen
@@ -109,6 +161,13 @@ export default function TabLayout() {
           ),
           tabBarLabel: ({ focused }) => (
             <TabBarLabel focused={focused} label="bottom_tab.myPage" />
+          ),
+          tabBarButton: (props) => (
+            <AnchoredTabBarButton
+              {...props}
+              anchorId="tab-myPage"
+              onNavigate={() => router.navigate("/(tabs)/(myPage)")}
+            />
           ),
         }}
       />
@@ -144,5 +203,10 @@ export const styles = StyleSheet.create({
     lineHeight: 18,
     fontWeight: "600",
     marginTop: 2,
+  },
+  tabAnchorButton: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
