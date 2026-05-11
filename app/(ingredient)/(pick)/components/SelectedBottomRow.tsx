@@ -1,3 +1,4 @@
+import { TutorialAnchor, useTutorial } from "@/app/tutorial";
 import { PickIngredient } from "@/app/types/domain/ingredient";
 import { CTAButton } from "@/components/CTAButton";
 import { SelectedIngredientItem } from "@/components/SelectedIngredientItem";
@@ -21,8 +22,13 @@ export const SelectedBottomRow = ({
   isPostBasketPending,
   className,
 }: Props) => {
+  const { registerAnchorAction } = useTutorial();
   const flatListRef = useRef<FlatList>(null);
   const preLength = useRef(selectedIngredients.length);
+
+  useEffect(() => {
+    registerAnchorAction("picker-cta", onCTAPress);
+  }, [onCTAPress, registerAnchorAction]);
 
   useEffect(() => {
     if (selectedIngredients.length > preLength.current) {
@@ -72,14 +78,17 @@ export const SelectedBottomRow = ({
         className="flex-1 my-3"
       />
 
-      <CTAButton
-        buttonLabel={i18n.t("ingredient_pick.add", {
-          count: selectedIngredients.length,
-        })}
-        isLoading={isPostBasketPending}
-        onPress={onCTAPress}
-        className={`px-4 pt-1 ${Platform.OS === "ios" ? "pb-[22px]" : ""}`}
-      />
+      <View className={`px-4 pt-1 ${Platform.OS === "ios" ? "pb-[22px]" : ""}`}>
+        <TutorialAnchor id="picker-cta">
+          <CTAButton
+            buttonLabel={i18n.t("ingredient_pick.add", {
+              count: selectedIngredients.length,
+            })}
+            isLoading={isPostBasketPending}
+            onPress={onCTAPress}
+          />
+        </TutorialAnchor>
+      </View>
     </View>
   );
 };

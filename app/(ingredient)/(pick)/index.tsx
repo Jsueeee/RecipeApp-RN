@@ -1,4 +1,5 @@
 import { CategoryTabs } from "@/app/(tabs)/(fridge)/components/CategoryTabs";
+import { TutorialAnchor, useTutorial } from "@/app/tutorial";
 import { FridgeTabs } from "@/app/(tabs)/(fridge)/constants/fridgeTabs";
 import { PressableScale } from "@/app/components/PressableScale";
 import { usePostFridgeBasketMutation } from "@/app/hooks/mutations/usePostFridgeBasketMutation";
@@ -11,7 +12,7 @@ import { PickIngredientItem } from "@/components/PickIngredientItem";
 import i18n from "@/lib/i18n";
 import { FlashList, FlashListRef } from "@shopify/flash-list";
 import { useFocusEffect, useRouter } from "expo-router";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Text, View, useWindowDimensions } from "react-native";
 import { SelectedBottomRow } from "./components/SelectedBottomRow";
 
@@ -28,6 +29,7 @@ type SectionRow =
 
 export default function IngredientPickScreen() {
   const router = useRouter();
+  const { reportProgress, registerAnchorAction } = useTutorial();
 
   const listRef = useRef<FlashListRef<SectionRow>>(null);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
@@ -107,10 +109,10 @@ export default function IngredientPickScreen() {
     return chunks;
   };
 
-  /** flatData 구성 & (ingredientId -> flat index) 매핑 */
-  const { flatData, ingredientRowIndexMap } = useMemo(() => {
+  /** flatData 구성 & 튜토리얼에서 유도할 첫 두 재료 계산 */
+  const { flatData, tutorialIngredients } = useMemo(() => {
     const data: SectionRow[] = [];
-    const indexMap = new Map<number, number>(); // ingredientId -> flat index
+    const tutorialItems: PickIngredient[] = [];
 
     (filteredIngredients ?? []).forEach((category, categoryIndex, all) => {
       data.push({
@@ -133,25 +135,71 @@ export default function IngredientPickScreen() {
         };
         data.push(rowItem);
 
-        rowItems.forEach((ing) => {
-          indexMap.set(ing.ingredientId, data.length - 1);
+        rowItems.forEach((ingredient) => {
+          if (tutorialItems.length < 2) {
+            tutorialItems.push(ingredient);
+          }
         });
       });
     });
 
-    return { flatData: data, ingredientRowIndexMap: indexMap };
+    return { flatData: data, tutorialIngredients: tutorialItems };
   }, [filteredIngredients, ROW_COUNT]);
+
+  const tutorialIngredientIds = useMemo(
+    () => tutorialIngredients.map((ingredient) => ingredient.ingredientId),
+    [tutorialIngredients]
+  );
 
   const toggleIngredient = useCallback(
     (ingredient: PickIngredient) => {
       if (selectedSet.has(ingredient.ingredientId)) {
         handleIngredientUnselect(ingredient);
       } else {
+        if (ingredient.ingredientId === tutorialIngredientIds[0]) {
+          reportProgress("picker-picked-1");
+        }
+        if (ingredient.ingredientId === tutorialIngredientIds[1]) {
+          reportProgress("picker-picked-2");
+        }
         handleIngredientSelect(ingredient);
       }
     },
-    [selectedSet, handleIngredientUnselect, handleIngredientSelect]
+    [
+      selectedSet,
+      tutorialIngredientIds,
+      reportProgress,
+      handleIngredientUnselect,
+      handleIngredientSelect,
+    ]
   );
+
+  const getTutorialIngredientAnchorId = useCallback(
+    (ingredientId: number) => {
+      if (ingredientId === tutorialIngredientIds[0]) {
+        return "picker-ingredient-first" as const;
+      }
+      if (ingredientId === tutorialIngredientIds[1]) {
+        return "picker-ingredient-second" as const;
+      }
+      return null;
+    },
+    [tutorialIngredientIds]
+  );
+
+  useEffect(() => {
+    const [firstIngredient, secondIngredient] = tutorialIngredients;
+    if (firstIngredient) {
+      registerAnchorAction("picker-ingredient-first", () => {
+        toggleIngredient(firstIngredient);
+      });
+    }
+    if (secondIngredient) {
+      registerAnchorAction("picker-ingredient-second", () => {
+        toggleIngredient(secondIngredient);
+      });
+    }
+  }, [registerAnchorAction, toggleIngredient, tutorialIngredients]);
 
   const renderItem = ({ item }: { item: SectionRow }) => {
     if (isLoading || !shouldLoadData) return null;
@@ -170,16 +218,38 @@ export default function IngredientPickScreen() {
         style={item.addBottomGap ? { marginBottom: 20 } : undefined}
       >
         <View className="flex-row justify-between">
-          {item.items.map((ingredient) => (
-            <PickIngredientItem
-              key={ingredient.ingredientId}
-              ingredientId={ingredient.ingredientId}
-              ingredientName={ingredient.ingredientName}
-              ingredientIconId={ingredient.ingredientIconId}
-              isSelected={selectedSet.has(ingredient.ingredientId)}
-              onPress={() => toggleIngredient(ingredient)}
-            />
-          ))}
+          {item.items.map((ingredient) => {
+            const anchorId = getTutorialIngredientAnchorId(
+              ingredient.ingredientId
+            );
+            const ingredientItem = (
+              <PickIngredientItem
+                ingredientId={ingredient.ingredientId}
+                ingredientName={ingredient.ingredientName}
+                ingredientIconId={ingredient.ingredientIconId}
+                isSelected={selectedSet.has(ingredient.ingredientId)}
+                onPress={() => toggleIngredient(ingredient)}
+              />
+            );
+
+            if (!anchorId) {
+              return (
+                <React.Fragment key={ingredient.ingredientId}>
+                  {ingredientItem}
+                </React.Fragment>
+              );
+            }
+
+            return (
+              <TutorialAnchor
+                key={ingredient.ingredientId}
+                id={anchorId}
+                style={{ width: 76, height: 76 }}
+              >
+                {ingredientItem}
+              </TutorialAnchor>
+            );
+          })}
 
           {(() => {
             const emptyCount = Math.max(0, ROW_COUNT - item.items.length);
@@ -218,16 +288,17 @@ export default function IngredientPickScreen() {
           <BasketIcon width={24} height={24} />
         </PressableScale>
 
-        <PressableScale
-          key="custom"
-          onPress={onCustomIngredientButtonPress}
-          hitSlop={4}
-          className="items-center justify-center"
-        >
-          <Text className="text-utility1">
-            {i18n.t("custom_ingredient.button")}
-          </Text>
-        </PressableScale>
+        <TutorialAnchor id="picker-custom">
+          <PressableScale
+            onPress={onCustomIngredientButtonPress}
+            hitSlop={4}
+            className="items-center justify-center"
+          >
+            <Text className="text-utility1">
+              {i18n.t("custom_ingredient.button")}
+            </Text>
+          </PressableScale>
+        </TutorialAnchor>
       </View>,
     ];
   }, [onBasketButtonPress, onCustomIngredientButtonPress]);
@@ -238,14 +309,17 @@ export default function IngredientPickScreen() {
         title={i18n.t("ingredient_pick.title")}
         rightButtonIcons={renderRightButtons()}
       >
-        <View>
+        <TutorialAnchor
+          id="picker-categories"
+          style={{ height: 60 }}
+        >
           <CategoryTabs
             tabs={TABS}
             selectedTabIndex={selectedTabIndex}
             onSelectTabIndex={handleTabSelect}
             className="bg-white w-full"
           />
-        </View>
+        </TutorialAnchor>
 
         <FlashList
           ref={listRef}
