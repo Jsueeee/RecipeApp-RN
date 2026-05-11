@@ -64,6 +64,12 @@ export function TutorialOverlay() {
     currentStep.spotlightHorizontalInset,
     currentStep.spotlightVerticalInset,
   );
+  const anchorCenter = currentAnchorRect
+    ? {
+        x: currentAnchorRect.x + currentAnchorRect.width / 2,
+        y: currentAnchorRect.y + currentAnchorRect.height / 2,
+      }
+    : null;
 
   const charCenterX = charPos.left + CHARACTER_BODY_W / 2;
   const charCenterY = charPos.top + CHARACTER_BODY_H / 2;
@@ -99,22 +105,23 @@ export function TutorialOverlay() {
           <SparkleBurst
             cx={charCenterX}
             cy={charCenterY + 6}
-            count={8}
-            distance={68}
-            durationMs={780}
+            count={10}
+            distance={76}
+            durationMs={860}
             triggerKey={`entrance-${stepIndex}`}
           />
         ) : null}
 
-        {state.phase === "success" && !isLastStep ? (
+        {anchorCenter && state.phase === "success" ? (
           <SparkleBurst
-            cx={charCenterX}
-            cy={charCenterY}
-            count={5}
-            distance={42}
-            durationMs={500}
-            triggerKey={`success-${stepIndex}`}
-            size={18}
+            cx={anchorCenter.x}
+            cy={anchorCenter.y}
+            count={7}
+            distance={54}
+            durationMs={620}
+            triggerKey={`touch-success-${stepIndex}`}
+            size={16}
+            lift={0}
           />
         ) : null}
 

@@ -25,6 +25,7 @@ type Props = {
   durationMs?: number;
   triggerKey: string | number;
   size?: number;
+  lift?: number;
 };
 
 export function SparkleBurst({
@@ -35,6 +36,7 @@ export function SparkleBurst({
   durationMs = 750,
   triggerKey,
   size = SPARKLE_W,
+  lift = 8,
 }: Props) {
   const angles = Array.from({ length: count }).map((_, i) => {
     const baseAngle = (i / count) * Math.PI * 2;
@@ -49,10 +51,12 @@ export function SparkleBurst({
           key={`${triggerKey}-${i}`}
           angle={angle}
           distance={distance + ((i % 3) - 1) * 8}
-          delay={i * 28}
-          durationMs={durationMs}
+          delay={i * 24}
+          durationMs={durationMs + (i % 2) * 80}
           variantIndex={i % SPARKLE_VARIANTS.length}
-          size={size}
+          size={size * (0.82 + (i % 4) * 0.11)}
+          rotateDirection={i % 2 === 0 ? 1 : -1}
+          lift={lift}
         />
       ))}
     </View>
@@ -66,6 +70,8 @@ function Sparkle({
   durationMs,
   variantIndex,
   size,
+  rotateDirection,
+  lift,
 }: {
   angle: number;
   distance: number;
@@ -73,6 +79,8 @@ function Sparkle({
   durationMs: number;
   variantIndex: number;
   size: number;
+  rotateDirection: 1 | -1;
+  lift: number;
 }) {
   const progress = useSharedValue(0);
 
@@ -90,18 +98,19 @@ function Sparkle({
   const animStyle = useAnimatedStyle(() => {
     const t = progress.value;
     const tx = Math.cos(angle) * distance * t;
-    const ty = Math.sin(angle) * distance * t;
-    const grow = t < 0.4 ? t / 0.4 : 1;
-    const fade = t < 0.4 ? 1 : 1 - (t - 0.4) / 0.6;
-    const scale = grow * fade;
+    const ty = Math.sin(angle) * distance * t - lift * t;
+    const grow = t < 0.32 ? t / 0.32 : 1;
+    const fade = t < 0.52 ? 1 : 1 - (t - 0.52) / 0.48;
+    const twinkle = 0.88 + Math.sin(t * Math.PI) * 0.22;
+    const scale = grow * Math.max(0, fade) * twinkle;
     return {
       transform: [
         { translateX: tx - size / 2 },
         { translateY: ty - (size * (SPARKLE_H / SPARKLE_W)) / 2 },
         { scale: Math.max(0, scale) },
-        { rotate: `${t * 220}deg` },
+        { rotate: `${rotateDirection * t * 260}deg` },
       ],
-      opacity: fade,
+      opacity: Math.max(0, fade),
     };
   });
 
