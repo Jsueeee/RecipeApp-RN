@@ -1,3 +1,4 @@
+import { TutorialProvider } from "@/app/tutorial";
 import { queryClient } from "@/app/lib/query/client";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -126,14 +127,15 @@ function RootLayoutNav() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SystemBars style="auto" />
       <BottomSheetModalProvider>
-        <ThemeProvider
-          value={colorScheme.colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <Stack
-            screenOptions={{
-              headerShown: false,
-            }}
+        <TutorialProvider>
+          <ThemeProvider
+            value={colorScheme.colorScheme === "dark" ? DarkTheme : DefaultTheme}
           >
+            <Stack
+              screenOptions={{
+                headerShown: false,
+              }}
+            >
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="(fridge)" options={{ headerShown: false }} />
@@ -158,7 +160,8 @@ function RootLayoutNav() {
             />
             <Stack.Screen name="modal" options={{ presentation: "modal" }} />
           </Stack>
-        </ThemeProvider>
+          </ThemeProvider>
+        </TutorialProvider>
       </BottomSheetModalProvider>
 
       <ToastManager
