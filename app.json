@@ -98,17 +98,22 @@
           "androidAppId": "ca-app-pub-2611426405819679~9602354001",
           "iosAppId": "ca-app-pub-2611426405819679~6618341289"
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/pretendard_regular.otf",
+            "./assets/fonts/pretendard_medium.otf",
+            "./assets/fonts/pretendard_semi_bold.otf",
+            "./assets/fonts/pretendard_bold.otf",
+            "./assets/fonts/cafe_24_ssurround.ttf"
+          ]
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "fonts": {
-      "Pretendard": "./assets/fonts/pretendard_regular.otf",
-      "Pretendard-Medium": "./assets/fonts/pretendard_medium.otf",
-      "Pretendard-SemiBold": "./assets/fonts/pretendard_semi_bold.otf",
-      "Pretendard-Bold": "./assets/fonts/pretendard_bold.otf",
-      "Cafe24Ssurround": "./assets/fonts/cafe_24_ssurround.ttf"
     }
   }
 }
