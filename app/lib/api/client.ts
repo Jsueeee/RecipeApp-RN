@@ -3,6 +3,12 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { router } from "expo-router";
 import { authStorage } from "../storage/auth";
 
+const AUTH_ENDPOINT_PATTERN =
+  /\/users\/(auto-login|kakao-login|google-login|naver-login|apple-login|token-reissue)$/;
+
+const isAuthEndpoint = (url?: string) =>
+  url ? AUTH_ENDPOINT_PATTERN.test(url) : false;
+
 export const apiClient = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_BASE_URL,
   timeout: 30000,
@@ -40,9 +46,8 @@ apiClient.interceptors.response.use(
     }
 
     // 토큰 재발급 요청 자체에서의 에러는 전파 (재발급 무한루프 방지)
-    const isReissueEndpoint = /\/users\/token-reissue/.test(
-      originalConfig.url || "",
-    );
+    const requestUrl = originalConfig.url || "";
+    const isReissueEndpoint = /\/users\/token-reissue/.test(requestUrl);
     if (isReissueEndpoint) {
       return Promise.reject(error);
     }
@@ -56,6 +61,19 @@ apiClient.interceptors.response.use(
 
       // 동시 다발 403 대응: 한 번만 재발급 수행, 나머지는 대기
       try {
+        const refreshToken = await authStorage.getRefreshToken();
+        const userId = await authStorage.getUserId();
+
+        if (!refreshToken || !userId) {
+          await authStorage.clear();
+
+          if (!isAuthEndpoint(requestUrl)) {
+            router.replace("/(auth)");
+          }
+
+          return Promise.reject(error);
+        }
+
         await refreshAccessTokenOnce();
 
         // 최신 토큰으로 헤더 갱신 후 원 요청 재시도
@@ -125,8 +143,6 @@ async function refreshAccessToken(): Promise<void> {
   if (!refreshToken || !userId) {
     await authStorage.clear();
 
-    router.replace("/(auth)");
-
     throw new Error("Missing refresh token or userId");
   }
 
@@ -162,6 +178,7 @@ function refreshAccessTokenOnce(): Promise<void> {
       })
       .finally(() => {
         isRefreshing = false;
+        refreshPromise = null;
       });
   }
   // refreshPromise는 null이 아님을 보장(위에서 설정)

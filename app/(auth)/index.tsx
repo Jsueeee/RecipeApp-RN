@@ -138,7 +138,7 @@ export default function LoginScreen() {
         setIsLoading={setIsLoading}
       />
 
-      <UpdateVersionDialog visible={isShowUpdateDialog} />
+      <UpdateVersionDialog visible={Boolean(isShowUpdateDialog)} />
       <ServerErrorDialog visible={isErrorAppVersion} />
 
       {isLoading && <DotLoadingScreen isShowDim={true} />}

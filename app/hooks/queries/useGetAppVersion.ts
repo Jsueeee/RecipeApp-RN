@@ -3,7 +3,7 @@ import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetAppVersion = () => {
-  const { data, isError } = useQuery({
+  const { data, isError, isLoading } = useQuery({
     queryKey: QUERY_KEYS.APP.VERSION(),
     queryFn: () => apiClient.get("/app/version"),
     select: (data) => data.data,
@@ -14,5 +14,6 @@ export const useGetAppVersion = () => {
   return {
     minimumAppVersion: data?.version,
     isError,
+    isLoading,
   };
 };
