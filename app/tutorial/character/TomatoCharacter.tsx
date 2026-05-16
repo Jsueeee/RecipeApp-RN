@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { StyleSheet } from "react-native";
+import { InteractionManager, StyleSheet } from "react-native";
 import Animated, {
   cancelAnimation,
   Easing,
@@ -25,6 +25,25 @@ import {
   SPRING_SNAPPY,
   tauntBob,
 } from "./characterMotions";
+
+// 화면 전환 + 새 화면 첫 페인트가 끝났음을 가늠해 콜백을 실행한다.
+// Spotlight 와 동일한 패턴: InteractionManager + 2 rAF.
+function scheduleAfterScreenReady(callback: () => void): () => void {
+  let cancelled = false;
+  InteractionManager.runAfterInteractions(() => {
+    if (cancelled) return;
+    requestAnimationFrame(() => {
+      if (cancelled) return;
+      requestAnimationFrame(() => {
+        if (cancelled) return;
+        callback();
+      });
+    });
+  });
+  return () => {
+    cancelled = true;
+  };
+}
 
 export const CHARACTER_BODY_W = 84;
 export const CHARACTER_BODY_H = 78;
@@ -54,30 +73,35 @@ function TomatoCharacterBase({ position, emotion, phase }: Props) {
   const isFirstPositionRef = useRef(true);
 
   useEffect(() => {
-    left.value = withSpring(position.left, SPRING_GLIDE);
-    top.value = withSpring(position.top, SPRING_GLIDE);
+    // 위치 이동(스프링) + lean rotation 은 화면 전환과 첫 렌더가 끝난 뒤 시작한다.
+    // 그동안 추가 측정으로 position 이 갱신되면 cleanup 이 보류분을 취소하고
+    // 새 위치 기준으로 다시 예약된다 — 즉 실제 발동되는 호출은 항상 최신 위치.
+    return scheduleAfterScreenReady(() => {
+      left.value = withSpring(position.left, SPRING_GLIDE);
+      top.value = withSpring(position.top, SPRING_GLIDE);
 
-    if (isFirstPositionRef.current) {
-      isFirstPositionRef.current = false;
+      if (isFirstPositionRef.current) {
+        isFirstPositionRef.current = false;
+        prevPositionRef.current = { left: position.left, top: position.top };
+        return;
+      }
+
+      const dx = position.left - prevPositionRef.current.left;
+      const dy = position.top - prevPositionRef.current.top;
       prevPositionRef.current = { left: position.left, top: position.top };
-      return;
-    }
 
-    const dx = position.left - prevPositionRef.current.left;
-    const dy = position.top - prevPositionRef.current.top;
-    prevPositionRef.current = { left: position.left, top: position.top };
-
-    if (Math.abs(dx) > 30 || Math.abs(dy) > 30) {
-      const leanDeg = Math.max(-14, Math.min(14, dx * 0.07));
-      leanRotation.value = withSequence(
-        withTiming(leanDeg, {
-          duration: 220,
-          easing: Easing.out(Easing.quad),
-        }),
-        withSpring(0, SPRING_LEAN_RETURN),
-      );
-      settleRotation.value = withDelay(450, settleWobble());
-    }
+      if (Math.abs(dx) > 30 || Math.abs(dy) > 30) {
+        const leanDeg = Math.max(-14, Math.min(14, dx * 0.07));
+        leanRotation.value = withSequence(
+          withTiming(leanDeg, {
+            duration: 220,
+            easing: Easing.out(Easing.quad),
+          }),
+          withSpring(0, SPRING_LEAN_RETURN),
+        );
+        settleRotation.value = withDelay(450, settleWobble());
+      }
+    });
   }, [position.left, position.top, left, top, leanRotation, settleRotation]);
 
   // Entrance — drop from above with squash
@@ -87,30 +111,33 @@ function TomatoCharacterBase({ position, emotion, phase }: Props) {
   const entranceOpacity = useSharedValue(0);
 
   useEffect(() => {
-    entranceOpacity.value = withTiming(1, {
-      duration: 220,
-      easing: Easing.out(Easing.quad),
+    // 등장(drop in)도 새 화면이 안정된 뒤에 시작한다.
+    return scheduleAfterScreenReady(() => {
+      entranceOpacity.value = withTiming(1, {
+        duration: 220,
+        easing: Easing.out(Easing.quad),
+      });
+      entranceY.value = withDelay(80, withSpring(0, SPRING_DROP));
+      // Drop landing → squash → settle (compose via sequence)
+      entranceScaleY.value = withDelay(
+        80,
+        withSequence(
+          withTiming(0.6, { duration: 100 }),
+          withTiming(1.15, { duration: 220, easing: Easing.out(Easing.cubic) }),
+          withTiming(0.85, { duration: 110, easing: Easing.in(Easing.quad) }),
+          withSpring(1, SPRING_BOUNCY),
+        ),
+      );
+      entranceScaleX.value = withDelay(
+        80,
+        withSequence(
+          withTiming(1.1, { duration: 100 }),
+          withTiming(0.9, { duration: 220, easing: Easing.out(Easing.cubic) }),
+          withTiming(1.15, { duration: 110, easing: Easing.in(Easing.quad) }),
+          withSpring(1, SPRING_BOUNCY),
+        ),
+      );
     });
-    entranceY.value = withDelay(80, withSpring(0, SPRING_DROP));
-    // Drop landing → squash → settle (compose via sequence)
-    entranceScaleY.value = withDelay(
-      80,
-      withSequence(
-        withTiming(0.6, { duration: 100 }),
-        withTiming(1.15, { duration: 220, easing: Easing.out(Easing.cubic) }),
-        withTiming(0.85, { duration: 110, easing: Easing.in(Easing.quad) }),
-        withSpring(1, SPRING_BOUNCY),
-      ),
-    );
-    entranceScaleX.value = withDelay(
-      80,
-      withSequence(
-        withTiming(1.1, { duration: 100 }),
-        withTiming(0.9, { duration: 220, easing: Easing.out(Easing.cubic) }),
-        withTiming(1.15, { duration: 110, easing: Easing.in(Easing.quad) }),
-        withSpring(1, SPRING_BOUNCY),
-      ),
-    );
   }, [
     entranceOpacity,
     entranceY,
@@ -118,15 +145,20 @@ function TomatoCharacterBase({ position, emotion, phase }: Props) {
     entranceScaleY,
   ]);
 
-  // Idle floating + breath
+  // Idle floating + breath — 화면이 정착한 뒤에 켜야 그 전까지 UI 스레드를 깨끗하게 유지한다.
   const idleY = useSharedValue(0);
   const breathScale = useSharedValue(1);
   useEffect(() => {
-    idleY.value = idleFloat();
-    breathScale.value = idleBreath();
+    const cancel = scheduleAfterScreenReady(() => {
+      idleY.value = idleFloat();
+      breathScale.value = idleBreath();
+    });
     return () => {
+      cancel();
       cancelAnimation(idleY);
       cancelAnimation(breathScale);
+      idleY.value = 0;
+      breathScale.value = 1;
     };
   }, [idleY, breathScale]);
 

@@ -9,7 +9,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { View, type LayoutChangeEvent } from "react-native";
+import {
+  InteractionManager,
+  View,
+  type LayoutChangeEvent,
+} from "react-native";
 import { emitTutorialEvent } from "../engine/analytics";
 import { engineReducer, initialEngineState } from "../engine/reducer";
 import { STEPS } from "../engine/steps";
@@ -193,11 +197,27 @@ export function TutorialProvider({ children }: Props) {
         method,
       });
     }
-    const t = setTimeout(
-      () => dispatch({ type: "EXIT_COMPLETE" }),
-      SUCCESS_DURATION_MS,
-    );
-    return () => clearTimeout(t);
+    let cancelled = false;
+    let interactionHandle: { cancel: () => void } | null = null;
+    const t = setTimeout(() => {
+      if (cancelled) return;
+      // 화면 전환·새 화면의 첫 렌더가 끝난 뒤 다음 스텝으로 넘어가도록 보류.
+      // InteractionManager는 진행 중인 인터랙션(네비게이션 트랜지션 포함)이
+      // 모두 종료된 후 콜백을 실행한다. 한 프레임 더 기다려 다음 화면의
+      // 레이아웃이 안정된 상태로 새 스포트라이트 애니메이션을 시작하게 한다.
+      interactionHandle = InteractionManager.runAfterInteractions(() => {
+        if (cancelled) return;
+        requestAnimationFrame(() => {
+          if (cancelled) return;
+          dispatch({ type: "EXIT_COMPLETE" });
+        });
+      });
+    }, SUCCESS_DURATION_MS);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+      interactionHandle?.cancel();
+    };
   }, [state.phase, state.stepIndex]);
 
   useEffect(() => {
