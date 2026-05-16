@@ -7,7 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.recipe.android.recipeapp",
@@ -107,10 +106,11 @@
             "./assets/fonts/pretendard_medium.otf",
             "./assets/fonts/pretendard_semi_bold.otf",
             "./assets/fonts/pretendard_bold.otf",
-            "./assets/fonts/cafe_24_ssurround.ttf"
+            "./assets/fonts/cafe24.otf"
           ]
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

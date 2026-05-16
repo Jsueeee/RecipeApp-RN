@@ -1,11 +1,11 @@
-import Expo
+internal import Expo
 import RNCKakaoUser
-import NidThirdPartyLogin
+import NaverThirdPartyLogin
 import React
 import ReactAppDependencyProvider
 
-@UIApplicationMain
-public class AppDelegate: ExpoAppDelegate {
+@main
+class AppDelegate: ExpoAppDelegate {
   var window: UIWindow?
 
   var reactNativeDelegate: ExpoReactNativeFactoryDelegate?
@@ -21,7 +21,6 @@ public class AppDelegate: ExpoAppDelegate {
 
     reactNativeDelegate = delegate
     reactNativeFactory = factory
-    bindReactNativeFactory(factory)
 
 #if os(iOS) || os(tvOS)
     window = UIWindow(frame: UIScreen.main.bounds)
@@ -31,7 +30,6 @@ public class AppDelegate: ExpoAppDelegate {
       launchOptions: launchOptions)
 #endif
 
-        NidOAuth.shared.initialize()
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
@@ -42,11 +40,10 @@ public class AppDelegate: ExpoAppDelegate {
     options: [UIApplication.OpenURLOptionsKey: Any] = [:]
   ) -> Bool {
   if(RNCKakaoUserUtil.isKakaoTalkLoginUrl(url)) { return RNCKakaoUserUtil.handleOpen(url) }
-    if (url.scheme == "com.recipe.android.recipeapp" && NidOAuth.shared.handleURL(url)) {
-      
-      return true
-    }
-    return super.application(app, open: url, options: options) || RCTLinkingManager.application(app, open: url, options: options)
+    if (url.scheme == "com.recipe.android.recipeapp") {
+        return NaverThirdPartyLoginConnection.getSharedInstance().application(app, open: url, options: options)
+      }
+      return super.application(app, open: url, options: options) || RCTLinkingManager.application(app, open: url, options: options)
   }
 
   // Universal Links
