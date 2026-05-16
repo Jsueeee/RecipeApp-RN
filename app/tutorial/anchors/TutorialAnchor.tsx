@@ -28,12 +28,14 @@ export function TutorialAnchor({
 }: Props) {
   const ref = useRef<View>(null);
   const {
+    coordinateSpaceVersion,
     currentStep,
     registerAnchor,
     unregisterAnchor,
     reportAnchorTap,
     state,
   } = useTutorial();
+  const isCurrentAnchor = currentStep?.anchorId === id;
 
   const measure = useCallback(() => {
     const node = ref.current;
@@ -47,6 +49,7 @@ export function TutorialAnchor({
   }, [id, registerAnchor]);
 
   useEffect(() => {
+    if (!isCurrentAnchor) return;
     // Late re-measure to catch layout shifts after children (e.g. FlashList,
     // images) finish laying out beyond the initial onLayout pass.
     const timers = [
@@ -57,10 +60,15 @@ export function TutorialAnchor({
       timers.forEach(clearTimeout);
       unregisterAnchor(id);
     };
-  }, [id, measure, unregisterAnchor]);
+  }, [id, isCurrentAnchor, measure, unregisterAnchor]);
 
   useEffect(() => {
-    if (currentStep?.anchorId !== id) return;
+    if (!isCurrentAnchor) return;
+    measure();
+  }, [coordinateSpaceVersion, isCurrentAnchor, measure]);
+
+  useEffect(() => {
+    if (!isCurrentAnchor) return;
     const timers = [
       setTimeout(measure, 0),
       setTimeout(measure, 120),
@@ -70,13 +78,13 @@ export function TutorialAnchor({
     return () => {
       timers.forEach(clearTimeout);
     };
-  }, [currentStep?.anchorId, id, measure, state.phase]);
+  }, [coordinateSpaceVersion, isCurrentAnchor, measure, state.phase]);
 
   return (
     <View
       ref={ref}
       collapsable={false}
-      onLayout={measure}
+      onLayout={isCurrentAnchor ? measure : undefined}
       style={style}
       onTouchEnd={reportTapOnPress ? () => reportAnchorTap(id) : undefined}
     >

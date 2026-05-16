@@ -22,6 +22,11 @@ export function Typewriter({
   const [cursorOn, setCursorOn] = useState(true);
   const cancelRef = useRef(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const revealedRef = useRef(0);
+
+  useEffect(() => {
+    revealedRef.current = revealed;
+  }, [revealed]);
 
   useEffect(() => {
     cancelRef.current = false;
@@ -56,10 +61,16 @@ export function Typewriter({
   }, [active, text, charDelayMs, startDelayMs]);
 
   useEffect(() => {
-    if (!cursor) return;
-    const t = setInterval(() => setCursorOn((p) => !p), 480);
+    if (!cursor || !active) return;
+    const t = setInterval(() => {
+      if (revealedRef.current >= text.length) {
+        clearInterval(t);
+        return;
+      }
+      setCursorOn((p) => !p);
+    }, 480);
     return () => clearInterval(t);
-  }, [cursor]);
+  }, [active, cursor, text.length]);
 
   const showCursor = cursor && revealed < text.length;
 

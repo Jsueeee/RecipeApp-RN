@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { StyleSheet, useWindowDimensions } from "react-native";
 import Animated, {
+  cancelAnimation,
   Easing,
   useAnimatedProps,
   useSharedValue,
@@ -9,12 +10,14 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import Svg, { Defs, Mask, Rect as SvgRect } from "react-native-svg";
+import Svg, { Path as SvgPath, Rect as SvgRect } from "react-native-svg";
 import type { Rect, SpotlightShape } from "../engine/types";
 
+const AnimatedPath = Animated.createAnimatedComponent(SvgPath);
 const AnimatedRect = Animated.createAnimatedComponent(SvgRect);
 
 const SPRING = { damping: 18, stiffness: 140, mass: 1 } as const;
+const POP_SPRING = { damping: 12, stiffness: 220, mass: 1 } as const;
 const BREATH_CYCLE_MS = 1700;
 const RIPPLE_CYCLE_MS = 1350;
 
@@ -26,9 +29,11 @@ type Props = {
   radius?: number;
   dimOpacity?: number;
   ringColor?: string;
+  viewportWidth?: number;
+  viewportHeight?: number;
 };
 
-export function Spotlight({
+function SpotlightBase({
   rect,
   isSuccess = false,
   shape = "rect",
@@ -36,39 +41,64 @@ export function Spotlight({
   radius = 16,
   dimOpacity = 0.62,
   ringColor = "#6FE4C7",
+  viewportWidth,
+  viewportHeight,
 }: Props) {
-  const { width: screenW, height: screenH } = useWindowDimensions();
+  const windowDimensions = useWindowDimensions();
+  const screenW = viewportWidth || windowDimensions.width;
+  const screenH = viewportHeight || windowDimensions.height;
 
   const x = useSharedValue(rect ? rect.x - padding : screenW / 2);
   const y = useSharedValue(rect ? rect.y - padding : screenH / 2);
   const w = useSharedValue(rect ? rect.width + padding * 2 : 0);
   const h = useSharedValue(rect ? rect.height + padding * 2 : 0);
+  const aliveProgress = useSharedValue(0);
+  const isAliveRef = useRef(false);
 
   useEffect(() => {
     if (rect) {
-      x.value = withSpring(rect.x - padding, SPRING);
-      y.value = withSpring(rect.y - padding, SPRING);
-      w.value = withSpring(rect.width + padding * 2, SPRING);
-      h.value = withSpring(rect.height + padding * 2, SPRING);
+      if (!isAliveRef.current) {
+        // 첫 등장: 화면 가운데에서 날아오지 않게 타겟 위치로 즉시 스냅한 뒤
+        // aliveProgress 만 스프링으로 부풀려 그 자리에서 "뿅" 하고 나타나도록.
+        x.value = rect.x - padding;
+        y.value = rect.y - padding;
+        w.value = rect.width + padding * 2;
+        h.value = rect.height + padding * 2;
+        aliveProgress.value = withSpring(1, POP_SPRING);
+        isAliveRef.current = true;
+      } else {
+        // 같은 스텝에서 앵커가 다시 측정된 경우 — 위치만 부드럽게 따라간다.
+        x.value = withSpring(rect.x - padding, SPRING);
+        y.value = withSpring(rect.y - padding, SPRING);
+        w.value = withSpring(rect.width + padding * 2, SPRING);
+        h.value = withSpring(rect.height + padding * 2, SPRING);
+      }
     } else {
-      x.value = withSpring(screenW / 2, SPRING);
-      y.value = withSpring(screenH / 2, SPRING);
-      w.value = withSpring(0, SPRING);
-      h.value = withSpring(0, SPRING);
+      // 역할이 끝나면 그 자리에서 작게 줄어들며 사라지도록
+      // 위치는 그대로 두고 aliveProgress만 0으로 보낸다.
+      aliveProgress.value = withTiming(0, {
+        duration: 240,
+        easing: Easing.in(Easing.quad),
+      });
+      isAliveRef.current = false;
     }
-  }, [rect, padding, screenW, screenH, x, y, w, h]);
+  }, [rect, padding, screenW, screenH, x, y, w, h, aliveProgress]);
 
   const isCircle = shape === "circle";
 
-  const holeProps = useAnimatedProps(() => {
-    const r = isCircle ? Math.max(w.value, h.value) / 2 : radius;
+  const dimProps = useAnimatedProps(() => {
     return {
-      x: x.value,
-      y: y.value,
-      width: w.value,
-      height: h.value,
-      rx: r,
-      ry: r,
+      d: makeDimPath(
+        screenW,
+        screenH,
+        x.value,
+        y.value,
+        w.value,
+        h.value,
+        isCircle,
+        radius,
+        aliveProgress.value,
+      ),
     };
   });
 
@@ -143,6 +173,14 @@ export function Spotlight({
       -1,
       false,
     );
+
+    return () => {
+      cancelAnimation(breathScale);
+      cancelAnimation(glowOpacity);
+      cancelAnimation(outlineOpacity);
+      cancelAnimation(rippleScale);
+      cancelAnimation(rippleOpacity);
+    };
   }, [breathScale, glowOpacity, outlineOpacity, rippleScale, rippleOpacity]);
 
   const glowProps = useAnimatedProps(() =>
@@ -151,8 +189,8 @@ export function Spotlight({
       y.value,
       w.value,
       h.value,
-      breathScale.value,
-      glowOpacity.value,
+      breathScale.value * aliveProgress.value,
+      glowOpacity.value * aliveProgress.value,
       isCircle,
       radius,
     ),
@@ -163,8 +201,8 @@ export function Spotlight({
       y.value,
       w.value,
       h.value,
-      1,
-      outlineOpacity.value,
+      aliveProgress.value,
+      outlineOpacity.value * aliveProgress.value,
       isCircle,
       radius,
     ),
@@ -175,8 +213,8 @@ export function Spotlight({
       y.value,
       w.value,
       h.value,
-      0.992,
-      0.9,
+      0.992 * aliveProgress.value,
+      0.9 * aliveProgress.value,
       isCircle,
       radius,
     ),
@@ -187,8 +225,8 @@ export function Spotlight({
       y.value,
       w.value,
       h.value,
-      rippleScale.value,
-      rippleOpacity.value,
+      rippleScale.value * aliveProgress.value,
+      rippleOpacity.value * aliveProgress.value,
       isCircle,
       radius,
     ),
@@ -230,20 +268,11 @@ export function Spotlight({
       width={screenW}
       height={screenH}
     >
-      <Defs>
-        <Mask id="tutorial-spot">
-          <SvgRect x={0} y={0} width={screenW} height={screenH} fill="white" />
-          <AnimatedRect animatedProps={holeProps} fill="black" />
-        </Mask>
-      </Defs>
-      <SvgRect
-        x={0}
-        y={0}
-        width={screenW}
-        height={screenH}
+      <AnimatedPath
+        animatedProps={dimProps}
         fill="black"
         opacity={dimOpacity}
-        mask="url(#tutorial-spot)"
+        fillRule="evenodd"
       />
       <AnimatedRect
         animatedProps={glowProps}
@@ -277,6 +306,66 @@ export function Spotlight({
       />
     </Svg>
   );
+}
+
+export const Spotlight = React.memo(
+  SpotlightBase,
+  (prev, next) =>
+    prev.isSuccess === next.isSuccess &&
+    prev.shape === next.shape &&
+    prev.padding === next.padding &&
+    prev.radius === next.radius &&
+    prev.dimOpacity === next.dimOpacity &&
+    prev.ringColor === next.ringColor &&
+    prev.viewportWidth === next.viewportWidth &&
+    prev.viewportHeight === next.viewportHeight &&
+    areRectsEqual(prev.rect, next.rect),
+);
+
+function areRectsEqual(a: Rect | null, b: Rect | null): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return (
+    a.x === b.x &&
+    a.y === b.y &&
+    a.width === b.width &&
+    a.height === b.height
+  );
+}
+
+function makeDimPath(
+  screenW: number,
+  screenH: number,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  isCircle: boolean,
+  defaultRadius: number,
+  progress: number,
+) {
+  "worklet";
+  const outer = `M0 0 H${screenW} V${screenH} H0 Z`;
+  const sw = w * progress;
+  const sh = h * progress;
+  if (sw < 4 || sh < 4) {
+    return outer;
+  }
+
+  const cx = x + w / 2;
+  const cy = y + h / 2;
+  const ex = cx - sw / 2;
+  const ey = cy - sh / 2;
+
+  if (isCircle) {
+    const r = Math.max(sw, sh) / 2;
+    return `${outer} M${cx - r} ${cy} A${r} ${r} 0 1 0 ${cx + r} ${cy} A${r} ${r} 0 1 0 ${cx - r} ${cy} Z`;
+  }
+
+  const r = Math.max(0, Math.min(defaultRadius, sw / 2, sh / 2));
+  const right = ex + sw;
+  const bottom = ey + sh;
+  return `${outer} M${ex + r} ${ey} H${right - r} Q${right} ${ey} ${right} ${ey + r} V${bottom - r} Q${right} ${bottom} ${right - r} ${bottom} H${ex + r} Q${ex} ${bottom} ${ex} ${bottom - r} V${ey + r} Q${ex} ${ey} ${ex + r} ${ey} Z`;
 }
 
 function makeRingProps(

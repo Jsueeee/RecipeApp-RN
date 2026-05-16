@@ -7,8 +7,9 @@ import React, {
   useMemo,
   useReducer,
   useRef,
+  useState,
 } from "react";
-import { View } from "react-native";
+import { View, type LayoutChangeEvent } from "react-native";
 import { emitTutorialEvent } from "../engine/analytics";
 import { engineReducer, initialEngineState } from "../engine/reducer";
 import { STEPS } from "../engine/steps";
@@ -29,6 +30,8 @@ export type TutorialContextValue = {
   state: EngineState;
   currentStep: StepConfig | undefined;
   currentAnchorRect: Rect | undefined;
+  coordinateSpaceVersion: number;
+  coordinateSpaceSize: { width: number; height: number };
   registerAnchor: (id: AnchorId, rect: Rect) => void;
   unregisterAnchor: (id: AnchorId) => void;
   reportAnchorTap: (id: AnchorId) => void;
@@ -61,16 +64,31 @@ function isFridgeTabHomeRoute(segments: readonly string[]): boolean {
 
 export function TutorialProvider({ children }: Props) {
   const [state, dispatch] = useReducer(engineReducer, initialEngineState);
+  const [containerLayoutVersion, setContainerLayoutVersion] = useState(0);
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const router = useRouter();
   const segments = useSegments();
   const { status, markCompleted, saveProgress } = useFirstLaunch();
   const lastEmittedStep = useRef<number>(-1);
   const hasRequestedTutorialHome = useRef(false);
+  const containerRef = useRef<View>(null);
+  const containerOriginRef = useRef({ x: 0, y: 0 });
+  const pendingAnchorActionRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   const currentStep = STEPS[state.stepIndex];
   const currentAnchorRect = currentStep?.anchorId
     ? state.anchors[currentStep.anchorId]
     : undefined;
+
+  const clearPendingAnchorAction = useCallback(() => {
+    if (!pendingAnchorActionRef.current) return;
+    clearTimeout(pendingAnchorActionRef.current);
+    pendingAnchorActionRef.current = null;
+  }, []);
+
+  useEffect(() => clearPendingAnchorAction, [clearPendingAnchorAction]);
 
   useEffect(() => {
     if (status !== "should-start") return;
@@ -138,7 +156,8 @@ export function TutorialProvider({ children }: Props) {
       step.trigger.type === "navigation" &&
       segs.includes(step.trigger.segmentMatch)
     ) {
-      dispatch({ type: "NAV_MATCHED", segment: step.trigger.segmentMatch });
+      const { segmentMatch } = step.trigger;
+      dispatch({ type: "NAV_MATCHED", segment: segmentMatch });
       return;
     }
 
@@ -193,15 +212,77 @@ export function TutorialProvider({ children }: Props) {
     emitTutorialEvent({ type: "tutorial_completed" });
   }, [state.phase, markCompleted]);
 
-  const registerAnchor = useCallback((id: AnchorId, rect: Rect) => {
-    dispatch({ type: "ANCHOR_MEASURED", id, rect });
+  const measureContainerOrigin = useCallback(() => {
+    requestAnimationFrame(() => {
+      containerRef.current?.measureInWindow((x, y) => {
+        const prev = containerOriginRef.current;
+        if (Math.abs(prev.x - x) < 0.5 && Math.abs(prev.y - y) < 0.5) {
+          return;
+        }
+        containerOriginRef.current = { x, y };
+        setContainerLayoutVersion((version) => version + 1);
+      });
+    });
   }, []);
+
+  const handleContainerLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const { width, height } = event.nativeEvent.layout;
+      setContainerSize((prev) => {
+        if (
+          Math.abs(prev.width - width) < 0.5 &&
+          Math.abs(prev.height - height) < 0.5
+        ) {
+          return prev;
+        }
+        return { width, height };
+      });
+      measureContainerOrigin();
+    },
+    [measureContainerOrigin],
+  );
+
+  useEffect(() => {
+    const timers = [
+      setTimeout(measureContainerOrigin, 0),
+      setTimeout(measureContainerOrigin, 250),
+      setTimeout(measureContainerOrigin, 700),
+    ];
+    return () => {
+      timers.forEach(clearTimeout);
+    };
+  }, [measureContainerOrigin]);
+
+  const registerAnchor = useCallback(
+    (id: AnchorId, rect: Rect) => {
+      const origin = containerOriginRef.current;
+      dispatch({
+        type: "ANCHOR_MEASURED",
+        id,
+        rect: {
+          ...rect,
+          x: rect.x - origin.x,
+          y: rect.y - origin.y,
+        },
+      });
+    },
+    [],
+  );
   const unregisterAnchor = useCallback((id: AnchorId) => {
     dispatch({ type: "ANCHOR_REMOVED", id });
   }, []);
   const reportAnchorTap = useCallback((id: AnchorId) => {
+    const step = STEPS[state.stepIndex];
+    if (
+      step?.anchorId === id &&
+      (step.trigger.type === "tap-anchor" ||
+        step.trigger.type === "navigation")
+    ) {
+      dispatch({ type: "ANCHOR_TAPPED", id });
+      return;
+    }
     dispatch({ type: "ANCHOR_TAPPED", id });
-  }, []);
+  }, [state.stepIndex]);
 
   const anchorActionsRef = useRef<Partial<Record<AnchorId, () => void>>>({});
   const registerAnchorAction = useCallback(
@@ -212,8 +293,28 @@ export function TutorialProvider({ children }: Props) {
   );
   const triggerAnchorAction = useCallback((id: AnchorId) => {
     const action = anchorActionsRef.current[id];
-    action?.();
-  }, []);
+    if (!action) return;
+
+    const step = STEPS[state.stepIndex];
+    const shouldWaitForTouchAnimation =
+      state.phase === "waiting" &&
+      step?.anchorId === id &&
+      (step.trigger.type === "tap-anchor" ||
+        step.trigger.type === "navigation");
+
+    if (!shouldWaitForTouchAnimation) {
+      action();
+      return;
+    }
+
+    if (pendingAnchorActionRef.current) {
+      clearTimeout(pendingAnchorActionRef.current);
+    }
+    pendingAnchorActionRef.current = setTimeout(() => {
+      pendingAnchorActionRef.current = null;
+      action();
+    }, SUCCESS_DURATION_MS);
+  }, [state.phase, state.stepIndex]);
   const advanceCta = useCallback(() => dispatch({ type: "CTA_PRESSED" }), []);
   const advanceScreenTap = useCallback(
     () => dispatch({ type: "SCREEN_TAPPED" }),
@@ -229,8 +330,9 @@ export function TutorialProvider({ children }: Props) {
   const skip = useCallback(() => {
     const step = STEPS[state.stepIndex];
     if (step) emitTutorialEvent({ type: "tutorial_skipped", atStep: step.id });
+    clearPendingAnchorAction();
     dispatch({ type: "SKIP" });
-  }, [state.stepIndex]);
+  }, [clearPendingAnchorAction, state.stepIndex]);
   const restart = useCallback(() => {
     dispatch({ type: "RESTART" });
     emitTutorialEvent({ type: "tutorial_started" });
@@ -241,6 +343,8 @@ export function TutorialProvider({ children }: Props) {
       state,
       currentStep,
       currentAnchorRect,
+      coordinateSpaceVersion: containerLayoutVersion,
+      coordinateSpaceSize: containerSize,
       registerAnchor,
       unregisterAnchor,
       reportAnchorTap,
@@ -255,6 +359,8 @@ export function TutorialProvider({ children }: Props) {
     }),
     [
       state,
+      containerLayoutVersion,
+      containerSize,
       currentStep,
       currentAnchorRect,
       registerAnchor,
@@ -273,7 +379,12 @@ export function TutorialProvider({ children }: Props) {
 
   return (
     <TutorialContext.Provider value={value}>
-      <View style={{ flex: 1 }}>
+      <View
+        ref={containerRef}
+        collapsable={false}
+        onLayout={handleContainerLayout}
+        style={{ flex: 1 }}
+      >
         {children}
         <TutorialOverlay />
       </View>

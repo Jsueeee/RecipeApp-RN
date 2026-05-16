@@ -6,7 +6,13 @@ import { StyleSheet } from "react-native";
 import { Pressable } from "react-native-gesture-handler";
 
 export function AddIngredientButton() {
-  const { reportAnchorTap, registerAnchorAction } = useTutorial();
+  const {
+    currentStep,
+    reportAnchorTap,
+    registerAnchorAction,
+    state,
+    triggerAnchorAction,
+  } = useTutorial();
 
   const openPicker = useCallback(() => {
     router.push("/(ingredient)/(pick)");
@@ -18,6 +24,13 @@ export function AddIngredientButton() {
 
   const onPress = () => {
     reportAnchorTap("fab-add-ingredient");
+    if (
+      state.phase === "waiting" &&
+      currentStep?.anchorId === "fab-add-ingredient"
+    ) {
+      triggerAnchorAction("fab-add-ingredient");
+      return;
+    }
     openPicker();
   };
 

@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, {
+  cancelAnimation,
   Easing,
+  type SharedValue,
   useAnimatedStyle,
   useSharedValue,
-  withDelay,
   withTiming,
 } from "react-native-reanimated";
 
@@ -38,21 +39,40 @@ export function SparkleBurst({
   size = SPARKLE_W,
   lift = 8,
 }: Props) {
-  const angles = Array.from({ length: count }).map((_, i) => {
-    const baseAngle = (i / count) * Math.PI * 2;
-    const jitter = ((i * 1.7) % 1 - 0.5) * 0.15;
-    return baseAngle + jitter;
-  });
+  const angles = useMemo(
+    () =>
+      Array.from({ length: count }).map((_, i) => {
+        const baseAngle = (i / count) * Math.PI * 2;
+        const jitter = ((i * 1.7) % 1 - 0.5) * 0.15;
+        return baseAngle + jitter;
+      }),
+    [count],
+  );
+  const progress = useSharedValue(0);
+  const totalDurationMs = durationMs + (count - 1) * 24 + 80;
+
+  useEffect(() => {
+    progress.value = 0;
+    progress.value = withTiming(1, {
+      duration: totalDurationMs,
+      easing: Easing.linear,
+    });
+    return () => {
+      cancelAnimation(progress);
+    };
+  }, [progress, totalDurationMs, triggerKey]);
 
   return (
     <View pointerEvents="none" style={[styles.container, { left: cx, top: cy }]}>
       {angles.map((angle, i) => (
         <Sparkle
           key={`${triggerKey}-${i}`}
+          progress={progress}
           angle={angle}
           distance={distance + ((i % 3) - 1) * 8}
           delay={i * 24}
           durationMs={durationMs + (i % 2) * 80}
+          totalDurationMs={totalDurationMs}
           variantIndex={i % SPARKLE_VARIANTS.length}
           size={size * (0.82 + (i % 4) * 0.11)}
           rotateDirection={i % 2 === 0 ? 1 : -1}
@@ -64,39 +84,33 @@ export function SparkleBurst({
 }
 
 function Sparkle({
+  progress,
   angle,
   distance,
   delay,
   durationMs,
+  totalDurationMs,
   variantIndex,
   size,
   rotateDirection,
   lift,
 }: {
+  progress: SharedValue<number>;
   angle: number;
   distance: number;
   delay: number;
   durationMs: number;
+  totalDurationMs: number;
   variantIndex: number;
   size: number;
   rotateDirection: 1 | -1;
   lift: number;
 }) {
-  const progress = useSharedValue(0);
-
-  useEffect(() => {
-    progress.value = 0;
-    progress.value = withDelay(
-      delay,
-      withTiming(1, {
-        duration: durationMs,
-        easing: Easing.out(Easing.cubic),
-      }),
-    );
-  }, [delay, durationMs, progress]);
-
   const animStyle = useAnimatedStyle(() => {
-    const t = progress.value;
+    const elapsedMs = progress.value * totalDurationMs;
+    const rawT = (elapsedMs - delay) / durationMs;
+    const clampedT = Math.min(1, Math.max(0, rawT));
+    const t = 1 - Math.pow(1 - clampedT, 3);
     const tx = Math.cos(angle) * distance * t;
     const ty = Math.sin(angle) * distance * t - lift * t;
     const grow = t < 0.32 ? t / 0.32 : 1;

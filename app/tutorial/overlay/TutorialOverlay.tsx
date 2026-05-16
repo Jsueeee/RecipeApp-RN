@@ -29,6 +29,7 @@ export function TutorialOverlay() {
     state,
     currentStep,
     currentAnchorRect,
+    coordinateSpaceSize,
     advanceCta,
     advanceScreenTap,
     skip,
@@ -36,7 +37,9 @@ export function TutorialOverlay() {
     triggerAnchorAction,
   } = useTutorial();
   const insets = useSafeAreaInsets();
-  const { width: screenW, height: screenH } = useWindowDimensions();
+  const windowDimensions = useWindowDimensions();
+  const screenW = coordinateSpaceSize.width || windowDimensions.width;
+  const screenH = coordinateSpaceSize.height || windowDimensions.height;
 
   const visible = state.phase !== "idle" && state.phase !== "done";
   if (!visible || !currentStep) return null;
@@ -64,6 +67,8 @@ export function TutorialOverlay() {
     currentStep.spotlightHorizontalInset,
     currentStep.spotlightVerticalInset,
   );
+  const activeSpotlightRect =
+    state.phase === "success" ? null : spotlightRect ?? null;
   const anchorCenter = currentAnchorRect
     ? {
         x: currentAnchorRect.x + currentAnchorRect.width / 2,
@@ -92,13 +97,16 @@ export function TutorialOverlay() {
       <Animated.View
         pointerEvents="none"
         entering={FadeIn.duration(280)}
-        style={StyleSheet.absoluteFill}
+        style={[StyleSheet.absoluteFill, styles.visualLayer]}
       >
         <Spotlight
-          rect={spotlightRect ?? null}
+          key={`spotlight-${currentStep.id}`}
+          rect={activeSpotlightRect}
           isSuccess={state.phase === "success"}
           shape={currentStep.spotlightShape}
           padding={currentStep.spotlightPadding}
+          viewportWidth={screenW}
+          viewportHeight={screenH}
         />
 
         {stepIndex === 0 ? (
@@ -195,7 +203,10 @@ export function TutorialOverlay() {
         {proxyAnchorId && currentAnchorRect ? (
           <Pressable
             onPress={() => {
-              if (currentStep.trigger.type === "tap-anchor") {
+              if (
+                currentStep.trigger.type === "tap-anchor" ||
+                currentStep.trigger.type === "navigation"
+              ) {
                 reportAnchorTap(proxyAnchorId);
               }
               triggerAnchorAction(proxyAnchorId);
@@ -370,5 +381,8 @@ const styles = StyleSheet.create({
     left: 24,
     right: 24,
     alignItems: "center",
+  },
+  visualLayer: {
+    overflow: "visible",
   },
 });

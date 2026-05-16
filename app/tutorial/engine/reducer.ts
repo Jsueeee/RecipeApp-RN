@@ -1,5 +1,7 @@
 import { STEPS, TOTAL_STEPS } from "./steps";
-import type { EngineEvent, EngineState } from "./types";
+import type { EngineEvent, EngineState, Rect } from "./types";
+
+const RECT_EPSILON = 0.5;
 
 export const initialEngineState: EngineState = {
   phase: "idle",
@@ -25,13 +27,7 @@ export function engineReducer(
 
     case "ANCHOR_MEASURED": {
       const prev = state.anchors[event.id];
-      if (
-        prev &&
-        prev.x === event.rect.x &&
-        prev.y === event.rect.y &&
-        prev.width === event.rect.width &&
-        prev.height === event.rect.height
-      ) {
+      if (prev && areRectsClose(prev, event.rect)) {
         return state;
       }
       return {
@@ -69,10 +65,13 @@ export function engineReducer(
     case "ANCHOR_TAPPED": {
       if (state.phase !== "waiting") return state;
       const step = STEPS[state.stepIndex];
+      if (!step || step.anchorId !== event.id) return state;
       if (
-        step?.trigger.type !== "tap-anchor" ||
-        step.trigger.anchorId !== event.id
-      ) return state;
+        step.trigger.type !== "tap-anchor" &&
+        step.trigger.type !== "navigation"
+      ) {
+        return state;
+      }
       return { ...state, phase: "success" };
     }
 
@@ -147,4 +146,13 @@ export function engineReducer(
     default:
       return state;
   }
+}
+
+function areRectsClose(a: Rect, b: Rect): boolean {
+  return (
+    Math.abs(a.x - b.x) < RECT_EPSILON &&
+    Math.abs(a.y - b.y) < RECT_EPSILON &&
+    Math.abs(a.width - b.width) < RECT_EPSILON &&
+    Math.abs(a.height - b.height) < RECT_EPSILON
+  );
 }

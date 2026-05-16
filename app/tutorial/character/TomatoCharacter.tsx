@@ -30,7 +30,12 @@ export const CHARACTER_BODY_W = 84;
 export const CHARACTER_BODY_H = 78;
 const SHADOW_W = 58;
 const SHADOW_H = 7;
-const CONTAINER_H = CHARACTER_BODY_H + SHADOW_H + 4;
+const MOTION_PAD_X = 28;
+const MOTION_PAD_TOP = 190;
+const MOTION_PAD_BOTTOM = 112;
+const CONTAINER_W = CHARACTER_BODY_W + MOTION_PAD_X * 2;
+const CONTAINER_H =
+  MOTION_PAD_TOP + CHARACTER_BODY_H + SHADOW_H + MOTION_PAD_BOTTOM;
 
 type Props = {
   position: { left: number; top: number };
@@ -38,7 +43,7 @@ type Props = {
   phase: Phase;
 };
 
-export function TomatoCharacter({ position, emotion, phase }: Props) {
+function TomatoCharacterBase({ position, emotion, phase }: Props) {
   const left = useSharedValue(position.left);
   const top = useSharedValue(position.top);
 
@@ -184,7 +189,10 @@ export function TomatoCharacter({ position, emotion, phase }: Props) {
   }, [phase, successScale, successRotation]);
 
   const containerStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: left.value }, { translateY: top.value }],
+    transform: [
+      { translateX: left.value - MOTION_PAD_X },
+      { translateY: top.value - MOTION_PAD_TOP },
+    ],
   }));
 
   const bodyStyle = useAnimatedStyle(() => {
@@ -225,6 +233,7 @@ export function TomatoCharacter({ position, emotion, phase }: Props) {
     <Animated.View
       pointerEvents="none"
       style={[styles.container, containerStyle]}
+      renderToHardwareTextureAndroid
     >
       <Animated.View style={[styles.shadow, shadowStyle]} />
       <Animated.Image
@@ -236,25 +245,35 @@ export function TomatoCharacter({ position, emotion, phase }: Props) {
   );
 }
 
+export const TomatoCharacter = React.memo(
+  TomatoCharacterBase,
+  (prev, next) =>
+    prev.phase === next.phase &&
+    prev.emotion === next.emotion &&
+    prev.position.left === next.position.left &&
+    prev.position.top === next.position.top,
+);
+
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
     left: 0,
     top: 0,
-    width: CHARACTER_BODY_W,
+    width: CONTAINER_W,
     height: CONTAINER_H,
+    overflow: "visible",
   },
   body: {
     position: "absolute",
-    top: 0,
-    left: 0,
+    top: MOTION_PAD_TOP,
+    left: MOTION_PAD_X,
     width: CHARACTER_BODY_W,
     height: CHARACTER_BODY_H,
   },
   shadow: {
     position: "absolute",
-    bottom: 0,
-    left: (CHARACTER_BODY_W - SHADOW_W) / 2,
+    top: MOTION_PAD_TOP + CHARACTER_BODY_H + 4,
+    left: MOTION_PAD_X + (CHARACTER_BODY_W - SHADOW_W) / 2,
     width: SHADOW_W,
     height: SHADOW_H,
     borderRadius: SHADOW_H / 2,
