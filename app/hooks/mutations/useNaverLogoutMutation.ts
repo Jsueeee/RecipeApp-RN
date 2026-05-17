@@ -1,12 +1,11 @@
 import { queryClient } from "@/app/lib/query/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { authStorage } from "@/app/lib/storage/auth";
-import { MutationCallbacks } from "@/app/types/common/mutation";
 import NaverLogin from "@react-native-seoul/naver-login";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
 
-export const useNaverLogoutMutation = (callbacks?: MutationCallbacks) => {
+export const useNaverLogoutMutation = () => {
   const naverLogoutMutation = useMutation({
     mutationKey: QUERY_KEYS.AUTH.NAVER(),
     mutationFn: async () => {

@@ -381,7 +381,6 @@ export default function RecipeCreateScreen() {
       setInputQuantity(Number(ingredient.quantity));
       setInputIconId(ingredient.ingredientIconId || null);
       setSelectedIngredientIndex(index);
-      console.log("💗 index", index);
       open();
     },
     [open],
