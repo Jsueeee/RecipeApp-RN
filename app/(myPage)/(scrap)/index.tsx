@@ -18,7 +18,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { Linking, View } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import * as Haptics from "expo-haptics";
+import { impactLight } from "@/app/lib/haptics";
 
 export default function MyScrapScreen() {
   const { type } = useLocalSearchParams<{ type: RecipeSourceType }>();
@@ -35,7 +35,7 @@ export default function MyScrapScreen() {
   const { removeScrap: removeYoutubeScrap } = useYoutubeRecipeScrapMutation();
 
   const handleScrapButtonPress = (isScrapped: boolean, recipeId: number) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    impactLight();
 
     switch (selectedTab) {
       case RECIPE_SOURCE_TYPE.BLOG:

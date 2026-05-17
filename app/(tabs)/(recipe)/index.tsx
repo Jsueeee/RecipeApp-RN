@@ -6,7 +6,7 @@ import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { MainTabHeader } from "@/components/MainTabHeader";
 import { NativeAdListItem } from "@/components/NativeAdListItem";
 import i18n from "@/lib/i18n";
-import * as Haptics from "expo-haptics";
+import { impactLight } from "@/app/lib/haptics";
 import { router } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Text, View } from "react-native";
@@ -68,7 +68,7 @@ export default function RecipeScreen() {
   };
 
   const onScrapPress = (recipeId: number, isScrapped: boolean) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    impactLight();
 
     isScrapped ? removeScrap(recipeId) : addScrap(recipeId);
   };

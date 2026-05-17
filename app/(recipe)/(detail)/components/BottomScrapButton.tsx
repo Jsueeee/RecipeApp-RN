@@ -6,7 +6,7 @@ import { CTAButton } from "@/components/CTAButton";
 import i18n from "@/lib/i18n";
 import React from "react";
 import { LayoutChangeEvent } from "react-native";
-import * as Haptics from "expo-haptics";
+import { impactLight } from "@/app/lib/haptics";
 
 interface Props {
   recipeDetail: RecipeDetail | undefined;
@@ -19,7 +19,7 @@ export const BottomScrapButton = ({ recipeDetail, onLayout }: Props) => {
   const onPress = () => {
     if (recipeDetail === undefined) return;
 
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    impactLight();
 
     if (recipeDetail.isScrap) {
       removeScrap(recipeDetail.id);

@@ -5,7 +5,7 @@ import MyPageIcon from "@/assets/images/ic_nav_my_page.svg";
 import RecipeIcon from "@/assets/images/ic_nav_recipe.svg";
 import SearchIcon from "@/assets/images/ic_nav_search.svg";
 import i18n from "@/lib/i18n";
-import * as Haptics from "expo-haptics";
+import { selection as hapticSelection } from "@/app/lib/haptics";
 import { router, Tabs } from "expo-router";
 import React, { useEffect } from "react";
 import {
@@ -47,7 +47,7 @@ const TabBarButton = ({
       android_ripple={null}
       android_disableSound={true}
       onPress={(e) => {
-        Haptics.selectionAsync();
+        hapticSelection();
         props.onPress?.(e);
       }}
       style={[styles.tabBarButton, style]}
@@ -82,7 +82,7 @@ const AnchoredTabBarButton = ({
         android_ripple={null}
         android_disableSound={true}
         onPress={(e) => {
-          Haptics.selectionAsync();
+          hapticSelection();
           props.onPress?.(e);
         }}
         style={styles.tabAnchorButton}

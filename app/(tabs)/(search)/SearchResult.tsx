@@ -14,7 +14,7 @@ import {
 } from "@/constants/RecipeSourceType";
 import i18n from "@/lib/i18n";
 import { FlashList } from "@shopify/flash-list";
-import * as Haptics from "expo-haptics";
+import { impactLight } from "@/app/lib/haptics";
 import { router } from "expo-router";
 import {
   default as React,
@@ -87,7 +87,7 @@ export default function SearchResult({ keyword, className }: Props) {
   }, [recipes?.length]);
 
   const handleScrapButtonPress = (isScrapped: boolean, recipeId: number) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    impactLight();
 
     switch (selectedTab) {
       case RECIPE_SOURCE_TYPE.BLOG:
