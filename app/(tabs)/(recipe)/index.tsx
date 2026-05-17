@@ -8,7 +8,7 @@ import { NativeAdListItem } from "@/components/NativeAdListItem";
 import i18n from "@/lib/i18n";
 import { impactLight } from "@/app/lib/haptics";
 import { router } from "expo-router";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { NativeAd, TestIds } from "react-native-google-mobile-ads";
 import Reanimated, {
@@ -23,6 +23,8 @@ import {
 } from "react-native-safe-area-context";
 import LargeRecipeListItem from "../../(recipe)/components/LargeRecipeListItem";
 import { EmptyRecipeTabPlaceholder } from "./components/EmptyRecipeTabPlaceholder";
+
+const ItemSeparator = () => <View className="h-[1px] mx-4 bg-gray-50" />;
 
 export default function RecipeScreen() {
   const insets = useSafeAreaInsets();
@@ -60,22 +62,24 @@ export default function RecipeScreen() {
     }
   }, [recipes?.length]);
 
-  const onRecipeItemPress = (recipeId: number) => {
+  const onRecipeItemPress = useCallback((recipeId: number) => {
     router.push({
       pathname: "/(recipe)/(detail)",
       params: { id: recipeId },
     });
-  };
+  }, []);
 
-  const onScrapPress = (recipeId: number, isScrapped: boolean) => {
-    impactLight();
+  const onScrapPress = useCallback(
+    (recipeId: number, isScrapped: boolean) => {
+      impactLight();
+      isScrapped ? removeScrap(recipeId) : addScrap(recipeId);
+    },
+    [addScrap, removeScrap]
+  );
 
-    isScrapped ? removeScrap(recipeId) : addScrap(recipeId);
-  };
-
-  const navigateToAddRecipe = () => {
+  const navigateToAddRecipe = useCallback(() => {
     router.push("/(ingredient)/(pick)");
-  };
+  }, []);
 
   const scrollY = useSharedValue(0);
   const onScroll = useAnimatedScrollHandler({
@@ -134,44 +138,47 @@ export default function RecipeScreen() {
     return result;
   }, [recipes, adsLoadedCount]);
 
-  const renderItem = ({ item, index }: { item: ListItem; index: number }) => {
-    if (item.type === "ad") {
-      if (!item.ad) return null;
+  const renderItem = useCallback(
+    ({ item, index }: { item: ListItem; index: number }) => {
+      if (item.type === "ad") {
+        if (!item.ad) return null;
 
+        return (
+          <View
+            style={{
+              height: 164,
+              justifyContent: "center",
+              backgroundColor: "white",
+            }}
+          >
+            <NativeAdListItem nativeAd={item.ad} />
+          </View>
+        );
+      }
+
+      const recipe = item.data;
       return (
-        <View
-          style={{
-            height: 164,
-            justifyContent: "center",
-            backgroundColor: "white",
-          }}
+        <Reanimated.View
+          className={index === 0 ? "bg-background-alternative" : "bg-white"}
         >
-          <NativeAdListItem nativeAd={item.ad} />
-        </View>
+          <LargeRecipeListItem
+            recipeId={recipe.id}
+            title={recipe.title}
+            thumbnail={recipe.thumbnail}
+            description={recipe.description}
+            ingredientMatchRate={recipe.ingredientMatchRate}
+            viewCount={recipe.viewCount}
+            scrapCount={recipe.scrapCount}
+            isScrapped={recipe.isScrapped}
+            onPress={() => onRecipeItemPress(recipe.id)}
+            onScrapPress={() => onScrapPress(recipe.id, recipe.isScrapped)}
+            className={`bg-white ${index === 0 ? "rounded-t-[16px]" : ""}`}
+          />
+        </Reanimated.View>
       );
-    }
-
-    const recipe = item.data;
-    return (
-      <Reanimated.View
-        className={index === 0 ? "bg-background-alternative" : "bg-white"}
-      >
-        <LargeRecipeListItem
-          recipeId={recipe.id}
-          title={recipe.title}
-          thumbnail={recipe.thumbnail}
-          description={recipe.description}
-          ingredientMatchRate={recipe.ingredientMatchRate}
-          viewCount={recipe.viewCount}
-          scrapCount={recipe.scrapCount}
-          isScrapped={recipe.isScrapped}
-          onPress={() => onRecipeItemPress(recipe.id)}
-          onScrapPress={() => onScrapPress(recipe.id, recipe.isScrapped)}
-          className={`bg-white ${index === 0 ? "rounded-t-[16px]" : ""}`}
-        />
-      </Reanimated.View>
-    );
-  };
+    },
+    [onRecipeItemPress, onScrapPress]
+  );
 
   const CountText = () => {
     return (
@@ -204,22 +211,29 @@ export default function RecipeScreen() {
     );
   }, [totalCount]);
 
-  const ListFooterComponent = () =>
-    hasNextPage ? <TealDotLoading className="mb-20" /> : null;
+  const ListFooterComponent = useCallback(
+    () => (hasNextPage ? <TealDotLoading className="mb-20" /> : null),
+    [hasNextPage]
+  );
 
-  const ItemSeparator = () => <View className="h-[1px] mx-4 bg-gray-50" />;
+  const keyExtractor = useCallback(
+    (item: ListItem) =>
+      item.type === "ad" ? item.id : item.data.id.toString(),
+    []
+  );
 
-  const keyExtractor = (item: ListItem) =>
-    item.type === "ad" ? item.id : item.data.id.toString();
-
-  const onEndReached = () => {
+  const onEndReached = useCallback(() => {
     if (hasNextPage) fetchNextPage();
-  };
+  }, [hasNextPage, fetchNextPage]);
 
-  const getItemLayout = (
-    _data: ArrayLike<ListItem> | null | undefined,
-    index: number,
-  ) => ({ length: 164, offset: 164 * index, index });
+  const getItemLayout = useCallback(
+    (_data: ArrayLike<ListItem> | null | undefined, index: number) => ({
+      length: 164,
+      offset: 164 * index,
+      index,
+    }),
+    []
+  );
 
   const renderContent = () => {
     if (isLoading) return <DotLoadingScreen />;
