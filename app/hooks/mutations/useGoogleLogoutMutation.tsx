@@ -1,3 +1,4 @@
+import { queryClient } from "@/app/lib/query/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { authStorage } from "@/app/lib/storage/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
@@ -15,6 +16,7 @@ export const useGoogleLogoutMutation = () => {
       }
 
       await authStorage.clear();
+      queryClient.clear();
     },
     onSuccess: () => {
       router.dismissAll();

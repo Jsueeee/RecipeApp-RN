@@ -14,14 +14,12 @@ export const useAppleLogoutMutation = () => {
     mutationKey: QUERY_KEYS.AUTH.APPLE(),
     mutationFn: async () => {
       try {
-        await queryClient.resetQueries({
-          queryKey: QUERY_KEYS.AUTH.APPLE(),
-        });
-
         await authStorage.clear();
       } catch (error) {
         console.warn("Logout API failed", error);
       }
+
+      queryClient.clear();
     },
     onSuccess: () => {
       router.dismissAll();

@@ -1,3 +1,4 @@
+import { queryClient } from "@/app/lib/query/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { authStorage } from "@/app/lib/storage/auth";
 import { MutationCallbacks } from "@/app/types/common/mutation";
@@ -16,6 +17,7 @@ export const useKaKaoLogoutMutation = (callbacks?: MutationCallbacks) => {
       }
 
       await authStorage.clear();
+      queryClient.clear();
     },
     onSuccess: () => {
       router.dismissAll();
