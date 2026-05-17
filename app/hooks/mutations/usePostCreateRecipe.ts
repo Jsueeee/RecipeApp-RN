@@ -17,10 +17,6 @@ export const usePostCreateRecipe = (callbacks: MutationCallbacks) => {
         queryKey: QUERY_KEYS.RECIPE.MY_LIST(),
       });
 
-      queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.RECIPE.MY_LIST(),
-      });
-
       callbacks.onSuccess?.();
     },
     onError: (error) => {
