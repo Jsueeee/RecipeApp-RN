@@ -100,11 +100,26 @@ apiClient.interceptors.response.use(
   },
 );
 
+// 토큰을 dev 로그에서 마스킹: 앞 6자 + …(<last 4>) 형태
+const maskToken = (raw: unknown): string => {
+  if (typeof raw !== "string" || raw.length === 0) return "undefined";
+  const stripped = raw.replace(/^Bearer\s+/i, "");
+  if (stripped.length <= 12) return "Bearer ***";
+  return `Bearer ${stripped.slice(0, 6)}…${stripped.slice(-4)}`;
+};
+
+const maskHeaders = (headers: unknown) => {
+  if (!headers || typeof headers !== "object") return headers;
+  const clone: Record<string, unknown> = { ...(headers as object) };
+  if (clone.Authorization) clone.Authorization = maskToken(clone.Authorization);
+  if (clone.authorization) clone.authorization = maskToken(clone.authorization);
+  return clone;
+};
+
 // 개발 환경에서만 요청/응답 로깅
 if (process.env.EXPO_PUBLIC_ENV === "dev") {
   apiClient.interceptors.request.use(
     async (config) => {
-      const storedAccessToken = await authStorage.getAccessToken();
       console.log(
         "🚀 API 요청:",
         `\nmethod: ${config.method}`,
@@ -112,10 +127,8 @@ if (process.env.EXPO_PUBLIC_ENV === "dev") {
         `\nurl: ${config.url}`,
         `\ndata: ${JSON.stringify(config.data)}`,
         `\nparams: ${JSON.stringify(config.params)}`,
-        `\nheaders: ${JSON.stringify(config.headers)}`,
-        `\nAuthorization: ${
-          config.headers.Authorization ?? storedAccessToken ?? "undefined"
-        }`,
+        `\nheaders: ${JSON.stringify(maskHeaders(config.headers))}`,
+        `\nAuthorization: ${maskToken(config.headers.Authorization)}`,
       );
       return config;
     },
