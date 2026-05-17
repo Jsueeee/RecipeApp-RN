@@ -79,8 +79,12 @@ const SplashParallax = memo(({ entrance, lift, liftDistance }: Props) => {
     outputRange: [1, 0, 0],
     extrapolate: "clamp",
   });
+  // phase * (v*scale)와 동등하지만 매 호출마다 새 Animated.Value를 생성하지 않는다.
   const mul = (v: number) =>
-    Animated.multiply(phase, new Animated.Value(v * scale));
+    phase.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, v * scale],
+    });
 
   // 등장/페이드 보조 함수
   const appearShift = (start: number) =>
