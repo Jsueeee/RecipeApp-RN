@@ -59,7 +59,7 @@ export default function RootLayout() {
   }, [loaded]);
 
   useEffect(() => {
-    initializeKakaoSDK("3cb89516c27c020802d2b85534cda074");
+    initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY ?? "");
 
     GoogleSignin.configure({
       webClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_WEB_CLIENT_ID,
