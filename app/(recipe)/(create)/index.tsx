@@ -168,38 +168,60 @@ export default function RecipeCreateScreen() {
     checkDraft();
   }, [editRecipeDetailString]); // editRecipeDetail 대신 editRecipeDetailString 사용
 
-  // 임시 저장: 입력 변경 시 저장, 화면 나갈 때(언마운트) 한 번 더 저장
+  // 임시 저장: 입력 변경 시 디바운스 후 저장, 화면 나갈 때(언마운트) 한 번 더 저장.
+  // cleanup에서 매번 saveDraft를 호출하면 디바운스가 무력화되고 unmount 후
+  // 비동기 콜백이 setState를 시도하는 race가 생기므로 두 effect로 분리한다.
+  const latestDraftRef = useRef({
+    title: inputTitleValue,
+    description: inputDescriptionValue,
+    isPublic,
+    selectedCookingLevel,
+    cookingTime,
+    stepInfo,
+    ingredients,
+    image,
+    isEditMode: !!editRecipeDetail,
+  });
+
+  latestDraftRef.current = {
+    title: inputTitleValue,
+    description: inputDescriptionValue,
+    isPublic,
+    selectedCookingLevel,
+    cookingTime,
+    stepInfo,
+    ingredients,
+    image,
+    isEditMode: !!editRecipeDetail,
+  };
+
+  const flushDraftFromRef = () => {
+    const d = latestDraftRef.current;
+    if (d.isEditMode) return;
+    if (
+      d.title.trim() ||
+      d.description.trim() ||
+      d.ingredients.length > 0 ||
+      d.stepInfo.some((step) => step.trim())
+    ) {
+      RecipeDraftStorage.saveDraft({
+        title: d.title,
+        description: d.description,
+        isPublic: d.isPublic,
+        selectedCookingLevel: d.selectedCookingLevel,
+        cookingTime: d.cookingTime,
+        stepInfo: d.stepInfo,
+        ingredients: d.ingredients,
+        thumbnail: d.image,
+      });
+    }
+  };
+
+  // 디바운스 저장 (입력 변경 시 1초 후)
   useEffect(() => {
-    const saveDraft = async () => {
-      // 수정 모드일 경우 임시 저장 하지 않음
-      if (editRecipeDetail) return;
-
-      if (
-        inputTitleValue.trim() ||
-        inputDescriptionValue.trim() ||
-        ingredients.length > 0 ||
-        stepInfo.some((step) => step.trim())
-      ) {
-        await RecipeDraftStorage.saveDraft({
-          title: inputTitleValue,
-          description: inputDescriptionValue,
-          isPublic,
-          selectedCookingLevel,
-          cookingTime,
-          stepInfo,
-          ingredients,
-          thumbnail: image,
-        });
-      }
-    };
-
-    // 디바운스 적용 (1초 후 저장)
-    const timeoutId = setTimeout(saveDraft, 1000);
-    return () => {
-      clearTimeout(timeoutId);
-
-      saveDraft();
-    };
+    if (editRecipeDetail) return;
+    const timeoutId = setTimeout(flushDraftFromRef, 1000);
+    return () => clearTimeout(timeoutId);
   }, [
     inputTitleValue,
     inputDescriptionValue,
@@ -211,6 +233,14 @@ export default function RecipeCreateScreen() {
     image,
     editRecipeDetail,
   ]);
+
+  // 언마운트 시점 1회 마지막 저장
+  useEffect(() => {
+    return () => {
+      flushDraftFromRef();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // 임시 저장 복원
   const restoreDraft = async () => {
