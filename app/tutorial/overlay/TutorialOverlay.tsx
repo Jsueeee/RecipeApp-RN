@@ -23,12 +23,7 @@ import { SpeechBubble } from "../tooltip/SpeechBubble";
 import { Spotlight } from "./Spotlight";
 import { TouchGate } from "./TouchGate";
 
-// 임시 진단용 스위치 — false 면 튜토리얼 오버레이/애니메이션을 통째로 꺼서
-// 화면 전환 스터터가 튜토리얼 때문인지 다른 요인 때문인지 분리해 확인한다.
-const TUTORIAL_ANIMATIONS_ENABLED = true;
-
 export function TutorialOverlay() {
-  if (!TUTORIAL_ANIMATIONS_ENABLED) return null;
   const [skipDialogVisible, setSkipDialogVisible] = useState(false);
   const {
     state,
