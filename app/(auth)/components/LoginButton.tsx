@@ -14,12 +14,14 @@ export enum LoginMethod {
 interface Props {
   method: LoginMethod;
   isOptional?: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }
 
 export const DefaultLoginButton = ({
   method,
   isOptional = false,
+  disabled = false,
   onClick: onPress,
 }: Props) => {
   const getIcon = () => {
@@ -38,6 +40,7 @@ export const DefaultLoginButton = ({
   return (
     <PressableScale
       onPress={onPress}
+      disabled={disabled}
       style={{
         width: "100%",
         padding: 16,
@@ -45,6 +48,7 @@ export const DefaultLoginButton = ({
         borderRadius: 12,
         borderWidth: 1,
         borderColor: isOptional ? "#ECEFED" : "#BFEDE2",
+        opacity: disabled ? 0.6 : 1,
       }}
       pressedStyle={{ backgroundColor: isOptional ? "#F7F8F7" : "#DFF6F0" }}
     >
@@ -71,7 +75,9 @@ export default function LoginButtonColumn({
   onPressOptionalLogin,
   setIsLoading,
 }: LoginButtonColumnProps) {
-  const { handleKakaoLogin, handleGoogleLogin } = useAuth({ setIsLoading });
+  const { handleKakaoLogin, handleGoogleLogin, isAnyAuthPending } = useAuth({
+    setIsLoading,
+  });
 
   // 플랫폼별 설정
   const buttonHeight = 52; // p-4(16*2) + 텍스트(20) = 약 52px // TODO : 텍스트 크기 고정 고려하기
@@ -79,6 +85,7 @@ export default function LoginButtonColumn({
   const totalHeight = 3 * buttonHeight + 2 * gap; // 3개 버튼 + 2개 간격의 고정 높이
 
   const onPressLogin = (loginMethod: LoginMethod) => {
+    if (isAnyAuthPending) return;
     setIsLoading(true);
 
     switch (loginMethod) {
@@ -105,16 +112,19 @@ export default function LoginButtonColumn({
       <View className="w-full gap-3">
         <DefaultLoginButton
           method={LoginMethod.GOOGLE}
+          disabled={isAnyAuthPending}
           onClick={() => onPressLogin(LoginMethod.GOOGLE)}
         />
         <DefaultLoginButton
           method={LoginMethod.KAKAO}
+          disabled={isAnyAuthPending}
           onClick={() => onPressLogin(LoginMethod.KAKAO)}
         />
       </View>
 
       <PressableScale
         onPress={onPressOptionalLogin}
+        disabled={isAnyAuthPending}
         style={{
           paddingHorizontal: 10,
           paddingVertical: 6,

@@ -18,10 +18,13 @@ export const OptionalLoginBottomSheet = ({
   bottomSheetModalRef,
   setIsLoading,
 }: Props) => {
-  const { handleAppleLogin, handleNaverLogin } = useAuth({ setIsLoading });
+  const { handleAppleLogin, handleNaverLogin, isAnyAuthPending } = useAuth({
+    setIsLoading,
+  });
   const isIOS = Platform.OS === "ios";
 
   const onPressLogin = (loginMethod: LoginMethod) => {
+    if (isAnyAuthPending) return;
     setIsLoading(true);
 
     switch (loginMethod) {
@@ -58,6 +61,7 @@ export const OptionalLoginBottomSheet = ({
           <DefaultLoginButton
             method={LoginMethod.APPLE}
             isOptional={true}
+            disabled={isAnyAuthPending}
             onClick={() => onPressLogin(LoginMethod.APPLE)}
           />
         )}
@@ -65,6 +69,7 @@ export const OptionalLoginBottomSheet = ({
         <DefaultLoginButton
           method={LoginMethod.NAVER}
           isOptional={true}
+          disabled={isAnyAuthPending}
           onClick={() => onPressLogin(LoginMethod.NAVER)}
         />
 
