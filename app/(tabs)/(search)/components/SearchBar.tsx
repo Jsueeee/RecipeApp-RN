@@ -25,20 +25,28 @@ export const SearchBar: React.FC<Props> = ({
 }) => {
   const inputRef = useRef<TextInput>(null);
   const isFocused = useIsFocused();
+  const hasAutoFocusedRef = useRef(false);
+  const keywordRef = useRef(keyword);
+  keywordRef.current = keyword;
 
   useEffect(() => {
-    if (keyword.trim()) return; // 검색어 없을 때만
-
-    if (!isFocused) return;
+    // 탭에서 벗어나면 다음 진입 때 다시 포커스할 수 있도록 리셋
+    if (!isFocused) {
+      hasAutoFocusedRef.current = false;
+      return;
+    }
     if (disableAutoFocus) return;
+    if (hasAutoFocusedRef.current) return;
+    if (keywordRef.current.trim()) return; // 검색어 있으면 자동 포커스 스킵
 
+    hasAutoFocusedRef.current = true;
     const timer = setTimeout(() => inputRef.current?.focus(), 300);
 
     return () => {
       clearTimeout(timer);
       inputRef.current?.blur();
     };
-  }, [disableAutoFocus, isFocused, keyword]);
+  }, [disableAutoFocus, isFocused]);
 
   // 키보드 내려올 때
   useEffect(() => {
@@ -46,7 +54,7 @@ export const SearchBar: React.FC<Props> = ({
       "keyboardDidHide",
       () => {
         inputRef.current?.blur();
-      }
+      },
     );
 
     return () => {
