@@ -41,6 +41,11 @@ export default function LoginScreen() {
   const { ref: bottomSheetModalRef, open: openBottomSheetModal } =
     useDefaultBottomSheetModal();
 
+  // 자동 로그인 시도는 마운트 동안 단 1번만 실행되어야 한다.
+  // buttonHeight onLayout / StrictMode 더블 마운트 / 기타 deps 변화에
+  // 의해 중복 실행되면 OAuth/리프레시가 2번 일어날 수 있음.
+  const hasAttemptedAutoLoginRef = useRef(false);
+
   // 1) 처음 진입 시 1초 동안 "스르륵 등장"
   useEffect(() => {
     Animated.timing(entrance, {
@@ -62,6 +67,9 @@ export default function LoginScreen() {
         return;
       }
       if (buttonHeight === 0) return;
+      if (hasAttemptedAutoLoginRef.current) return;
+
+      hasAttemptedAutoLoginRef.current = true;
 
       const isAutoLoginSuccess = await checkAuth();
       if (isAutoLoginSuccess) {
