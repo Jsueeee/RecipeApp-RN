@@ -29,6 +29,10 @@ import { NativeAd, TestIds } from "react-native-google-mobile-ads";
 import SmallRecipeListItem from "../../(recipe)/components/SmallRecipeListItem";
 import { NativeAdListItem } from "@/components/NativeAdListItem";
 
+const ItemSeparator = () => (
+  <View className="w-full h-[1px] bg-line-alternative" />
+);
+
 interface Props {
   keyword: string;
   className?: string;
@@ -86,21 +90,34 @@ export default function SearchResult({ keyword, className }: Props) {
     }
   }, [recipes?.length]);
 
-  const handleScrapButtonPress = (isScrapped: boolean, recipeId: number) => {
-    impactLight();
+  const handleScrapButtonPress = useCallback(
+    (isScrapped: boolean, recipeId: number) => {
+      impactLight();
 
-    switch (selectedTab) {
-      case RECIPE_SOURCE_TYPE.BLOG:
-        isScrapped ? removeBlogScrap(recipeId) : addBlogScrap(recipeId);
-        break;
-      case RECIPE_SOURCE_TYPE.YOUTUBE:
-        isScrapped ? removeYoutubeScrap(recipeId) : addYoutubeScrap(recipeId);
-        break;
-      default:
-        isScrapped ? removePublicScrap(recipeId) : addPublicScrap(recipeId);
-        break;
-    }
-  };
+      switch (selectedTab) {
+        case RECIPE_SOURCE_TYPE.BLOG:
+          isScrapped ? removeBlogScrap(recipeId) : addBlogScrap(recipeId);
+          break;
+        case RECIPE_SOURCE_TYPE.YOUTUBE:
+          isScrapped
+            ? removeYoutubeScrap(recipeId)
+            : addYoutubeScrap(recipeId);
+          break;
+        default:
+          isScrapped ? removePublicScrap(recipeId) : addPublicScrap(recipeId);
+          break;
+      }
+    },
+    [
+      selectedTab,
+      removeBlogScrap,
+      addBlogScrap,
+      removeYoutubeScrap,
+      addYoutubeScrap,
+      removePublicScrap,
+      addPublicScrap,
+    ]
+  );
 
   /**
    * 블로그, 유튜브 레시피 클릭 시 링크 이동
@@ -131,15 +148,10 @@ export default function SearchResult({ keyword, className }: Props) {
     }
   }, [totalCount, hasNextPage, fetchNextPage]);
 
-  const ListFooterComponent = () => {
+  const ListFooterComponent = useCallback(() => {
     if (!hasNextPage || (totalCount ?? 0) < PAGE_SIZE) return null;
-
     return <TealDotLoading className="mb-20" />;
-  };
-
-  const ItemSeparator = () => (
-    <View className="w-full h-[1px] bg-line-alternative" />
-  );
+  }, [hasNextPage, totalCount]);
 
   type ListItem =
     | { type: "recipe"; data: SearchRecipe }
@@ -199,10 +211,13 @@ export default function SearchResult({ keyword, className }: Props) {
     [keyword, handleScrapButtonPress, onRecipePress],
   );
 
-  const keyExtractor = (item: ListItem) =>
-    item.type === "ad"
-      ? item.id
-      : (item.data.recipeId ?? item.data.url).toString();
+  const keyExtractor = useCallback(
+    (item: ListItem) =>
+      item.type === "ad"
+        ? item.id
+        : (item.data.recipeId ?? item.data.url).toString(),
+    []
+  );
 
   const ListHeaderComponent = useMemo(() => {
     return (
@@ -224,15 +239,16 @@ export default function SearchResult({ keyword, className }: Props) {
     );
   }, [totalCount]);
 
-  const ListEmptyComponent = () => {
-    return (
+  const ListEmptyComponent = useCallback(
+    () => (
       <EmptyPlaceholder
         title={i18n.t("search.result_is_empty_title")}
         description={i18n.t("search.result_is_empty_desc")}
         className="flex-1"
       />
-    );
-  };
+    ),
+    []
+  );
 
   const renderContent = () => {
     if (isLoading) return <DotLoadingScreen />;
