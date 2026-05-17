@@ -54,7 +54,16 @@ export default function LoginScreen() {
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
     }).start();
-  }, []);
+
+    // 언마운트 시 진행 중인 모든 애니메이션 정지(StrictMode 더블 마운트 등에서
+    // 이전 애니메이션이 누수로 남는 것을 방지)
+    return () => {
+      entrance.stopAnimation();
+      lift.stopAnimation();
+      buttonSlide.stopAnimation();
+      buttonOpacity.stopAnimation();
+    };
+  }, [entrance, lift, buttonSlide, buttonOpacity]);
 
   // 2) 버전 체크/자동로그인 판별 후 → 실패 시 위로 올리며 버튼 노출
   useEffect(() => {
