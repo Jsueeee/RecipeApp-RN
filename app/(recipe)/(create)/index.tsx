@@ -220,7 +220,7 @@ export default function RecipeCreateScreen() {
       setInputDescriptionValue(draft.description);
       setIsPublic(draft.isPublic);
       setSelectedCookingLevel(draft.selectedCookingLevel);
-      setCookingTime(draft.cookingTime);
+      setCookingTime(draft.cookingTime ?? 0);
       setStepInfo(draft.stepInfo);
       setIngredients(draft.ingredients);
       setImage(draft.thumbnail);
@@ -239,7 +239,7 @@ export default function RecipeCreateScreen() {
     setSelectedCookingLevel(
       mapLevelToCookingLevelLabel(editRecipeDetail.level),
     );
-    setCookingTime(editRecipeDetail.cookingTime || null);
+    setCookingTime(editRecipeDetail.cookingTime ?? 0);
     setStepInfo(
       editRecipeDetail.processes?.map(
         (process: RecipeProcess) => process.description || "",
