@@ -236,7 +236,6 @@ export default function RecipeCreateScreen() {
 
     setInputTitleValue(editRecipeDetail.title);
     setInputDescriptionValue(editRecipeDetail.description || "");
-    setIsPublic(true); // TODO : 서버에서 isHidden 값을 받아오면 수정
     setSelectedCookingLevel(
       mapLevelToCookingLevelLabel(editRecipeDetail.level),
     );
@@ -249,7 +248,8 @@ export default function RecipeCreateScreen() {
     setIngredients(
       mapIngredientsToIngredientWithIndexes(editRecipeDetail.ingredients),
     );
-    setIsPublic(editRecipeDetail.isHidden);
+    // 서버는 isHidden(비공개 여부)으로 내려주므로 UI의 isPublic과 반전
+    setIsPublic(!editRecipeDetail.isHidden);
     setImage(editRecipeDetail.thumbnail || null);
   }, [editRecipeDetail]);
 
@@ -379,7 +379,7 @@ export default function RecipeCreateScreen() {
       introduction: inputDescriptionValue,
       level: selectedCookingLevel as "EASY" | "NORMAL" | "HARD",
       cookingTime: cookingTime || 0,
-      isHidden: isPublic,
+      isHidden: !isPublic,
       thumbnailImgUrl: finalImageUrl || undefined,
       ingredients: ingredients.map((item) => item.ingredient),
       processes: stepInfo
