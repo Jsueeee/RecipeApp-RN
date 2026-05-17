@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
  * 레시피 상세 조회
  */
 export const useRecipeDetailQuery = (recipeId: number) => {
+  const isValidRecipeId = Number.isFinite(recipeId);
   return useQuery({
     queryKey: QUERY_KEYS.RECIPE.DETAIL(recipeId),
     queryFn: async () => {
@@ -17,5 +18,6 @@ export const useRecipeDetailQuery = (recipeId: number) => {
       return response.data;
     },
     select: mapRecipeDetailResponse,
+    enabled: isValidRecipeId,
   });
 };
