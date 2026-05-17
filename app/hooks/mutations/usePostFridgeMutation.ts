@@ -17,8 +17,9 @@ export const usePostFridgeMutation = (callbacks?: MutationCallbacks) => {
         queryKey: QUERY_KEYS.FRIDGE.BASKET(),
       });
 
+      // 냉장고 추가 → 레시피 매칭률 풀이 바뀌므로 전체 RECIPE 갱신
       queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.RECIPE.RECOMMENDED_LIST(),
+        queryKey: QUERY_KEYS.RECIPE.ROOT,
       });
 
       callbacks?.onSuccess?.();

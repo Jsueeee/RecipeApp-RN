@@ -12,6 +12,9 @@ export const useDeleteFridgeMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FRIDGE.FRIDGES() });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.FRIDGE.BASKET() });
+      // 냉장고 삭제 → 안의 재료가 매칭 풀에서 빠지므로 RECIPE 전체 갱신
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.RECIPE.ROOT });
     },
   });
 };
