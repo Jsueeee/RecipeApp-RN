@@ -18,6 +18,8 @@ type Props = {
   showAfterDelayMs?: number;
   charDelayMs?: number;
   containerStyle?: ViewStyle;
+  /** 타이핑이 끝났을 때 1회 호출. */
+  onComplete?: () => void;
 };
 
 /**
@@ -32,6 +34,7 @@ export function SpeechBubble({
   showAfterDelayMs = 0,
   charDelayMs = 28,
   containerStyle,
+  onComplete,
 }: Props) {
   const scale = useSharedValue(0.94);
   const opacity = useSharedValue(0);
@@ -76,6 +79,8 @@ export function SpeechBubble({
         startDelayMs={typewriterStartDelay}
         charDelayMs={charDelayMs}
         cursor
+        haptic
+        onComplete={onComplete}
         style={styles.text}
       />
     </Animated.View>

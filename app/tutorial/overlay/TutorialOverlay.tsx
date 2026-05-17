@@ -1,5 +1,5 @@
 import { ChoiceDialog } from "@/components/ChoiceDialog";
-import * as Haptics from "expo-haptics";
+import { selection as hapticSelection } from "@/app/lib/haptics";
 import React, { useState } from "react";
 import {
   Pressable,
@@ -23,7 +23,12 @@ import { SpeechBubble } from "../tooltip/SpeechBubble";
 import { Spotlight } from "./Spotlight";
 import { TouchGate } from "./TouchGate";
 
+// 임시 진단용 스위치 — false 면 튜토리얼 오버레이/애니메이션을 통째로 꺼서
+// 화면 전환 스터터가 튜토리얼 때문인지 다른 요인 때문인지 분리해 확인한다.
+const TUTORIAL_ANIMATIONS_ENABLED = true;
+
 export function TutorialOverlay() {
+  if (!TUTORIAL_ANIMATIONS_ENABLED) return null;
   const [skipDialogVisible, setSkipDialogVisible] = useState(false);
   const {
     state,
@@ -34,6 +39,7 @@ export function TutorialOverlay() {
     advanceScreenTap,
     skip,
     reportAnchorTap,
+    reportSpeechComplete,
     triggerAnchorAction,
   } = useTutorial();
   const insets = useSafeAreaInsets();
@@ -177,6 +183,7 @@ export function TutorialOverlay() {
               visible={tooltipVisible}
               showAfterDelayMs={350}
               charDelayMs={28}
+              onComplete={() => reportSpeechComplete(stepIndex)}
             />
           </View>
         ) : null}
@@ -193,7 +200,7 @@ export function TutorialOverlay() {
         {advanceOnScreenTap && state.phase === "waiting" ? (
           <Pressable
             onPress={() => {
-              Haptics.selectionAsync().catch(() => {});
+              hapticSelection();
               advanceScreenTap();
             }}
             style={StyleSheet.absoluteFill}
@@ -228,7 +235,7 @@ export function TutorialOverlay() {
           >
             <Pressable
               onPress={() => {
-                Haptics.selectionAsync().catch(() => {});
+                hapticSelection();
                 advanceCta();
               }}
               style={({ pressed }) => [
@@ -243,7 +250,7 @@ export function TutorialOverlay() {
 
         <Pressable
           onPress={() => {
-            Haptics.selectionAsync().catch(() => {});
+            hapticSelection();
             setSkipDialogVisible(true);
           }}
           hitSlop={12}

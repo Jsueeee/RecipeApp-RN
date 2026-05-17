@@ -1,5 +1,5 @@
-import * as Haptics from "expo-haptics";
 import { useRouter, useSegments } from "expo-router";
+import { impactMedium } from "@/app/lib/haptics";
 import React, {
   createContext,
   useCallback,
@@ -30,6 +30,10 @@ const ENTRANCE_DURATION_MS = 600;
 const SUCCESS_DURATION_MS = 700;
 const FIRST_LAUNCH_DELAY_MS = 900;
 
+// auto 트리거에서 타이핑이 끝난 뒤 사용자에게 보장해줄 최소 읽기 시간.
+// 설정된 step.trigger.delayMs 와 비교해 더 긴 쪽을 자동 트리거 시점으로 사용한다.
+const MIN_READ_DWELL_AFTER_TYPING_MS = 450;
+
 export type TutorialContextValue = {
   state: EngineState;
   currentStep: StepConfig | undefined;
@@ -39,6 +43,7 @@ export type TutorialContextValue = {
   registerAnchor: (id: AnchorId, rect: Rect) => void;
   unregisterAnchor: (id: AnchorId) => void;
   reportAnchorTap: (id: AnchorId) => void;
+  reportSpeechComplete: (stepIndex: number) => void;
   registerAnchorAction: (id: AnchorId, action: () => void) => void;
   triggerAnchorAction: (id: AnchorId) => void;
   advanceCta: () => void;
@@ -70,6 +75,12 @@ export function TutorialProvider({ children }: Props) {
   const [state, dispatch] = useReducer(engineReducer, initialEngineState);
   const [containerLayoutVersion, setContainerLayoutVersion] = useState(0);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  // 현재 스텝의 SpeechBubble 타이핑이 완료된 시점을 추적. auto 트리거는 이 신호 + 읽기 여백
+  // 후에 발사돼서 어떤 기기에서도 텍스트가 잘리지 않도록 한다.
+  const [speechCompletedForStep, setSpeechCompletedForStep] = useState<
+    number | null
+  >(null);
+  const waitingStartRef = useRef<number>(0);
   const router = useRouter();
   const segments = useSegments();
   const { status, markCompleted, saveProgress } = useFirstLaunch();
@@ -132,6 +143,14 @@ export function TutorialProvider({ children }: Props) {
     }
   }, [state.phase, state.stepIndex]);
 
+  // waiting 진입 시각을 기록하고, 새 스텝에 들어갈 때마다 speechCompleted 표식을 리셋한다.
+  useEffect(() => {
+    if (state.phase === "waiting") {
+      waitingStartRef.current = Date.now();
+    }
+    setSpeechCompletedForStep(null);
+  }, [state.phase, state.stepIndex]);
+
   useEffect(() => {
     if (state.phase !== "waiting") return;
     const step = STEPS[state.stepIndex];
@@ -141,12 +160,24 @@ export function TutorialProvider({ children }: Props) {
     ) {
       return;
     }
-    const t = setTimeout(
-      () => dispatch({ type: "AUTO_TIMEOUT" }),
-      step.trigger.delayMs,
-    );
+
+    const hasSpeech = Boolean(step.speech);
+    // speech 가 있는 스텝은 타이핑 완료 신호가 올 때까지 트리거 자체를 미룬다.
+    if (hasSpeech && speechCompletedForStep !== state.stepIndex) {
+      return;
+    }
+
+    // speech 없음 OR speech 완료됨 → 발사 시점 계산.
+    // - 설정된 delayMs (waiting 시작 기준의 절대 시각) 를 가능한 한 존중한다
+    // - 단, 타이핑 종료 후 최소 MIN_READ_DWELL_AFTER_TYPING_MS 는 읽을 시간을 보장
+    const elapsed = Date.now() - waitingStartRef.current;
+    const remainingOfConfigured = Math.max(0, step.trigger.delayMs - elapsed);
+    const wait = hasSpeech
+      ? Math.max(remainingOfConfigured, MIN_READ_DWELL_AFTER_TYPING_MS)
+      : step.trigger.delayMs;
+    const t = setTimeout(() => dispatch({ type: "AUTO_TIMEOUT" }), wait);
     return () => clearTimeout(t);
-  }, [state.phase, state.stepIndex]);
+  }, [state.phase, state.stepIndex, speechCompletedForStep]);
 
   useEffect(() => {
     if (state.phase !== "waiting") return;
@@ -174,7 +205,7 @@ export function TutorialProvider({ children }: Props) {
   useEffect(() => {
     if (state.phase !== "success") return;
     const step = STEPS[state.stepIndex];
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    impactMedium();
     if (step) {
       const method = (() => {
         switch (step.trigger.type) {
@@ -303,6 +334,9 @@ export function TutorialProvider({ children }: Props) {
     }
     dispatch({ type: "ANCHOR_TAPPED", id });
   }, [state.stepIndex]);
+  const reportSpeechComplete = useCallback((stepIndex: number) => {
+    setSpeechCompletedForStep(stepIndex);
+  }, []);
 
   const anchorActionsRef = useRef<Partial<Record<AnchorId, () => void>>>({});
   const registerAnchorAction = useCallback(
@@ -368,6 +402,7 @@ export function TutorialProvider({ children }: Props) {
       registerAnchor,
       unregisterAnchor,
       reportAnchorTap,
+      reportSpeechComplete,
       registerAnchorAction,
       triggerAnchorAction,
       advanceCta,
@@ -386,6 +421,7 @@ export function TutorialProvider({ children }: Props) {
       registerAnchor,
       unregisterAnchor,
       reportAnchorTap,
+      reportSpeechComplete,
       registerAnchorAction,
       triggerAnchorAction,
       advanceCta,
