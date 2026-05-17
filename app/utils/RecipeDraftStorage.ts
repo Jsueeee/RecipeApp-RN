@@ -18,6 +18,21 @@ export interface RecipeDraft {
 
 const DRAFT_STORAGE_KEY = "recipe_draft";
 
+const isValidDraft = (value: unknown): value is RecipeDraft => {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  return (
+    typeof v.title === "string" &&
+    typeof v.description === "string" &&
+    typeof v.isPublic === "boolean" &&
+    typeof v.selectedCookingLevel === "string" &&
+    (typeof v.cookingTime === "number" || v.cookingTime === null) &&
+    Array.isArray(v.stepInfo) &&
+    Array.isArray(v.ingredients) &&
+    (typeof v.thumbnail === "string" || v.thumbnail === null)
+  );
+};
+
 export const RecipeDraftStorage = {
   // 임시 저장
   saveDraft: async (draft: Omit<RecipeDraft, "lastSavedAt">) => {
@@ -39,10 +54,15 @@ export const RecipeDraftStorage = {
   loadDraft: async (): Promise<RecipeDraft | null> => {
     try {
       const draftString = await AsyncStorage.getItem(DRAFT_STORAGE_KEY);
-      if (draftString) {
-        return JSON.parse(draftString);
+      if (!draftString) return null;
+
+      const parsed = JSON.parse(draftString);
+      if (!isValidDraft(parsed)) {
+        // 구버전/손상된 draft는 폼이 깨지지 않도록 폐기
+        await AsyncStorage.removeItem(DRAFT_STORAGE_KEY);
+        return null;
       }
-      return null;
+      return parsed;
     } catch (error) {
       console.error("레시피 임시 저장 불러오기 실패:", error);
       return null;
