@@ -4,8 +4,6 @@ import { usePostCreateRecipe } from "@/app/hooks/mutations/usePostCreateRecipe";
 import { useUploadFileMutation } from "@/app/hooks/mutations/useUploadFileMutation";
 import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetModal";
 import { useKeyboardAwareScroll } from "@/app/hooks/useKeyboardAwareScroll";
-import { queryClient } from "@/app/lib/query/client";
-import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { RecipeDetail, RecipeProcess } from "@/app/types/domain/recipe";
 import { RecipeDraftStorage } from "@/app/utils/RecipeDraftStorage";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
@@ -145,14 +143,8 @@ export default function RecipeCreateScreen() {
   });
 
   const { patchRecipe } = usePatchRecipeMutation({
-    onSuccess: async () => {
+    onSuccess: () => {
       router.dismiss();
-
-      if (!editRecipeDetail) return;
-
-      await queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.RECIPE.DETAIL(editRecipeDetail.id),
-      });
     },
     onError: (error) => {
       setIsLoading(false);
