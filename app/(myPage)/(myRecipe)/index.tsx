@@ -9,55 +9,53 @@ import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
-import React from "react";
+import React, { useCallback } from "react";
 import { View } from "react-native";
+
+const ItemSeparator = () => <View className="h-[1px] mx-4 bg-gray-50" />;
+const keyExtractor = (item: RecipeSummary) => item.id.toString();
 
 export default function MyRecipeScreen() {
   const { recipes, isLoading, fetchNextPage, hasNextPage } =
     useMyRecipeListQuery();
 
-  const onRecipeItemPress = (recipeId: number) => {
+  const onRecipeItemPress = useCallback((recipeId: number) => {
     router.push({
       pathname: "/(recipe)/(detail)",
       params: { id: recipeId },
     });
-  };
+  }, []);
 
-  const ListFooterComponent = () =>
-    hasNextPage ? <TealDotLoading className="mb-20" /> : null;
+  const ListFooterComponent = useCallback(
+    () => (hasNextPage ? <TealDotLoading className="mb-20" /> : null),
+    [hasNextPage]
+  );
 
-  const ItemSeparator = () => <View className="h-[1px] mx-4 bg-gray-50" />;
-
-  const keyExtractor = (item: RecipeSummary) => item.id.toString();
-
-  const onEndReached = () => {
+  const onEndReached = useCallback(() => {
     if (hasNextPage) {
       fetchNextPage();
     }
-  };
+  }, [hasNextPage, fetchNextPage]);
 
-  const renderItem = ({
-    item,
-    index,
-  }: {
-    item: RecipeSummary;
-    index: number;
-  }) => (
-    <View className={index === 0 ? "bg-background-alternative " : "bg-white"}>
-      <LargeRecipeListItem
-        recipeId={item.id}
-        title={item.title}
-        thumbnail={item.thumbnail}
-        description={item.description}
-        ingredientMatchRate={item.ingredientMatchRate}
-        viewCount={item.viewCount}
-        scrapCount={item.scrapCount}
-        isScrapped={item.isScrapped}
-        isScrapCountShow={false}
-        onPress={() => onRecipeItemPress(item.id)}
-        className={`bg-white ${index === 0 ? "rounded-t-[16px]" : ""}`}
-      />
-    </View>
+  const renderItem = useCallback(
+    ({ item, index }: { item: RecipeSummary; index: number }) => (
+      <View className={index === 0 ? "bg-background-alternative " : "bg-white"}>
+        <LargeRecipeListItem
+          recipeId={item.id}
+          title={item.title}
+          thumbnail={item.thumbnail}
+          description={item.description}
+          ingredientMatchRate={item.ingredientMatchRate}
+          viewCount={item.viewCount}
+          scrapCount={item.scrapCount}
+          isScrapped={item.isScrapped}
+          isScrapCountShow={false}
+          onPress={() => onRecipeItemPress(item.id)}
+          className={`bg-white ${index === 0 ? "rounded-t-[16px]" : ""}`}
+        />
+      </View>
+    ),
+    [onRecipeItemPress]
   );
 
   const renderContent = () => {
