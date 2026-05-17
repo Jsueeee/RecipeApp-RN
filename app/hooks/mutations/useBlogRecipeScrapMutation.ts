@@ -41,8 +41,8 @@ export const useBlogRecipeScrapMutation = () => {
   });
 
   return {
-    addScrap: addScrap.mutateAsync,
-    removeScrap: removeScrap.mutateAsync,
+    addScrap: addScrap.mutate,
+    removeScrap: removeScrap.mutate,
     isLoading: addScrap.isPending || removeScrap.isPending,
   };
 };
