@@ -85,8 +85,13 @@ apiClient.interceptors.response.use(
 
         return apiClient(originalConfig);
       } catch (refreshError) {
-        // 재발급 실패 시 토큰 정리
+        // 재발급 실패 시 토큰 정리 후 로그인 화면으로 복귀
         await authStorage.clear();
+
+        if (!isAuthEndpoint(requestUrl)) {
+          router.replace("/(auth)");
+        }
+
         return Promise.reject(refreshError);
       }
     }
