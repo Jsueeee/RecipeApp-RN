@@ -12,6 +12,9 @@ export const useAutoLoginMutation = () => {
       );
       return data;
     },
+    onError: (error) => {
+      console.error("🚫 auto-login mutation error:", error);
+    },
   });
 
   return {

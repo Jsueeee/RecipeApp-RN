@@ -18,6 +18,9 @@ export const useUpdateUserMutation = (callbacks?: MutationCallbacks) => {
       });
       callbacks?.onSuccess?.();
     },
+    onError: (error) => {
+      callbacks?.onError?.(error);
+    },
   });
 
   return {
