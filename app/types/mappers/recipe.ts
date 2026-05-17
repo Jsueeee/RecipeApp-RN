@@ -26,7 +26,7 @@ export const mapRecommendedRecipesResponse = (
   response: RecommendedRecipesResponse
 ): RecipeSummaryList => ({
   totalCount: response.totalCnt,
-  recipes: response.recipes.map(mapRecommendedRecipeResponse),
+  recipes: (response.recipes ?? []).map(mapRecommendedRecipeResponse),
 });
 
 const mapRecommendedRecipeResponse = (
@@ -64,8 +64,10 @@ export const mapRecipeDetailResponse = (
   postUserProfileImage: response.postUserProfileImage,
   isReported: response.isReported,
   isHidden: response.isHidden,
-  ingredients: response.recipeIngredients.map(mapRecipeIngredientResponse),
-  processes: response.recipeProcesses.map(mapRecipeProcessResponse),
+  ingredients: (response.recipeIngredients ?? []).map(
+    mapRecipeIngredientResponse
+  ),
+  processes: (response.recipeProcesses ?? []).map(mapRecipeProcessResponse),
 });
 
 const mapRecipeIngredientResponse = (
@@ -91,7 +93,7 @@ export const mapSearchRecipeResponse = (
   response: SearchRecipeResponse
 ): SearchRecipeResult => ({
   totalCnt: response.totalCnt,
-  recipes: response.recipes.map(mapSearchRecipeItemResponse),
+  recipes: (response.recipes ?? []).map(mapSearchRecipeItemResponse),
 });
 
 const mapSearchRecipeItemResponse = (
@@ -113,7 +115,7 @@ export const mapMyRecipesResponse = (
   response: MyRecipesResponse
 ): RecipeSummaryList => ({
   totalCount: response.totalCnt,
-  recipes: response.recipes.map(mapMyRecipeResponse),
+  recipes: (response.recipes ?? []).map(mapMyRecipeResponse),
 });
 
 const mapMyRecipeResponse = (recipe: MyRecipeResponse): RecipeSummary => ({
@@ -134,7 +136,7 @@ export const mapScrapRecipesResponse = (
   response: ScrapRecipesResponse
 ): RecipeSummaryList => ({
   totalCount: response.totalCnt,
-  recipes: response.recipes.map(mapScrapRecipeResponse),
+  recipes: (response.recipes ?? []).map(mapScrapRecipeResponse),
 });
 
 const mapScrapRecipeResponse = (
