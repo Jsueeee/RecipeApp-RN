@@ -80,7 +80,7 @@ export default {
     all_view: "전체 보기",
     scrap_blog_title: "블로그",
     scrap_youtube_title: "유튜브",
-    scrap_recipe_title: "추천",
+    scrap_recipe_title: "공개 레시피",
 
     my_recipe_title: "나만의 레시피",
     my_recipe_empty_placeholder: "나만의 레시피가 없어요",
