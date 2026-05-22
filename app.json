@@ -12,7 +12,11 @@
       "bundleIdentifier": "com.recipe.android.recipeapp",
       "googleServicesFile": "./GoogleService-Info.plist",
       "appleTeamId": "S7TUXRR3LP",
-      "usesAppleSignIn": true
+      "usesAppleSignIn": true,
+      "buildNumber": "2",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "레시피 사진을 선택하기 위해 사진 보관함 접근 권한이 필요합니다."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -20,7 +24,12 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.recipe.android.recipeapp",
-      "googleServicesFile": "./google-services.json"
+      "versionCode": 2,
+      "googleServicesFile": "./google-services.json",
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -37,7 +46,18 @@
             "extraMavenRepos": [
               "https://devrepo.kakao.com/nexus/content/groups/public/"
             ]
+          },
+          "ios": {
+            "useFrameworks": "static"
           }
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "레시피 사진을 선택하기 위해 사진 보관함 접근 권한이 필요합니다.",
+          "cameraPermission": false,
+          "microphonePermission": false
         }
       ],
       [
@@ -61,7 +81,6 @@
           }
         }
       ],
-      ["react-native-edge-to-edge"],
       ["@react-native-google-signin/google-signin"],
       [
         "@react-native-seoul/naver-login",
@@ -82,15 +101,6 @@
         }
       ],
       ["expo-apple-authentication"],
-      "react-native-google-mobile-ads",
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "useFrameworks": "static"
-          }
-        }
-      ],
       [
         "react-native-google-mobile-ads",
         {
