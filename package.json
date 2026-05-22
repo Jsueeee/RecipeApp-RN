@@ -4,11 +4,15 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "ENV=dev expo start",
-    "prod": "ENV=prod expo start",
+    "prod": "node scripts/with-env.js .env.prod expo start",
     "android:dev": "ENV=dev expo run:android",
-    "android:prod": "ENV=prod expo run:android",
+    "android:prod": "node scripts/with-env.js .env.prod expo run:android --variant release",
     "ios:dev": "ENV=dev expo run:ios",
-    "ios:prod": "ENV=prod expo run:ios",
+    "ios:prod": "node scripts/with-env.js .env.prod expo run:ios --configuration Release",
+    "android:release": "node scripts/with-env.js .env.prod expo run:android --variant release",
+    "ios:release": "node scripts/with-env.js .env.prod expo run:ios --configuration Release",
+    "typecheck": "tsc --noEmit",
+    "doctor": "npx expo-doctor",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "android": "expo run:android",
@@ -16,6 +20,13 @@
   },
   "jest": {
     "preset": "jest-expo"
+  },
+  "expo": {
+    "doctor": {
+      "appConfigFieldsNotSyncedCheck": {
+        "enabled": false
+      }
+    }
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -32,7 +43,7 @@
     "axios": "^1.8.4",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "expo": "~55.0.25",
+    "expo": "~55.0.26",
     "expo-apple-authentication": "~55.0.13",
     "expo-build-properties": "~55.0.14",
     "expo-constants": "~55.0.16",
@@ -43,7 +54,7 @@
     "expo-linear-gradient": "~55.0.14",
     "expo-linking": "~55.0.15",
     "expo-localization": "~55.0.15",
-    "expo-router": "~55.0.15",
+    "expo-router": "~55.0.16",
     "expo-secure-store": "~55.0.14",
     "expo-splash-screen": "~55.0.21",
     "expo-status-bar": "~55.0.6",
