@@ -28,13 +28,13 @@ import Animated, {
 } from "react-native-reanimated";
 
 interface Props {
-  bottomSheetModalRef: React.RefObject<BottomSheetModal>;
+  bottomSheetModalRef: React.RefObject<BottomSheetModal | null>;
   openBottomSheet: () => void;
   onDismiss: () => void;
   isEditMode: boolean;
-  inputNameRef: React.RefObject<TextInput>;
+  inputNameRef: React.RefObject<TextInput | null>;
   inputNameValue: string;
-  inputUnitRef: React.RefObject<TextInput>;
+  inputUnitRef: React.RefObject<TextInput | null>;
   inputUnitValue: string;
   inputQuantity: number;
   inputIconId: number | null;

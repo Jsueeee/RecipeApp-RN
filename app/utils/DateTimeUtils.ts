@@ -1,4 +1,4 @@
-import { format, parse } from "date-fns";
+import { format } from "date-fns";
 
 /**
  * 주로 재료의 유통기한 표시 시 사용
@@ -15,8 +15,6 @@ export const convertDateString = (
   inputPattern: string = "yyyy-MM-dd"
 ): string => {
   try {
-    console.log("dateStr", dateStr);
-
     const date = new Date(dateStr);
     return format(date, outputPattern);
   } catch (e) {

@@ -12,8 +12,6 @@ export const useRecommendedRecipesQuery = () => {
       queryKey: QUERY_KEYS.RECIPE.RECOMMENDED_LIST(),
       initialPageParam: 0,
       queryFn: async ({ pageParam = 0 }) => {
-      console.log("pageParam", pageParam);
-
         const response = await apiClient.get<RecommendedRecipesResponse>(
           "/recipes/fridges-recommendation",
           {
@@ -29,7 +27,7 @@ export const useRecommendedRecipesQuery = () => {
       getNextPageParam: (lastPage, allPages) => {
         if (lastPage.recipes.length === 0) return undefined;
 
-      return lastPage.recipes[lastPage.recipes.length - 1].recipeId;
+        return lastPage.recipes[lastPage.recipes.length - 1].recipeId;
       },
       select: (data) => {
         const combinedResponse: RecommendedRecipesResponse = {

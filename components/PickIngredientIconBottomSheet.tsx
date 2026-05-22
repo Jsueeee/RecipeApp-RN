@@ -9,7 +9,7 @@ import DefaultBottomSheetModal from "./DefaultBottomSheetModal";
 import { IngredientIconGrid } from "./IngredientIconSectionGrid";
 
 interface Props {
-  bottomSheetModalRef: React.RefObject<BottomSheetModal>;
+  bottomSheetModalRef: React.RefObject<BottomSheetModal | null>;
   onIconSelected: (iconId: number | null) => void;
 }
 

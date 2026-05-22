@@ -154,7 +154,7 @@ export default function SearchScreen() {
             ) : (
               <SearchKeywords
                 recentKeywords={recentSearches}
-                popularKeywords={popularKeywords}
+                popularKeywords={popularKeywords ?? []}
                 onKeywordPress={(keyword) => {
                   animateOnFocus();
                   setKeyword(keyword);

@@ -9,13 +9,6 @@ export const getCurrentAppVersion = (): string => {
 };
 
 /**
- * 버전 문자열을 숫자로 변환합니다.
- * 예: "1.2.3" -> 123
- */
-export const parseVersionToNumber = (version: string): number =>
-  Number(version.replace(/\./g, ""));
-
-/**
  * 두 버전을 비교합니다.
  * @param currentVersion 현재 버전
  * @param minimumVersion 최소 요구 버전
@@ -25,10 +18,19 @@ export const isVersionGreaterOrEqual = (
   currentVersion: string,
   minimumVersion: string
 ): boolean => {
-  const current = parseVersionToNumber(currentVersion);
-  const minimum = parseVersionToNumber(minimumVersion);
+  const current = currentVersion.split(".").map((value) => Number(value) || 0);
+  const minimum = minimumVersion.split(".").map((value) => Number(value) || 0);
+  const length = Math.max(current.length, minimum.length);
 
-  return current >= minimum;
+  for (let index = 0; index < length; index++) {
+    const currentPart = current[index] ?? 0;
+    const minimumPart = minimum[index] ?? 0;
+
+    if (currentPart > minimumPart) return true;
+    if (currentPart < minimumPart) return false;
+  }
+
+  return true;
 };
 
 /**
