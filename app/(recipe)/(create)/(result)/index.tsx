@@ -1,3 +1,4 @@
+import { getNativeAdUnitId } from "@/app/lib/ads/adUnits";
 import { useMyRecipeListQuery } from "@/app/hooks/queries/useMyRecipeListQuery";
 import { CTAButton } from "@/components/CTAButton";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
@@ -12,12 +13,12 @@ import {
   NativeAsset,
   NativeAssetType,
   NativeMediaView,
-  TestIds,
 } from "react-native-google-mobile-ads";
 
 export default function CreateRecipeResultScreen() {
   const nativeAdRef = useRef<NativeAd | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [adLoadFinished, setAdLoadFinished] = useState(false);
+  const [animationStarted, setAnimationStarted] = useState(false);
 
   const anim1 = useRef(new Animated.Value(0)).current;
   const anim2 = useRef(new Animated.Value(0)).current;
@@ -26,7 +27,9 @@ export default function CreateRecipeResultScreen() {
   const { recipes, totalCount, isLoading } = useMyRecipeListQuery();
 
   useEffect(() => {
-    if (loaded) {
+    if (!isLoading && !animationStarted) {
+      setAnimationStarted(true);
+
       Animated.stagger(200, [
         Animated.timing(anim1, {
           toValue: 1,
@@ -45,7 +48,7 @@ export default function CreateRecipeResultScreen() {
         }),
       ]).start();
     }
-  }, [loaded]);
+  }, [isLoading, animationStarted]);
 
   const getAnimStyle = (anim: Animated.Value) => ({
     opacity: anim,
@@ -63,17 +66,27 @@ export default function CreateRecipeResultScreen() {
     let isMounted = true;
 
     const loadAd = async () => {
+      const adUnitId = getNativeAdUnitId();
+
+      if (!adUnitId) {
+        setAdLoadFinished(true);
+        return;
+      }
+
       try {
-        const ad = await NativeAd.createForAdRequest(TestIds.NATIVE, {
+        const ad = await NativeAd.createForAdRequest(adUnitId, {
           requestNonPersonalizedAdsOnly: true,
         });
 
         if (isMounted) {
           nativeAdRef.current = ad;
-          setLoaded(true);
         }
       } catch (error) {
         console.error("Ad load failed", error);
+      } finally {
+        if (isMounted) {
+          setAdLoadFinished(true);
+        }
       }
     };
 
@@ -81,6 +94,7 @@ export default function CreateRecipeResultScreen() {
 
     return () => {
       isMounted = false;
+      nativeAdRef.current?.destroy();
     };
   }, []);
 
@@ -96,63 +110,65 @@ export default function CreateRecipeResultScreen() {
 
   return (
     <ScreenLayout onBackClick={router.back}>
-      {nativeAd && loaded && !isLoading ? (
+      {!isLoading ? (
         <>
-          <NativeAdView
-            nativeAd={nativeAd}
-            style={{
-              width: "100%",
-              backgroundColor: "white",
-              alignContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <View className="px-4 py-5 h-[450px] gap-4">
-              <View className="w-full max-w-[384px] rounded-[12px] bg-gray-50 overflow-hidden mr-4 items-center">
-                <NativeMediaView
-                  resizeMode="cover"
-                  style={{ width: "100%", aspectRatio: 4 / 3 }}
-                />
-              </View>
+          {nativeAd && adLoadFinished ? (
+            <NativeAdView
+              nativeAd={nativeAd}
+              style={{
+                width: "100%",
+                backgroundColor: "white",
+                alignContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <View className="px-4 py-5 h-[450px] gap-4">
+                <View className="w-full max-w-[384px] rounded-[12px] bg-gray-50 overflow-hidden mr-4 items-center">
+                  <NativeMediaView
+                    resizeMode="cover"
+                    style={{ width: "100%", aspectRatio: 4 / 3 }}
+                  />
+                </View>
 
-              <View className="justify-between gap-4 px-4">
-                <View>
-                  <View className="flex-row items-center gap-2 mb-1">
-                    <View className="bg-gray-100 px-1.5 py-0.5 rounded">
-                      <Text className="text-[10px] font-bold text-gray-500">
-                        AD
-                      </Text>
+                <View className="justify-between gap-4 px-4">
+                  <View>
+                    <View className="flex-row items-center gap-2 mb-1">
+                      <View className="bg-gray-100 px-1.5 py-0.5 rounded">
+                        <Text className="text-[10px] font-bold text-gray-500">
+                          AD
+                        </Text>
+                      </View>
+                      <NativeAsset assetType={NativeAssetType.HEADLINE}>
+                        <Text
+                          className="text-base font-bold text-gray-900"
+                          numberOfLines={1}
+                        >
+                          {nativeAd.headline}
+                        </Text>
+                      </NativeAsset>
                     </View>
-                    <NativeAsset assetType={NativeAssetType.HEADLINE}>
+
+                    <NativeAsset assetType={NativeAssetType.BODY}>
                       <Text
-                        className="text-base font-bold text-gray-900"
-                        numberOfLines={1}
+                        className="text-body4 text-text-assistive"
+                        numberOfLines={2}
                       >
-                        {nativeAd.headline}
+                        {nativeAd.body}
                       </Text>
                     </NativeAsset>
                   </View>
 
-                  <NativeAsset assetType={NativeAssetType.BODY}>
-                    <Text
-                      className="text-body4 text-text-assistive"
-                      numberOfLines={2}
-                    >
-                      {nativeAd.body}
-                    </Text>
-                  </NativeAsset>
+                  {/* <NativeAsset assetType={NativeAssetType.CALL_TO_ACTION}>
+                    <TouchableOpacity className="bg-fill-normal px-3 py-2 rounded-[8px] self-end">
+                      <Text className="text-caption1 font-bold text-white">
+                        {nativeAd.callToAction}
+                      </Text>
+                    </TouchableOpacity>
+                  </NativeAsset> */}
                 </View>
-
-                {/* <NativeAsset assetType={NativeAssetType.CALL_TO_ACTION}>
-                  <TouchableOpacity className="bg-fill-normal px-3 py-2 rounded-[8px] self-end">
-                    <Text className="text-caption1 font-bold text-white">
-                      {nativeAd.callToAction}
-                    </Text>
-                  </TouchableOpacity>
-                </NativeAsset> */}
               </View>
-            </View>
-          </NativeAdView>
+            </NativeAdView>
+          ) : null}
 
           <Animated.Text
             className="text-heading1 text-text-normal self-center"

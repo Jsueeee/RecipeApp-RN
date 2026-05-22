@@ -1,5 +1,12 @@
 import { TutorialProvider } from "@/app/tutorial";
 import { queryClient } from "@/app/lib/query/client";
+import {
+  googleLoginWebClientId,
+  kakaoNativeAppKey,
+  naverLoginClientId,
+  naverLoginClientSecret,
+  validatePublicEnv,
+} from "@/app/lib/config/env";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
@@ -59,25 +66,27 @@ export default function RootLayout() {
   }, [loaded]);
 
   useEffect(() => {
-    initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY ?? "");
+    validatePublicEnv();
+
+    initializeKakaoSDK(kakaoNativeAppKey);
 
     GoogleSignin.configure({
-      webClientId: process.env.EXPO_PUBLIC_GOOGLE_LOGIN_WEB_CLIENT_ID,
+      webClientId: googleLoginWebClientId,
       scopes: ["email", "profile"],
       offlineAccess: true,
     });
 
     NaverLogin.initialize({
       appName: "레시피 저장소",
-      consumerKey: process.env.EXPO_PUBLIC_NAVER_LOGIN_CLIENT_ID ?? "",
-      consumerSecret: process.env.EXPO_PUBLIC_NAVER_LOGIN_CLIENT_SECRET ?? "",
+      consumerKey: naverLoginClientId,
+      consumerSecret: naverLoginClientSecret,
       serviceUrlSchemeIOS: "com.recipe.android.recipeapp",
       disableNaverAppAuthIOS: true,
     });
 
     mobileAds()
       .setRequestConfiguration({
-        testDeviceIdentifiers: ["EMULATOR"],
+        testDeviceIdentifiers: __DEV__ ? ["EMULATOR"] : [],
       })
       .then(() => {
         mobileAds().initialize();

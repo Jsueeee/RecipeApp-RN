@@ -1,5 +1,6 @@
 import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMutation";
 import { useRecommendedRecipesQuery } from "@/app/hooks/queries/useRecommendedRecipesQuery";
+import { getNativeAdUnitId } from "@/app/lib/ads/adUnits";
 import { RecipeSummary } from "@/app/types/domain/recipe";
 import { TealDotLoading } from "@/components/DotLoading";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
@@ -10,7 +11,7 @@ import { impactLight } from "@/app/lib/haptics";
 import { router } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Text, View } from "react-native";
-import { NativeAd, TestIds } from "react-native-google-mobile-ads";
+import { NativeAd } from "react-native-google-mobile-ads";
 import Reanimated, {
   interpolate,
   useAnimatedScrollHandler,
@@ -48,9 +49,13 @@ export default function RecipeScreen() {
 
     if (adsNeeded > currentAds) {
       const loadAds = async () => {
+        const adUnitId = getNativeAdUnitId();
+
+        if (!adUnitId) return;
+
         for (let i = currentAds; i < adsNeeded; i++) {
           try {
-            const ad = await NativeAd.createForAdRequest(TestIds.NATIVE);
+            const ad = await NativeAd.createForAdRequest(adUnitId);
             adsCache.current.push(ad);
             setAdsLoadedCount((prev) => prev + 1);
           } catch (e) {
@@ -61,6 +66,13 @@ export default function RecipeScreen() {
       loadAds();
     }
   }, [recipes?.length]);
+
+  useEffect(() => {
+    return () => {
+      adsCache.current.forEach((ad) => ad.destroy());
+      adsCache.current = [];
+    };
+  }, []);
 
   const onRecipeItemPress = useCallback((recipeId: number) => {
     router.push({

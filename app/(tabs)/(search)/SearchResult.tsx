@@ -2,6 +2,7 @@ import { useBlogRecipeScrapMutation } from "@/app/hooks/mutations/useBlogRecipeS
 import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMutation";
 import { useYoutubeRecipeScrapMutation } from "@/app/hooks/mutations/useYoutubeRecipeScrapMutation";
 import { useSearchRecipesQuery } from "@/app/hooks/queries/useSearchRecipeQuery";
+import { getNativeAdUnitId } from "@/app/lib/ads/adUnits";
 import { TutorialAnchor } from "@/app/tutorial";
 import { SearchRecipe } from "@/app/types/domain/recipe";
 import { TealDotLoading } from "@/components/DotLoading";
@@ -25,7 +26,7 @@ import {
   useState,
 } from "react";
 import { Linking, Text, View } from "react-native";
-import { NativeAd, TestIds } from "react-native-google-mobile-ads";
+import { NativeAd } from "react-native-google-mobile-ads";
 import SmallRecipeListItem from "../../(recipe)/components/SmallRecipeListItem";
 import { NativeAdListItem } from "@/components/NativeAdListItem";
 
@@ -76,9 +77,13 @@ export default function SearchResult({ keyword, className }: Props) {
 
     if (adsNeeded > currentAds) {
       const loadAds = async () => {
+        const adUnitId = getNativeAdUnitId();
+
+        if (!adUnitId) return;
+
         for (let i = currentAds; i < adsNeeded; i++) {
           try {
-            const ad = await NativeAd.createForAdRequest(TestIds.NATIVE);
+            const ad = await NativeAd.createForAdRequest(adUnitId);
             adsCache.current.push(ad);
             setAdsLoadedCount((prev) => prev + 1);
           } catch (e) {
@@ -89,6 +94,13 @@ export default function SearchResult({ keyword, className }: Props) {
       loadAds();
     }
   }, [recipes?.length]);
+
+  useEffect(() => {
+    return () => {
+      adsCache.current.forEach((ad) => ad.destroy());
+      adsCache.current = [];
+    };
+  }, []);
 
   const handleScrapButtonPress = useCallback(
     (isScrapped: boolean, recipeId: number) => {

@@ -1,4 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
+import { isProdEnv } from "../config/env";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -7,7 +8,7 @@ export const queryClient = new QueryClient({
       retry: 1,
       refetchOnWindowFocus: false,
 
-      ...(process.env.EXPO_PUBLIC_ENV === "dev" && {
+      ...(!isProdEnv && {
         onError: (error: any) => {
           console.error("Query Error:", error);
         },

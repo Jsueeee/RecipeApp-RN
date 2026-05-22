@@ -1,6 +1,7 @@
 import type { ReissueTokenResponse } from "@/app/types/api/auth";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { router } from "expo-router";
+import { apiBaseUrl, isProdEnv } from "../config/env";
 import { authStorage } from "../storage/auth";
 
 const AUTH_ENDPOINT_PATTERN =
@@ -10,7 +11,7 @@ const isAuthEndpoint = (url?: string) =>
   url ? AUTH_ENDPOINT_PATTERN.test(url) : false;
 
 export const apiClient = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_BASE_URL,
+  baseURL: apiBaseUrl,
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
@@ -117,7 +118,7 @@ const maskHeaders = (headers: unknown) => {
 };
 
 // 개발 환경에서만 요청/응답 로깅
-if (process.env.EXPO_PUBLIC_ENV === "dev") {
+if (!isProdEnv) {
   apiClient.interceptors.request.use(
     async (config) => {
       console.log(
@@ -166,7 +167,7 @@ async function refreshAccessToken(): Promise<void> {
 
   // 인터셉터 영향을 받지 않는 전용 클라이언트로 호출
   const plainClient = axios.create({
-    baseURL: process.env.EXPO_PUBLIC_API_BASE_URL,
+    baseURL: apiBaseUrl,
     timeout: 30000,
     headers: { "Content-Type": "application/json" },
   });
