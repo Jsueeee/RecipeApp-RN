@@ -48,7 +48,8 @@
             ]
           },
           "ios": {
-            "useFrameworks": "static"
+            "useFrameworks": "static",
+            "buildReactNativeFromSource": true
           }
         }
       ],
