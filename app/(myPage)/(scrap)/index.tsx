@@ -15,6 +15,7 @@ import {
 } from "@/constants/RecipeSourceType";
 import i18n from "@/lib/i18n";
 import { router, useLocalSearchParams } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
 import React, { useCallback, useState } from "react";
 import { Linking, View } from "react-native";
 import { FlashList } from "@shopify/flash-list";
@@ -57,6 +58,12 @@ export default function MyScrapScreen() {
   const onRecipeItemPress = (recipe: RecipeSummary) => {
     switch (selectedTab) {
       case RECIPE_SOURCE_TYPE.BLOG:
+        if (recipe.linkUrl) {
+          WebBrowser.openBrowserAsync(recipe.linkUrl).catch((error) => {
+            console.error("블로그 링크 열기 실패:", error);
+          });
+        }
+        break;
       case RECIPE_SOURCE_TYPE.YOUTUBE:
         if (recipe.linkUrl) {
           Linking.openURL(recipe.linkUrl);

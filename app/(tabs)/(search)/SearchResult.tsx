@@ -17,6 +17,7 @@ import i18n from "@/lib/i18n";
 import { FlashList } from "@shopify/flash-list";
 import { impactLight } from "@/app/lib/haptics";
 import { router } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
 import {
   default as React,
   useCallback,
@@ -139,6 +140,12 @@ export default function SearchResult({ keyword, className }: Props) {
     (recipe: SearchRecipe) => {
       switch (selectedTab) {
         case RECIPE_SOURCE_TYPE.BLOG:
+          if (recipe.url) {
+            WebBrowser.openBrowserAsync(recipe.url).catch((error) => {
+              console.error("블로그 링크 열기 실패:", error);
+            });
+          }
+          break;
         case RECIPE_SOURCE_TYPE.YOUTUBE:
           if (recipe.url) {
             Linking.openURL(recipe.url);
