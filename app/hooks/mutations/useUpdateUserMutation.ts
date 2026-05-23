@@ -16,6 +16,10 @@ export const useUpdateUserMutation = (callbacks?: MutationCallbacks) => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.USER.INFO(),
       });
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.RECIPE.ROOT,
+        refetchType: "none",
+      });
       callbacks?.onSuccess?.();
     },
     onError: (error) => {
