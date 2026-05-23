@@ -112,9 +112,7 @@ export default function SearchResult({ keyword, className }: Props) {
           isScrapped ? removeBlogScrap(recipeId) : addBlogScrap(recipeId);
           break;
         case RECIPE_SOURCE_TYPE.YOUTUBE:
-          isScrapped
-            ? removeYoutubeScrap(recipeId)
-            : addYoutubeScrap(recipeId);
+          isScrapped ? removeYoutubeScrap(recipeId) : addYoutubeScrap(recipeId);
           break;
         default:
           isScrapped ? removePublicScrap(recipeId) : addPublicScrap(recipeId);
@@ -129,7 +127,7 @@ export default function SearchResult({ keyword, className }: Props) {
       addYoutubeScrap,
       removePublicScrap,
       addPublicScrap,
-    ]
+    ],
   );
 
   /**
@@ -216,6 +214,7 @@ export default function SearchResult({ keyword, className }: Props) {
           keyword={keyword}
           recipeId={data.recipeId}
           title={data.title}
+          description={data.description ?? undefined}
           thumbnail={data.thumbnail}
           postUserName={data.postUserName}
           postDate={data.postDate}
@@ -235,7 +234,7 @@ export default function SearchResult({ keyword, className }: Props) {
       item.type === "ad"
         ? item.id
         : (item.data.recipeId ?? item.data.url).toString(),
-    []
+    [],
   );
 
   const ListHeaderComponent = useMemo(() => {
@@ -266,7 +265,7 @@ export default function SearchResult({ keyword, className }: Props) {
         className="flex-1"
       />
     ),
-    []
+    [],
   );
 
   const renderContent = () => {

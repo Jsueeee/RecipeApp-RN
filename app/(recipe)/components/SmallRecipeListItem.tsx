@@ -7,6 +7,7 @@ interface Props {
   keyword?: string;
   recipeId: number;
   title: string;
+  description?: string;
   thumbnail: string | null;
   postUserName: string | null;
   postDate: string | null;
@@ -24,6 +25,7 @@ const SmallRecipeListItem = ({
   keyword,
   recipeId,
   title,
+  description,
   thumbnail,
   postUserName,
   postDate,
@@ -68,7 +70,7 @@ const SmallRecipeListItem = ({
               {highlightKeyword(title)}
             </Text>
 
-            <View className="flex-row mt-1 flex-1">
+            <View className="flex-row mt-1 ">
               {postUserName && (
                 <Text
                   className="text-body4 text-text-assistive flex-shrink"
@@ -92,6 +94,16 @@ const SmallRecipeListItem = ({
                 </Text>
               )}
             </View>
+
+            {description && (
+              <Text
+                className="text-body4 text-text-alternative mt-1"
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {description}
+              </Text>
+            )}
           </View>
 
           <View className="flex-1" />

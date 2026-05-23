@@ -25,7 +25,7 @@ export default function MyScrapScreen() {
   const { type } = useLocalSearchParams<{ type: RecipeSourceType }>();
 
   const [selectedTab, setSelectedTab] = useState<RecipeSourceType>(
-    type ? (type as RecipeSourceType) : RECIPE_SOURCE_TYPE.BLOG
+    type ? (type as RecipeSourceType) : RECIPE_SOURCE_TYPE.BLOG,
   );
 
   const { recipes, isLoading, fetchNextPage, hasNextPage } =
@@ -96,6 +96,7 @@ export default function MyScrapScreen() {
         <SmallRecipeListItem
           recipeId={item.id}
           title={item.title}
+          description={item.description ?? undefined}
           thumbnail={item.thumbnail}
           postUserName={item.postUserName ?? null}
           postDate={item.postDate}
@@ -107,7 +108,7 @@ export default function MyScrapScreen() {
         />
       </View>
     ),
-    [handleScrapButtonPress, onRecipeItemPress]
+    [handleScrapButtonPress, onRecipeItemPress],
   );
 
   const renderContent = () => {
