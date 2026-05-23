@@ -1,5 +1,4 @@
 import { useDeleteAccountMutation } from "@/app/hooks/mutations/useDeleteAccountMutation";
-import { authStorage } from "@/app/lib/storage/auth";
 import { CTAButton } from "@/components/CTAButton";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
@@ -12,12 +11,10 @@ import { DeleteAccountReasonOptions } from "./components/DeleteAccountReasonOpti
 export default function DeleteAccountConfirmScreen() {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
-  const { deleteAccount } = useDeleteAccountMutation({
+  const { deleteAccount, isLoading } = useDeleteAccountMutation({
     onSuccess: () => {
-      authStorage.clear().then(() => {
-        router.dismissAll();
-        router.replace("/(setting)/(delete-account)/(success)"); // 탈퇴 성공 화면으로 이동
-      });
+      router.dismissAll();
+      router.replace("/(setting)/(delete-account)/(success)"); // 탈퇴 성공 화면으로 이동
     },
     onError: () => {
       Toast.error(i18n.t("delete_account_confirm.error"));
@@ -33,7 +30,7 @@ export default function DeleteAccountConfirmScreen() {
 
     deleteAccount({
       withdrawalReason: selectedOptionText,
-    });
+    }).catch(() => undefined);
   };
 
   return (
@@ -43,7 +40,8 @@ export default function DeleteAccountConfirmScreen() {
       footer={
         <CTAButton
           buttonLabel={i18n.t("delete_account_confirm.cta")}
-          disabled={selectedOption === null}
+          disabled={selectedOption === null || isLoading}
+          isLoading={isLoading}
           onPress={onCTAButtonPress}
           className="px-4 pb-[22px] mt-3"
         />

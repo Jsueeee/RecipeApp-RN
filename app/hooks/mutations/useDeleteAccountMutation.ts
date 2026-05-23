@@ -1,5 +1,6 @@
 import { apiClient } from "@/app/lib/api/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
+import { authStorage } from "@/app/lib/storage/auth";
 import { RequestDeleteAccount } from "@/app/types/api/user";
 import { MutationCallbacks } from "@/app/types/common/mutation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -13,12 +14,13 @@ export const useDeleteAccountMutation = (callbacks?: MutationCallbacks) => {
       const response = await apiClient.delete(`/users`, {
         data: params,
       });
+
+      await authStorage.clear();
+      queryClient.clear();
+
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.USER.DELETE_ACCOUNT(),
-      });
       callbacks?.onSuccess?.();
     },
     onError: (error) => {
