@@ -1,5 +1,6 @@
 import { useRouter, useSegments } from "expo-router";
 import { impactMedium } from "@/app/lib/haptics";
+import { useFridgesQuery } from "@/app/hooks/queries/useFridgeQuery";
 import React, {
   createContext,
   useCallback,
@@ -9,20 +10,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  InteractionManager,
-  View,
-  type LayoutChangeEvent,
-} from "react-native";
+import { InteractionManager, View, type LayoutChangeEvent } from "react-native";
 import { emitTutorialEvent } from "../engine/analytics";
 import { engineReducer, initialEngineState } from "../engine/reducer";
 import { STEPS } from "../engine/steps";
-import type {
-  AnchorId,
-  EngineState,
-  Rect,
-  StepConfig,
-} from "../engine/types";
+import type { AnchorId, EngineState, Rect, StepConfig } from "../engine/types";
 import { TutorialOverlay } from "../overlay/TutorialOverlay";
 import { useFirstLaunch } from "./useFirstLaunch";
 
@@ -83,7 +75,26 @@ export function TutorialProvider({ children }: Props) {
   const waitingStartRef = useRef<number>(0);
   const router = useRouter();
   const segments = useSegments();
-  const { status, markCompleted, saveProgress } = useFirstLaunch();
+  const { status, resumeStepIndex, markCompleted, saveProgress } =
+    useFirstLaunch();
+
+  const shouldCheckEmptyFridge =
+    status === "should-start" &&
+    resumeStepIndex === null &&
+    Boolean(segments) &&
+    !isAuthRoute(segments as readonly string[]);
+
+  const { fridges } = useFridgesQuery({ enabled: shouldCheckEmptyFridge });
+
+  const hasNoFridgeIngredients = useMemo(
+    () =>
+      fridges?.every((category) => category.ingredients.length === 0) ?? false,
+    [fridges],
+  );
+  const shouldStartTutorial =
+    status === "should-start" &&
+    (resumeStepIndex !== null || hasNoFridgeIngredients);
+
   const lastEmittedStep = useRef<number>(-1);
   const hasRequestedTutorialHome = useRef(false);
   const containerRef = useRef<View>(null);
@@ -106,7 +117,7 @@ export function TutorialProvider({ children }: Props) {
   useEffect(() => clearPendingAnchorAction, [clearPendingAnchorAction]);
 
   useEffect(() => {
-    if (status !== "should-start") return;
+    if (!shouldStartTutorial) return;
     if (state.hasStarted) return;
     if (!segments) return;
     if (!isFridgeTabHomeRoute(segments)) {
@@ -122,7 +133,7 @@ export function TutorialProvider({ children }: Props) {
       emitTutorialEvent({ type: "tutorial_started" });
     }, FIRST_LAUNCH_DELAY_MS);
     return () => clearTimeout(t);
-  }, [router, status, segments, state.hasStarted]);
+  }, [router, shouldStartTutorial, segments, state.hasStarted]);
 
   useEffect(() => {
     if (state.phase !== "entering") return;
@@ -153,11 +164,10 @@ export function TutorialProvider({ children }: Props) {
 
   useEffect(() => {
     if (state.phase !== "waiting") return;
+
     const step = STEPS[state.stepIndex];
-    if (
-      step?.trigger.type !== "auto" &&
-      step?.trigger.type !== "auto-or-tap"
-    ) {
+
+    if (step?.trigger.type !== "auto" && step?.trigger.type !== "auto-or-tap") {
       return;
     }
 
@@ -176,6 +186,7 @@ export function TutorialProvider({ children }: Props) {
       ? Math.max(remainingOfConfigured, MIN_READ_DWELL_AFTER_TYPING_MS)
       : step.trigger.delayMs;
     const t = setTimeout(() => dispatch({ type: "AUTO_TIMEOUT" }), wait);
+
     return () => clearTimeout(t);
   }, [state.phase, state.stepIndex, speechCompletedForStep]);
 
@@ -193,6 +204,7 @@ export function TutorialProvider({ children }: Props) {
     ) {
       const { segmentMatch } = step.trigger;
       dispatch({ type: "NAV_MATCHED", segment: segmentMatch });
+
       return;
     }
 
@@ -304,36 +316,38 @@ export function TutorialProvider({ children }: Props) {
     };
   }, [measureContainerOrigin]);
 
-  const registerAnchor = useCallback(
-    (id: AnchorId, rect: Rect) => {
-      const origin = containerOriginRef.current;
-      dispatch({
-        type: "ANCHOR_MEASURED",
-        id,
-        rect: {
-          ...rect,
-          x: rect.x - origin.x,
-          y: rect.y - origin.y,
-        },
-      });
-    },
-    [],
-  );
+  const registerAnchor = useCallback((id: AnchorId, rect: Rect) => {
+    const origin = containerOriginRef.current;
+    dispatch({
+      type: "ANCHOR_MEASURED",
+      id,
+      rect: {
+        ...rect,
+        x: rect.x - origin.x,
+        y: rect.y - origin.y,
+      },
+    });
+  }, []);
+
   const unregisterAnchor = useCallback((id: AnchorId) => {
     dispatch({ type: "ANCHOR_REMOVED", id });
   }, []);
-  const reportAnchorTap = useCallback((id: AnchorId) => {
-    const step = STEPS[state.stepIndex];
-    if (
-      step?.anchorId === id &&
-      (step.trigger.type === "tap-anchor" ||
-        step.trigger.type === "navigation")
-    ) {
+
+  const reportAnchorTap = useCallback(
+    (id: AnchorId) => {
+      const step = STEPS[state.stepIndex];
+      if (
+        step?.anchorId === id &&
+        (step.trigger.type === "tap-anchor" ||
+          step.trigger.type === "navigation")
+      ) {
+        dispatch({ type: "ANCHOR_TAPPED", id });
+        return;
+      }
       dispatch({ type: "ANCHOR_TAPPED", id });
-      return;
-    }
-    dispatch({ type: "ANCHOR_TAPPED", id });
-  }, [state.stepIndex]);
+    },
+    [state.stepIndex],
+  );
   const reportSpeechComplete = useCallback((stepIndex: number) => {
     setSpeechCompletedForStep(stepIndex);
   }, []);
@@ -345,42 +359,51 @@ export function TutorialProvider({ children }: Props) {
     },
     [],
   );
-  const triggerAnchorAction = useCallback((id: AnchorId) => {
-    const action = anchorActionsRef.current[id];
-    if (!action) return;
 
-    const step = STEPS[state.stepIndex];
-    const shouldWaitForTouchAnimation =
-      state.phase === "waiting" &&
-      step?.anchorId === id &&
-      (step.trigger.type === "tap-anchor" ||
-        step.trigger.type === "navigation");
+  const triggerAnchorAction = useCallback(
+    (id: AnchorId) => {
+      const action = anchorActionsRef.current[id];
+      if (!action) return;
 
-    if (!shouldWaitForTouchAnimation) {
-      action();
-      return;
-    }
+      const step = STEPS[state.stepIndex];
+      const shouldWaitForTouchAnimation =
+        state.phase === "waiting" &&
+        step?.anchorId === id &&
+        (step.trigger.type === "tap-anchor" ||
+          step.trigger.type === "navigation");
 
-    if (pendingAnchorActionRef.current) {
-      clearTimeout(pendingAnchorActionRef.current);
-    }
-    pendingAnchorActionRef.current = setTimeout(() => {
-      pendingAnchorActionRef.current = null;
-      action();
-    }, SUCCESS_DURATION_MS);
-  }, [state.phase, state.stepIndex]);
+      if (!shouldWaitForTouchAnimation) {
+        action();
+        return;
+      }
+
+      if (pendingAnchorActionRef.current) {
+        clearTimeout(pendingAnchorActionRef.current);
+      }
+      pendingAnchorActionRef.current = setTimeout(() => {
+        pendingAnchorActionRef.current = null;
+        action();
+      }, SUCCESS_DURATION_MS);
+    },
+    [state.phase, state.stepIndex],
+  );
+
   const advanceCta = useCallback(() => dispatch({ type: "CTA_PRESSED" }), []);
+
   const advanceScreenTap = useCallback(
     () => dispatch({ type: "SCREEN_TAPPED" }),
     [],
   );
+
   const reportSheetDismiss = useCallback(
     () => dispatch({ type: "SHEET_DISMISSED" }),
     [],
   );
+
   const reportProgress = useCallback((key: string) => {
     dispatch({ type: "PROGRESS_REPORTED", key });
   }, []);
+
   const skip = useCallback(() => {
     const step = STEPS[state.stepIndex];
     if (step) emitTutorialEvent({ type: "tutorial_skipped", atStep: step.id });

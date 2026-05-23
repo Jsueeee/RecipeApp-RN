@@ -5,7 +5,11 @@ import { Fridges } from "@/app/types/domain/fridge";
 import { mapFridgesResponse } from "@/app/types/mappers/fridge";
 import { useQuery } from "@tanstack/react-query";
 
-export const useFridgesQuery = () => {
+type UseFridgesQueryOptions = {
+  enabled?: boolean;
+};
+
+export const useFridgesQuery = (options?: UseFridgesQueryOptions) => {
   const { data, isLoading, isError } = useQuery<
     FridgesResponse,
     Error,
@@ -17,6 +21,7 @@ export const useFridgesQuery = () => {
       return response.data;
     },
     select: mapFridgesResponse,
+    enabled: options?.enabled ?? true,
   });
 
   return {
