@@ -9,7 +9,13 @@ import { NativeAdListItem } from "@/components/NativeAdListItem";
 import i18n from "@/lib/i18n";
 import { impactLight } from "@/app/lib/haptics";
 import { router } from "expo-router";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Text, View } from "react-native";
 import { NativeAd } from "react-native-google-mobile-ads";
 import Reanimated, {
@@ -86,7 +92,7 @@ export default function RecipeScreen() {
       impactLight();
       isScrapped ? removeScrap(recipeId) : addScrap(recipeId);
     },
-    [addScrap, removeScrap]
+    [addScrap, removeScrap],
   );
 
   const navigateToAddRecipe = useCallback(() => {
@@ -189,7 +195,7 @@ export default function RecipeScreen() {
         </Reanimated.View>
       );
     },
-    [onRecipeItemPress, onScrapPress]
+    [onRecipeItemPress, onScrapPress],
   );
 
   const CountText = () => {
@@ -225,13 +231,13 @@ export default function RecipeScreen() {
 
   const ListFooterComponent = useCallback(
     () => (hasNextPage ? <TealDotLoading className="mb-20" /> : null),
-    [hasNextPage]
+    [hasNextPage],
   );
 
   const keyExtractor = useCallback(
     (item: ListItem) =>
       item.type === "ad" ? item.id : item.data.id.toString(),
-    []
+    [],
   );
 
   const onEndReached = useCallback(() => {
@@ -244,7 +250,7 @@ export default function RecipeScreen() {
       offset: 164 * index,
       index,
     }),
-    []
+    [],
   );
 
   const renderContent = () => {
