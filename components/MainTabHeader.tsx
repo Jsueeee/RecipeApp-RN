@@ -1,4 +1,4 @@
-import { MainTab } from "@/app/(tabs)/MainTab";
+import { MainTab } from "@/constants/MainTab";
 import i18n from "@/lib/i18n";
 import React from "react";
 import { Platform, Text, View } from "react-native";
