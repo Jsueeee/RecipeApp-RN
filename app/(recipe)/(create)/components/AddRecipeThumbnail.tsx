@@ -1,6 +1,7 @@
 import IC_CAMERA from "@/assets/images/ic_camera.svg";
+import { optimizeRecipeThumbnail } from "@/app/utils/RecipeImageUtils";
 import * as ImagePicker from "expo-image-picker";
-import React from "react";
+import React, { useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
 
 interface Props {
@@ -9,16 +10,32 @@ interface Props {
 }
 
 export const AddRecipeThumbnail = ({ image, setImage }: Props) => {
+  const [isPreparingImage, setIsPreparingImage] = useState(false);
+
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
+    if (isPreparingImage) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: false,
       aspect: [1, 1],
-      quality: 0.1,
+      quality: 1,
     });
 
     if (!result.canceled && result.assets[0]) {
-      setImage(result.assets[0].uri);
+      const asset = result.assets[0];
+
+      setIsPreparingImage(true);
+
+      try {
+        const optimizedUri = await optimizeRecipeThumbnail(asset);
+        setImage(optimizedUri);
+      } catch (error) {
+        console.error("레시피 이미지 최적화 실패:", error);
+        setImage(asset.uri);
+      } finally {
+        setIsPreparingImage(false);
+      }
     }
   };
 
@@ -27,6 +44,7 @@ export const AddRecipeThumbnail = ({ image, setImage }: Props) => {
       activeOpacity={0.7}
       className="w-full h-full bg-gray-100 items-center justify-center"
       onPress={pickImage}
+      disabled={isPreparingImage}
     >
       {image ? (
         <Image
