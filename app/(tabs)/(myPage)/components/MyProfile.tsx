@@ -1,6 +1,7 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import RightArrowIcon from "@/assets/images/ic_arrow_right.svg";
-import React from "react";
+import { getProfileAvatarSource } from "@/constants/ProfileAvatar";
+import React, { useMemo } from "react";
 import { Image, Text, View } from "react-native";
 
 interface Props {
@@ -14,14 +15,23 @@ export function MyProfile({
   nickname,
   onPress = () => {},
 }: Props) {
+  const profileImageSource = useMemo(
+    () => getProfileAvatarSource(profileImage),
+    [profileImage],
+  );
+
   return (
     <PressableScale onPress={onPress} className="mx-4 mt-3">
       <View className="flex-row items-center">
-        <Image
-          source={{ uri: profileImage ?? "" }}
-          className="w-12 h-12 rounded-[18px] bg-gray-50"
-          resizeMode="cover"
-        />
+        {profileImageSource ? (
+          <Image
+            source={profileImageSource}
+            className="w-12 h-12 rounded-[18px] bg-gray-50"
+            resizeMode="cover"
+          />
+        ) : (
+          <View className="w-12 h-12 rounded-[18px] bg-gray-50" />
+        )}
 
         <Text className="flex-1 ml-3 text-title4 text-text-strong">
           {nickname}

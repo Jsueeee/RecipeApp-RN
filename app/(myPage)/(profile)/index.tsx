@@ -4,6 +4,7 @@ import { useDefaultBottomSheetModal } from "@/app/hooks/useDefaultBottomSheetMod
 import ProfileImageEditIcon from "@/assets/images/ic_profile_image_edit.svg";
 import NicknameEditIcon from "@/assets/images/ic_profile_nickname_edit.svg";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
+import { getProfileAvatarSource } from "@/constants/ProfileAvatar";
 import i18n from "@/lib/i18n";
 import React, { useMemo } from "react";
 import { Image, Text, View } from "react-native";
@@ -28,6 +29,11 @@ export default function MyProfileScreen() {
   const onNicknameEditButtonPress = () => {
     openNicknameBottomSheetModal();
   };
+
+  const profileImageSource = useMemo(
+    () => getProfileAvatarSource(userInfo?.profileImageUrl),
+    [userInfo?.profileImageUrl],
+  );
 
   const loginProviderIcon = useMemo(() => {
     switch (userInfo?.loginProvider.toLowerCase()) {
@@ -63,10 +69,14 @@ export default function MyProfileScreen() {
     >
       <View className="items-center justify-center gap-4 mt-3">
         <PressableScale onPress={onProfileImageEditButtonPress}>
-          <Image
-            source={{ uri: userInfo?.profileImageUrl ?? "" }}
-            className="w-[100px] h-[100px] rounded-[36px] bg-gray-50"
-          />
+          {profileImageSource ? (
+            <Image
+              source={profileImageSource}
+              className="w-[100px] h-[100px] rounded-[36px] bg-gray-50"
+            />
+          ) : (
+            <View className="w-[100px] h-[100px] rounded-[36px] bg-gray-50" />
+          )}
           <ProfileImageEditIcon
             width={32}
             height={32}

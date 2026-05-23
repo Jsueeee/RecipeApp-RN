@@ -1,4 +1,5 @@
 import i18n from "@/lib/i18n";
+import { getProfileAvatarSource } from "@/constants/ProfileAvatar";
 import clsx from "clsx";
 import { Image, Text, View } from "react-native";
 import IC_TOMATO from "@/assets/images/ic_tomato.svg";
@@ -14,12 +15,14 @@ export const RecipeAuthorProfile = ({
   nickname,
   className,
 }: Props) => {
+  const profileImageSource = getProfileAvatarSource(profileImage);
+
   return (
     <View className={clsx("flex-row items-center gap-2", className)}>
       <View className="w-[30px] h-[30px] items-center justify-center">
-        {profileImage ? (
+        {profileImageSource ? (
           <Image
-            source={{ uri: profileImage }}
+            source={profileImageSource}
             className="w-[30px] h-[30px] rounded-[8px] bg-gray-50"
             resizeMode="cover"
           />
