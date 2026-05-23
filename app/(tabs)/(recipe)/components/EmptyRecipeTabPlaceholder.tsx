@@ -11,7 +11,7 @@ interface Props {
 export const EmptyRecipeTabPlaceholder = ({ onPress }: Props) => {
   return (
     <View className="flex-1">
-      <MainTabHeader tab="recipe" className="mt-safe" />
+      <MainTabHeader tab="recipe" />
 
       <EmptyPlaceholder
         className="absolute top-0 bottom-0 left-0 right-0"
