@@ -24,7 +24,7 @@ export default function EditProfileImageBottomSheet({
   bottomSheetModalRef,
 }: Props) {
   const [selectedImage, setSelectedImage] = useState<string | null>(
-    currentImageUrl ?? null
+    currentImageUrl ?? null,
   );
 
   useEffect(() => {
@@ -94,23 +94,27 @@ export default function EditProfileImageBottomSheet({
         )}
 
         <View className="flex-row flex-wrap justify-between mt-6">
-          {PROFILE_AVATARS.map((avatar) => (
-            <TouchableOpacity
-              key={avatar.url}
-              onPress={() => handleImageSelect(avatar.url)}
-              className={`w-[22%] aspect-square mb-5 rounded-[25px] ${
-                selectedImage === avatar.url
-                  ? "border-2 border-primary-normal overflow-hidden"
-                  : ""
-              }`}
-            >
-              <Image
-                source={avatar.source}
-                className="w-full h-full"
-                resizeMode="cover"
-              />
-            </TouchableOpacity>
-          ))}
+          {PROFILE_AVATARS.map((avatar) => {
+            const isSelected = selectedImage === avatar.url;
+
+            return (
+              <TouchableOpacity
+                key={avatar.url}
+                onPress={() => handleImageSelect(avatar.url)}
+                className="w-[22%] aspect-square mb-5 rounded-[25px] overflow-hidden"
+              >
+                <Image
+                  source={avatar.source}
+                  className="w-full h-full rounded-[25px]"
+                  resizeMode="cover"
+                />
+
+                {isSelected && (
+                  <View className="absolute inset-0 rounded-[25px] border-2 border-primary-normal" />
+                )}
+              </TouchableOpacity>
+            );
+          })}
         </View>
       </View>
     </DefaultBottomSheetModal>
