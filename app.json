@@ -21,7 +21,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#9FE5D3"
       },
       "package": "com.recipe.android.recipeapp",
       "versionCode": 2,
