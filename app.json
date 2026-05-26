@@ -24,7 +24,7 @@
         "backgroundColor": "#9FE5D3"
       },
       "package": "com.recipe.android.recipeapp",
-      "versionCode": 2,
+      "versionCode": 4,
       "googleServicesFile": "./google-services.json",
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO",
