@@ -10,6 +10,15 @@ const AUTH_ENDPOINT_PATTERN =
 const isAuthEndpoint = (url?: string) =>
   url ? AUTH_ENDPOINT_PATTERN.test(url) : false;
 
+let isAuthRedirectSuppressed = false;
+
+export const setAuthRedirectSuppressed = (isSuppressed: boolean) => {
+  isAuthRedirectSuppressed = isSuppressed;
+};
+
+const shouldRedirectToAuth = (url?: string) =>
+  !isAuthRedirectSuppressed && !isAuthEndpoint(url);
+
 export const apiClient = axios.create({
   baseURL: apiBaseUrl,
   timeout: 30000,
@@ -68,7 +77,7 @@ apiClient.interceptors.response.use(
         if (!refreshToken || !userId) {
           await authStorage.clear();
 
-          if (!isAuthEndpoint(requestUrl)) {
+          if (shouldRedirectToAuth(requestUrl)) {
             router.replace("/(auth)");
           }
 
@@ -89,7 +98,7 @@ apiClient.interceptors.response.use(
         // 재발급 실패 시 토큰 정리 후 로그인 화면으로 복귀
         await authStorage.clear();
 
-        if (!isAuthEndpoint(requestUrl)) {
+        if (shouldRedirectToAuth(requestUrl)) {
           router.replace("/(auth)");
         }
 

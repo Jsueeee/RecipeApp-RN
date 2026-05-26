@@ -1,4 +1,4 @@
-import { apiClient } from "@/app/lib/api/client";
+import { apiClient, setAuthRedirectSuppressed } from "@/app/lib/api/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { authStorage } from "@/app/lib/storage/auth";
 import { RequestDeleteAccount } from "@/app/types/api/user";
@@ -15,12 +15,12 @@ export const useDeleteAccountMutation = (callbacks?: MutationCallbacks) => {
         data: params,
       });
 
-      await authStorage.clear();
-      queryClient.clear();
-
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      setAuthRedirectSuppressed(true);
+      await authStorage.clear();
+      queryClient.clear();
       callbacks?.onSuccess?.();
     },
     onError: (error) => {

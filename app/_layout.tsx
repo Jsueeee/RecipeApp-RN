@@ -167,6 +167,14 @@ function RootLayoutNav() {
               name="(myPage)/(myRecipe)"
               options={{ headerShown: false }}
             />
+            <Stack.Screen
+              name="(setting)"
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+                fullScreenGestureEnabled: false,
+              }}
+            />
             <Stack.Screen name="modal" options={{ presentation: "modal" }} />
           </Stack>
           </ThemeProvider>
