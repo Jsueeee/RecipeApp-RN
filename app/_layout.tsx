@@ -1,5 +1,6 @@
 import { TutorialProvider } from "@/app/tutorial";
 import { queryClient } from "@/app/lib/query/client";
+import { defaultStackScreenOptions } from "@/app/lib/navigation/stackOptions";
 import {
   googleLoginWebClientId,
   kakaoNativeAppKey,
@@ -141,9 +142,7 @@ function RootLayoutNav() {
             value={colorScheme.colorScheme === "dark" ? DarkTheme : DefaultTheme}
           >
             <Stack
-              screenOptions={{
-                headerShown: false,
-              }}
+              screenOptions={defaultStackScreenOptions}
             >
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
