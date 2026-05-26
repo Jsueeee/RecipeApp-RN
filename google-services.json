@@ -38,6 +38,22 @@
           }
         },
         {
+          "client_id": "763399346922-mi8le2odvlrhjtsluup1u9rrffq68cjp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.recipe.android.recipeapp",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "763399346922-mtlrn5hlgtqc9rj30r9hqvl5qt9491th.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.recipe.android.recipeapp",
+            "certificate_hash": "ce51016dd795de8c4c264452e3fff435a2000f08"
+          }
+        },
+        {
           "client_id": "763399346922-nnp5kfr7pqunvn5nkrgt9h2q4ilc2kdp.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -61,6 +77,13 @@
             {
               "client_id": "763399346922-889igtgkplgnh1gg1kj2ptihnqhsmi08.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "763399346922-hcrsr78iionca1bhmgncgoscpv8s3tuo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.recipe.android.recipeapp"
+              }
             }
           ]
         }
