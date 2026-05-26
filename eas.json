@@ -10,11 +10,7 @@
       "env": {
         "ENV": "dev",
         "EXPO_PUBLIC_ENV": "dev",
-        "EXPO_PUBLIC_API_BASE_URL": "https://recipestorage2026.shop",
-        "EXPO_PUBLIC_GOOGLE_LOGIN_WEB_CLIENT_ID": "763399346922-aq0plcl2qej6rv661n733v9tghnlpp8h.apps.googleusercontent.com",
-        "EXPO_PUBLIC_NAVER_LOGIN_CLIENT_ID": "SJx6zvMfVUgzf4cusKSX",
-        "EXPO_PUBLIC_NAVER_LOGIN_CLIENT_SECRET": "n5SOueYLzT",
-        "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "3cb89516c27c020802d2b85534cda074"
+        "EXPO_PUBLIC_API_BASE_URL": "https://recipestorage2026.shop"
       }
     },
     "prod": {
@@ -23,13 +19,7 @@
       "env": {
         "ENV": "prod",
         "EXPO_PUBLIC_ENV": "prod",
-        "EXPO_PUBLIC_API_BASE_URL": "https://recipestorage2026.shop",
-        "EXPO_PUBLIC_GOOGLE_LOGIN_WEB_CLIENT_ID": "763399346922-aq0plcl2qej6rv661n733v9tghnlpp8h.apps.googleusercontent.com",
-        "EXPO_PUBLIC_NAVER_LOGIN_CLIENT_ID": "SJx6zvMfVUgzf4cusKSX",
-        "EXPO_PUBLIC_NAVER_LOGIN_CLIENT_SECRET": "n5SOueYLzT",
-        "EXPO_PUBLIC_ADMOB_NATIVE_IOS_ID": "ca-app-pub-2611426405819679/4594813173",
-        "EXPO_PUBLIC_ADMOB_NATIVE_ANDROID_ID": "ca-app-pub-2611426405819679/3430206635",
-        "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "3cb89516c27c020802d2b85534cda074"
+        "EXPO_PUBLIC_API_BASE_URL": "https://recipestorage2026.shop"
       }
     },
     "production": {
