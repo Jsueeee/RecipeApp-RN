@@ -1,6 +1,7 @@
 import { queryClient } from "@/app/lib/query/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { authStorage } from "@/app/lib/storage/auth";
+import { clearSyncedFcmToken } from "@/app/utils/NotificationUtils";
 import { logout as logoutKakao } from "@react-native-kakao/user";
 import { useMutation } from "@tanstack/react-query";
 import { router } from "expo-router";
@@ -15,6 +16,7 @@ export const useKaKaoLogoutMutation = () => {
         console.warn("Logout API failed", error);
       }
 
+      await clearSyncedFcmToken();
       await authStorage.clear();
       queryClient.clear();
     },

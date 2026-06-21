@@ -1,4 +1,5 @@
-import { View, Text, Switch, Platform } from "react-native";
+import { AppSwitch } from "@/components/AppSwitch";
+import { View, Text } from "react-native";
 import AlertIcon from "@/assets/images/ic_alert_desc.svg";
 import i18n from "@/lib/i18n";
 
@@ -18,20 +19,7 @@ export function PublicToggleSection({
           {i18n.t("recipe_my_create.public_toggle_title")}
         </Text>
 
-        <Switch
-          trackColor={{ false: "#E9E9EA", true: "#4BD2B0" }}
-          thumbColor={"#FFFFFF"}
-          onValueChange={onValueChange}
-          value={isPublic}
-          style={{
-            transform: [
-              {
-                scale: Platform.OS === "ios" ? 0.8 : 1.3,
-              },
-            ],
-            marginRight: Platform.OS === "ios" ? 0 : 4,
-          }}
-        />
+        <AppSwitch onValueChange={onValueChange} value={isPublic} />
       </View>
 
       <Text className="mt-2 text-body3 text-text-alternative flex-1">

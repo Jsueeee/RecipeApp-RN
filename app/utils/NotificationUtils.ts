@@ -1,5 +1,6 @@
 import { apiClient } from "@/app/lib/api/client";
 import { authStorage } from "@/app/lib/storage/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   AuthorizationStatus,
   getMessaging,
@@ -14,10 +15,12 @@ import { PermissionsAndroid, Platform } from "react-native";
 
 let cachedFcmToken: string | null = null;
 let pendingFcmTokenRequest: Promise<string> | null = null;
-let pendingFcmTokenSync: Promise<void> | null = null;
+let pendingFcmTokenSync: Promise<boolean> | null = null;
 
 const FCM_TOKEN_RETRY_COUNT = 3;
 const FCM_TOKEN_RETRY_DELAY_MS = 1500;
+const EXPIRATION_NOTIFICATION_ENABLED_KEY =
+  "settings:expiration_notification_enabled";
 
 const isMessagingSupportedPlatform = () => {
   return Platform.OS === "android" || Platform.OS === "ios";
@@ -27,6 +30,41 @@ const delay = (milliseconds: number) => {
   return new Promise((resolve) => {
     setTimeout(resolve, milliseconds);
   });
+};
+
+export const getExpirationNotificationEnabled = async () => {
+  try {
+    const value = await AsyncStorage.getItem(EXPIRATION_NOTIFICATION_ENABLED_KEY);
+    return value !== "false";
+  } catch (error) {
+    if (__DEV__) {
+      console.warn(
+        "[Notifications] failed to read expiration notification setting",
+        error,
+      );
+    }
+
+    return true;
+  }
+};
+
+const saveExpirationNotificationEnabled = async (isEnabled: boolean) => {
+  try {
+    await AsyncStorage.setItem(
+      EXPIRATION_NOTIFICATION_ENABLED_KEY,
+      String(isEnabled),
+    );
+    return true;
+  } catch (error) {
+    if (__DEV__) {
+      console.warn(
+        "[Notifications] failed to save expiration notification setting",
+        error,
+      );
+    }
+
+    return false;
+  }
 };
 
 const isMessagingPermissionGranted = (status: number) => {
@@ -162,11 +200,7 @@ export const getFcmToken = async () => {
   return token;
 };
 
-export const syncFcmToken = async (token: string) => {
-  if (!token) {
-    return;
-  }
-
+const patchFcmToken = async (token: string) => {
   if (pendingFcmTokenSync) {
     await pendingFcmTokenSync.catch(() => {});
   }
@@ -176,33 +210,95 @@ export const syncFcmToken = async (token: string) => {
       const accessToken = await authStorage.getAccessToken();
 
       if (!accessToken) {
-        return;
+        return true;
       }
 
       await apiClient.patch("/users/fcm-token", {
         fcmToken: token,
       });
+
+      return true;
     } catch (error) {
       if (__DEV__) {
         console.warn("[Notifications] failed to sync FCM token", error);
       }
+
+      return false;
     }
   })().finally(() => {
     pendingFcmTokenSync = null;
   });
 
-  await pendingFcmTokenSync;
+  return pendingFcmTokenSync;
+};
+
+export const syncFcmToken = async (token: string) => {
+  if (!token) {
+    return false;
+  }
+
+  const isNotificationEnabled = await getExpirationNotificationEnabled();
+
+  if (!isNotificationEnabled) {
+    return false;
+  }
+
+  return patchFcmToken(token);
 };
 
 export const syncCurrentFcmToken = async () => {
   const accessToken = await authStorage.getAccessToken();
 
   if (!accessToken) {
-    return;
+    return false;
+  }
+
+  const isNotificationEnabled = await getExpirationNotificationEnabled();
+
+  if (!isNotificationEnabled) {
+    return false;
   }
 
   const token = await getFcmToken();
-  await syncFcmToken(token);
+  return syncFcmToken(token);
+};
+
+export const clearSyncedFcmToken = async () => {
+  return patchFcmToken("");
+};
+
+export const updateExpirationNotificationEnabled = async (
+  isEnabled: boolean,
+) => {
+  const didSaveSetting = await saveExpirationNotificationEnabled(isEnabled);
+
+  if (!didSaveSetting) {
+    return false;
+  }
+
+  if (!isEnabled) {
+    const didClearToken = await clearSyncedFcmToken();
+
+    if (!didClearToken) {
+      await saveExpirationNotificationEnabled(true);
+    }
+
+    return didClearToken;
+  }
+
+  const accessToken = await authStorage.getAccessToken();
+
+  if (!accessToken) {
+    return true;
+  }
+
+  const didSyncToken = await syncCurrentFcmToken();
+
+  if (!didSyncToken) {
+    await saveExpirationNotificationEnabled(false);
+  }
+
+  return didSyncToken;
 };
 
 export const registerFcmTokenRefreshSync = () => {

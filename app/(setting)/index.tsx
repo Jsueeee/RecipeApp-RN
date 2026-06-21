@@ -6,23 +6,54 @@ import i18n from "@/lib/i18n";
 import Constants from "expo-constants";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Linking, Text, View } from "react-native";
+import { Alert, Linking, Text, View } from "react-native";
 import { PressableScale } from "../components/PressableScale";
 import { useGoogleLogoutMutation } from "../hooks/mutations/useGoogleLogoutMutation";
 import { useKaKaoLogoutMutation } from "../hooks/mutations/useKaKaoLogoutMutation";
 import { useNaverLogoutMutation } from "../hooks/mutations/useNaverLogoutMutation";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { useAppleLogoutMutation } from "../hooks/mutations/useAppleLogoutMutation";
+import { AppSwitch } from "@/components/AppSwitch";
+import {
+  getExpirationNotificationEnabled,
+  updateExpirationNotificationEnabled,
+} from "@/app/utils/NotificationUtils";
 
 export default function SettingScreen() {
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isExpirationNotificationOn, setIsExpirationNotificationOn] =
+    useState(true);
+  const [isNotificationSettingLoading, setIsNotificationSettingLoading] =
+    useState(true);
+  const [isNotificationSettingUpdating, setIsNotificationSettingUpdating] =
+    useState(false);
 
   const { userInfo } = useUserInfoQuery();
   const { kakaoLogout } = useKaKaoLogoutMutation();
   const { googleLogout } = useGoogleLogoutMutation();
   const { naverLogout } = useNaverLogoutMutation();
   const { appleLogout } = useAppleLogoutMutation();
+
+  React.useEffect(() => {
+    let isMounted = true;
+
+    getExpirationNotificationEnabled()
+      .then((isEnabled) => {
+        if (isMounted) {
+          setIsExpirationNotificationOn(isEnabled);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsNotificationSettingLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const onCSEmailPress = () => {
     const email = "recipestorage2021@gmail.com";
@@ -39,6 +70,29 @@ export default function SettingScreen() {
 
   const onLogoutPress = () => {
     setLogoutDialogVisible(true);
+  };
+
+  const onExpirationNotificationValueChange = async (nextValue: boolean) => {
+    if (isNotificationSettingLoading || isNotificationSettingUpdating) {
+      return;
+    }
+
+    const previousValue = isExpirationNotificationOn;
+
+    setIsExpirationNotificationOn(nextValue);
+    setIsNotificationSettingUpdating(true);
+
+    const didUpdate = await updateExpirationNotificationEnabled(nextValue);
+
+    if (!didUpdate) {
+      setIsExpirationNotificationOn(previousValue);
+      Alert.alert(
+        i18n.t("setting.pushAlarm_update_failed_title"),
+        i18n.t("setting.pushAlarm_update_failed_message"),
+      );
+    }
+
+    setIsNotificationSettingUpdating(false);
   };
 
   const onLogoutConfirmPress = async () => {
@@ -83,6 +137,24 @@ export default function SettingScreen() {
     );
   };
 
+  const renderPushAlarmSetting = () => {
+    return (
+      <View className="flex-row items-center justify-between">
+        <Text className="text-utility2 text-text-strong">
+          {i18n.t("setting.pushAlarm")}
+        </Text>
+
+        <AppSwitch
+          disabled={
+            isNotificationSettingLoading || isNotificationSettingUpdating
+          }
+          onValueChange={onExpirationNotificationValueChange}
+          value={isExpirationNotificationOn}
+        />
+      </View>
+    );
+  };
+
   const renderLogoutButton = () => {
     return (
       <PressableScale onPress={onLogoutPress} hitSlop={8}>
@@ -113,6 +185,10 @@ export default function SettingScreen() {
       backgroundColor="background-alternative"
     >
       <View className="flex-1 px-4 py-3 gap-3">
+        <View className="w-full bg-white rounded-[12px] p-4 gap-7">
+          {renderPushAlarmSetting()}
+        </View>
+
         <View className="w-full bg-white rounded-[12px] p-4 gap-7">
           {renderCSEmail()}
           {renderVersionInfo()}

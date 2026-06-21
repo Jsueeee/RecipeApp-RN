@@ -183,6 +183,8 @@ export default {
     newVersionValue: "1.3.0",
     serviceSetting: "서비스설정",
     pushAlarm: "유통기한 알림 설정",
+    pushAlarm_update_failed_title: "알림 설정을 변경하지 못했어요",
+    pushAlarm_update_failed_message: "잠시 후 다시 시도해 주세요.",
     developer: "개발자 소개",
     contactUs: "Contact Us",
     developerEmail: "recipestorage2021@gmail.com",
