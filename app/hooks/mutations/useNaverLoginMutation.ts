@@ -2,7 +2,10 @@ import { apiClient } from "@/app/lib/api/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { authStorage } from "@/app/lib/storage/auth";
 import { LoginResponse } from "@/app/types/api/auth";
-import { syncCurrentFcmToken } from "@/app/utils/NotificationUtils";
+import {
+  getFcmToken,
+  syncCurrentFcmToken,
+} from "@/app/utils/NotificationUtils";
 import NaverLogin from "@react-native-seoul/naver-login";
 import { useMutation } from "@tanstack/react-query";
 
@@ -18,10 +21,13 @@ export const useNaverLoginMutation = () => {
           if (!accessToken)
             throw new Error("네이버 로그인에 실패했습니다. (accessToken 없음)");
 
+          const fcmToken = await getFcmToken();
+
           const { data } = await apiClient.post<LoginResponse>(
             "/users/naver-login",
             {
               accessToken,
+              fcmToken,
             }
           );
           return data;

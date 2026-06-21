@@ -2,7 +2,10 @@ import { apiClient } from "@/app/lib/api/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { authStorage } from "@/app/lib/storage/auth";
 import { LoginResponse } from "@/app/types/api/auth";
-import { syncCurrentFcmToken } from "@/app/utils/NotificationUtils";
+import {
+  getFcmToken,
+  syncCurrentFcmToken,
+} from "@/app/utils/NotificationUtils";
 import { useMutation } from "@tanstack/react-query";
 import * as AppleAuthentication from "expo-apple-authentication";
 
@@ -18,10 +21,13 @@ export const useAppleLoginMutation = () => {
           if (!identityToken)
             throw new Error("애플 로그인에 실패했습니다. (accessToken 없음)");
 
+          const fcmToken = await getFcmToken();
+
           const { data } = await apiClient.post<LoginResponse>(
             "/users/apple-login",
             {
               accessToken: identityToken,
+              fcmToken,
             }
           );
           return data;

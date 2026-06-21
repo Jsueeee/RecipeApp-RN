@@ -2,7 +2,10 @@ import { apiClient } from "@/app/lib/api/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { authStorage } from "@/app/lib/storage/auth";
 import { LoginResponse } from "@/app/types/api/auth";
-import { syncCurrentFcmToken } from "@/app/utils/NotificationUtils";
+import {
+  getFcmToken,
+  syncCurrentFcmToken,
+} from "@/app/utils/NotificationUtils";
 import {
   GoogleSignin,
   isCancelledResponse,
@@ -23,10 +26,13 @@ export const useGoogleLoginMutation = () => {
           if (!idToken)
             throw new Error("구글 로그인에 실패했습니다. (idToken 없음)");
 
+          const fcmToken = await getFcmToken();
+
           const { data } = await apiClient.post<LoginResponse>(
             "/users/google-login",
             {
               accessToken: idToken,
+              fcmToken,
             }
           );
           return data;

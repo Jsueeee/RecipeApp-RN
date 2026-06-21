@@ -2,6 +2,7 @@ import { TutorialProvider } from "@/app/tutorial";
 import { queryClient } from "@/app/lib/query/client";
 import { defaultStackScreenOptions } from "@/app/lib/navigation/stackOptions";
 import {
+  getFcmToken,
   registerFcmTokenRefreshSync,
   syncCurrentFcmToken,
 } from "@/app/utils/NotificationUtils";
@@ -101,6 +102,10 @@ export default function RootLayout() {
       });
 
     void syncCurrentFcmToken();
+
+    if (__DEV__) {
+      void getFcmToken();
+    }
 
     return registerFcmTokenRefreshSync();
   }, []);
