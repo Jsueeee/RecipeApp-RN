@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { LoginResponse } from "@/app/types/api/auth";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { authStorage } from "@/app/lib/storage/auth";
+import { syncCurrentFcmToken } from "@/app/utils/NotificationUtils";
 
 export const useLoginMutation = () => {
   const kakaoLoginMutation = useMutation({
@@ -15,7 +16,6 @@ export const useLoginMutation = () => {
         "/users/kakao-login",
         {
           accessToken: result.accessToken,
-          fcmToken: "", // TODO : get fcm token
         }
       );
       return data;
@@ -26,6 +26,8 @@ export const useLoginMutation = () => {
         refreshToken: data.refreshToken,
         userId: data.userId,
       });
+
+      void syncCurrentFcmToken();
     },
   });
 

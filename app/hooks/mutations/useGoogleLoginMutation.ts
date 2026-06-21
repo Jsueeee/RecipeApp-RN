@@ -2,6 +2,7 @@ import { apiClient } from "@/app/lib/api/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { authStorage } from "@/app/lib/storage/auth";
 import { LoginResponse } from "@/app/types/api/auth";
+import { syncCurrentFcmToken } from "@/app/utils/NotificationUtils";
 import {
   GoogleSignin,
   isCancelledResponse,
@@ -26,7 +27,6 @@ export const useGoogleLoginMutation = () => {
             "/users/google-login",
             {
               accessToken: idToken,
-              fcmToken: "", // TODO: FCM 토큰 필요시 추가
             }
           );
           return data;
@@ -45,6 +45,8 @@ export const useGoogleLoginMutation = () => {
         refreshToken: data.refreshToken,
         userId: data.userId,
       });
+
+      void syncCurrentFcmToken();
     },
   });
 

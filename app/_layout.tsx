@@ -2,6 +2,10 @@ import { TutorialProvider } from "@/app/tutorial";
 import { queryClient } from "@/app/lib/query/client";
 import { defaultStackScreenOptions } from "@/app/lib/navigation/stackOptions";
 import {
+  registerFcmTokenRefreshSync,
+  syncCurrentFcmToken,
+} from "@/app/utils/NotificationUtils";
+import {
   googleLoginWebClientId,
   kakaoNativeAppKey,
   naverLoginClientId,
@@ -95,6 +99,10 @@ export default function RootLayout() {
       .catch((error) => {
         console.error("Request configuration error", error);
       });
+
+    void syncCurrentFcmToken();
+
+    return registerFcmTokenRefreshSync();
   }, []);
 
   if (!loaded) {

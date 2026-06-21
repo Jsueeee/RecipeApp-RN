@@ -14,8 +14,12 @@
       "appleTeamId": "S7TUXRR3LP",
       "usesAppleSignIn": true,
       "buildNumber": "2",
+      "entitlements": {
+        "aps-environment": "development"
+      },
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "레시피 사진을 선택하기 위해 사진 보관함 접근 권한이 필요합니다."
+        "NSPhotoLibraryUsageDescription": "레시피 사진을 선택하기 위해 사진 보관함 접근 권한이 필요합니다.",
+        "UIBackgroundModes": ["remote-notification"]
       }
     },
     "android": {
@@ -26,6 +30,7 @@
       "package": "com.recipe.android.recipeapp",
       "versionCode": 4,
       "googleServicesFile": "./google-services.json",
+      "permissions": ["android.permission.POST_NOTIFICATIONS"],
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.SYSTEM_ALERT_WINDOW"
@@ -39,6 +44,8 @@
     "plugins": [
       "expo-router",
       "expo-localization",
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging",
       [
         "expo-build-properties",
         {
