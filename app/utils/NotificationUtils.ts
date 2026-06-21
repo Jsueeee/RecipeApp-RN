@@ -3,6 +3,7 @@ import { authStorage } from "@/app/lib/storage/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   AuthorizationStatus,
+  deleteToken,
   getMessaging,
   getToken,
   hasPermission,
@@ -16,6 +17,7 @@ import { PermissionsAndroid, Platform } from "react-native";
 let cachedFcmToken: string | null = null;
 let pendingFcmTokenRequest: Promise<string> | null = null;
 let pendingFcmTokenSync: Promise<boolean> | null = null;
+let isFcmTokenSyncPaused = false;
 
 const FCM_TOKEN_RETRY_COUNT = 3;
 const FCM_TOKEN_RETRY_DELAY_MS = 1500;
@@ -260,6 +262,10 @@ const patchFcmToken = async (token: string) => {
 };
 
 export const syncFcmToken = async (token: string) => {
+  if (isFcmTokenSyncPaused) {
+    return false;
+  }
+
   if (!token) {
     return false;
   }
@@ -290,8 +296,42 @@ export const syncCurrentFcmToken = async () => {
   return syncFcmToken(token);
 };
 
-export const clearSyncedFcmToken = async () => {
-  return patchFcmToken("");
+const deleteDeviceFcmToken = async () => {
+  if (!isMessagingSupportedPlatform()) {
+    return true;
+  }
+
+  try {
+    await deleteToken(getMessaging());
+    cachedFcmToken = null;
+    pendingFcmTokenRequest = null;
+    return true;
+  } catch (error) {
+    if (__DEV__) {
+      console.warn("[Notifications] failed to delete FCM token", error);
+    }
+
+    return false;
+  }
+};
+
+export const resumeFcmTokenSync = () => {
+  isFcmTokenSyncPaused = false;
+};
+
+export const clearSyncedFcmToken = async (options?: {
+  keepSyncPaused?: boolean;
+}) => {
+  isFcmTokenSyncPaused = true;
+
+  const didClearServerToken = await patchFcmToken("");
+  const didDeleteDeviceToken = await deleteDeviceFcmToken();
+
+  if (!options?.keepSyncPaused) {
+    resumeFcmTokenSync();
+  }
+
+  return didClearServerToken || didDeleteDeviceToken;
 };
 
 export const updateExpirationNotificationEnabled = async (
