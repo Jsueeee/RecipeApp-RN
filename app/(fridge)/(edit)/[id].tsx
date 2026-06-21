@@ -12,6 +12,7 @@ import { EditExpiredAtMenu } from "./components/EditExpiredAtMenu";
 import { EditQuantityMenu } from "./components/EditQuantityMenu";
 import { EditUnitMenu } from "./components/EditUnitMenu";
 import { usePatchFridgeMutation } from "@/app/hooks/mutations/usePatchFridgeMutation";
+import { toDateOnlyRequestString } from "@/app/utils/DateTimeUtils";
 
 export default function IngredientEditScreen() {
   const { id } = useLocalSearchParams();
@@ -42,7 +43,7 @@ export default function IngredientEditScreen() {
     try {
       await patchFridgeMutation.mutateAsync({
         fridgeId: Number(id),
-        expiredAt: localData.expiredAt,
+        expiredAt: toDateOnlyRequestString(localData.expiredAt),
         quantity: localData.quantity,
         unit: localData.unit,
       });
@@ -110,11 +111,7 @@ export default function IngredientEditScreen() {
 
         <EditExpiredAtMenu
           expiredAt={localData?.expiredAt}
-          onExpiredAtChanged={(expiredAt) => {
-            const date = new Date(expiredAt);
-            const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
-            updateLocalData({ expiredAt: kstDate.toISOString() });
-          }}
+          onExpiredAtChanged={(expiredAt) => updateLocalData({ expiredAt })}
         />
 
         <EditUnitMenu

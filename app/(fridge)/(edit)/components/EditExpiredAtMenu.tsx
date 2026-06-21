@@ -1,4 +1,7 @@
-import { convertDateString } from "@/app/utils/DateTimeUtils";
+import {
+  convertDateString,
+  toDateOnlyRequestString,
+} from "@/app/utils/DateTimeUtils";
 import i18n from "@/lib/i18n";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
@@ -11,9 +14,10 @@ interface Props {
 
 export function EditExpiredAtMenu({ expiredAt, onExpiredAtChanged }: Props) {
   const [showPicker, setShowPicker] = useState(false);
+  const dateOnlyExpiredAt = toDateOnlyRequestString(expiredAt);
 
   const handleDateChange = (params: { date: DateType }) => {
-    onExpiredAtChanged(params.date?.toString() ?? "");
+    onExpiredAtChanged(toDateOnlyRequestString(params.date) ?? "");
     setShowPicker(false);
   };
 
@@ -34,7 +38,9 @@ export function EditExpiredAtMenu({ expiredAt, onExpiredAtChanged }: Props) {
       <DatePicker
         showPicker={showPicker}
         setShowPicker={setShowPicker}
-        expiredAt={expiredAt ? new Date(expiredAt) : new Date()}
+        expiredAt={
+          dateOnlyExpiredAt ? new Date(`${dateOnlyExpiredAt}T00:00:00`) : new Date()
+        }
         handleDateChange={handleDateChange}
       />
     </View>

@@ -5,7 +5,7 @@ import { MutationCallbacks } from "@/app/types/common/mutation";
 import { useMutation } from "@tanstack/react-query";
 
 interface RequestPatchFridgeBasketIngredient {
-  expiredAt?: string;
+  expiredAt?: string | null;
   quantity: number;
   unit?: string;
 }

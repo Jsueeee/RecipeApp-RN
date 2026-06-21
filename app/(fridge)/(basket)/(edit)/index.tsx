@@ -4,6 +4,7 @@ import { ChoiceDialog } from "@/components/ChoiceDialog";
 import { CTAButton } from "@/components/CTAButton";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import { FoodDataManager } from "@/constants/IngredientManager";
+import { toDateOnlyRequestString } from "@/app/utils/DateTimeUtils";
 import i18n from "@/lib/i18n";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -69,7 +70,7 @@ export default function BasketIngredientEditScreen() {
       await patchFridgeBasketIngredient({
         id: Number(id),
         body: {
-          expiredAt: localData.expiredAt,
+          expiredAt: toDateOnlyRequestString(localData.expiredAt),
           quantity: localData.quantity,
           unit: localData.unit,
         },
@@ -135,11 +136,7 @@ export default function BasketIngredientEditScreen() {
 
         <EditExpiredAtMenu
           expiredAt={localData?.expiredAt}
-          onExpiredAtChanged={(expiredAt) => {
-            const date = new Date(expiredAt);
-            const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000);
-            updateLocalData({ expiredAt: kstDate.toISOString() });
-          }}
+          onExpiredAtChanged={(expiredAt) => updateLocalData({ expiredAt })}
         />
 
         <EditUnitMenu
