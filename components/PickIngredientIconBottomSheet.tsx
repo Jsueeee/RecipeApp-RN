@@ -4,7 +4,7 @@ import { FoodDataManager } from "@/constants/IngredientManager";
 import i18n from "@/lib/i18n";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import React, { useMemo, useRef } from "react";
-import { View } from "react-native";
+import { useWindowDimensions, View } from "react-native";
 import DefaultBottomSheetModal from "./DefaultBottomSheetModal";
 import { IngredientIconGrid } from "./IngredientIconSectionGrid";
 
@@ -18,6 +18,8 @@ export function PickIngredientIconBottomSheet({
   onIconSelected,
 }: Props) {
   const selectedIconId = useRef<number | null>(null);
+  const { height } = useWindowDimensions();
+  const iconPickerHeight = height * 0.7;
 
   const handleIconSelected = (iconId: number) => {
     selectedIconId.current = iconId;
@@ -54,8 +56,9 @@ export function PickIngredientIconBottomSheet({
       title={i18n.t("custom_ingredient_create.select_icon")}
       onDismiss={onDismiss}
       scrollEnabled={false}
+      contentStyle={{ height: iconPickerHeight, alignItems: "stretch" }}
     >
-      <View className="w-full max-h-[500px]">
+      <View className="w-full flex-1">
         <IngredientIconGrid
           categorizedIngredients={ingredientList}
           onPress={handleIconSelected}
