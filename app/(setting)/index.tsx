@@ -1,12 +1,13 @@
 import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
 import RightArrowIcon from "@/assets/images/ic_arrow_right.svg";
 import { ChoiceDialog } from "@/components/ChoiceDialog";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
 import i18n from "@/lib/i18n";
 import Constants from "expo-constants";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Alert, Linking, Text, View } from "react-native";
+import { AppState, Linking, Text, View } from "react-native";
 import { PressableScale } from "../components/PressableScale";
 import { useGoogleLogoutMutation } from "../hooks/mutations/useGoogleLogoutMutation";
 import { useKaKaoLogoutMutation } from "../hooks/mutations/useKaKaoLogoutMutation";
@@ -16,12 +17,17 @@ import { useAppleLogoutMutation } from "../hooks/mutations/useAppleLogoutMutatio
 import { AppSwitch } from "@/components/AppSwitch";
 import {
   getExpirationNotificationEnabled,
+  isNotificationPermissionGranted,
+  requestNotificationPermission,
   updateExpirationNotificationEnabled,
 } from "@/app/utils/NotificationUtils";
 
 export default function SettingScreen() {
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [permissionDialogVisible, setPermissionDialogVisible] = useState(false);
+  const [updateFailedDialogVisible, setUpdateFailedDialogVisible] =
+    useState(false);
   const [isExpirationNotificationOn, setIsExpirationNotificationOn] =
     useState(true);
   const [isNotificationSettingLoading, setIsNotificationSettingLoading] =
@@ -35,25 +41,29 @@ export default function SettingScreen() {
   const { naverLogout } = useNaverLogoutMutation();
   const { appleLogout } = useAppleLogoutMutation();
 
-  React.useEffect(() => {
-    let isMounted = true;
+  const refreshExpirationNotificationState = React.useCallback(async () => {
+    const [isEnabled, hasPermission] = await Promise.all([
+      getExpirationNotificationEnabled(),
+      isNotificationPermissionGranted(),
+    ]);
 
-    getExpirationNotificationEnabled()
-      .then((isEnabled) => {
-        if (isMounted) {
-          setIsExpirationNotificationOn(isEnabled);
-        }
-      })
-      .finally(() => {
-        if (isMounted) {
-          setIsNotificationSettingLoading(false);
-        }
-      });
+    setIsExpirationNotificationOn(isEnabled && hasPermission);
+    setIsNotificationSettingLoading(false);
+  }, []);
+
+  React.useEffect(() => {
+    void refreshExpirationNotificationState();
+
+    const subscription = AppState.addEventListener("change", (nextState) => {
+      if (nextState === "active") {
+        void refreshExpirationNotificationState();
+      }
+    });
 
     return () => {
-      isMounted = false;
+      subscription.remove();
     };
-  }, []);
+  }, [refreshExpirationNotificationState]);
 
   const onCSEmailPress = () => {
     const email = "recipestorage2021@gmail.com";
@@ -72,6 +82,11 @@ export default function SettingScreen() {
     setLogoutDialogVisible(true);
   };
 
+  const onPermissionDialogConfirmPress = () => {
+    setPermissionDialogVisible(false);
+    void Linking.openSettings();
+  };
+
   const onExpirationNotificationValueChange = async (nextValue: boolean) => {
     if (isNotificationSettingLoading || isNotificationSettingUpdating) {
       return;
@@ -82,14 +97,23 @@ export default function SettingScreen() {
     setIsExpirationNotificationOn(nextValue);
     setIsNotificationSettingUpdating(true);
 
+    if (nextValue) {
+      const hasPermission = await requestNotificationPermission();
+
+      if (!hasPermission) {
+        setIsExpirationNotificationOn(false);
+        await updateExpirationNotificationEnabled(false);
+        setIsNotificationSettingUpdating(false);
+        setPermissionDialogVisible(true);
+        return;
+      }
+    }
+
     const didUpdate = await updateExpirationNotificationEnabled(nextValue);
 
     if (!didUpdate) {
       setIsExpirationNotificationOn(previousValue);
-      Alert.alert(
-        i18n.t("setting.pushAlarm_update_failed_title"),
-        i18n.t("setting.pushAlarm_update_failed_message"),
-      );
+      setUpdateFailedDialogVisible(true);
     }
 
     setIsNotificationSettingUpdating(false);
@@ -207,6 +231,24 @@ export default function SettingScreen() {
         cancelText={i18n.t("setting.logout_dialog_cancel")}
         onConfirm={onLogoutConfirmPress}
         onCancel={() => setLogoutDialogVisible(false)}
+      />
+
+      <ChoiceDialog
+        visible={permissionDialogVisible}
+        title={i18n.t("setting.pushAlarm_permission_title")}
+        message={i18n.t("setting.pushAlarm_permission_message")}
+        confirmText={i18n.t("setting.pushAlarm_permission_confirm")}
+        cancelText={i18n.t("setting.pushAlarm_permission_cancel")}
+        onConfirm={onPermissionDialogConfirmPress}
+        onCancel={() => setPermissionDialogVisible(false)}
+      />
+
+      <ConfirmDialog
+        visible={updateFailedDialogVisible}
+        title={i18n.t("setting.pushAlarm_update_failed_title")}
+        message={i18n.t("setting.pushAlarm_update_failed_message")}
+        confirmText={i18n.t("common.close")}
+        onConfirm={() => setUpdateFailedDialogVisible(false)}
       />
 
       {isLoading && <DotLoadingScreen />}

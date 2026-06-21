@@ -185,6 +185,11 @@ export default {
     pushAlarm: "유통기한 알림 설정",
     pushAlarm_update_failed_title: "알림 설정을 변경하지 못했어요",
     pushAlarm_update_failed_message: "잠시 후 다시 시도해 주세요.",
+    pushAlarm_permission_title: "기기 알림 권한이 꺼져 있어요",
+    pushAlarm_permission_message:
+      "유통기한 알림을 받으려면 기기 설정에서 알림을 허용해 주세요.",
+    pushAlarm_permission_cancel: "닫기",
+    pushAlarm_permission_confirm: "설정 열기",
     developer: "개발자 소개",
     contactUs: "Contact Us",
     developerEmail: "recipestorage2021@gmail.com",

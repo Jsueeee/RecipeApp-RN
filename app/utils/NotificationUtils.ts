@@ -94,6 +94,33 @@ const requestAndroidNotificationPermission = async () => {
   return result === PermissionsAndroid.RESULTS.GRANTED;
 };
 
+export const isNotificationPermissionGranted = async () => {
+  try {
+    if (!isMessagingSupportedPlatform()) {
+      return false;
+    }
+
+    if (Platform.OS === "android") {
+      if (Number(Platform.Version) < 33) {
+        return true;
+      }
+
+      return PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+      );
+    }
+
+    const currentStatus = await hasPermission(getMessaging());
+    return isMessagingPermissionGranted(currentStatus);
+  } catch (error) {
+    if (__DEV__) {
+      console.warn("[Notifications] failed to check permission", error);
+    }
+
+    return false;
+  }
+};
+
 export const requestNotificationPermission = async () => {
   try {
     if (!isMessagingSupportedPlatform()) {
