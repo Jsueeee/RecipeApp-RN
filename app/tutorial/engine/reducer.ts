@@ -17,10 +17,14 @@ export function engineReducer(
   switch (event.type) {
     case "START": {
       if (state.hasStarted && state.phase !== "done") return state;
+      const stepIndex = Math.min(
+        Math.max(event.stepIndex ?? 0, 0),
+        TOTAL_STEPS - 1,
+      );
       return {
         ...state,
         phase: "entering",
-        stepIndex: 0,
+        stepIndex,
         hasStarted: true,
       };
     }

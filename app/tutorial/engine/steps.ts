@@ -163,8 +163,9 @@ export const STEPS: ReadonlyArray<StepConfig> = [
     id: "celebration",
     index: 16,
     character: { emotion: "celebrating", region: "center" },
-    speech: "튜토리얼이 모두 끝났어요🎉\n앞으로 잘 부탁드려요!",
-    trigger: { type: "auto", delayMs: 2300 },
+    speech:
+      "튜토리얼이 모두 끝났어요🎉\n앞으로 잘 부탁드려요!\n\n마지막으로 유통기한 알림 설정만\n확인하고 시작해볼까요?",
+    trigger: { type: "auto", delayMs: 3500 },
     blocksTouches: true,
   },
 ];

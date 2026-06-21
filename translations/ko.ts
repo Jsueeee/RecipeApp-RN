@@ -183,6 +183,8 @@ export default {
     newVersionValue: "1.3.0",
     serviceSetting: "서비스설정",
     pushAlarm: "유통기한 알림 설정",
+    pushAlarm_description:
+      "알림을 설정하면 냉장고 재료의 유통기한이 임박했을 때 알려드릴 수 있어요.",
     pushAlarm_update_failed_title: "알림 설정을 변경하지 못했어요",
     pushAlarm_update_failed_message: "잠시 후 다시 시도해 주세요.",
     pushAlarm_permission_title: "기기 알림 권한이 꺼져 있어요",

@@ -106,7 +106,7 @@ export type EngineState = {
 };
 
 export type EngineEvent =
-  | { type: "START" }
+  | { type: "START"; stepIndex?: number }
   | { type: "ANCHOR_MEASURED"; id: AnchorId; rect: Rect }
   | { type: "ANCHOR_REMOVED"; id: AnchorId }
   | { type: "ENTRANCE_COMPLETE" }

@@ -55,12 +55,36 @@ function isAuthRoute(segments: readonly string[]): boolean {
 }
 
 function isFridgeTabHomeRoute(segments: readonly string[]): boolean {
+  return isTabHomeRoute(segments, "(fridge)");
+}
+
+function isMyPageTabHomeRoute(segments: readonly string[]): boolean {
+  return isTabHomeRoute(segments, "(myPage)");
+}
+
+function isTabHomeRoute(
+  segments: readonly string[],
+  tabSegment: "(fridge)" | "(myPage)",
+): boolean {
   const [root, tab, leaf] = segments;
   return (
     root === "(tabs)" &&
-    tab === "(fridge)" &&
+    tab === tabSegment &&
     (segments.length === 2 || leaf === "index")
   );
+}
+
+function getTutorialStartRoute(stepIndex: number) {
+  return stepIndex >= 15 ? "/(tabs)/(myPage)" : "/(tabs)/(fridge)";
+}
+
+function isTutorialStartRoute(
+  segments: readonly string[],
+  stepIndex: number,
+): boolean {
+  return stepIndex >= 15
+    ? isMyPageTabHomeRoute(segments)
+    : isFridgeTabHomeRoute(segments);
 }
 
 export function TutorialProvider({ children }: Props) {
@@ -94,8 +118,11 @@ export function TutorialProvider({ children }: Props) {
   const shouldStartTutorial =
     status === "should-start" &&
     (resumeStepIndex !== null || hasNoFridgeIngredients);
+  const tutorialStartIndex = resumeStepIndex ?? 0;
 
   const lastEmittedStep = useRef<number>(-1);
+  const didSkipTutorialRef = useRef(false);
+  const didHandleTutorialDoneRef = useRef(false);
   const hasRequestedTutorialHome = useRef(false);
   const containerRef = useRef<View>(null);
   const containerOriginRef = useRef({ x: 0, y: 0 });
@@ -120,20 +147,26 @@ export function TutorialProvider({ children }: Props) {
     if (!shouldStartTutorial) return;
     if (state.hasStarted) return;
     if (!segments) return;
-    if (!isFridgeTabHomeRoute(segments)) {
+    if (!isTutorialStartRoute(segments, tutorialStartIndex)) {
       if (!isAuthRoute(segments) && !hasRequestedTutorialHome.current) {
         hasRequestedTutorialHome.current = true;
-        router.replace("/(tabs)/(fridge)");
+        router.replace(getTutorialStartRoute(tutorialStartIndex));
       }
       return;
     }
     hasRequestedTutorialHome.current = false;
     const t = setTimeout(() => {
-      dispatch({ type: "START" });
+      dispatch({ type: "START", stepIndex: tutorialStartIndex });
       emitTutorialEvent({ type: "tutorial_started" });
     }, FIRST_LAUNCH_DELAY_MS);
     return () => clearTimeout(t);
-  }, [router, shouldStartTutorial, segments, state.hasStarted]);
+  }, [
+    router,
+    shouldStartTutorial,
+    segments,
+    state.hasStarted,
+    tutorialStartIndex,
+  ]);
 
   useEffect(() => {
     if (state.phase !== "entering") return;
@@ -271,9 +304,18 @@ export function TutorialProvider({ children }: Props) {
 
   useEffect(() => {
     if (state.phase !== "done") return;
-    markCompleted();
+    if (didHandleTutorialDoneRef.current) return;
+
+    didHandleTutorialDoneRef.current = true;
+    void markCompleted();
     emitTutorialEvent({ type: "tutorial_completed" });
-  }, [state.phase, markCompleted]);
+    if (!didSkipTutorialRef.current) {
+      router.push({
+        pathname: "/(setting)",
+        params: { tutorialHighlight: "expiration-notification" },
+      });
+    }
+  }, [router, state.phase, markCompleted]);
 
   const measureContainerOrigin = useCallback(() => {
     requestAnimationFrame(() => {
@@ -407,10 +449,13 @@ export function TutorialProvider({ children }: Props) {
   const skip = useCallback(() => {
     const step = STEPS[state.stepIndex];
     if (step) emitTutorialEvent({ type: "tutorial_skipped", atStep: step.id });
+    didSkipTutorialRef.current = true;
     clearPendingAnchorAction();
     dispatch({ type: "SKIP" });
   }, [clearPendingAnchorAction, state.stepIndex]);
   const restart = useCallback(() => {
+    didSkipTutorialRef.current = false;
+    didHandleTutorialDoneRef.current = false;
     dispatch({ type: "RESTART" });
     emitTutorialEvent({ type: "tutorial_started" });
   }, []);
