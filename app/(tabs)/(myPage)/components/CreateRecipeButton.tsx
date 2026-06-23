@@ -1,3 +1,5 @@
+import { useAuthStatus } from "@/app/hooks/useAuthStatus";
+import { useLoginPrompt } from "@/app/hooks/useLoginPrompt";
 import { TutorialAnchor } from "@/app/tutorial";
 import CreateRecipeFabIcon from "@/assets/images/ic_create_recipe_fab.svg";
 import { useRouter } from "expo-router";
@@ -6,8 +8,15 @@ import { Pressable } from "react-native-gesture-handler";
 
 export function CreateRecipeButton() {
   const router = useRouter();
+  const { isAuthenticated } = useAuthStatus();
+  const promptLogin = useLoginPrompt();
 
   const onButtonPress = () => {
+    if (!isAuthenticated) {
+      promptLogin();
+      return;
+    }
+
     router.push("/(recipe)/(create)");
   };
 

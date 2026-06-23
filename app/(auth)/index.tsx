@@ -120,6 +120,10 @@ export default function LoginScreen() {
     ]).start();
   };
 
+  const continueAsGuest = () => {
+    router.replace("/(tabs)");
+  };
+
   return (
     <>
       <SafeAreaView className="flex-1 bg-teal-300">
@@ -145,6 +149,7 @@ export default function LoginScreen() {
         >
           <LoginButtonColumn
             onPressOptionalLogin={openBottomSheetModal}
+            onPressGuest={continueAsGuest}
             setIsLoading={setIsLoading}
           />
         </Animated.View>

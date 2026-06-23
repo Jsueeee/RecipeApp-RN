@@ -1,4 +1,6 @@
 import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMutation";
+import { useAuthStatus } from "@/app/hooks/useAuthStatus";
+import { useLoginPrompt } from "@/app/hooks/useLoginPrompt";
 import { RecipeDetail } from "@/app/types/domain/recipe";
 import HeartFillIcon from "@/assets/images/ic_heart_fill.svg";
 import HeartStrokeIcon from "@/assets/images/ic_heart_stroke.svg";
@@ -15,9 +17,15 @@ interface Props {
 
 export const BottomScrapButton = ({ recipeDetail, onLayout }: Props) => {
   const { addScrap, removeScrap, isLoading } = useRecipeScrapMutation();
+  const { isAuthenticated } = useAuthStatus();
+  const promptLogin = useLoginPrompt();
 
   const onPress = () => {
     if (recipeDetail === undefined) return;
+    if (!isAuthenticated) {
+      promptLogin();
+      return;
+    }
 
     impactLight();
 

@@ -1,4 +1,5 @@
 import { TutorialProvider } from "@/app/tutorial";
+import { LoginRequiredDialogProvider } from "@/app/components/LoginRequiredDialogProvider";
 import { queryClient } from "@/app/lib/query/client";
 import { defaultStackScreenOptions } from "@/app/lib/navigation/stackOptions";
 import {
@@ -150,47 +151,51 @@ function RootLayoutNav() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SystemBars style="auto" />
       <BottomSheetModalProvider>
-        <TutorialProvider>
-          <ThemeProvider
-            value={colorScheme.colorScheme === "dark" ? DarkTheme : DefaultTheme}
-          >
-            <Stack
-              screenOptions={defaultStackScreenOptions}
+        <LoginRequiredDialogProvider>
+          <TutorialProvider>
+            <ThemeProvider
+              value={
+                colorScheme.colorScheme === "dark" ? DarkTheme : DefaultTheme
+              }
             >
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="(fridge)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="(fridge)/(edit)"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen name="(recipe)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="(recipe)/(detail)"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen name="(search)" options={{ headerShown: false }} />
-            <Stack.Screen name="(myPage)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="(myPage)/(profile)"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="(myPage)/(myRecipe)"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="(setting)"
-              options={{
-                headerShown: false,
-                gestureEnabled: false,
-                fullScreenGestureEnabled: false,
-              }}
-            />
-            <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-          </Stack>
-          </ThemeProvider>
-        </TutorialProvider>
+              <Stack screenOptions={defaultStackScreenOptions}>
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="(fridge)"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="(fridge)/(edit)"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="(recipe)"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="(recipe)/(detail)"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen name="(search)" options={{ headerShown: false }} />
+                <Stack.Screen name="(myPage)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="(myPage)/(profile)"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="(myPage)/(myRecipe)"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="(setting)"
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+              </Stack>
+            </ThemeProvider>
+          </TutorialProvider>
+        </LoginRequiredDialogProvider>
       </BottomSheetModalProvider>
 
       <ToastManager

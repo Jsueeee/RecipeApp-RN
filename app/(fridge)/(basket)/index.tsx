@@ -1,6 +1,11 @@
 import { CategorizedIngredientsGroup } from "@/app/(tabs)/(fridge)/components/CategorizedIngredientsGroup";
 import { usePostFridgeMutation } from "@/app/hooks/mutations/usePostFridgeMutation";
 import { useFridgeBasketQuery } from "@/app/hooks/queries/useFridgeBasketQuery";
+import { useAuthStatus } from "@/app/hooks/useAuthStatus";
+import {
+  useGuestFridgeBasketQuery,
+  useGuestPostFridgeMutation,
+} from "@/app/lib/storage/guestFridge";
 import { TutorialAnchor, useTutorial } from "@/app/tutorial";
 import { CategorizedFridgeBasket, Ingredient } from "@/app/types/domain/fridge";
 import { mapFridgeBasketIngredient } from "@/app/types/mappers/fridge";
@@ -17,12 +22,29 @@ import { View } from "react-native";
 
 export default function IngredientBasketScreen() {
   const { registerAnchorAction } = useTutorial();
-  const { categorizedFridgeBaskets, isLoading, isError } =
-    useFridgeBasketQuery();
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuthStatus();
+  const remoteBasketQuery = useFridgeBasketQuery({ enabled: isAuthenticated });
+  const guestBasketQuery = useGuestFridgeBasketQuery({
+    enabled: !isAuthenticated,
+  });
+  const categorizedFridgeBaskets = isAuthenticated
+    ? remoteBasketQuery.categorizedFridgeBaskets
+    : guestBasketQuery.categorizedFridgeBaskets;
+  const isLoading =
+    isAuthLoading ||
+    (isAuthenticated ? remoteBasketQuery.isLoading : guestBasketQuery.isLoading);
 
   const router = useRouter();
 
   const { postFridge, isPending } = usePostFridgeMutation({
+    onSuccess: () => {
+      router.replace("/(tabs)/(fridge)");
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+  const { postGuestFridge, isGuestPending } = useGuestPostFridgeMutation({
     onSuccess: () => {
       router.replace("/(tabs)/(fridge)");
     },
@@ -107,8 +129,13 @@ export default function IngredientBasketScreen() {
   };
 
   const onCTAButtonPress = useCallback(() => {
+    if (!isAuthenticated) {
+      postGuestFridge();
+      return;
+    }
+
     postFridge();
-  }, [postFridge]);
+  }, [isAuthenticated, postFridge, postGuestFridge]);
 
   useEffect(() => {
     registerAnchorAction("fridge-basket-save", onCTAButtonPress);
@@ -135,7 +162,7 @@ export default function IngredientBasketScreen() {
               <TutorialAnchor id="fridge-basket-save">
                 <CTAButton
                   buttonLabel={i18n.t("fridge_basket.cta")}
-                  isLoading={isPending}
+                  isLoading={isAuthenticated ? isPending : isGuestPending}
                   onPress={onCTAButtonPress}
                 />
               </TutorialAnchor>

@@ -7,15 +7,17 @@ import { UserInfo } from "@/app/types/domain/mypage";
 
 export const useUserInfoQuery = <T = UserInfo>(options?: {
   select?: (data: UserInfo) => T;
+  enabled?: boolean;
 }) => {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError } = useQuery<UserInfo, Error, T>({
     queryKey: QUERY_KEYS.USER.INFO(),
     queryFn: async () => {
       const response = await apiClient.get<UserInfoResponse>("/users");
       return mapUserInfoResponse(response.data);
     },
     staleTime: 1000 * 60,
-    ...options,
+    select: options?.select,
+    enabled: options?.enabled ?? true,
   });
 
   return {

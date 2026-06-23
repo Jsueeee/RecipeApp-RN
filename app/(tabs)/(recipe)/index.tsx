@@ -1,6 +1,12 @@
 import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMutation";
-import { useRecommendedRecipesQuery } from "@/app/hooks/queries/useRecommendedRecipesQuery";
+import {
+  usePublicRecommendedRecipesQuery,
+  useRecommendedRecipesQuery,
+} from "@/app/hooks/queries/useRecommendedRecipesQuery";
+import { useAuthStatus } from "@/app/hooks/useAuthStatus";
+import { useLoginPrompt } from "@/app/hooks/useLoginPrompt";
 import { getNativeAdUnitId } from "@/app/lib/ads/adUnits";
+import { useGuestFridgeIngredientNamesQuery } from "@/app/lib/storage/guestFridge";
 import { RecipeSummary } from "@/app/types/domain/recipe";
 import { TealDotLoading } from "@/components/DotLoading";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
@@ -35,8 +41,32 @@ const ItemSeparator = () => <View className="h-[1px] mx-4 bg-gray-50" />;
 
 export default function RecipeScreen() {
   const insets = useSafeAreaInsets();
-  const { recipes, totalCount, isLoading, fetchNextPage, hasNextPage } =
-    useRecommendedRecipesQuery();
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuthStatus();
+  const promptLogin = useLoginPrompt();
+  const { ingredientNames, isLoading: isGuestIngredientLoading } =
+    useGuestFridgeIngredientNamesQuery({ enabled: !isAuthenticated });
+  const recommendedRecipesQuery = useRecommendedRecipesQuery({
+    enabled: isAuthenticated,
+  });
+  const publicRecommendedRecipesQuery = usePublicRecommendedRecipesQuery({
+    ingredientNames,
+    enabled: !isAuthenticated,
+  });
+  const recipes = isAuthenticated
+    ? recommendedRecipesQuery.recipes
+    : publicRecommendedRecipesQuery.recipes;
+  const totalCount = isAuthenticated
+    ? recommendedRecipesQuery.totalCount
+    : publicRecommendedRecipesQuery.totalCount;
+  const isLoading = isAuthenticated
+    ? recommendedRecipesQuery.isLoading
+    : isGuestIngredientLoading || publicRecommendedRecipesQuery.isLoading;
+  const fetchNextPage = isAuthenticated
+    ? recommendedRecipesQuery.fetchNextPage
+    : publicRecommendedRecipesQuery.fetchNextPage;
+  const hasNextPage = isAuthenticated
+    ? recommendedRecipesQuery.hasNextPage
+    : publicRecommendedRecipesQuery.hasNextPage;
 
   const { addScrap, removeScrap } = useRecipeScrapMutation();
 
@@ -89,10 +119,15 @@ export default function RecipeScreen() {
 
   const onScrapPress = useCallback(
     (recipeId: number, isScrapped: boolean) => {
+      if (!isAuthenticated) {
+        promptLogin();
+        return;
+      }
+
       impactLight();
       isScrapped ? removeScrap(recipeId) : addScrap(recipeId);
     },
-    [addScrap, removeScrap],
+    [addScrap, isAuthenticated, promptLogin, removeScrap],
   );
 
   const navigateToAddRecipe = useCallback(() => {
@@ -254,6 +289,7 @@ export default function RecipeScreen() {
   );
 
   const renderContent = () => {
+    if (isAuthLoading) return <DotLoadingScreen />;
     if (isLoading) return <DotLoadingScreen />;
     if (!recipes?.length) {
       return <EmptyRecipeTabPlaceholder onPress={navigateToAddRecipe} />;
@@ -288,20 +324,24 @@ export default function RecipeScreen() {
     <SafeAreaView className="flex-1 bg-background-alternative">
       {renderContent()}
 
-      <View
-        pointerEvents="box-none"
-        className="absolute inset-x-0 top-0 justify-end"
-        style={{ paddingTop: 16 }}
-      >
-        <Reanimated.View
-          className="absolute inset-0 bg-white"
-          style={headerBgStyle}
-        />
+      {Boolean(recipes?.length) && (
+        <View
+          pointerEvents="box-none"
+          className="absolute inset-x-0 top-0 justify-end"
+          style={{ paddingTop: 16 }}
+        >
+          <Reanimated.View
+            className="absolute inset-0 bg-white"
+            style={headerBgStyle}
+          />
 
-        <Reanimated.View style={headerContentStyle}>
-          <Text className="px-4 pb-4 text-title4 mt-safe">{CountText()}</Text>
-        </Reanimated.View>
-      </View>
+          <Reanimated.View style={headerContentStyle}>
+            <Text className="px-4 pb-4 text-title4 mt-safe">
+              {CountText()}
+            </Text>
+          </Reanimated.View>
+        </View>
+      )}
     </SafeAreaView>
   );
 }

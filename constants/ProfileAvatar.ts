@@ -5,10 +5,12 @@ type ProfileAvatar = {
   source: ImageSourcePropType;
 };
 
+export const DEFAULT_PROFILE_AVATAR_SOURCE = require("@/assets/images/profile/avatar_0.png");
+
 export const PROFILE_AVATARS = [
   {
     url: "https://firebasestorage.googleapis.com/v0/b/recipeapp-a79ed.appspot.com/o/profile_icon%2Favatar.png?alt=media&token=d29802a8-9c30-41f1-ab04-5ccf62c3dad4",
-    source: require("@/assets/images/profile/avatar_0.png"),
+    source: DEFAULT_PROFILE_AVATAR_SOURCE,
   },
   {
     url: "https://firebasestorage.googleapis.com/v0/b/recipeapp-a79ed.appspot.com/o/profile_icon%2Favatar%20(1).png?alt=media&token=4eec78f8-597b-40af-8a8f-436ee80d60d6",

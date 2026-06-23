@@ -1,17 +1,22 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import RightArrowIcon from "@/assets/images/ic_arrow_right.svg";
-import { getProfileAvatarSource } from "@/constants/ProfileAvatar";
+import {
+  DEFAULT_PROFILE_AVATAR_SOURCE,
+  getProfileAvatarSource,
+} from "@/constants/ProfileAvatar";
 import React, { useMemo } from "react";
 import { Image, Text, View } from "react-native";
 
 interface Props {
   profileImage?: string | undefined | null;
+  showGuestAvatar?: boolean;
   nickname: string | undefined;
   onPress?: () => void;
 }
 
 export function MyProfile({
   profileImage,
+  showGuestAvatar = false,
   nickname,
   onPress = () => {},
 }: Props) {
@@ -26,6 +31,12 @@ export function MyProfile({
         {profileImageSource ? (
           <Image
             source={profileImageSource}
+            className="w-12 h-12 rounded-[18px] bg-gray-50"
+            resizeMode="cover"
+          />
+        ) : showGuestAvatar ? (
+          <Image
+            source={DEFAULT_PROFILE_AVATAR_SOURCE}
             className="w-12 h-12 rounded-[18px] bg-gray-50"
             resizeMode="cover"
           />

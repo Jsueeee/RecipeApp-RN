@@ -1,5 +1,8 @@
 import { CategoryTabs } from "@/app/(tabs)/(fridge)/components/CategoryTabs";
 import { useFridgesQuery } from "@/app/hooks/queries/useFridgeQuery";
+import { useAuthStatus } from "@/app/hooks/useAuthStatus";
+import { useLoginPrompt } from "@/app/hooks/useLoginPrompt";
+import { useGuestFridgesQuery } from "@/app/lib/storage/guestFridge";
 import { Ingredient } from "@/app/types/domain/fridge";
 import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
@@ -19,10 +22,24 @@ const TABS = Object.values(FridgeTabs);
 export default function FridgeScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const { isAuthenticated, isLoading: isAuthLoading } = useAuthStatus();
+  const promptLogin = useLoginPrompt();
 
-  const { fridges, isLoading } = useFridgesQuery();
+  const remoteFridgesQuery = useFridgesQuery({ enabled: isAuthenticated });
+  const guestFridgesQuery = useGuestFridgesQuery({ enabled: !isAuthenticated });
+  const fridges = isAuthenticated
+    ? remoteFridgesQuery.fridges
+    : guestFridgesQuery.fridges;
+  const isLoading = isAuthenticated
+    ? remoteFridgesQuery.isLoading
+    : guestFridgesQuery.isLoading;
 
   const onIngredientItemClick = (ingredient: Ingredient) => {
+    if (!isAuthenticated) {
+      promptLogin();
+      return;
+    }
+
     router.push({
       pathname: "/(fridge)/(edit)/[id]",
       params: { id: ingredient.fridgeId },
@@ -47,11 +64,15 @@ export default function FridgeScreen() {
   );
 
   const renderContent = () => {
+    if (isAuthLoading) {
+      return <DotLoadingScreen />;
+    }
+
     if (isLoading) {
       return <DotLoadingScreen />;
     }
 
-    if (filteredCategories?.length === 0) {
+    if (!filteredCategories?.length) {
       return (
         <View className="flex-1 justify-center items-center">
           <EmptyPlaceholder

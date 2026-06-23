@@ -2,6 +2,7 @@ import type { ReissueTokenResponse } from "@/app/types/api/auth";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { router } from "expo-router";
 import { apiBaseUrl, isProdEnv } from "../config/env";
+import { queryClient } from "../query/client";
 import { authStorage } from "../storage/auth";
 
 const AUTH_ENDPOINT_PATTERN =
@@ -10,14 +11,49 @@ const AUTH_ENDPOINT_PATTERN =
 const isAuthEndpoint = (url?: string) =>
   url ? AUTH_ENDPOINT_PATTERN.test(url) : false;
 
+const PUBLIC_GET_ENDPOINT_PATTERNS = [
+  /^\/recipes$/,
+  /^\/recipes\/blog$/,
+  /^\/recipes\/youtube$/,
+  /^\/recipes\/best-keywords$/,
+  /^\/recipes\/public\/recommendation$/,
+  /^\/recipes\/\d+$/,
+];
+
+const getPathname = (url?: string) => {
+  if (!url) return "";
+
+  try {
+    return new URL(url, apiBaseUrl).pathname;
+  } catch {
+    return url.split("?")[0];
+  }
+};
+
+const isPublicGetEndpoint = (config: InternalAxiosRequestConfig) => {
+  const method = (config.method ?? "get").toLowerCase();
+  if (method !== "get") return false;
+
+  const path = getPathname(config.url);
+  return PUBLIC_GET_ENDPOINT_PATTERNS.some((pattern) => pattern.test(path));
+};
+
 let isAuthRedirectSuppressed = false;
 
 export const setAuthRedirectSuppressed = (isSuppressed: boolean) => {
   isAuthRedirectSuppressed = isSuppressed;
 };
 
-const shouldRedirectToAuth = (url?: string) =>
-  !isAuthRedirectSuppressed && !isAuthEndpoint(url);
+const shouldRedirectToAuth = (config: InternalAxiosRequestConfig) =>
+  !isAuthRedirectSuppressed &&
+  !isAuthEndpoint(config.url) &&
+  !isPublicGetEndpoint(config);
+
+const resetToAuth = () => {
+  queryClient.clear();
+  router.dismissAll();
+  router.replace("/(auth)");
+};
 
 export const apiClient = axios.create({
   baseURL: apiBaseUrl,
@@ -77,8 +113,8 @@ apiClient.interceptors.response.use(
         if (!refreshToken || !userId) {
           await authStorage.clear();
 
-          if (shouldRedirectToAuth(requestUrl)) {
-            router.replace("/(auth)");
+          if (shouldRedirectToAuth(originalConfig)) {
+            resetToAuth();
           }
 
           return Promise.reject(error);
@@ -98,8 +134,8 @@ apiClient.interceptors.response.use(
         // 재발급 실패 시 토큰 정리 후 로그인 화면으로 복귀
         await authStorage.clear();
 
-        if (shouldRedirectToAuth(requestUrl)) {
-          router.replace("/(auth)");
+        if (shouldRedirectToAuth(originalConfig)) {
+          resetToAuth();
         }
 
         return Promise.reject(refreshError);

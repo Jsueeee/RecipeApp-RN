@@ -7,6 +7,8 @@ import { Image, Text, View } from "react-native";
 
 interface Props {
   recipes: UserRecipeSummary[];
+  isAuthenticated: boolean;
+  onRequireLogin: () => void;
   className?: string;
 }
 
@@ -47,10 +49,20 @@ const ThumbnailItem = ({
   );
 };
 
-export function MyRecipeSummary({ recipes = [], className }: Props) {
+export function MyRecipeSummary({
+  recipes = [],
+  isAuthenticated,
+  onRequireLogin,
+  className,
+}: Props) {
   const router = useRouter();
 
   const onAllViewPress = () => {
+    if (!isAuthenticated) {
+      onRequireLogin();
+      return;
+    }
+
     router.push("/(myPage)/(myRecipe)");
   };
 

@@ -40,6 +40,17 @@ export default {
     with_APPLE: "Apple로 로그인",
 
     optional_login_button: "다른 방법으로 로그인하기",
+    continue_as_guest: "로그인 없이 둘러보기",
+    required_title: "로그인이 필요한 기능이에요",
+    required_description:
+      "냉장고, 저장, 나만의 레시피는\n로그인 후 이용할 수 있어요.",
+    required_cta: "로그인하기",
+    required_toast: "로그인 후 이용할 수 있어요",
+    required_dialog_title: "로그인이 필요한 기능이에요",
+    required_dialog_message:
+      "나만의 냉장고 재료를 저장하고\n나에게 딱 맞는 레시피들을 추천받아 보세요!",
+    required_dialog_confirm: "로그인하기",
+    required_dialog_cancel: "둘러보기",
   },
   category: {
     youtube: "유튜브",

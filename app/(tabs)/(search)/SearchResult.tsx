@@ -2,6 +2,8 @@ import { useBlogRecipeScrapMutation } from "@/app/hooks/mutations/useBlogRecipeS
 import { useRecipeScrapMutation } from "@/app/hooks/mutations/useRecipeScrapMutation";
 import { useYoutubeRecipeScrapMutation } from "@/app/hooks/mutations/useYoutubeRecipeScrapMutation";
 import { useSearchRecipesQuery } from "@/app/hooks/queries/useSearchRecipeQuery";
+import { useAuthStatus } from "@/app/hooks/useAuthStatus";
+import { useLoginPrompt } from "@/app/hooks/useLoginPrompt";
 import { getNativeAdUnitId } from "@/app/lib/ads/adUnits";
 import { TutorialAnchor } from "@/app/tutorial";
 import { SearchRecipe } from "@/app/types/domain/recipe";
@@ -44,6 +46,8 @@ export default function SearchResult({ keyword, className }: Props) {
   const [selectedTab, setSelectedTab] = useState<RecipeSourceType>(
     RECIPE_SOURCE_TYPE.BLOG,
   );
+  const { isAuthenticated } = useAuthStatus();
+  const promptLogin = useLoginPrompt();
 
   // 리스트에 광고 아이템을 삽입하기 위한 인터벌
   const AD_INTERVAL = 4;
@@ -105,6 +109,11 @@ export default function SearchResult({ keyword, className }: Props) {
 
   const handleScrapButtonPress = useCallback(
     (isScrapped: boolean, recipeId: number) => {
+      if (!isAuthenticated) {
+        promptLogin();
+        return;
+      }
+
       impactLight();
 
       switch (selectedTab) {
@@ -127,6 +136,8 @@ export default function SearchResult({ keyword, className }: Props) {
       addYoutubeScrap,
       removePublicScrap,
       addPublicScrap,
+      isAuthenticated,
+      promptLogin,
     ],
   );
 

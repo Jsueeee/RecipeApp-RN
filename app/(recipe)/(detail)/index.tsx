@@ -2,6 +2,8 @@ import { useRecipeDeleteMutation } from "@/app/hooks/mutations/useRecipeDeleteMu
 import { useRecipeReportMutation } from "@/app/hooks/mutations/useRecipeReportMutation";
 import { useRecipeDetailQuery } from "@/app/hooks/queries/useRecipeDetailQuery";
 import { useUserInfoQuery } from "@/app/hooks/queries/useUserInfoQuery";
+import { useAuthStatus } from "@/app/hooks/useAuthStatus";
+import { useLoginPrompt } from "@/app/hooks/useLoginPrompt";
 import { queryClient } from "@/app/lib/query/client";
 import { QUERY_KEYS } from "@/app/lib/query/keys";
 import IC_MORE from "@/assets/images/ic_more.svg";
@@ -28,6 +30,8 @@ import { ReportRecipeDialog } from "./components/ReportRecipeDialog";
 
 export default function RecipeDetailScreen() {
   const { id } = useLocalSearchParams();
+  const { isAuthenticated } = useAuthStatus();
+  const promptLogin = useLoginPrompt();
   const { data: recipeDetail } = useRecipeDetailQuery(Number(id));
 
   const [scrapButtonHeight, setScrapButtonHeight] = useState<number>(0);
@@ -39,7 +43,7 @@ export default function RecipeDetailScreen() {
     setScrapButtonHeight(e.nativeEvent.layout.height);
   };
 
-  const { userInfo } = useUserInfoQuery();
+  const { userInfo } = useUserInfoQuery({ enabled: isAuthenticated });
 
   const { reportRecipe } = useRecipeReportMutation({
     onSuccess: () => {
@@ -138,6 +142,11 @@ export default function RecipeDetailScreen() {
   const onCloseMoreMenu = () => setIsMoreMenuVisible(false);
   const onReportButtonPress = () => {
     setIsMoreMenuVisible(false);
+    if (!isAuthenticated) {
+      promptLogin();
+      return;
+    }
+
     setIsReportDialogVisible(true);
   };
   const onDelete = () => {

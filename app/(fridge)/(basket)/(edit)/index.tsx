@@ -1,5 +1,10 @@
 import { useDeleteFridgeBasketIngredientMutation } from "@/app/hooks/mutations/useDeleteFridgeBasketIngredientMutation";
 import { usePatchFridgeBasketIngredientMutation } from "@/app/hooks/mutations/usePatchFridgeBasketIngredientMutation";
+import { useAuthStatus } from "@/app/hooks/useAuthStatus";
+import {
+  useGuestDeleteFridgeBasketIngredientMutation,
+  useGuestPatchFridgeBasketIngredientMutation,
+} from "@/app/lib/storage/guestFridge";
 import { ChoiceDialog } from "@/components/ChoiceDialog";
 import { CTAButton } from "@/components/CTAButton";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
@@ -17,6 +22,7 @@ export default function BasketIngredientEditScreen() {
   const { id, ingredientName, ingredientIconId, expiredAt, quantity, unit } =
     useLocalSearchParams();
   const router = useRouter();
+  const { isAuthenticated } = useAuthStatus();
 
   const { deleteFridgeBasketIngredient, isDeletePending } =
     useDeleteFridgeBasketIngredientMutation({
@@ -24,8 +30,20 @@ export default function BasketIngredientEditScreen() {
         router.back();
       },
     });
+  const { deleteGuestFridgeBasketIngredient, isGuestDeletePending } =
+    useGuestDeleteFridgeBasketIngredientMutation({
+      onSuccess: () => {
+        router.back();
+      },
+    });
   const { patchFridgeBasketIngredient, isPatchPending } =
     usePatchFridgeBasketIngredientMutation({
+      onSuccess: () => {
+        router.back();
+      },
+    });
+  const { patchGuestFridgeBasketIngredient, isGuestPatchPending } =
+    useGuestPatchFridgeBasketIngredientMutation({
       onSuccess: () => {
         router.back();
       },
@@ -67,6 +85,18 @@ export default function BasketIngredientEditScreen() {
     }
 
     try {
+      if (!isAuthenticated) {
+        await patchGuestFridgeBasketIngredient({
+          id: Number(id),
+          body: {
+            expiredAt: localData.expiredAt,
+            quantity: localData.quantity,
+            unit: localData.unit,
+          },
+        });
+        return;
+      }
+
       await patchFridgeBasketIngredient({
         id: Number(id),
         body: {
@@ -86,6 +116,11 @@ export default function BasketIngredientEditScreen() {
 
   const onRemoveDialogConfirm = async () => {
     setRemoveDialogVisible(false);
+
+    if (!isAuthenticated) {
+      deleteGuestFridgeBasketIngredient(Number(id));
+      return;
+    }
 
     deleteFridgeBasketIngredient(Number(id));
   };
@@ -116,7 +151,7 @@ export default function BasketIngredientEditScreen() {
 
           <CTAButton
             buttonLabel={i18n.t("edit_food.cta")}
-            isLoading={isPatchPending}
+            isLoading={isAuthenticated ? isPatchPending : isGuestPatchPending}
             onPress={onCTAClick}
             disabled={!localData?.quantity || localData.quantity <= 0}
             className="mt-2"
@@ -150,6 +185,9 @@ export default function BasketIngredientEditScreen() {
         title={i18n.t("fridge_basket.remove_dialog_title")}
         message={i18n.t("fridge_basket.remove_dialog_message")}
         confirmText={i18n.t("fridge_basket.remove_dialog_confirm")}
+        isConfirmLoading={
+          isAuthenticated ? isDeletePending : isGuestDeletePending
+        }
         onConfirm={onRemoveDialogConfirm}
         onCancel={onRemoveDialogCancel}
       />

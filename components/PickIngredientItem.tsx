@@ -11,6 +11,7 @@ interface Props {
   isSelected: boolean;
   onPress: () => void;
   isNameVisible?: boolean;
+  disabled?: boolean;
 }
 
 const PickIngredientItem = React.memo(
@@ -21,6 +22,7 @@ const PickIngredientItem = React.memo(
     isSelected,
     onPress,
     isNameVisible = true,
+    disabled = false,
   }: Props) {
     const Icon = useMemo(
       () => FoodDataManager.getImageSource(ingredientIconId),
@@ -30,6 +32,7 @@ const PickIngredientItem = React.memo(
     return (
       <PressableScale
         onPress={onPress}
+        disabled={disabled}
         hitSlop={10}
         className="items-center w-[76px]"
       >
@@ -56,6 +59,7 @@ const PickIngredientItem = React.memo(
     if (prevProps.ingredientId !== nextProps.ingredientId) return false;
     if (prevProps.ingredientIconId !== nextProps.ingredientIconId) return false;
     if (prevProps.ingredientName !== nextProps.ingredientName) return false;
+    if (prevProps.disabled !== nextProps.disabled) return false;
     return true;
   } // 이걸 제거하면 느려짐
 );

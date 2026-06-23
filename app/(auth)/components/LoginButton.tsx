@@ -1,7 +1,7 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import i18n from "@/lib/i18n";
 import React from "react";
-import { Image, Text, View } from "react-native";
+import { Image, Text, useWindowDimensions, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";
 
 export enum LoginMethod {
@@ -68,21 +68,48 @@ export const DefaultLoginButton = ({
 
 interface LoginButtonColumnProps {
   onPressOptionalLogin: () => void;
+  onPressGuest: () => void;
   setIsLoading: (isLoading: boolean) => void;
+}
+
+interface LoginTextActionProps {
+  label: string;
+  onPress: () => void;
+  disabled: boolean;
+}
+
+function LoginTextAction({
+  label,
+  onPress,
+  disabled,
+}: LoginTextActionProps) {
+  return (
+    <PressableScale
+      onPress={onPress}
+      disabled={disabled}
+      style={{
+        borderRadius: 8,
+        opacity: disabled ? 0.6 : 1,
+        paddingHorizontal: 8,
+        paddingVertical: 6,
+      }}
+      pressedStyle={{ backgroundColor: "rgba(255, 255, 255, 0.28)" }}
+    >
+      <Text className="text-body2 text-text-normal">{label}</Text>
+    </PressableScale>
+  );
 }
 
 export default function LoginButtonColumn({
   onPressOptionalLogin,
+  onPressGuest,
   setIsLoading,
 }: LoginButtonColumnProps) {
+  const { width } = useWindowDimensions();
   const { handleKakaoLogin, handleGoogleLogin, isAnyAuthPending } = useAuth({
     setIsLoading,
   });
-
-  // 플랫폼별 설정
-  const buttonHeight = 52; // p-4(16*2) + 텍스트(20) = 약 52px // TODO : 텍스트 크기 고정 고려하기
-  const gap = 12;
-  const totalHeight = 3 * buttonHeight + 2 * gap; // 3개 버튼 + 2개 간격의 고정 높이
+  const shouldStackTextActions = width < 360;
 
   const onPressLogin = (loginMethod: LoginMethod) => {
     if (isAnyAuthPending) return;
@@ -99,16 +126,7 @@ export default function LoginButtonColumn({
   };
 
   return (
-    <View
-      className="w-full max-w-[500px]"
-      style={{
-        gap: gap,
-        height: totalHeight,
-        alignItems: "center",
-        flexDirection: "column",
-        justifyContent: "space-between",
-      }}
-    >
+    <View className="w-full max-w-[500px] items-center">
       <View className="w-full gap-3">
         <DefaultLoginButton
           method={LoginMethod.GOOGLE}
@@ -122,20 +140,34 @@ export default function LoginButtonColumn({
         />
       </View>
 
-      <PressableScale
-        onPress={onPressOptionalLogin}
-        disabled={isAnyAuthPending}
-        style={{
-          paddingHorizontal: 10,
-          paddingVertical: 6,
-          borderRadius: 8,
-        }}
-        pressedStyle={{ backgroundColor: "#0000001A" }}
+      <View
+        className={`mt-3 items-center justify-center ${
+          shouldStackTextActions ? "gap-1" : "flex-row"
+        }`}
       >
-        <Text className="text-body2 text-text-normal">
-          {i18n.t("login.optional_login_button")}
-        </Text>
-      </PressableScale>
+        <LoginTextAction
+          label={i18n.t("login.continue_as_guest")}
+          onPress={onPressGuest}
+          disabled={isAnyAuthPending}
+        />
+
+        {!shouldStackTextActions && (
+          <View
+            className="mx-1"
+            style={{
+              backgroundColor: "rgba(63, 69, 66, 0.28)",
+              height: 12,
+              width: 1,
+            }}
+          />
+        )}
+
+        <LoginTextAction
+          label={i18n.t("login.optional_login_button")}
+          onPress={onPressOptionalLogin}
+          disabled={isAnyAuthPending}
+        />
+      </View>
     </View>
   );
 }

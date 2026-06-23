@@ -11,6 +11,8 @@ interface Props {
   blogScrapCount: number;
   youtubeScrapCount: number;
   recipeScrapCount: number;
+  isAuthenticated: boolean;
+  onRequireLogin: () => void;
   className?: string;
 }
 
@@ -39,13 +41,25 @@ export function MyScrapSummary({
   blogScrapCount,
   youtubeScrapCount,
   recipeScrapCount,
+  isAuthenticated,
+  onRequireLogin,
   className,
 }: Props) {
   const onAllViewPress = () => {
+    if (!isAuthenticated) {
+      onRequireLogin();
+      return;
+    }
+
     router.push("/(myPage)/(scrap)");
   };
 
   const onScrapCountPress = (type: RecipeSourceType) => {
+    if (!isAuthenticated) {
+      onRequireLogin();
+      return;
+    }
+
     router.push(`/(myPage)/(scrap)?type=${type}`);
   };
 

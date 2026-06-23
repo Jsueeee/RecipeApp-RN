@@ -3,7 +3,7 @@ import { QUERY_KEYS } from "@/app/lib/query/keys";
 import { FridgeBasket } from "@/app/types/domain/fridge";
 import { useQuery } from "@tanstack/react-query";
 
-export const useFridgeBasketQuery = () => {
+export const useFridgeBasketQuery = (options?: { enabled?: boolean }) => {
   const { data, isLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.FRIDGE.BASKET(),
     queryFn: async () => {
@@ -17,6 +17,7 @@ export const useFridgeBasketQuery = () => {
       ),
     }),
     staleTime: 0,
+    enabled: options?.enabled ?? true,
   });
 
   return {
