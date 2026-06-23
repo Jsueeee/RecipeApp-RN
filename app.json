@@ -28,7 +28,7 @@
         "backgroundColor": "#9FE5D3"
       },
       "package": "com.recipe.android.recipeapp",
-      "versionCode": 4,
+      "versionCode": 200005,
       "googleServicesFile": "./google-services.json",
       "permissions": ["android.permission.POST_NOTIFICATIONS"],
       "blockedPermissions": [
