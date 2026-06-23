@@ -14,6 +14,7 @@ import {
   naverLoginClientSecret,
   validatePublicEnv,
 } from "@/app/lib/config/env";
+import { DevModeRibbon } from "@/components/DevModeRibbon";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
@@ -204,6 +205,7 @@ function RootLayoutNav() {
         duration={1500}
         useModal={false}
       />
+      <DevModeRibbon />
     </GestureHandlerRootView>
   );
 }
