@@ -66,10 +66,10 @@ export default function CustomIngredientScreen() {
         ?.filter(
           (category) =>
             selectedTabIndex === 0 ||
-            category.ingredientCategoryName === TABS[selectedTabIndex]
+            category.ingredientCategoryName === TABS[selectedTabIndex],
         )
         .filter((category) => category.ingredients.length > 0),
-    [categorizedIngredients, selectedTabIndex]
+    [categorizedIngredients, selectedTabIndex],
   );
 
   const renderContent = useMemo(() => {
