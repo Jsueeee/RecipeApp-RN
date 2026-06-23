@@ -111,6 +111,10 @@
       <string>pretendard_bold.otf</string>
       <string>cafe24.otf</string>
     </array>
+    <key>UIBackgroundModes</key>
+    <array>
+      <string>remote-notification</string>
+    </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>
