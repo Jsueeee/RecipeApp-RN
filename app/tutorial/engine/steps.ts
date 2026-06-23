@@ -1,6 +1,9 @@
 import type { StepConfig } from "./types";
 
-export const STEPS: ReadonlyArray<StepConfig> = [
+export type TutorialMode = "authenticated" | "guest";
+export type TutorialStepMode = TutorialMode | "expiration-notification";
+
+export const AUTHENTICATED_STEPS: ReadonlyArray<StepConfig> = [
   {
     id: "entrance",
     index: 0,
@@ -170,4 +173,224 @@ export const STEPS: ReadonlyArray<StepConfig> = [
   },
 ];
 
+export const GUEST_STEPS: ReadonlyArray<StepConfig> = [
+  {
+    id: "guest-entrance",
+    index: 0,
+    character: { emotion: "happy", region: "center" },
+    speech: "안녕하세요.\n저는 토마토예요 🍅\n\n만나서 반가워요!",
+    trigger: { type: "auto", delayMs: 2200 },
+    blocksTouches: true,
+  },
+  {
+    id: "guest-login-choice",
+    index: 1,
+    character: { emotion: "happy", region: "center" },
+    speech: "로그인을 하시면\n모든 서비스를 이용할 수 있어요!",
+    trigger: {
+      type: "guest-mode-choice",
+      loginLabel: "로그인하러 가기",
+      continueLabel: "게스트로 튜토리얼 계속하기",
+      unavailableFeatures: [
+        "내 맘대로 맞춤 재료 저장하기",
+        "개인 맞춤형 레시피 추천받기",
+        "블로그 레시피, 유튜브, 모든 추천 레시피 저장하기",
+        "나만의 레시피 만들기",
+        "다른 유저들과 레시피 공유하기",
+      ],
+    },
+    blocksTouches: true,
+  },
+  {
+    id: "guest-mode-start",
+    index: 2,
+    character: { emotion: "cheering", region: "center" },
+    speech: "좋아요!\n게스트 모드로 같이 구경해요!",
+    trigger: { type: "auto", delayMs: 2400 },
+    blocksTouches: true,
+  },
+  {
+    id: "tap-fab",
+    index: 3,
+    anchorId: "fab-add-ingredient",
+    character: { emotion: "pointing", region: "beside-anchor" },
+    speech: "이 버튼을 눌러서\n재료를 추가해 볼까요?",
+    trigger: { type: "tap-anchor", anchorId: "fab-add-ingredient" },
+    spotlightShape: "circle",
+    blocksTouches: true,
+  },
+  {
+    id: "guest-picker-intro",
+    index: 4,
+    anchorId: "picker-categories",
+    character: { emotion: "pointing", region: "center" },
+    speech: "재료 추가 화면이에요!\n카테고리로 종류별로 볼 수 있어요.",
+    trigger: { type: "auto", delayMs: 3000 },
+    advanceOnSegment: "(fridge)",
+    spotlightPadding: 2,
+    spotlightHorizontalInset: 16,
+    blocksTouches: false,
+  },
+  {
+    id: "picker-pick",
+    index: 5,
+    anchorId: "picker-ingredient-first",
+    character: { emotion: "taunting", region: "beside-anchor" },
+    speech: "먼저 이 재료를\n눌러 보세요!",
+    trigger: { type: "progress", key: "picker-picked-1" },
+    advanceOnSegment: "(fridge)",
+    spotlightShape: "circle",
+    blocksTouches: true,
+  },
+  {
+    id: "picker-pick-next",
+    index: 6,
+    anchorId: "picker-ingredient-second",
+    character: { emotion: "pointing", region: "beside-anchor" },
+    speech: "좋아요!\n이번엔 이 재료를 선택해 볼까요?",
+    trigger: { type: "progress", key: "picker-picked-2" },
+    advanceOnSegment: "(fridge)",
+    spotlightShape: "circle",
+    blocksTouches: true,
+  },
+  {
+    id: "picker-custom",
+    index: 7,
+    anchorId: "picker-custom",
+    character: { emotion: "pointing", region: "beside-anchor" },
+    speech: "MY 버튼에서\n원하는 재료를 직접 등록할 수도 있어요!",
+    trigger: { type: "auto-or-tap", delayMs: 2800 },
+    advanceOnSegment: "(fridge)",
+    blocksTouches: true,
+  },
+  {
+    id: "guest-picker-confirm",
+    index: 8,
+    anchorId: "picker-cta",
+    character: { emotion: "pointing", region: "center" },
+    speech: "이제 담기 버튼을 눌러서\n냉장고에 추가해 볼까요?",
+    trigger: { type: "navigation", segmentMatch: "(fridge)" },
+    advanceOnSegment: "(basket)",
+    blocksTouches: false,
+  },
+  {
+    id: "guest-back-cheer",
+    index: 9,
+    character: { emotion: "cheering", region: "top-right" },
+    speech: "잘했어요!\n이렇게 재료를 관리할 수 있어요.",
+    trigger: { type: "auto-or-tap", delayMs: 2400 },
+    blocksTouches: true,
+  },
+  {
+    id: "guest-basket-edit-hint",
+    index: 10,
+    anchorId: "fridge-basket-first-ingredient",
+    character: { emotion: "pointing", region: "beside-anchor" },
+    speech: "담긴 재료를 누르면\n수량이나 유통기한을 수정할 수 있어요.",
+    trigger: { type: "auto-or-tap", delayMs: 3000 },
+    spotlightPadding: 2,
+    blocksTouches: true,
+  },
+  {
+    id: "guest-fridge-save",
+    index: 11,
+    anchorId: "fridge-basket-save",
+    character: { emotion: "taunting", region: "beside-anchor" },
+    speech: "버튼을 눌러서\n내 냉장고에 저장해 볼까요?",
+    trigger: { type: "navigation", segmentMatch: "(tabs)" },
+    blocksTouches: true,
+  },
+  {
+    id: "recipe-tab-quest",
+    index: 12,
+    anchorId: "tab-recipe",
+    character: { emotion: "pointing", region: "beside-anchor" },
+    speech:
+      "냉장고에 재료를 담으면\n레시피가 자동으로 추천돼요.\n레시피 저장소로 가볼까요?",
+    trigger: { type: "navigation", segmentMatch: "(recipe)" },
+    blocksTouches: true,
+  },
+  {
+    id: "search-tab-quest",
+    index: 13,
+    anchorId: "tab-search",
+    character: { emotion: "pointing", region: "beside-anchor" },
+    speech: "레시피 검색도 가능해요!",
+    trigger: { type: "navigation", segmentMatch: "(search)" },
+    blocksTouches: true,
+  },
+  {
+    id: "search-popular-quest",
+    index: 14,
+    anchorId: "search-popular-keyword",
+    character: { emotion: "taunting", region: "beside-anchor" },
+    speech: "지금 가장 인기 있는 레시피를\n하나 눌러볼까요?",
+    trigger: { type: "progress", key: "search-popular-picked" },
+    blocksTouches: true,
+  },
+  {
+    id: "search-result-intro",
+    index: 15,
+    anchorId: "search-result-source-tabs",
+    character: { emotion: "happy", region: "beside-anchor" },
+    speech: "블로그, 유튜브, 추천 레시피를\n여기서 한 번에 확인할 수 있어요.",
+    trigger: { type: "auto-or-tap", delayMs: 3300 },
+    spotlightPadding: 2,
+    spotlightHorizontalInset: 12,
+    blocksTouches: true,
+  },
+  {
+    id: "my-tab-quest",
+    index: 16,
+    anchorId: "tab-myPage",
+    character: { emotion: "pointing", region: "beside-anchor" },
+    speech: "마지막으로 MY 탭도\n둘러볼까요?",
+    trigger: { type: "navigation", segmentMatch: "(myPage)" },
+    blocksTouches: true,
+  },
+  {
+    id: "my-page-intro",
+    index: 17,
+    anchorId: "my-recipe-create",
+    character: { emotion: "cheering", region: "beside-anchor" },
+    speech: "여기서 나만의 레시피를 만들고\n다른 유저와 공유할 수도 있어요.",
+    trigger: { type: "auto-or-tap", delayMs: 3300 },
+    spotlightShape: "circle",
+    blocksTouches: true,
+  },
+  {
+    id: "guest-celebration",
+    index: 18,
+    character: { emotion: "celebrating", region: "center" },
+    speech:
+      "튜토리얼이 모두 끝났어요🎉\n로그인하고 유통기한 알림도 이용해 보세요!\n\n다음에 다시 만나요!",
+    trigger: { type: "auto", delayMs: 4200 },
+    blocksTouches: true,
+  },
+];
+
+export const EXPIRATION_NOTIFICATION_STEPS: ReadonlyArray<StepConfig> = [
+  {
+    id: "expiration-notification-intro",
+    index: 0,
+    character: { emotion: "happy", region: "center" },
+    speech:
+      "유통기한 알림을 설정해볼까요?\n식재료들이 상하기 전에 알려드릴게요!",
+    trigger: { type: "auto-or-tap", delayMs: 4200 },
+    blocksTouches: true,
+  },
+];
+
+export const getTutorialSteps = (mode: TutorialStepMode) => {
+  switch (mode) {
+    case "authenticated":
+      return AUTHENTICATED_STEPS;
+    case "guest":
+      return GUEST_STEPS;
+    case "expiration-notification":
+      return EXPIRATION_NOTIFICATION_STEPS;
+  }
+};
+
+export const STEPS = AUTHENTICATED_STEPS;
 export const TOTAL_STEPS = STEPS.length;

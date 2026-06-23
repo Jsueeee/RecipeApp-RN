@@ -1,6 +1,7 @@
 import { ChoiceDialog } from "@/components/ChoiceDialog";
+import { CTAButton } from "@/components/CTAButton";
 import { selection as hapticSelection } from "@/app/lib/haptics";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -8,7 +9,19 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, {
+  cancelAnimation,
+  Easing,
+  Extrapolation,
+  FadeIn,
+  interpolate,
+  interpolateColor,
+  type SharedValue,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   CHARACTER_BODY_H,
@@ -17,17 +30,31 @@ import {
 } from "../character/TomatoCharacter";
 import { SparkleBurst } from "../character/SparkleBurst";
 import { useTutorial } from "../context/useTutorial";
-import { STEPS, TOTAL_STEPS } from "../engine/steps";
 import type { AnchorId, CharacterRegion, Rect } from "../engine/types";
 import { SpeechBubble } from "../tooltip/SpeechBubble";
 import { Spotlight } from "./Spotlight";
 import { TouchGate } from "./TouchGate";
 
+const GUEST_CHOICE_POP_DELAY_MS = 140;
+const GUEST_FEATURE_ROLL_VISIBLE_COUNT = 3;
+const GUEST_FEATURE_ROLL_ITEM_HEIGHT = 34;
+const GUEST_FEATURE_ROLL_HEIGHT =
+  GUEST_FEATURE_ROLL_VISIBLE_COUNT * GUEST_FEATURE_ROLL_ITEM_HEIGHT;
+const GUEST_FEATURE_ROLL_INTERVAL_MS = 1900;
+const GUEST_FEATURE_ROLL_TRANSITION_MS = 360;
+const GUEST_CHOICE_BUTTON_HEIGHT = 52;
+const GUEST_CHOICE_STACK_GAP = 10;
+const SPEECH_LINE_HEIGHT = 28;
+
 export function TutorialOverlay() {
   const [skipDialogVisible, setSkipDialogVisible] = useState(false);
+  const [guestChoiceReadyStep, setGuestChoiceReadyStep] = useState<
+    number | null
+  >(null);
   const {
     state,
     currentStep,
+    totalSteps,
     currentAnchorRect,
     coordinateSpaceSize,
     advanceCta,
@@ -36,19 +63,99 @@ export function TutorialOverlay() {
     reportAnchorTap,
     reportSpeechComplete,
     triggerAnchorAction,
+    continueGuestTutorial,
+    goToLoginFromTutorial,
   } = useTutorial();
   const insets = useSafeAreaInsets();
   const windowDimensions = useWindowDimensions();
   const screenW = coordinateSpaceSize.width || windowDimensions.width;
   const screenH = coordinateSpaceSize.height || windowDimensions.height;
+  const currentStepId = currentStep?.id;
+  const currentStepTriggerType = currentStep?.trigger.type;
+
+  const guestChoiceOpacity = useSharedValue(0);
+  const guestChoiceScale = useSharedValue(0.96);
+  const guestChoiceTranslateY = useSharedValue(8);
+
+  useEffect(() => {
+    setGuestChoiceReadyStep(null);
+    guestChoiceOpacity.value = 0;
+    guestChoiceScale.value = 0.96;
+    guestChoiceTranslateY.value = 8;
+  }, [
+    currentStepId,
+    state.stepIndex,
+    guestChoiceOpacity,
+    guestChoiceScale,
+    guestChoiceTranslateY,
+  ]);
+
+  useEffect(() => {
+    if (
+      state.phase !== "waiting" ||
+      currentStepTriggerType !== "guest-mode-choice" ||
+      guestChoiceReadyStep !== state.stepIndex
+    ) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      guestChoiceOpacity.value = withTiming(1, {
+        duration: 220,
+        easing: Easing.out(Easing.quad),
+      });
+      guestChoiceScale.value = withSpring(1, {
+        damping: 9,
+        stiffness: 180,
+        mass: 0.7,
+      });
+      guestChoiceTranslateY.value = withSpring(0, {
+        damping: 11,
+        stiffness: 190,
+        mass: 0.75,
+      });
+    }, GUEST_CHOICE_POP_DELAY_MS);
+
+    return () => clearTimeout(timer);
+  }, [
+    currentStepTriggerType,
+    guestChoiceOpacity,
+    guestChoiceReadyStep,
+    guestChoiceScale,
+    guestChoiceTranslateY,
+    state.phase,
+    state.stepIndex,
+  ]);
+
+  const guestChoiceAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: guestChoiceOpacity.value,
+    transform: [
+      { translateY: guestChoiceTranslateY.value },
+      { scale: guestChoiceScale.value },
+    ],
+  }));
 
   const visible = state.phase !== "idle" && state.phase !== "done";
   if (!visible || !currentStep) return null;
 
   const showCta = currentStep.trigger.type === "cta";
+  const showGuestChoice = currentStep.trigger.type === "guest-mode-choice";
   const advanceOnScreenTap = currentStep.trigger.type === "auto-or-tap";
   const ctaLabel =
     currentStep.trigger.type === "cta" ? currentStep.trigger.label : "";
+  const loginChoiceLabel =
+    currentStep.trigger.type === "guest-mode-choice"
+      ? currentStep.trigger.loginLabel
+      : "";
+  const continueChoiceLabel =
+    currentStep.trigger.type === "guest-mode-choice"
+      ? currentStep.trigger.continueLabel
+      : "";
+  const unavailableFeatures =
+    currentStep.trigger.type === "guest-mode-choice"
+      ? (currentStep.trigger.unavailableFeatures ?? [])
+      : [];
+  const hasUnavailableFeatures = unavailableFeatures.length > 0;
 
   const charPos = regionToPosition(
     currentStep.character.region,
@@ -62,14 +169,14 @@ export function TutorialOverlay() {
 
   const tooltipVisible = state.phase === "waiting";
   const stepIndex = state.stepIndex;
-  const isLastStep = stepIndex === TOTAL_STEPS - 1;
+  const isLastStep = stepIndex === totalSteps - 1;
   const spotlightRect = applySpotlightInsets(
     currentAnchorRect,
     currentStep.spotlightHorizontalInset,
     currentStep.spotlightVerticalInset,
   );
   const activeSpotlightRect =
-    state.phase === "success" ? null : spotlightRect ?? null;
+    state.phase === "success" ? null : (spotlightRect ?? null);
   const anchorCenter = currentAnchorRect
     ? {
         x: currentAnchorRect.x + currentAnchorRect.width / 2,
@@ -80,6 +187,29 @@ export function TutorialOverlay() {
   const charCenterX = charPos.left + CHARACTER_BODY_W / 2;
   const charCenterY = charPos.top + CHARACTER_BODY_H / 2;
   const bubbleAboveChar = charPos.top + CHARACTER_BODY_H > screenH * 0.5;
+  const estimatedSpeechLineCount = estimateSpeechLineCount(
+    currentStep.speech ?? "",
+    screenW,
+  );
+  const estimatedSpeechHeight = estimatedSpeechLineCount * SPEECH_LINE_HEIGHT;
+  const speechBlockBottom = currentStep.speech
+    ? bubbleAboveChar
+      ? charPos.top - 24
+      : charPos.top + CHARACTER_BODY_H + 24 + estimatedSpeechHeight
+    : charPos.top + CHARACTER_BODY_H + 24;
+  const guestChoiceStackHeight =
+    GUEST_CHOICE_BUTTON_HEIGHT * 2 +
+    GUEST_CHOICE_STACK_GAP +
+    (hasUnavailableFeatures
+      ? GUEST_FEATURE_ROLL_HEIGHT + GUEST_CHOICE_STACK_GAP
+      : 0);
+  const minGuestChoiceTop = insets.top + 96;
+  const maxGuestChoiceTop =
+    screenH - insets.bottom - guestChoiceStackHeight - 32;
+  const guestChoiceTop = Math.max(
+    minGuestChoiceTop,
+    Math.min(maxGuestChoiceTop, speechBlockBottom + 18),
+  );
 
   const proxyAnchorId =
     state.phase === "waiting" &&
@@ -178,18 +308,19 @@ export function TutorialOverlay() {
               visible={tooltipVisible}
               showAfterDelayMs={350}
               charDelayMs={28}
-              onComplete={() => reportSpeechComplete(stepIndex)}
+              onComplete={() => {
+                reportSpeechComplete(stepIndex);
+                if (showGuestChoice) {
+                  setGuestChoiceReadyStep(stepIndex);
+                }
+              }}
             />
           </View>
         ) : null}
-
       </Animated.View>
 
       {/* Interaction layer — blocks dimmed areas, keeps active target + skip tappable. */}
-      <View
-        pointerEvents="box-none"
-        style={StyleSheet.absoluteFill}
-      >
+      <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
         <TouchGate rect={spotlightRect ?? null} />
 
         {advanceOnScreenTap && state.phase === "waiting" ? (
@@ -254,6 +385,46 @@ export function TutorialOverlay() {
           <Text style={styles.skipText}>건너뛰기</Text>
         </Pressable>
 
+        {showGuestChoice &&
+        state.phase === "waiting" &&
+        guestChoiceReadyStep === stepIndex ? (
+          <Animated.View
+            pointerEvents="box-none"
+            style={[
+              styles.guestChoiceButtons,
+              { top: guestChoiceTop },
+              guestChoiceAnimatedStyle,
+            ]}
+          >
+            {unavailableFeatures.length > 0 ? (
+              <GuestFeatureRoller features={unavailableFeatures} />
+            ) : null}
+
+            <View style={styles.guestChoiceButton}>
+              <CTAButton
+                buttonLabel={loginChoiceLabel}
+                onPress={() => {
+                  hapticSelection();
+                  goToLoginFromTutorial();
+                }}
+                className="w-[200px]"
+              />
+            </View>
+
+            <View style={styles.guestChoiceButton}>
+              <CTAButton
+                buttonLabel={continueChoiceLabel}
+                variant="cancel"
+                onPress={() => {
+                  hapticSelection();
+                  continueGuestTutorial();
+                }}
+                className="w-[200px]"
+              />
+            </View>
+          </Animated.View>
+        ) : null}
+
         <ChoiceDialog
           visible={skipDialogVisible}
           title="튜토리얼을 그만볼까요?"
@@ -269,6 +440,157 @@ export function TutorialOverlay() {
       </View>
     </>
   );
+}
+
+function GuestFeatureRoller({ features }: { features: readonly string[] }) {
+  const offsetY = useSharedValue(0);
+  const displayFeatures = useMemo(
+    () => createLoopedFeatureList(features),
+    [features],
+  );
+
+  useEffect(() => {
+    offsetY.value = 0;
+    if (features.length <= 1) return;
+
+    let currentIndex = 0;
+    const interval = setInterval(() => {
+      currentIndex += 1;
+      const targetIndex = currentIndex;
+      offsetY.value = withTiming(
+        -GUEST_FEATURE_ROLL_ITEM_HEIGHT * targetIndex,
+        {
+          duration: GUEST_FEATURE_ROLL_TRANSITION_MS,
+          easing: Easing.out(Easing.cubic),
+        },
+        (finished) => {
+          if (finished && targetIndex === features.length) {
+            offsetY.value = 0;
+          }
+        },
+      );
+
+      if (currentIndex === features.length) {
+        currentIndex = 0;
+      }
+    }, GUEST_FEATURE_ROLL_INTERVAL_MS);
+
+    return () => {
+      clearInterval(interval);
+      cancelAnimation(offsetY);
+    };
+  }, [features, offsetY]);
+
+  const rollStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: offsetY.value }],
+  }));
+
+  return (
+    <View style={styles.guestFeatureBlock}>
+      <View style={styles.guestFeatureRoller}>
+        <Animated.View style={rollStyle}>
+          {displayFeatures.map((feature, index) => (
+            <GuestFeatureRollerItem
+              key={`${feature}-${index}`}
+              feature={feature}
+              index={index}
+              offsetY={offsetY}
+            />
+          ))}
+        </Animated.View>
+      </View>
+    </View>
+  );
+}
+
+function GuestFeatureRollerItem({
+  feature,
+  index,
+  offsetY,
+}: {
+  feature: string;
+  index: number;
+  offsetY: SharedValue<number>;
+}) {
+  const itemStyle = useAnimatedStyle(() => {
+    const focus = getGuestFeatureFocus(index, offsetY.value);
+
+    return {
+      opacity: interpolate(focus, [0, 1], [0.46, 1], Extrapolation.CLAMP),
+    };
+  });
+
+  const textStyle = useAnimatedStyle(() => {
+    const focus = getGuestFeatureFocus(index, offsetY.value);
+
+    return {
+      color: interpolateColor(
+        focus,
+        [0, 1],
+        ["rgba(255, 255, 255, 0.74)", "#8AF1D5"],
+      ),
+      textShadowColor: interpolateColor(
+        focus,
+        [0, 1],
+        ["rgba(0, 0, 0, 0.72)", "rgba(75, 210, 176, 0.32)"],
+      ),
+      textShadowRadius: interpolate(focus, [0, 1], [7, 10]),
+    };
+  });
+
+  return (
+    <Animated.View style={[styles.guestFeatureItem, itemStyle]}>
+      <Animated.Text
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.72}
+        style={[styles.guestFeatureText, textStyle]}
+      >
+        {feature}
+      </Animated.Text>
+    </Animated.View>
+  );
+}
+
+function getGuestFeatureFocus(index: number, offsetY: number): number {
+  "worklet";
+
+  const distanceFromCenter = Math.abs(
+    index + offsetY / GUEST_FEATURE_ROLL_ITEM_HEIGHT - 1,
+  );
+
+  return interpolate(
+    distanceFromCenter,
+    [0, 1],
+    [1, 0],
+    Extrapolation.CLAMP,
+  );
+}
+
+function createLoopedFeatureList(features: readonly string[]): string[] {
+  if (features.length === 0) return [];
+  if (features.length === 1) return [...features];
+
+  const repeated = [...features];
+  const targetLength = features.length + GUEST_FEATURE_ROLL_VISIBLE_COUNT;
+  while (repeated.length < targetLength) {
+    repeated.push(features[repeated.length % features.length]);
+  }
+  return repeated;
+}
+
+function estimateSpeechLineCount(text: string, screenW: number): number {
+  if (!text) return 1;
+
+  const charsPerLine = screenW < 360 ? 15 : 18;
+  return text
+    .split("\n")
+    .reduce(
+      (lineCount, line) =>
+        lineCount +
+        Math.max(1, Math.ceil(Array.from(line).length / charsPerLine)),
+      0,
+    );
 }
 
 function applySpotlightInsets(
@@ -377,6 +699,47 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontFamily: "pretendard_bold",
+  },
+  guestChoiceButtons: {
+    position: "absolute",
+    left: 24,
+    right: 24,
+    alignItems: "center",
+    gap: GUEST_CHOICE_STACK_GAP,
+  },
+  guestChoiceButton: {
+    width: "100%",
+    maxWidth: 400,
+    alignItems: "center",
+  },
+  guestFeatureBlock: {
+    width: "100%",
+    maxWidth: 370,
+    alignItems: "center",
+  },
+  guestFeatureRoller: {
+    width: "100%",
+    height: GUEST_FEATURE_ROLL_HEIGHT,
+    overflow: "hidden",
+    backgroundColor: "transparent",
+  },
+  guestFeatureItem: {
+    height: GUEST_FEATURE_ROLL_ITEM_HEIGHT,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 12,
+  },
+  guestFeatureText: {
+    flexShrink: 1,
+    color: "rgba(255, 255, 255, 0.74)",
+    fontSize: 13,
+    lineHeight: 18,
+    fontFamily: "pretendard_bold",
+    includeFontPadding: false,
+    textAlign: "center",
+    textShadowColor: "rgba(0, 0, 0, 0.72)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 7,
   },
   bubbleWrap: {
     position: "absolute",

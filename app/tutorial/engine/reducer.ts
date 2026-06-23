@@ -1,4 +1,3 @@
-import { STEPS, TOTAL_STEPS } from "./steps";
 import type { EngineEvent, EngineState, Rect } from "./types";
 
 const RECT_EPSILON = 0.5;
@@ -19,7 +18,7 @@ export function engineReducer(
       if (state.hasStarted && state.phase !== "done") return state;
       const stepIndex = Math.min(
         Math.max(event.stepIndex ?? 0, 0),
-        TOTAL_STEPS - 1,
+        event.totalSteps - 1,
       );
       return {
         ...state,
@@ -54,21 +53,28 @@ export function engineReducer(
 
     case "CTA_PRESSED": {
       if (state.phase !== "waiting") return state;
-      const step = STEPS[state.stepIndex];
+      const step = event.step;
       if (step?.trigger.type !== "cta") return state;
+      return { ...state, phase: "success" };
+    }
+
+    case "GUEST_MODE_CONTINUED": {
+      if (state.phase !== "waiting") return state;
+      const step = event.step;
+      if (step?.trigger.type !== "guest-mode-choice") return state;
       return { ...state, phase: "success" };
     }
 
     case "SCREEN_TAPPED": {
       if (state.phase !== "waiting") return state;
-      const step = STEPS[state.stepIndex];
+      const step = event.step;
       if (step?.trigger.type !== "auto-or-tap") return state;
       return { ...state, phase: "success" };
     }
 
     case "ANCHOR_TAPPED": {
       if (state.phase !== "waiting") return state;
-      const step = STEPS[state.stepIndex];
+      const step = event.step;
       if (!step || step.anchorId !== event.id) return state;
       if (
         step.trigger.type !== "tap-anchor" &&
@@ -81,7 +87,7 @@ export function engineReducer(
 
     case "NAV_MATCHED": {
       if (state.phase !== "waiting") return state;
-      const step = STEPS[state.stepIndex];
+      const step = event.step;
       if (!step) return state;
       const matchesPrimary =
         step.trigger.type === "navigation" &&
@@ -95,7 +101,7 @@ export function engineReducer(
 
     case "AUTO_TIMEOUT": {
       if (state.phase !== "waiting") return state;
-      const step = STEPS[state.stepIndex];
+      const step = event.step;
       if (
         step?.trigger.type !== "auto" &&
         step?.trigger.type !== "auto-or-tap"
@@ -107,14 +113,14 @@ export function engineReducer(
 
     case "SHEET_DISMISSED": {
       if (state.phase !== "waiting") return state;
-      const step = STEPS[state.stepIndex];
+      const step = event.step;
       if (step?.trigger.type !== "sheet-dismiss") return state;
       return { ...state, phase: "success" };
     }
 
     case "PROGRESS_REPORTED": {
       if (state.phase !== "waiting") return state;
-      const step = STEPS[state.stepIndex];
+      const step = event.step;
       if (
         step?.trigger.type !== "progress" ||
         step.trigger.key !== event.key
@@ -127,7 +133,7 @@ export function engineReducer(
     case "EXIT_COMPLETE": {
       if (state.phase !== "success") return state;
       const next = state.stepIndex + 1;
-      if (next >= TOTAL_STEPS) {
+      if (next >= event.totalSteps) {
         return { ...state, phase: "done" };
       }
       return { ...state, stepIndex: next, phase: "entering" };

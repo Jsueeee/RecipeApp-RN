@@ -1,6 +1,12 @@
 import { useRouter, useSegments } from "expo-router";
 import { impactMedium } from "@/app/lib/haptics";
 import { useFridgesQuery } from "@/app/hooks/queries/useFridgeQuery";
+import { useAuthStatus } from "@/app/hooks/useAuthStatus";
+import { useGuestFridgesQuery } from "@/app/lib/storage/guestFridge";
+import {
+  getExpirationNotificationEnabled,
+  isNotificationPermissionGranted,
+} from "@/app/utils/NotificationUtils";
 import React, {
   createContext,
   useCallback,
@@ -13,14 +19,23 @@ import React, {
 import { InteractionManager, View, type LayoutChangeEvent } from "react-native";
 import { emitTutorialEvent } from "../engine/analytics";
 import { engineReducer, initialEngineState } from "../engine/reducer";
-import { STEPS } from "../engine/steps";
+import {
+  getTutorialSteps,
+  type TutorialMode,
+  type TutorialStepMode,
+} from "../engine/steps";
 import type { AnchorId, EngineState, Rect, StepConfig } from "../engine/types";
 import { TutorialOverlay } from "../overlay/TutorialOverlay";
-import { useFirstLaunch } from "./useFirstLaunch";
+import {
+  useExpirationNotificationTutorial,
+  useFirstLaunch,
+} from "./useFirstLaunch";
 
 const ENTRANCE_DURATION_MS = 600;
 const SUCCESS_DURATION_MS = 700;
 const FIRST_LAUNCH_DELAY_MS = 900;
+const EXPIRATION_NOTIFICATION_TUTORIAL_HIGHLIGHT =
+  "expiration-notification";
 
 // auto 트리거에서 타이핑이 끝난 뒤 사용자에게 보장해줄 최소 읽기 시간.
 // 설정된 step.trigger.delayMs 와 비교해 더 긴 쪽을 자동 트리거 시점으로 사용한다.
@@ -29,6 +44,7 @@ const MIN_READ_DWELL_AFTER_TYPING_MS = 450;
 export type TutorialContextValue = {
   state: EngineState;
   currentStep: StepConfig | undefined;
+  totalSteps: number;
   currentAnchorRect: Rect | undefined;
   coordinateSpaceVersion: number;
   coordinateSpaceSize: { width: number; height: number };
@@ -39,6 +55,8 @@ export type TutorialContextValue = {
   registerAnchorAction: (id: AnchorId, action: () => void) => void;
   triggerAnchorAction: (id: AnchorId) => void;
   advanceCta: () => void;
+  continueGuestTutorial: () => void;
+  goToLoginFromTutorial: () => void;
   advanceScreenTap: () => void;
   reportSheetDismiss: () => void;
   reportProgress: (key: string) => void;
@@ -74,15 +92,30 @@ function isTabHomeRoute(
   );
 }
 
-function getTutorialStartRoute(stepIndex: number) {
-  return stepIndex >= 15 ? "/(tabs)/(myPage)" : "/(tabs)/(fridge)";
+function shouldStartOnMyPage(step: StepConfig | undefined) {
+  return (
+    step?.id === "my-page-intro" ||
+    step?.id === "celebration" ||
+    step?.id === "guest-my-page-intro" ||
+    step?.id === "guest-celebration"
+  );
+}
+
+function getTutorialStartRoute(
+  steps: ReadonlyArray<StepConfig>,
+  stepIndex: number,
+) {
+  return shouldStartOnMyPage(steps[stepIndex])
+    ? "/(tabs)/(myPage)"
+    : "/(tabs)/(fridge)";
 }
 
 function isTutorialStartRoute(
   segments: readonly string[],
+  steps: ReadonlyArray<StepConfig>,
   stepIndex: number,
 ): boolean {
-  return stepIndex >= 15
+  return shouldStartOnMyPage(steps[stepIndex])
     ? isMyPageTabHomeRoute(segments)
     : isFridgeTabHomeRoute(segments);
 }
@@ -99,41 +132,85 @@ export function TutorialProvider({ children }: Props) {
   const waitingStartRef = useRef<number>(0);
   const router = useRouter();
   const segments = useSegments();
+  const {
+    isAuthenticated,
+    isLoading: isAuthLoading,
+  } = useAuthStatus();
+  const accountTutorialMode: TutorialMode = isAuthenticated
+    ? "authenticated"
+    : "guest";
+  const [isExpirationNotificationTutorialActive, setIsExpirationNotificationTutorialActive] =
+    useState(false);
+  const tutorialMode: TutorialStepMode = isExpirationNotificationTutorialActive
+    ? "expiration-notification"
+    : accountTutorialMode;
+  const tutorialSteps = useMemo(
+    () => getTutorialSteps(tutorialMode),
+    [tutorialMode],
+  );
+  const totalSteps = tutorialSteps.length;
   const { status, resumeStepIndex, markCompleted, saveProgress } =
-    useFirstLaunch();
+    useFirstLaunch(isAuthLoading ? null : accountTutorialMode);
+  const {
+    status: expirationNotificationTutorialStatus,
+    markCompleted: markExpirationNotificationTutorialCompleted,
+  } = useExpirationNotificationTutorial();
 
   const shouldCheckEmptyFridge =
+    !isExpirationNotificationTutorialActive &&
+    !isAuthLoading &&
     status === "should-start" &&
     resumeStepIndex === null &&
     Boolean(segments) &&
     !isAuthRoute(segments as readonly string[]);
 
-  const { fridges } = useFridgesQuery({ enabled: shouldCheckEmptyFridge });
+  const { fridges: remoteFridges } = useFridgesQuery({
+    enabled: shouldCheckEmptyFridge && isAuthenticated,
+  });
+  const { fridges: guestFridges } = useGuestFridgesQuery({
+    enabled: shouldCheckEmptyFridge && !isAuthenticated,
+  });
+  const fridges = isAuthenticated ? remoteFridges : guestFridges;
 
   const hasNoFridgeIngredients = useMemo(
     () =>
       fridges?.every((category) => category.ingredients.length === 0) ?? false,
     [fridges],
   );
-  const shouldStartTutorial =
+  const shouldStartMainTutorial =
+    !isExpirationNotificationTutorialActive &&
+    !isAuthLoading &&
     status === "should-start" &&
     (resumeStepIndex !== null || hasNoFridgeIngredients);
-  const tutorialStartIndex = resumeStepIndex ?? 0;
+  const shouldStartTutorial =
+    isExpirationNotificationTutorialActive || shouldStartMainTutorial;
+  const tutorialStartIndex = isExpirationNotificationTutorialActive
+    ? 0
+    : (resumeStepIndex ?? 0);
 
   const lastEmittedStep = useRef<number>(-1);
   const didSkipTutorialRef = useRef(false);
   const didHandleTutorialDoneRef = useRef(false);
   const hasRequestedTutorialHome = useRef(false);
+  const hasRequestedExpirationNotificationTutorial = useRef(false);
+  const activeTutorialModeRef = useRef<TutorialStepMode | null>(null);
   const containerRef = useRef<View>(null);
   const containerOriginRef = useRef({ x: 0, y: 0 });
   const pendingAnchorActionRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
 
-  const currentStep = STEPS[state.stepIndex];
+  const currentStep = tutorialSteps[state.stepIndex];
   const currentAnchorRect = currentStep?.anchorId
     ? state.anchors[currentStep.anchorId]
     : undefined;
+
+  useEffect(() => {
+    didSkipTutorialRef.current = false;
+    didHandleTutorialDoneRef.current = false;
+    lastEmittedStep.current = -1;
+    hasRequestedTutorialHome.current = false;
+  }, [tutorialMode]);
 
   const clearPendingAnchorAction = useCallback(() => {
     if (!pendingAnchorActionRef.current) return;
@@ -145,18 +222,29 @@ export function TutorialProvider({ children }: Props) {
 
   useEffect(() => {
     if (!shouldStartTutorial) return;
-    if (state.hasStarted) return;
+    if (state.hasStarted && state.phase !== "done") return;
+    if (
+      state.phase === "done" &&
+      activeTutorialModeRef.current === tutorialMode
+    ) {
+      return;
+    }
     if (!segments) return;
-    if (!isTutorialStartRoute(segments, tutorialStartIndex)) {
+    if (!isTutorialStartRoute(segments, tutorialSteps, tutorialStartIndex)) {
       if (!isAuthRoute(segments) && !hasRequestedTutorialHome.current) {
         hasRequestedTutorialHome.current = true;
-        router.replace(getTutorialStartRoute(tutorialStartIndex));
+        router.replace(getTutorialStartRoute(tutorialSteps, tutorialStartIndex));
       }
       return;
     }
     hasRequestedTutorialHome.current = false;
     const t = setTimeout(() => {
-      dispatch({ type: "START", stepIndex: tutorialStartIndex });
+      activeTutorialModeRef.current = tutorialMode;
+      dispatch({
+        type: "START",
+        stepIndex: tutorialStartIndex,
+        totalSteps,
+      });
       emitTutorialEvent({ type: "tutorial_started" });
     }, FIRST_LAUNCH_DELAY_MS);
     return () => clearTimeout(t);
@@ -165,6 +253,10 @@ export function TutorialProvider({ children }: Props) {
     shouldStartTutorial,
     segments,
     state.hasStarted,
+    state.phase,
+    totalSteps,
+    tutorialMode,
+    tutorialSteps,
     tutorialStartIndex,
   ]);
 
@@ -175,13 +267,13 @@ export function TutorialProvider({ children }: Props) {
       ENTRANCE_DURATION_MS,
     );
     return () => clearTimeout(t);
-  }, [state.phase, state.stepIndex]);
+  }, [state.phase, state.stepIndex, tutorialSteps]);
 
   useEffect(() => {
     if (state.phase === "idle" || state.phase === "done") return;
     if (lastEmittedStep.current === state.stepIndex) return;
     lastEmittedStep.current = state.stepIndex;
-    const step = STEPS[state.stepIndex];
+    const step = tutorialSteps[state.stepIndex];
     if (step) {
       emitTutorialEvent({ type: "tutorial_step_shown", stepId: step.id });
     }
@@ -198,7 +290,7 @@ export function TutorialProvider({ children }: Props) {
   useEffect(() => {
     if (state.phase !== "waiting") return;
 
-    const step = STEPS[state.stepIndex];
+    const step = tutorialSteps[state.stepIndex];
 
     if (step?.trigger.type !== "auto" && step?.trigger.type !== "auto-or-tap") {
       return;
@@ -218,14 +310,17 @@ export function TutorialProvider({ children }: Props) {
     const wait = hasSpeech
       ? Math.max(remainingOfConfigured, MIN_READ_DWELL_AFTER_TYPING_MS)
       : step.trigger.delayMs;
-    const t = setTimeout(() => dispatch({ type: "AUTO_TIMEOUT" }), wait);
+    const t = setTimeout(
+      () => dispatch({ type: "AUTO_TIMEOUT", step }),
+      wait,
+    );
 
     return () => clearTimeout(t);
-  }, [state.phase, state.stepIndex, speechCompletedForStep]);
+  }, [state.phase, state.stepIndex, speechCompletedForStep, tutorialSteps]);
 
   useEffect(() => {
     if (state.phase !== "waiting") return;
-    const step = STEPS[state.stepIndex];
+    const step = tutorialSteps[state.stepIndex];
     if (!step) return;
     if (!segments) return;
     const segs = segments as readonly string[];
@@ -236,20 +331,20 @@ export function TutorialProvider({ children }: Props) {
       segs.includes(step.trigger.segmentMatch)
     ) {
       const { segmentMatch } = step.trigger;
-      dispatch({ type: "NAV_MATCHED", segment: segmentMatch });
+      dispatch({ type: "NAV_MATCHED", segment: segmentMatch, step });
 
       return;
     }
 
     // Secondary advanceOnSegment fast-forward
     if (step.advanceOnSegment && segs.includes(step.advanceOnSegment)) {
-      dispatch({ type: "NAV_MATCHED", segment: step.advanceOnSegment });
+      dispatch({ type: "NAV_MATCHED", segment: step.advanceOnSegment, step });
     }
-  }, [segments, state.phase, state.stepIndex]);
+  }, [segments, state.phase, state.stepIndex, tutorialSteps]);
 
   useEffect(() => {
     if (state.phase !== "success") return;
-    const step = STEPS[state.stepIndex];
+    const step = tutorialSteps[state.stepIndex];
     impactMedium();
     if (step) {
       const method = (() => {
@@ -258,6 +353,8 @@ export function TutorialProvider({ children }: Props) {
           case "auto-or-tap":
             return "auto";
           case "cta":
+          case "guest-mode-choice":
+            return "cta";
           case "navigation":
           case "progress":
             return step.trigger.type;
@@ -285,7 +382,7 @@ export function TutorialProvider({ children }: Props) {
         if (cancelled) return;
         requestAnimationFrame(() => {
           if (cancelled) return;
-          dispatch({ type: "EXIT_COMPLETE" });
+          dispatch({ type: "EXIT_COMPLETE", totalSteps });
         });
       });
     }, SUCCESS_DURATION_MS);
@@ -294,28 +391,102 @@ export function TutorialProvider({ children }: Props) {
       clearTimeout(t);
       interactionHandle?.cancel();
     };
-  }, [state.phase, state.stepIndex]);
+  }, [state.phase, state.stepIndex, totalSteps, tutorialSteps]);
 
   useEffect(() => {
     if (!state.hasStarted) return;
     if (state.phase === "done") return;
+    if (tutorialMode === "expiration-notification") return;
     saveProgress(state.stepIndex);
-  }, [state.stepIndex, state.hasStarted, state.phase, saveProgress]);
+  }, [
+    state.stepIndex,
+    state.hasStarted,
+    state.phase,
+    saveProgress,
+    tutorialMode,
+  ]);
 
   useEffect(() => {
     if (state.phase !== "done") return;
+    if (activeTutorialModeRef.current !== tutorialMode) return;
     if (didHandleTutorialDoneRef.current) return;
 
     didHandleTutorialDoneRef.current = true;
-    void markCompleted();
     emitTutorialEvent({ type: "tutorial_completed" });
-    if (!didSkipTutorialRef.current) {
+
+    if (tutorialMode === "expiration-notification") {
+      void markExpirationNotificationTutorialCompleted();
+      setIsExpirationNotificationTutorialActive(false);
       router.push({
         pathname: "/(setting)",
-        params: { tutorialHighlight: "expiration-notification" },
+        params: {
+          tutorialHighlight: EXPIRATION_NOTIFICATION_TUTORIAL_HIGHLIGHT,
+        },
+      });
+      return;
+    }
+
+    void markCompleted();
+    if (!didSkipTutorialRef.current && tutorialMode === "authenticated") {
+      void markExpirationNotificationTutorialCompleted();
+      router.push({
+        pathname: "/(setting)",
+        params: {
+          tutorialHighlight: EXPIRATION_NOTIFICATION_TUTORIAL_HIGHLIGHT,
+        },
       });
     }
-  }, [router, state.phase, markCompleted]);
+  }, [
+    router,
+    state.phase,
+    markCompleted,
+    markExpirationNotificationTutorialCompleted,
+    tutorialMode,
+  ]);
+
+  useEffect(() => {
+    if (isAuthLoading || !isAuthenticated) return;
+    if (status !== "skip") return;
+    if (expirationNotificationTutorialStatus !== "pending") return;
+    if (state.phase !== "idle" && state.phase !== "done") return;
+    if (!segments) return;
+    if (isAuthRoute(segments as readonly string[])) return;
+    if (hasRequestedExpirationNotificationTutorial.current) return;
+
+    let cancelled = false;
+    hasRequestedExpirationNotificationTutorial.current = true;
+
+    (async () => {
+      const [isExpirationNotificationEnabled, hasNotificationPermission] =
+        await Promise.all([
+          getExpirationNotificationEnabled(),
+          isNotificationPermissionGranted(),
+        ]);
+
+      if (cancelled) return;
+
+      if (isExpirationNotificationEnabled && hasNotificationPermission) {
+        void markExpirationNotificationTutorialCompleted();
+        return;
+      }
+
+      setIsExpirationNotificationTutorialActive(true);
+      if (cancelled) return;
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    router,
+    segments,
+    state.phase,
+    status,
+    isAuthLoading,
+    isAuthenticated,
+    expirationNotificationTutorialStatus,
+    markExpirationNotificationTutorialCompleted,
+  ]);
 
   const measureContainerOrigin = useCallback(() => {
     requestAnimationFrame(() => {
@@ -377,18 +548,18 @@ export function TutorialProvider({ children }: Props) {
 
   const reportAnchorTap = useCallback(
     (id: AnchorId) => {
-      const step = STEPS[state.stepIndex];
+      const step = tutorialSteps[state.stepIndex];
       if (
         step?.anchorId === id &&
         (step.trigger.type === "tap-anchor" ||
           step.trigger.type === "navigation")
       ) {
-        dispatch({ type: "ANCHOR_TAPPED", id });
+        dispatch({ type: "ANCHOR_TAPPED", id, step });
         return;
       }
-      dispatch({ type: "ANCHOR_TAPPED", id });
+      dispatch({ type: "ANCHOR_TAPPED", id, step });
     },
-    [state.stepIndex],
+    [state.stepIndex, tutorialSteps],
   );
   const reportSpeechComplete = useCallback((stepIndex: number) => {
     setSpeechCompletedForStep(stepIndex);
@@ -407,7 +578,7 @@ export function TutorialProvider({ children }: Props) {
       const action = anchorActionsRef.current[id];
       if (!action) return;
 
-      const step = STEPS[state.stepIndex];
+      const step = tutorialSteps[state.stepIndex];
       const shouldWaitForTouchAnimation =
         state.phase === "waiting" &&
         step?.anchorId === id &&
@@ -427,43 +598,86 @@ export function TutorialProvider({ children }: Props) {
         action();
       }, SUCCESS_DURATION_MS);
     },
-    [state.phase, state.stepIndex],
+    [state.phase, state.stepIndex, tutorialSteps],
   );
 
-  const advanceCta = useCallback(() => dispatch({ type: "CTA_PRESSED" }), []);
-
-  const advanceScreenTap = useCallback(
-    () => dispatch({ type: "SCREEN_TAPPED" }),
-    [],
+  const advanceCta = useCallback(
+    () =>
+      dispatch({
+        type: "CTA_PRESSED",
+        step: tutorialSteps[state.stepIndex],
+      }),
+    [state.stepIndex, tutorialSteps],
   );
 
-  const reportSheetDismiss = useCallback(
-    () => dispatch({ type: "SHEET_DISMISSED" }),
-    [],
+  const continueGuestTutorial = useCallback(
+    () =>
+      dispatch({
+        type: "GUEST_MODE_CONTINUED",
+        step: tutorialSteps[state.stepIndex],
+      }),
+    [state.stepIndex, tutorialSteps],
   );
 
-  const reportProgress = useCallback((key: string) => {
-    dispatch({ type: "PROGRESS_REPORTED", key });
-  }, []);
-
-  const skip = useCallback(() => {
-    const step = STEPS[state.stepIndex];
+  const goToLoginFromTutorial = useCallback(() => {
+    const step = tutorialSteps[state.stepIndex];
     if (step) emitTutorialEvent({ type: "tutorial_skipped", atStep: step.id });
     didSkipTutorialRef.current = true;
     clearPendingAnchorAction();
     dispatch({ type: "SKIP" });
-  }, [clearPendingAnchorAction, state.stepIndex]);
+    router.dismissAll();
+    router.replace("/(auth)");
+  }, [clearPendingAnchorAction, router, state.stepIndex, tutorialSteps]);
+
+  const advanceScreenTap = useCallback(
+    () =>
+      dispatch({
+        type: "SCREEN_TAPPED",
+        step: tutorialSteps[state.stepIndex],
+      }),
+    [state.stepIndex, tutorialSteps],
+  );
+
+  const reportSheetDismiss = useCallback(
+    () =>
+      dispatch({
+        type: "SHEET_DISMISSED",
+        step: tutorialSteps[state.stepIndex],
+      }),
+    [state.stepIndex, tutorialSteps],
+  );
+
+  const reportProgress = useCallback(
+    (key: string) => {
+      dispatch({
+        type: "PROGRESS_REPORTED",
+        key,
+        step: tutorialSteps[state.stepIndex],
+      });
+    },
+    [state.stepIndex, tutorialSteps],
+  );
+
+  const skip = useCallback(() => {
+    const step = tutorialSteps[state.stepIndex];
+    if (step) emitTutorialEvent({ type: "tutorial_skipped", atStep: step.id });
+    didSkipTutorialRef.current = true;
+    clearPendingAnchorAction();
+    dispatch({ type: "SKIP" });
+  }, [clearPendingAnchorAction, state.stepIndex, tutorialSteps]);
   const restart = useCallback(() => {
     didSkipTutorialRef.current = false;
     didHandleTutorialDoneRef.current = false;
+    activeTutorialModeRef.current = tutorialMode;
     dispatch({ type: "RESTART" });
     emitTutorialEvent({ type: "tutorial_started" });
-  }, []);
+  }, [tutorialMode]);
 
   const value = useMemo<TutorialContextValue>(
     () => ({
       state,
       currentStep,
+      totalSteps,
       currentAnchorRect,
       coordinateSpaceVersion: containerLayoutVersion,
       coordinateSpaceSize: containerSize,
@@ -474,6 +688,8 @@ export function TutorialProvider({ children }: Props) {
       registerAnchorAction,
       triggerAnchorAction,
       advanceCta,
+      continueGuestTutorial,
+      goToLoginFromTutorial,
       advanceScreenTap,
       reportSheetDismiss,
       reportProgress,
@@ -485,6 +701,7 @@ export function TutorialProvider({ children }: Props) {
       containerLayoutVersion,
       containerSize,
       currentStep,
+      totalSteps,
       currentAnchorRect,
       registerAnchor,
       unregisterAnchor,
@@ -493,6 +710,8 @@ export function TutorialProvider({ children }: Props) {
       registerAnchorAction,
       triggerAnchorAction,
       advanceCta,
+      continueGuestTutorial,
+      goToLoginFromTutorial,
       advanceScreenTap,
       reportSheetDismiss,
       reportProgress,
