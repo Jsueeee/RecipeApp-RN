@@ -1,4 +1,7 @@
 import LoginButtonColumn from "@/app/(auth)/components/LoginButton";
+import { queryClient } from "@/app/lib/query/client";
+import { authStorage } from "@/app/lib/storage/auth";
+import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, View } from "react-native";
@@ -11,7 +14,6 @@ import { useVersionCheck } from "../hooks/useVersionCheck";
 import SplashParallax from "./components/SplashParallax";
 import { useAutoLogin } from "./hooks/useAutoLogin";
 import { OptionalLoginBottomSheet } from "./components/OptionalLoginBottomSheet";
-import { DotLoadingScreen } from "@/components/DotLoadingScreen";
 
 const DUR = {
   ENTRANCE: 1000, // 등장(요구사항 유지: 1초)
@@ -120,8 +122,19 @@ export default function LoginScreen() {
     ]).start();
   };
 
-  const continueAsGuest = () => {
-    router.replace("/(tabs)");
+  const continueAsGuest = async () => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+
+    try {
+      await authStorage.clear();
+      queryClient.clear();
+      router.replace("/(tabs)");
+    } catch (error) {
+      console.error("Failed to continue as guest:", error);
+      setIsLoading(false);
+    }
   };
 
   return (

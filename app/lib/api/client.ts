@@ -12,6 +12,7 @@ const isAuthEndpoint = (url?: string) =>
   url ? AUTH_ENDPOINT_PATTERN.test(url) : false;
 
 const PUBLIC_GET_ENDPOINT_PATTERNS = [
+  /^\/app\/version$/,
   /^\/recipes$/,
   /^\/recipes\/blog$/,
   /^\/recipes\/youtube$/,
@@ -19,6 +20,8 @@ const PUBLIC_GET_ENDPOINT_PATTERNS = [
   /^\/recipes\/public\/recommendation$/,
   /^\/recipes\/\d+$/,
 ];
+
+const SILENT_AUTH_FAILURE_ENDPOINT_PATTERNS = [/^\/users\/fcm-token$/];
 
 const getPathname = (url?: string) => {
   if (!url) return "";
@@ -38,6 +41,13 @@ const isPublicGetEndpoint = (config: InternalAxiosRequestConfig) => {
   return PUBLIC_GET_ENDPOINT_PATTERNS.some((pattern) => pattern.test(path));
 };
 
+const isSilentAuthFailureEndpoint = (config: InternalAxiosRequestConfig) => {
+  const path = getPathname(config.url);
+  return SILENT_AUTH_FAILURE_ENDPOINT_PATTERNS.some((pattern) =>
+    pattern.test(path),
+  );
+};
+
 let isAuthRedirectSuppressed = false;
 
 export const setAuthRedirectSuppressed = (isSuppressed: boolean) => {
@@ -47,7 +57,8 @@ export const setAuthRedirectSuppressed = (isSuppressed: boolean) => {
 const shouldRedirectToAuth = (config: InternalAxiosRequestConfig) =>
   !isAuthRedirectSuppressed &&
   !isAuthEndpoint(config.url) &&
-  !isPublicGetEndpoint(config);
+  !isPublicGetEndpoint(config) &&
+  !isSilentAuthFailureEndpoint(config);
 
 const resetToAuth = () => {
   queryClient.clear();
