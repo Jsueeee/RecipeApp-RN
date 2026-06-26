@@ -7,7 +7,6 @@ import { Linking, Platform, Text, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";
 import { DefaultLoginButton, LoginMethod } from "./LoginButton";
 import { PressableScale } from "@/app/components/PressableScale";
-import { router } from "expo-router";
 
 interface Props {
   bottomSheetModalRef: React.RefObject<BottomSheetModal | null>;
@@ -18,7 +17,7 @@ export const OptionalLoginBottomSheet = ({
   bottomSheetModalRef,
   setIsLoading,
 }: Props) => {
-  const { handleAppleLogin, handleNaverLogin, isAnyAuthPending } = useAuth({
+  const { handleGoogleLogin, handleNaverLogin, isAnyAuthPending } = useAuth({
     setIsLoading,
   });
   const isIOS = Platform.OS === "ios";
@@ -31,8 +30,8 @@ export const OptionalLoginBottomSheet = ({
       case LoginMethod.NAVER:
         handleNaverLogin();
         break;
-      case LoginMethod.APPLE:
-        handleAppleLogin();
+      case LoginMethod.GOOGLE:
+        handleGoogleLogin();
         break;
     }
   };
@@ -42,11 +41,11 @@ export const OptionalLoginBottomSheet = ({
     const subject = "[레시피 저장소] 문의";
     const body = "여기에 내용을 입력해 주세요.";
     const url = `mailto:${email}?subject=${encodeURIComponent(
-      subject
+      subject,
     )}&body=${encodeURIComponent(body)}`;
 
     Linking.openURL(url).catch((err) =>
-      console.error("이메일 열기 실패:", err)
+      console.error("이메일 열기 실패:", err),
     );
   };
 
@@ -59,10 +58,10 @@ export const OptionalLoginBottomSheet = ({
       <View className="w-full px-4 py-2 gap-3">
         {isIOS && (
           <DefaultLoginButton
-            method={LoginMethod.APPLE}
+            method={LoginMethod.GOOGLE}
             isOptional={true}
             disabled={isAnyAuthPending}
-            onClick={() => onPressLogin(LoginMethod.APPLE)}
+            onClick={() => onPressLogin(LoginMethod.GOOGLE)}
           />
         )}
 

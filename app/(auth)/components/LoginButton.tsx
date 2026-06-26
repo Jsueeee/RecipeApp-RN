@@ -1,7 +1,7 @@
 import { PressableScale } from "@/app/components/PressableScale";
 import i18n from "@/lib/i18n";
 import React from "react";
-import { Image, Text, useWindowDimensions, View } from "react-native";
+import { Image, Platform, Text, useWindowDimensions, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";
 
 export enum LoginMethod {
@@ -78,11 +78,7 @@ interface LoginTextActionProps {
   disabled: boolean;
 }
 
-function LoginTextAction({
-  label,
-  onPress,
-  disabled,
-}: LoginTextActionProps) {
+function LoginTextAction({ label, onPress, disabled }: LoginTextActionProps) {
   return (
     <PressableScale
       onPress={onPress}
@@ -106,9 +102,15 @@ export default function LoginButtonColumn({
   setIsLoading,
 }: LoginButtonColumnProps) {
   const { width } = useWindowDimensions();
-  const { handleKakaoLogin, handleGoogleLogin, isAnyAuthPending } = useAuth({
+  const {
+    handleAppleLogin,
+    handleKakaoLogin,
+    handleGoogleLogin,
+    isAnyAuthPending,
+  } = useAuth({
     setIsLoading,
   });
+  const isIOS = Platform.OS === "ios";
   const shouldStackTextActions = width < 360;
 
   const onPressLogin = (loginMethod: LoginMethod) => {
@@ -122,17 +124,31 @@ export default function LoginButtonColumn({
       case LoginMethod.GOOGLE:
         handleGoogleLogin();
         break;
+      case LoginMethod.APPLE:
+        handleAppleLogin();
+        break;
     }
   };
 
   return (
     <View className="w-full max-w-[500px] items-center">
       <View className="w-full gap-3">
-        <DefaultLoginButton
-          method={LoginMethod.GOOGLE}
-          disabled={isAnyAuthPending}
-          onClick={() => onPressLogin(LoginMethod.GOOGLE)}
-        />
+        {isIOS && (
+          <DefaultLoginButton
+            method={LoginMethod.APPLE}
+            disabled={isAnyAuthPending}
+            onClick={() => onPressLogin(LoginMethod.APPLE)}
+          />
+        )}
+
+        {!isIOS && (
+          <DefaultLoginButton
+            method={LoginMethod.GOOGLE}
+            disabled={isAnyAuthPending}
+            onClick={() => onPressLogin(LoginMethod.GOOGLE)}
+          />
+        )}
+
         <DefaultLoginButton
           method={LoginMethod.KAKAO}
           disabled={isAnyAuthPending}
