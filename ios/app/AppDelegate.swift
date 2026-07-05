@@ -1,7 +1,7 @@
 internal import Expo
-import FirebaseCore
 import RNCKakaoUser
 import NaverThirdPartyLogin
+import FirebaseCore
 import React
 import ReactAppDependencyProvider
 
@@ -25,7 +25,9 @@ class AppDelegate: ExpoAppDelegate {
 
 #if os(iOS) || os(tvOS)
     window = UIWindow(frame: UIScreen.main.bounds)
-    FirebaseApp.configure()
+// @generated begin @react-native-firebase/app-didFinishLaunchingWithOptions - expo prebuild (DO NOT MODIFY) sync-10e8520570672fd76b2403b7e1e27f5198a6349a
+FirebaseApp.configure()
+// @generated end @react-native-firebase/app-didFinishLaunchingWithOptions
     factory.startReactNative(
       withModuleName: "main",
       in: window,

@@ -1,8 +1,8 @@
 {
   "expo.jsEngine": "hermes",
   "EX_DEV_CLIENT_NETWORK_INSPECTOR": "true",
-  "ios.buildReactNativeFromSource": "true",
   "ios.useFrameworks": "static",
   "ios.forceStaticLinking": "[\"RNFBAnalytics\",\"RNFBApp\",\"RNFBMessaging\"]",
-  "apple.privacyManifestAggregationEnabled": "true"
+  "apple.privacyManifestAggregationEnabled": "true",
+  "ios.buildReactNativeFromSource": "true"
 }

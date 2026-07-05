@@ -104,26 +104,15 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        release {
-            def releaseStoreFile = findProperty('RECIPEAPP_UPLOAD_STORE_FILE') ?: System.getenv('RECIPEAPP_UPLOAD_STORE_FILE')
-            def releaseStorePassword = findProperty('RECIPEAPP_UPLOAD_STORE_PASSWORD') ?: System.getenv('RECIPEAPP_UPLOAD_STORE_PASSWORD')
-            def releaseKeyAlias = findProperty('RECIPEAPP_UPLOAD_KEY_ALIAS') ?: System.getenv('RECIPEAPP_UPLOAD_KEY_ALIAS')
-            def releaseKeyPassword = findProperty('RECIPEAPP_UPLOAD_KEY_PASSWORD') ?: System.getenv('RECIPEAPP_UPLOAD_KEY_PASSWORD')
-
-            if (releaseStoreFile && releaseStorePassword && releaseKeyAlias && releaseKeyPassword) {
-                storeFile file(releaseStoreFile)
-                storePassword releaseStorePassword
-                keyAlias releaseKeyAlias
-                keyPassword releaseKeyPassword
-            }
-        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            signingConfig signingConfigs.release
+            // Caution! In production, you need to generate your own keystore file.
+            // see https://reactnative.dev/docs/signed-apk-android.
+            signingConfig signingConfigs.debug
             def enableShrinkResources = findProperty('android.enableShrinkResourcesInReleaseBuilds') ?: 'false'
             shrinkResources enableShrinkResources.toBoolean()
             minifyEnabled enableMinifyInReleaseBuilds
@@ -193,8 +182,3 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
-
-def easBuildGradle = file("./eas-build.gradle")
-if (easBuildGradle.exists()) {
-    apply from: easBuildGradle
-}

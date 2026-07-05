@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>763399346922-hcrsr78iionca1bhmgncgoscpv8s3tuo.apps.googleusercontent.com</string>
+	<string>930463247396-8ickuh78l0aftm6951ule58s2ca9sv83.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.763399346922-hcrsr78iionca1bhmgncgoscpv8s3tuo</string>
+	<string>com.googleusercontent.apps.930463247396-8ickuh78l0aftm6951ule58s2ca9sv83</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>763399346922-4g7atuglk5hhdnm5lhe8h8i8t1mv1n5i.apps.googleusercontent.com</string>
+	<string>930463247396-nghjqpsvn2co7ridu1it6m1gumocnjqb.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAZa4lGN6HICB6wjLEgAZStXqtwan5rBkw</string>
+	<string>AIzaSyAYF0laNLDpo1nlYBhqau873JP7QQIWtao</string>
 	<key>GCM_SENDER_ID</key>
-	<string>763399346922</string>
+	<string>930463247396</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.recipe.android.recipeapp</string>
 	<key>PROJECT_ID</key>
-	<string>recipeapp-a79ed</string>
+	<string>recipestorage</string>
 	<key>STORAGE_BUCKET</key>
-	<string>recipeapp-a79ed.appspot.com</string>
+	<string>recipestorage.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:763399346922:ios:dd8009662f887e99c15593</string>
+	<string>1:930463247396:ios:8ecb361ffe046c92c43cb1</string>
 </dict>
 </plist>
