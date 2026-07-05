@@ -1,7 +1,8 @@
+import { DebouncedTouchableOpacity } from "@/app/components/DebouncedPressable";
 import IC_CHEVRON_LEFT from "@/assets/images/ic_chevron_left.svg";
 import clsx from "clsx";
 import React from "react";
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 
 interface Props {
   title: string;
@@ -24,9 +25,13 @@ export const Header = ({
 }: Props) => {
   return (
     <View className={clsx("w-full p-4 flex-row items-center", className)}>
-      <TouchableOpacity onPress={onBackClick} className="z-10" hitSlop={10}>
+      <DebouncedTouchableOpacity
+        onPress={onBackClick}
+        className="z-10"
+        hitSlop={10}
+      >
         <IC_CHEVRON_LEFT width={24} height={24} color={backButtonIconColor} />
-      </TouchableOpacity>
+      </DebouncedTouchableOpacity>
 
       <Text
         className={`absolute left-0 right-0 text-title4 text-center ${titleColor}`}
@@ -35,12 +40,12 @@ export const Header = ({
       </Text>
 
       {rightButtonIcons && (
-        <TouchableOpacity
+        <DebouncedTouchableOpacity
           onPress={onRightButtonClick}
           className="absolute right-4"
         >
           {rightButtonIcons}
-        </TouchableOpacity>
+        </DebouncedTouchableOpacity>
       )}
     </View>
   );

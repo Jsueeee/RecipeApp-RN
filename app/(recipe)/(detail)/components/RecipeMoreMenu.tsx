@@ -1,3 +1,4 @@
+import { DebouncedPressable } from "@/app/components/DebouncedPressable";
 import { PressableScale } from "@/app/components/PressableScale";
 import { UnscaledModalRoot } from "@/components/UnscaledModalRoot";
 import i18n from "@/lib/i18n";
@@ -31,7 +32,7 @@ export function RecipeMoreMenu({
         animationType="fade"
         onRequestClose={onClose}
       >
-        <Pressable className="flex-1 bg-black/20" onPress={onClose}>
+        <DebouncedPressable className="flex-1 bg-black/20" onPress={onClose}>
           <Pressable
             className="bg-white rounded-[12px] overflow-hidden min-w-[120px] absolute top-[48px] right-4 p-2 border-b border-gray-100"
             onPress={(e) => e.stopPropagation()}
@@ -79,7 +80,7 @@ export function RecipeMoreMenu({
               </View>
             )}
           </Pressable>
-        </Pressable>
+        </DebouncedPressable>
       </Modal>
     </UnscaledModalRoot>
   );

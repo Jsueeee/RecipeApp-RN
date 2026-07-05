@@ -1,3 +1,4 @@
+import { DebouncedPressable } from "@/app/components/DebouncedPressable";
 import { Modal, Pressable, View } from "react-native";
 import DateTimePicker, {
   DateType,
@@ -27,7 +28,7 @@ export function DatePicker({
       onRequestClose={() => setShowPicker(false)}
       statusBarTranslucent={true}
     >
-      <Pressable
+      <DebouncedPressable
         className="flex-1 justify-center bg-black/30"
         onPress={() => setShowPicker(false)}
       >
@@ -55,7 +56,7 @@ export function DatePicker({
             />
           </View>
         </Pressable>
-      </Pressable>
+      </DebouncedPressable>
     </Modal>
   );
 }

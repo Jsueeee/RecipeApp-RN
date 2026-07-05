@@ -1,6 +1,6 @@
+import { DebouncedPressable } from "@/app/components/DebouncedPressable";
 import LottieView from "lottie-react-native";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Pressable } from "react-native";
 
 interface Props {
   viewCount?: number;
@@ -17,6 +17,13 @@ const RecipeViewScrapCount: React.FC<Props> = ({
 }) => {
   const animationRef = useRef<LottieView>(null);
   const [animating, setAnimating] = useState(false);
+
+  const onPress = () => {
+    if (!isScrapped) {
+      setAnimating(true);
+    }
+    onScrapClick();
+  };
 
   useLayoutEffect(() => {
     if (animating) return;
@@ -42,15 +49,10 @@ const RecipeViewScrapCount: React.FC<Props> = ({
   }, [animating]);
 
   return (
-    <Pressable
+    <DebouncedPressable
       hitSlop={20}
-      onPress={(e) => {
-        e.stopPropagation();
-        if (!isScrapped) {
-          setAnimating(true);
-        }
-        onScrapClick();
-      }}
+      onPressBeforeDebounce={(e) => e.stopPropagation()}
+      onPress={onPress}
       className="w-[40px] h-[40px] absolute bottom-[-8px] right-[-2px] z-10 items-center justify-center"
     >
       <LottieView
@@ -67,7 +69,7 @@ const RecipeViewScrapCount: React.FC<Props> = ({
           setAnimating(false);
         }}
       />
-    </Pressable>
+    </DebouncedPressable>
   );
 };
 

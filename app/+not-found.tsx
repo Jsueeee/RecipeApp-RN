@@ -1,16 +1,28 @@
-import { Link, Stack } from 'expo-router';
+import { useDebouncedPress } from '@/app/hooks/useDebouncedPress';
+import { Link, Stack, router } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
 import { Text, View } from '@/components/Themed';
 
 export default function NotFoundScreen() {
+  const debouncedNavigateHome = useDebouncedPress(() => {
+    router.replace('/');
+  });
+
   return (
     <>
       <Stack.Screen options={{ title: 'Oops!' }} />
       <View style={styles.container}>
         <Text style={styles.title}>This screen doesn't exist.</Text>
 
-        <Link href="/" style={styles.link}>
+        <Link
+          href="/"
+          style={styles.link}
+          onPress={(event) => {
+            event.preventDefault();
+            debouncedNavigateHome();
+          }}
+        >
           <Text style={styles.linkText}>Go to home screen!</Text>
         </Link>
       </View>

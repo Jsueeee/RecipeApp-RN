@@ -1,13 +1,15 @@
+import { useDebouncedPress } from "@/app/hooks/useDebouncedPress";
 import { useRef } from "react";
 import {
   Animated,
+  GestureResponderEvent,
   LayoutChangeEvent,
   Pressable,
   ViewStyle,
 } from "react-native";
 
 interface PressableScaleProps {
-  onPress: () => void;
+  onPress: (event: GestureResponderEvent) => void;
   children: React.ReactNode;
   className?: string;
   style?: ViewStyle;
@@ -15,6 +17,7 @@ interface PressableScaleProps {
   disabled?: boolean;
   hitSlop?: number;
   onLayout?: (e: LayoutChangeEvent) => void;
+  debounceDelay?: number;
 }
 
 export const PressableScale: React.FC<PressableScaleProps> = ({
@@ -26,9 +29,12 @@ export const PressableScale: React.FC<PressableScaleProps> = ({
   disabled = false,
   hitSlop = 0,
   onLayout,
+  debounceDelay,
 }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
+  const debouncedOnPress =
+    useDebouncedPress<[GestureResponderEvent]>(onPress, debounceDelay);
 
   const onPressIn = () => {
     Animated.parallel([
@@ -64,7 +70,7 @@ export const PressableScale: React.FC<PressableScaleProps> = ({
     <Pressable
       onPressIn={onPressIn}
       onPressOut={onPressOut}
-      onPress={onPress}
+      onPress={debouncedOnPress}
       disabled={disabled}
       className={className}
       hitSlop={hitSlop}

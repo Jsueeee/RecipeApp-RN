@@ -1,5 +1,5 @@
+import { DebouncedGesturePressable } from "@/app/components/DebouncedPressable";
 import { View } from "react-native";
-import { Pressable } from "react-native-gesture-handler";
 
 interface Props {
   icon: React.ReactNode;
@@ -8,7 +8,7 @@ interface Props {
 
 export function FAB({ icon, onPress }: Props) {
   return (
-    <Pressable
+    <DebouncedGesturePressable
       onPress={onPress}
       style={({ pressed }) => ({
         position: "absolute",
@@ -23,6 +23,6 @@ export function FAB({ icon, onPress }: Props) {
       })}
     >
       <View>{icon}</View>
-    </Pressable>
+    </DebouncedGesturePressable>
   );
 }

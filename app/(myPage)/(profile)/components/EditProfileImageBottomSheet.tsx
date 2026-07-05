@@ -1,3 +1,4 @@
+import { DebouncedTouchableOpacity } from "@/app/components/DebouncedPressable";
 import { useUpdateUserMutation } from "@/app/hooks/mutations/useUpdateUserMutation";
 import {
   getProfileAvatarSource,
@@ -9,7 +10,7 @@ import DefaultBottomSheetModal from "@/components/DefaultBottomSheetModal";
 import i18n from "@/lib/i18n";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useEffect, useState } from "react";
-import { Image, TouchableOpacity, View } from "react-native";
+import { Image, View } from "react-native";
 import { impactLight } from "@/app/lib/haptics";
 
 interface Props {
@@ -98,7 +99,7 @@ export default function EditProfileImageBottomSheet({
             const isSelected = selectedImage === avatar.url;
 
             return (
-              <TouchableOpacity
+              <DebouncedTouchableOpacity
                 key={avatar.url}
                 onPress={() => handleImageSelect(avatar.url)}
                 className="w-[22%] aspect-square mb-5 rounded-[25px] overflow-hidden"
@@ -112,7 +113,7 @@ export default function EditProfileImageBottomSheet({
                 {isSelected && (
                   <View className="absolute inset-0 rounded-[25px] border-2 border-primary-normal" />
                 )}
-              </TouchableOpacity>
+              </DebouncedTouchableOpacity>
             );
           })}
         </View>

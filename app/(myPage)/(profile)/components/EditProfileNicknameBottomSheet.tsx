@@ -1,3 +1,4 @@
+import { DebouncedTouchableOpacity } from "@/app/components/DebouncedPressable";
 import { useUpdateUserMutation } from "@/app/hooks/mutations/useUpdateUserMutation";
 import CancelIcon from "@/assets/images/ic_profile_nickname_cancel.svg";
 import { CTAButton } from "@/components/CTAButton";
@@ -5,7 +6,7 @@ import DefaultBottomSheetModal from "@/components/DefaultBottomSheetModal";
 import i18n from "@/lib/i18n";
 import { BottomSheetModal, BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { useRef, useState } from "react";
-import { Keyboard, Text, TouchableOpacity, View } from "react-native";
+import { Keyboard, Text, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 
 interface Props {
@@ -43,6 +44,11 @@ export default function EditProfileNicknameBottomSheet({
     });
   };
 
+  const clearInput = () => {
+    inputRef.current?.clear();
+    setInputValue("");
+  };
+
   return (
     <DefaultBottomSheetModal
       bottomSheetModalRef={bottomSheetModalRef}
@@ -73,14 +79,9 @@ export default function EditProfileNicknameBottomSheet({
             autoFocus
           />
 
-          <TouchableOpacity
-            onPress={() => {
-              inputRef.current?.clear();
-              setInputValue("");
-            }}
-          >
+          <DebouncedTouchableOpacity onPress={clearInput}>
             <CancelIcon width={32} height={32} />
-          </TouchableOpacity>
+          </DebouncedTouchableOpacity>
         </View>
 
         <Text className="text-body3 text-text-assistive mt-3 self-end">

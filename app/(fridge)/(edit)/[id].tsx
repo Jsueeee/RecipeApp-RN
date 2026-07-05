@@ -1,5 +1,6 @@
 import { useDeleteFridgeMutation } from "@/app/hooks/mutations/useDeleteFridgeMutation";
 import { useFridgeDetailQuery } from "@/app/hooks/queries/useFridgeDetailQuery";
+import { DebouncedPressable } from "@/app/components/DebouncedPressable";
 import { ChoiceDialog } from "@/components/ChoiceDialog";
 import { CTAButton } from "@/components/CTAButton";
 import { ScreenLayout } from "@/components/layout/ScreenLayout";
@@ -7,7 +8,7 @@ import { FoodDataManager } from "@/constants/IngredientManager";
 import i18n from "@/lib/i18n";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { EditExpiredAtMenu } from "./components/EditExpiredAtMenu";
 import { EditQuantityMenu } from "./components/EditQuantityMenu";
 import { EditUnitMenu } from "./components/EditUnitMenu";
@@ -84,11 +85,14 @@ export default function IngredientEditScreen() {
       isScrollEnabled={true}
       footer={
         <View className="fixed bottom-0 left-0 right-0 px-4 pb-[22px]">
-          <Pressable className="items-center py-[14px]" onPress={onRemoveClick}>
+          <DebouncedPressable
+            className="items-center py-[14px]"
+            onPress={onRemoveClick}
+          >
             <Text className="text-title5 text-strong-destructive">
               {i18n.t("edit_food.remove")}
             </Text>
-          </Pressable>
+          </DebouncedPressable>
 
           <CTAButton
             buttonLabel={i18n.t("edit_food.cta")}

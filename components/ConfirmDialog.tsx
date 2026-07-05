@@ -1,3 +1,5 @@
+import { DebouncedPressable } from "@/app/components/DebouncedPressable";
+import { useDebouncedPress } from "@/app/hooks/useDebouncedPress";
 import { CTAButton } from "@/components/CTAButton";
 import { Modal, Pressable, Text, View } from "react-native";
 
@@ -21,6 +23,8 @@ export const ConfirmDialog = ({
   isConfirmLoading = false,
   onConfirm,
 }: Props) => {
+  const debouncedConfirm = useDebouncedPress(onConfirm);
+
   return (
     <Modal
       visible={visible}
@@ -28,9 +32,10 @@ export const ConfirmDialog = ({
       statusBarTranslucent={true}
       animationType="fade"
     >
-      <Pressable
+      <DebouncedPressable
         className="flex-1 bg-material-dimmer justify-center items-center"
-        onPress={onConfirm}
+        onPress={debouncedConfirm}
+        disablePressDebounce
       >
         <Pressable
           className="bg-white rounded-[16px] p-4 w-[80%] max-w-[400px]"
@@ -44,12 +49,12 @@ export const ConfirmDialog = ({
             <CTAButton
               buttonLabel={confirmText ?? ""}
               isLoading={isConfirmLoading}
-              onPress={onConfirm}
+              onPress={debouncedConfirm}
               className="flex-1"
             />
           </View>
         </Pressable>
-      </Pressable>
+      </DebouncedPressable>
     </Modal>
   );
 };

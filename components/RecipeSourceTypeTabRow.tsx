@@ -1,10 +1,10 @@
+import { DebouncedTouchableOpacity } from "@/app/components/DebouncedPressable";
 import { RecipeSourceType } from "@/constants/RecipeSourceType";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   LayoutChangeEvent,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 
@@ -41,7 +41,7 @@ export function RecipeSourceTypeTabRow({
     >
       <View className="flex-row border-b border-gray-100">
         {tabs.map((tab) => (
-          <TouchableOpacity
+          <DebouncedTouchableOpacity
             key={tab}
             className="flex-1 items-center py-3"
             onPress={() => onTabSelected(tab)}
@@ -53,7 +53,7 @@ export function RecipeSourceTypeTabRow({
             >
               {tab}
             </Text>
-          </TouchableOpacity>
+          </DebouncedTouchableOpacity>
         ))}
         {containerWidth > 0 && (
           <Animated.View

@@ -1,3 +1,4 @@
+import { DebouncedPressable } from "@/app/components/DebouncedPressable";
 import { TutorialAnchor, useTutorial } from "@/app/tutorial";
 import type { AnchorId } from "@/app/tutorial";
 import FridgeIcon from "@/assets/images/ic_nav_fridge.svg";
@@ -9,7 +10,6 @@ import { selection as hapticSelection } from "@/app/lib/haptics";
 import { router, Tabs } from "expo-router";
 import React, { useEffect } from "react";
 import {
-  Pressable,
   PressableProps,
   StyleProp,
   StyleSheet,
@@ -42,7 +42,7 @@ const TabBarButton = ({
   style?: StyleProp<ViewStyle>;
 } & Omit<PressableProps, "style">) => {
   return (
-    <Pressable
+    <DebouncedPressable
       {...props}
       android_ripple={null}
       android_disableSound={true}
@@ -53,7 +53,7 @@ const TabBarButton = ({
       style={[styles.tabBarButton, style]}
     >
       {children}
-    </Pressable>
+    </DebouncedPressable>
   );
 };
 
@@ -77,7 +77,7 @@ const AnchoredTabBarButton = ({
 
   return (
     <TutorialAnchor id={anchorId} style={[styles.tabBarButton, style]}>
-      <Pressable
+      <DebouncedPressable
         {...props}
         android_ripple={null}
         android_disableSound={true}
@@ -88,7 +88,7 @@ const AnchoredTabBarButton = ({
         style={styles.tabAnchorButton}
       >
         {children}
-      </Pressable>
+      </DebouncedPressable>
     </TutorialAnchor>
   );
 };

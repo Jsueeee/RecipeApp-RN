@@ -1,9 +1,9 @@
+import { DebouncedGesturePressable } from "@/app/components/DebouncedPressable";
 import { TutorialAnchor, useTutorial } from "@/app/tutorial";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useCallback, useEffect } from "react";
 import { StyleSheet } from "react-native";
-import { Pressable } from "react-native-gesture-handler";
 
 export function AddIngredientButton() {
   const {
@@ -33,10 +33,9 @@ export function AddIngredientButton() {
     }
     openPicker();
   };
-
   return (
     <TutorialAnchor id="fab-add-ingredient" style={styles.position}>
-      <Pressable
+      <DebouncedGesturePressable
         onPress={onPress}
         style={({ pressed }) => [
           styles.button,
@@ -44,7 +43,7 @@ export function AddIngredientButton() {
         ]}
       >
         <MaterialIcons name="add" size={24} color="white" />
-      </Pressable>
+      </DebouncedGesturePressable>
     </TutorialAnchor>
   );
 }

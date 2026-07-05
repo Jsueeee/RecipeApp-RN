@@ -1,8 +1,9 @@
+import { DebouncedTouchableOpacity } from "@/app/components/DebouncedPressable";
 import { PressableScale } from "@/app/components/PressableScale";
 import IC_PLUS from "@/assets/images/ic_plus_bold.svg";
 import IC_DELETE from "@/assets/images/ic_selected_cancel.svg";
 import i18n from "@/lib/i18n";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 
 interface CookingStepProps {
   stepNumber: number;
@@ -27,12 +28,12 @@ const CookingStepInput: React.FC<CookingStepProps> = ({
             {String(stepNumber).padStart(2, "0")}
           </Text>
 
-          <TouchableOpacity
+          <DebouncedTouchableOpacity
             activeOpacity={0.8}
             onPress={() => onDeleteButtonPress?.(stepNumber)}
           >
             <IC_DELETE width={24} height={24} />
-          </TouchableOpacity>
+          </DebouncedTouchableOpacity>
         </View>
 
         <TextInput

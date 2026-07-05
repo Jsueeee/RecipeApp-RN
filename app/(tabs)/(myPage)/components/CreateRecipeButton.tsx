@@ -1,10 +1,10 @@
+import { DebouncedGesturePressable } from "@/app/components/DebouncedPressable";
 import { useAuthStatus } from "@/app/hooks/useAuthStatus";
 import { useLoginPrompt } from "@/app/hooks/useLoginPrompt";
 import { TutorialAnchor } from "@/app/tutorial";
 import CreateRecipeFabIcon from "@/assets/images/ic_create_recipe_fab.svg";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Pressable } from "react-native-gesture-handler";
 
 export function CreateRecipeButton() {
   const router = useRouter();
@@ -25,7 +25,7 @@ export function CreateRecipeButton() {
       id="my-recipe-create"
       style={{ position: "absolute", bottom: 80, right: 16 }}
     >
-      <Pressable
+      <DebouncedGesturePressable
         onPress={onButtonPress}
         style={({ pressed }) => ({
           width: 48,
@@ -37,7 +37,7 @@ export function CreateRecipeButton() {
         })}
       >
         <CreateRecipeFabIcon width={20} height={20} />
-      </Pressable>
+      </DebouncedGesturePressable>
     </TutorialAnchor>
   );
 }

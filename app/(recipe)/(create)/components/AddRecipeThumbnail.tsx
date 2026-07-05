@@ -1,8 +1,9 @@
+import { DebouncedTouchableOpacity } from "@/app/components/DebouncedPressable";
 import IC_CAMERA from "@/assets/images/ic_camera.svg";
 import { optimizeRecipeThumbnail } from "@/app/utils/RecipeImageUtils";
 import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
-import { Image, TouchableOpacity } from "react-native";
+import { Image } from "react-native";
 
 interface Props {
   image: string | null;
@@ -38,9 +39,8 @@ export const AddRecipeThumbnail = ({ image, setImage }: Props) => {
       }
     }
   };
-
   return (
-    <TouchableOpacity
+    <DebouncedTouchableOpacity
       activeOpacity={0.7}
       className="w-full h-full bg-gray-100 items-center justify-center"
       onPress={pickImage}
@@ -55,6 +55,6 @@ export const AddRecipeThumbnail = ({ image, setImage }: Props) => {
       ) : (
         <IC_CAMERA width={40} height={40} />
       )}
-    </TouchableOpacity>
+    </DebouncedTouchableOpacity>
   );
 };

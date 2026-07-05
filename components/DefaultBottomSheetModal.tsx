@@ -1,3 +1,4 @@
+import { DebouncedPressable } from "@/app/components/DebouncedPressable";
 import { PressableScale } from "@/app/components/PressableScale";
 import IC_CLOSE from "@/assets/images/ic_close.svg";
 import IC_CHEVRON_LEFT from "@/assets/images/ic_chevron_left.svg";
@@ -13,7 +14,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   BackHandler,
   Keyboard,
-  Pressable,
   StyleProp,
   StyleSheet,
   Text,
@@ -107,7 +107,10 @@ export default function DefaultBottomSheetModal({
     animatedIndex,
     style,
   }: BottomSheetBackdropProps) => (
-    <Pressable onPress={onBackDropPress} style={[style, styles.backdrop]} />
+    <DebouncedPressable
+      onPress={onBackDropPress}
+      style={[style, styles.backdrop]}
+    />
   );
 
   const renderContent = () => {

@@ -1,3 +1,7 @@
+import {
+  DebouncedPressable,
+  DebouncedTouchableOpacity,
+} from "@/app/components/DebouncedPressable";
 import { PressableScale } from "@/app/components/PressableScale";
 import { RecipeIngredientInput } from "@/app/types/api/recipe";
 import { RecipeIngredient } from "@/app/types/domain/recipe";
@@ -5,7 +9,7 @@ import IC_PLUS from "@/assets/images/ic_plus_bold.svg";
 import IC_DELETE from "@/assets/images/ic_selected_cancel.svg";
 import { FoodDataManager } from "@/constants/IngredientManager";
 import i18n from "@/lib/i18n";
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import { EmptyIngredientsPlaceholder } from "../../(detail)/components/EmptyIngredientsPlaceholder";
 import { IngredientFridgeType } from "../../(detail)/components/RecipeIngredients";
 
@@ -49,7 +53,10 @@ export function IngredientItem({
   const Icon = FoodDataManager.getImageSource(item.ingredientIconId);
 
   return (
-    <Pressable className="flex-row items-center p-2 pr-4" onPress={onPress}>
+    <DebouncedPressable
+      className="flex-row items-center p-2 pr-4"
+      onPress={onPress}
+    >
       <View className="w-12 h-12 justify-center items-center">
         {Icon && <Icon width={40} height={40} />}
       </View>
@@ -67,14 +74,15 @@ export function IngredientItem({
         </View>
       </View>
 
-      <TouchableOpacity
+      <DebouncedTouchableOpacity
         activeOpacity={0.8}
+        onPressBeforeDebounce={(e) => e.stopPropagation()}
         onPress={onDeleteButtonPress}
         style={{ alignSelf: "flex-start" }}
       >
         <IC_DELETE width={24} height={24} />
-      </TouchableOpacity>
-    </Pressable>
+      </DebouncedTouchableOpacity>
+    </DebouncedPressable>
   );
 }
 

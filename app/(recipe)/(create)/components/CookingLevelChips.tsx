@@ -1,10 +1,11 @@
+import { DebouncedPressable } from "@/app/components/DebouncedPressable";
 import CookingLevel1Icon from "@/assets/images/ic_cooking_level_1.svg";
 import CookingLevel2Icon from "@/assets/images/ic_cooking_level_2.svg";
 import CookingLevel3Icon from "@/assets/images/ic_cooking_level_3.svg";
 import i18n from "@/lib/i18n";
 import clsx from "clsx";
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 interface Props {
   cookingLevel: string;
@@ -60,7 +61,7 @@ export const CookingLevelChips = ({ cookingLevel, onChanged }: Props) => {
 
       {/* Level */}
       {COOKING_LEVEL.map((level) => (
-        <Pressable key={level.key} onPress={() => onChanged(level.key)}>
+        <DebouncedPressable key={level.key} onPress={() => onChanged(level.key)}>
           <View
             className={clsx(
               "px-2 py-1.5 items-center justify-center rounded-[8px]",
@@ -79,7 +80,7 @@ export const CookingLevelChips = ({ cookingLevel, onChanged }: Props) => {
               {level.label}
             </Text>
           </View>
-        </Pressable>
+        </DebouncedPressable>
       ))}
     </View>
   );

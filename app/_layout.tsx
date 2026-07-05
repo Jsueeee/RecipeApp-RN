@@ -1,6 +1,7 @@
 import { TutorialProvider } from "@/app/tutorial";
 import { LoginRequiredDialogProvider } from "@/app/components/LoginRequiredDialogProvider";
 import { queryClient } from "@/app/lib/query/client";
+import { installNavigationDebounce } from "@/app/lib/navigation/navigationDebounce";
 import { defaultStackScreenOptions } from "@/app/lib/navigation/stackOptions";
 import {
   getFcmToken,
@@ -51,6 +52,7 @@ export const unstable_settings = {
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+installNavigationDebounce();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({

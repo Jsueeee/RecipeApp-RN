@@ -1,3 +1,5 @@
+import { DebouncedPressable } from "@/app/components/DebouncedPressable";
+import { useDebouncedPress } from "@/app/hooks/useDebouncedPress";
 import i18n from "@/lib/i18n";
 import { Modal, Pressable, Text, View } from "react-native";
 import { CTAButton } from "./CTAButton";
@@ -26,6 +28,8 @@ export function ChoiceDialog({
   const handleCancel = () => {
     onCancel();
   };
+  const debouncedCancel = useDebouncedPress(handleCancel);
+  const debouncedConfirm = useDebouncedPress(onConfirm);
 
   return (
     <Modal
@@ -35,9 +39,10 @@ export function ChoiceDialog({
       animationType="fade"
       onRequestClose={handleCancel}
     >
-      <Pressable
+      <DebouncedPressable
         className="flex-1 bg-material-dimmer justify-center items-center"
-        onPress={handleCancel}
+        onPress={debouncedCancel}
+        disablePressDebounce
       >
         <Pressable
           className="bg-white rounded-[16px] p-4 w-[80%] max-w-[400px]"
@@ -51,19 +56,19 @@ export function ChoiceDialog({
             <CTAButton
               buttonLabel={cancelText ?? ""}
               variant="cancel"
-              onPress={handleCancel}
+              onPress={debouncedCancel}
               className="flex-1"
             />
 
             <CTAButton
               buttonLabel={confirmText ?? ""}
               isLoading={isConfirmLoading}
-              onPress={onConfirm}
+              onPress={debouncedConfirm}
               className="flex-1"
             />
           </View>
         </Pressable>
-      </Pressable>
+      </DebouncedPressable>
     </Modal>
   );
 }

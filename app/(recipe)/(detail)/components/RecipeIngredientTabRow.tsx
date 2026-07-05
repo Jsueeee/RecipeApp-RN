@@ -1,7 +1,8 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { IngredientFridgeType } from "./RecipeIngredients";
+import { DebouncedTouchableOpacity } from "@/app/components/DebouncedPressable";
 import i18n from "@/lib/i18n";
+import React from "react";
+import { View, Text } from "react-native";
+import { IngredientFridgeType } from "./RecipeIngredients";
 
 interface Props {
   tabs: IngredientFridgeType[];
@@ -17,7 +18,7 @@ export const RecipeIngredientTabRow: React.FC<Props> = ({
   return (
     <View className="flex-row border-b border-gray-100 bg-white">
       {tabs.map((tab) => (
-        <TouchableOpacity
+        <DebouncedTouchableOpacity
           key={tab}
           onPress={() => onTabSelected(tab)}
           className="flex-1"
@@ -34,7 +35,7 @@ export const RecipeIngredientTabRow: React.FC<Props> = ({
           {selectedTab === tab && (
             <View className="h-0.5 mx-1 bg-gray-800 rounded-lg" />
           )}
-        </TouchableOpacity>
+        </DebouncedTouchableOpacity>
       ))}
     </View>
   );

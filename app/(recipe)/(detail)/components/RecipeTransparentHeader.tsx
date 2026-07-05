@@ -1,9 +1,10 @@
+import { DebouncedTouchableOpacity } from "@/app/components/DebouncedPressable";
 import IC_CHEVRON_LEFT from "@/assets/images/ic_chevron_left.svg";
 import IC_MORE from "@/assets/images/ic_more.svg";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Props {
@@ -35,18 +36,18 @@ export const RecipeTransparentHeader = ({ isMyRecipe, onMoreClick }: Props) => {
         className="flex-row items-center justify-between px-4 w-full z-10"
         style={{ top: insets.top + 16 }}
       >
-        <TouchableOpacity onPress={onBackClick} hitSlop={8}>
+        <DebouncedTouchableOpacity onPress={onBackClick} hitSlop={8}>
           <IC_CHEVRON_LEFT width={24} height={24} color="#FFFFFF" />
-        </TouchableOpacity>
+        </DebouncedTouchableOpacity>
 
         {!isMyRecipe && (
-          <TouchableOpacity
+          <DebouncedTouchableOpacity
             onPress={onMoreClick}
             activeOpacity={0.8}
             hitSlop={8}
           >
             <IC_MORE width={24} height={24} color="#FFFFFF" />
-          </TouchableOpacity>
+          </DebouncedTouchableOpacity>
         )}
       </View>
     </>

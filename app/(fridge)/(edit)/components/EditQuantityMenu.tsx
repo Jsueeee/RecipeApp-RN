@@ -1,7 +1,8 @@
+import { DebouncedPressable } from "@/app/components/DebouncedPressable";
 import IC_EDIT_FOOD_MINUS from "@/assets/images/ic_edit_food_minus.svg";
 import IC_EDIT_FOOD_PLUS from "@/assets/images/ic_edit_food_plus.svg";
 import i18n from "@/lib/i18n";
-import { Platform, Pressable, Text, TextInput, View } from "react-native";
+import { Platform, Text, TextInput, View } from "react-native";
 
 interface Props {
   quantity: number;
@@ -43,12 +44,11 @@ export const QuantityInput = ({ quantity, onQuantityChanged }: Props) => {
     const updateQuantity = quantity + 0.5;
     onQuantityChanged(updateQuantity);
   };
-
   return (
     <View className="w-[150px] flex-row py-[12px] items-center justify-between">
-      <Pressable onPress={handleDecrease} className="active:opacity-70">
+      <DebouncedPressable onPress={handleDecrease} className="active:opacity-70">
         <IC_EDIT_FOOD_MINUS width={32} height={32} />
-      </Pressable>
+      </DebouncedPressable>
 
       <TextInput
         value={quantity.toString()}
@@ -75,9 +75,9 @@ export const QuantityInput = ({ quantity, onQuantityChanged }: Props) => {
         }}
       />
 
-      <Pressable onPress={handleIncrease} className="active:opacity-70">
+      <DebouncedPressable onPress={handleIncrease} className="active:opacity-70">
         <IC_EDIT_FOOD_PLUS width={32} height={32} />
-      </Pressable>
+      </DebouncedPressable>
     </View>
   );
 };

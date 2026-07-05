@@ -1,9 +1,9 @@
+import { DebouncedPressable } from "@/app/components/DebouncedPressable";
 import { ChoiceDialog } from "@/components/ChoiceDialog";
 import { CTAButton } from "@/components/CTAButton";
 import { selection as hapticSelection } from "@/app/lib/haptics";
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  Pressable,
   StyleSheet,
   Text,
   View,
@@ -72,7 +72,15 @@ export function TutorialOverlay() {
   const screenH = coordinateSpaceSize.height || windowDimensions.height;
   const currentStepId = currentStep?.id;
   const currentStepTriggerType = currentStep?.trigger.type;
-
+  const proxyAnchorId =
+    state.phase === "waiting" &&
+    currentAnchorRect &&
+    currentStep?.anchorId &&
+    (currentStep.trigger.type === "tap-anchor" ||
+      currentStep.trigger.type === "navigation" ||
+      currentStep.trigger.type === "progress")
+      ? currentStep.anchorId
+      : null;
   const guestChoiceOpacity = useSharedValue(0);
   const guestChoiceScale = useSharedValue(0.96);
   const guestChoiceTranslateY = useSharedValue(8);
@@ -211,16 +219,6 @@ export function TutorialOverlay() {
     Math.min(maxGuestChoiceTop, speechBlockBottom + 18),
   );
 
-  const proxyAnchorId =
-    state.phase === "waiting" &&
-    currentAnchorRect &&
-    currentStep.anchorId &&
-    (currentStep.trigger.type === "tap-anchor" ||
-      currentStep.trigger.type === "navigation" ||
-      currentStep.trigger.type === "progress")
-      ? currentStep.anchorId
-      : null;
-
   return (
     <>
       {/* Visual layer. Touch blocking is handled by the interaction layer so
@@ -324,7 +322,7 @@ export function TutorialOverlay() {
         <TouchGate rect={spotlightRect ?? null} />
 
         {advanceOnScreenTap && state.phase === "waiting" ? (
-          <Pressable
+          <DebouncedPressable
             onPress={() => {
               hapticSelection();
               advanceScreenTap();
@@ -334,7 +332,7 @@ export function TutorialOverlay() {
         ) : null}
 
         {proxyAnchorId && currentAnchorRect ? (
-          <Pressable
+          <DebouncedPressable
             onPress={() => {
               if (
                 currentStep.trigger.type === "tap-anchor" ||
@@ -359,7 +357,7 @@ export function TutorialOverlay() {
             pointerEvents="box-none"
             style={[styles.ctaWrap, { bottom: insets.bottom + 36 }]}
           >
-            <Pressable
+            <DebouncedPressable
               onPress={() => {
                 hapticSelection();
                 advanceCta();
@@ -370,11 +368,11 @@ export function TutorialOverlay() {
               ]}
             >
               <Text style={styles.ctaText}>{ctaLabel}</Text>
-            </Pressable>
+            </DebouncedPressable>
           </View>
         ) : null}
 
-        <Pressable
+        <DebouncedPressable
           onPress={() => {
             hapticSelection();
             setSkipDialogVisible(true);
@@ -383,7 +381,7 @@ export function TutorialOverlay() {
           style={[styles.skipBtn, { top: insets.top + 8 }]}
         >
           <Text style={styles.skipText}>건너뛰기</Text>
-        </Pressable>
+        </DebouncedPressable>
 
         {showGuestChoice &&
         state.phase === "waiting" &&
