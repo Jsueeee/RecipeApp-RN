@@ -45,6 +45,14 @@ const GUEST_FEATURE_ROLL_TRANSITION_MS = 360;
 const GUEST_CHOICE_BUTTON_HEIGHT = 52;
 const GUEST_CHOICE_STACK_GAP = 10;
 const SPEECH_LINE_HEIGHT = 28;
+const BOTTOM_TAB_SPOTLIGHT_HORIZONTAL_INSET = 20;
+const BOTTOM_TAB_SPOTLIGHT_VERTICAL_INSET = 8;
+const BOTTOM_TAB_ANCHOR_IDS = new Set<AnchorId>([
+  "tab-fridge",
+  "tab-recipe",
+  "tab-search",
+  "tab-myPage",
+]);
 
 export function TutorialOverlay() {
   const [skipDialogVisible, setSkipDialogVisible] = useState(false);
@@ -180,8 +188,8 @@ export function TutorialOverlay() {
   const isLastStep = stepIndex === totalSteps - 1;
   const spotlightRect = applySpotlightInsets(
     currentAnchorRect,
-    currentStep.spotlightHorizontalInset,
-    currentStep.spotlightVerticalInset,
+    getSpotlightHorizontalInset(currentStep.anchorId, currentStep),
+    getSpotlightVerticalInset(currentStep.anchorId, currentStep),
   );
   const activeSpotlightRect =
     state.phase === "success" ? null : (spotlightRect ?? null);
@@ -607,6 +615,32 @@ function applySpotlightInsets(
     width: rect.width - safeHorizontalInset * 2,
     height: rect.height - safeVerticalInset * 2,
   };
+}
+
+function getSpotlightHorizontalInset(
+  anchorId: AnchorId | undefined,
+  step: { spotlightHorizontalInset?: number },
+) {
+  if (step.spotlightHorizontalInset !== undefined) {
+    return step.spotlightHorizontalInset;
+  }
+
+  return anchorId && BOTTOM_TAB_ANCHOR_IDS.has(anchorId)
+    ? BOTTOM_TAB_SPOTLIGHT_HORIZONTAL_INSET
+    : undefined;
+}
+
+function getSpotlightVerticalInset(
+  anchorId: AnchorId | undefined,
+  step: { spotlightVerticalInset?: number },
+) {
+  if (step.spotlightVerticalInset !== undefined) {
+    return step.spotlightVerticalInset;
+  }
+
+  return anchorId && BOTTOM_TAB_ANCHOR_IDS.has(anchorId)
+    ? BOTTOM_TAB_SPOTLIGHT_VERTICAL_INSET
+    : undefined;
 }
 
 function regionToPosition(

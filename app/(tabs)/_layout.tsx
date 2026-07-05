@@ -16,6 +16,10 @@ import {
   Text,
   ViewStyle,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const TAB_BAR_CONTENT_HEIGHT = 58;
+const TAB_BAR_HIT_SLOP = { top: 8, bottom: 8, left: 6, right: 6 };
 
 const TabBarLabel = ({
   focused,
@@ -46,11 +50,12 @@ const TabBarButton = ({
       {...props}
       android_ripple={null}
       android_disableSound={true}
+      hitSlop={TAB_BAR_HIT_SLOP}
       onPress={(e) => {
         hapticSelection();
         props.onPress?.(e);
       }}
-      style={[styles.tabBarButton, style]}
+      style={[style, styles.tabBarButton]}
     >
       {children}
     </DebouncedPressable>
@@ -76,11 +81,12 @@ const AnchoredTabBarButton = ({
   }, [anchorId, onNavigate, registerAnchorAction]);
 
   return (
-    <TutorialAnchor id={anchorId} style={[styles.tabBarButton, style]}>
+    <TutorialAnchor id={anchorId} style={[style, styles.tabBarAnchor]}>
       <DebouncedPressable
         {...props}
         android_ripple={null}
         android_disableSound={true}
+        hitSlop={TAB_BAR_HIT_SLOP}
         onPress={(e) => {
           hapticSelection();
           props.onPress?.(e);
@@ -94,11 +100,19 @@ const AnchoredTabBarButton = ({
 };
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [
+          styles.tabBar,
+          {
+            height: TAB_BAR_CONTENT_HEIGHT + insets.bottom,
+            paddingBottom: insets.bottom,
+          },
+        ],
         tabBarButton: (props) => <TabBarButton {...props} />,
         tabBarIconStyle: styles.tabBarIcon,
         tabBarLabelStyle: styles.tabBarLabel,
@@ -192,7 +206,18 @@ export const styles = StyleSheet.create({
   },
   tabBarButton: {
     flex: 1,
-    paddingVertical: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: TAB_BAR_CONTENT_HEIGHT,
+    paddingTop: 8,
+    paddingBottom: 8,
+  },
+  tabBarAnchor: {
+    flex: 1,
+    alignItems: "stretch",
+    justifyContent: "center",
+    minHeight: TAB_BAR_CONTENT_HEIGHT,
+    padding: 0,
   },
   tabBarIcon: {
     width: 20,
@@ -208,5 +233,10 @@ export const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    minHeight: TAB_BAR_CONTENT_HEIGHT,
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingHorizontal: 5,
+    width: "100%",
   },
 });
