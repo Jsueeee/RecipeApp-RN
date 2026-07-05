@@ -54,6 +54,7 @@
           }
         }
       ],
+      "@react-native-firebase/crashlytics",
       [
         "expo-build-properties",
         {
@@ -68,6 +69,7 @@
             "forceStaticLinking": [
               "RNFBAnalytics",
               "RNFBApp",
+              "RNFBCrashlytics",
               "RNFBMessaging"
             ]
           }
