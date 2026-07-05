@@ -34,7 +34,9 @@ export const Header = ({
       </DebouncedTouchableOpacity>
 
       <Text
-        className={`absolute left-0 right-0 text-title4 text-center ${titleColor}`}
+        className={`absolute left-14 right-14 text-title4 text-center ${titleColor}`}
+        numberOfLines={1}
+        ellipsizeMode="tail"
       >
         {title}
       </Text>

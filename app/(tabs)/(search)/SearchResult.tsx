@@ -40,11 +40,16 @@ const ItemSeparator = () => (
 interface Props {
   keyword: string;
   className?: string;
+  initialSelectedTab?: RecipeSourceType;
 }
 
-export default function SearchResult({ keyword, className }: Props) {
+export default function SearchResult({
+  keyword,
+  className,
+  initialSelectedTab = RECIPE_SOURCE_TYPE.BLOG,
+}: Props) {
   const [selectedTab, setSelectedTab] = useState<RecipeSourceType>(
-    RECIPE_SOURCE_TYPE.BLOG,
+    initialSelectedTab,
   );
   const { isAuthenticated } = useAuthStatus();
   const promptLogin = useLoginPrompt();
@@ -60,6 +65,10 @@ export default function SearchResult({ keyword, className }: Props) {
     useYoutubeRecipeScrapMutation();
 
   const PAGE_SIZE = 10;
+
+  useEffect(() => {
+    setSelectedTab(initialSelectedTab);
+  }, [initialSelectedTab]);
 
   const { recipes, totalCount, isLoading, fetchNextPage, hasNextPage } =
     useSearchRecipesQuery({

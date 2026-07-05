@@ -2,6 +2,8 @@ import { PressableScale } from "@/app/components/PressableScale";
 import { RecipeDetail } from "@/app/types/domain/recipe";
 import BlogIcon from "@/assets/images/ic_blog.svg";
 import YoutubeIcon from "@/assets/images/ic_youtube.svg";
+import { RECIPE_SOURCE_TYPE } from "@/constants/RecipeSourceType";
+import { router } from "expo-router";
 import React from "react";
 import { LayoutChangeEvent, View } from "react-native";
 import { BottomScrapButton } from "./BottomScrapButton";
@@ -18,9 +20,21 @@ export const RecipeFooter = ({
   scrapButtonHeight,
   onScrapLayout,
 }: Props) => {
+  const insets = useSafeAreaInsets();
+
   if (!recipeDetail) return null;
 
-  const insets = useSafeAreaInsets();
+  const navigateToSearchResult = (
+    sourceType: keyof typeof RECIPE_SOURCE_TYPE,
+  ) => {
+    router.push({
+      pathname: "/(search)/recipe-result",
+      params: {
+        keyword: recipeDetail.title,
+        sourceType,
+      },
+    });
+  };
 
   return (
     <View
@@ -29,7 +43,10 @@ export const RecipeFooter = ({
         paddingBottom: insets.bottom,
       }}
     >
-      <PressableScale disabled={!recipeDetail} onPress={() => {}}>
+      <PressableScale
+        disabled={!recipeDetail}
+        onPress={() => navigateToSearchResult("YOUTUBE")}
+      >
         <View
           style={{ height: scrapButtonHeight, aspectRatio: 1 }}
           className="bg-fill-subtle rounded-[12px] items-center justify-center"
@@ -38,7 +55,10 @@ export const RecipeFooter = ({
         </View>
       </PressableScale>
 
-      <PressableScale disabled={!recipeDetail} onPress={() => {}}>
+      <PressableScale
+        disabled={!recipeDetail}
+        onPress={() => navigateToSearchResult("BLOG")}
+      >
         <View
           style={{ height: scrapButtonHeight, aspectRatio: 1 }}
           className="bg-fill-subtle rounded-[12px] items-center justify-center"
