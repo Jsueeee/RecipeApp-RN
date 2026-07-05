@@ -52,6 +52,24 @@ function warnAnalyticsError(action: string, error: unknown) {
   }
 }
 
+function getTutorialModeParam(mode: TutorialAnalyticsEvent["mode"]) {
+  return mode.replace(/-/g, "_");
+}
+
+function getTutorialAccountType(mode: TutorialAnalyticsEvent["mode"]) {
+  return mode === "guest" ? "guest" : "logged_in";
+}
+
+function getTutorialBaseParams(
+  event: TutorialAnalyticsEvent,
+): AnalyticsParams {
+  return {
+    tutorial_mode: getTutorialModeParam(event.mode),
+    account_type: getTutorialAccountType(event.mode),
+    total_steps: event.totalSteps,
+  };
+}
+
 export function getFirebaseScreenName(segments: readonly string[]): string {
   const rawName = segments.length > 0 ? segments.join("/") : "root";
   const screenName = rawName
@@ -102,21 +120,52 @@ export async function logFirebaseAnalyticsEvent<T extends string>(
 export function logTutorialAnalyticsEvent(
   event: TutorialAnalyticsEvent,
 ): Promise<void> {
+  const baseParams = getTutorialBaseParams(event);
+
   switch (event.type) {
     case "tutorial_started":
-    case "tutorial_completed":
-      return logFirebaseAnalyticsEvent(event.type);
+      return logFirebaseAnalyticsEvent(event.type, {
+        ...baseParams,
+        start_step: event.startStep,
+        start_step_index: event.startStepIndex,
+      });
     case "tutorial_step_shown":
-      return logFirebaseAnalyticsEvent(event.type, { step_id: event.stepId });
+      return logFirebaseAnalyticsEvent(event.type, {
+        ...baseParams,
+        step_id: event.stepId,
+        step_index: event.stepIndex,
+      });
     case "tutorial_step_advanced":
       return logFirebaseAnalyticsEvent(event.type, {
+        ...baseParams,
         step_id: event.stepId,
+        step_index: event.stepIndex,
         method: event.method,
       });
     case "tutorial_skipped":
-      return logFirebaseAnalyticsEvent(event.type, { at_step: event.atStep });
+      return logFirebaseAnalyticsEvent(event.type, {
+        ...baseParams,
+        at_step: event.atStep,
+        at_step_index: event.atStepIndex,
+        skip_reason: event.reason,
+      });
+    case "tutorial_completed":
+      return logFirebaseAnalyticsEvent(event.type, {
+        ...baseParams,
+        final_step: event.finalStep,
+        final_step_index: event.finalStepIndex,
+      });
+    case "tutorial_finished":
+      return logFirebaseAnalyticsEvent(event.type, {
+        ...baseParams,
+        outcome: event.outcome,
+        final_step: event.finalStep,
+        final_step_index: event.finalStepIndex,
+        skip_reason: event.skipReason,
+      });
     case "tutorial_anchor_timeout":
       return logFirebaseAnalyticsEvent(event.type, {
+        ...baseParams,
         anchor_id: event.anchorId,
       });
   }

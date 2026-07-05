@@ -18,6 +18,10 @@ import React, {
 } from "react";
 import { InteractionManager, View, type LayoutChangeEvent } from "react-native";
 import { emitTutorialEvent } from "../engine/analytics";
+import type {
+  TutorialCompletionOutcome,
+  TutorialSkipReason,
+} from "../engine/analytics";
 import { engineReducer, initialEngineState } from "../engine/reducer";
 import {
   getTutorialSteps,
@@ -190,6 +194,7 @@ export function TutorialProvider({ children }: Props) {
 
   const lastEmittedStep = useRef<number>(-1);
   const didSkipTutorialRef = useRef(false);
+  const skipReasonRef = useRef<TutorialSkipReason | null>(null);
   const didHandleTutorialDoneRef = useRef(false);
   const hasRequestedTutorialHome = useRef(false);
   const hasRequestedExpirationNotificationTutorial = useRef(false);
@@ -205,8 +210,98 @@ export function TutorialProvider({ children }: Props) {
     ? state.anchors[currentStep.anchorId]
     : undefined;
 
+  const emitTutorialStarted = useCallback(
+    (step: StepConfig) => {
+      emitTutorialEvent({
+        type: "tutorial_started",
+        mode: tutorialMode,
+        startStep: step.id,
+        startStepIndex: step.index,
+        totalSteps,
+      });
+    },
+    [totalSteps, tutorialMode],
+  );
+
+  const emitTutorialStepShown = useCallback(
+    (step: StepConfig) => {
+      emitTutorialEvent({
+        type: "tutorial_step_shown",
+        mode: tutorialMode,
+        stepId: step.id,
+        stepIndex: step.index,
+        totalSteps,
+      });
+    },
+    [totalSteps, tutorialMode],
+  );
+
+  const emitTutorialStepAdvanced = useCallback(
+    (
+      step: StepConfig,
+      method: "auto" | "cta" | "tap" | "navigation" | "progress" | "sheet",
+    ) => {
+      emitTutorialEvent({
+        type: "tutorial_step_advanced",
+        mode: tutorialMode,
+        stepId: step.id,
+        stepIndex: step.index,
+        method,
+        totalSteps,
+      });
+    },
+    [totalSteps, tutorialMode],
+  );
+
+  const emitTutorialSkipped = useCallback(
+    (step: StepConfig, reason: TutorialSkipReason) => {
+      emitTutorialEvent({
+        type: "tutorial_skipped",
+        mode: tutorialMode,
+        atStep: step.id,
+        atStepIndex: step.index,
+        reason,
+        totalSteps,
+      });
+    },
+    [totalSteps, tutorialMode],
+  );
+
+  const emitTutorialCompleted = useCallback(
+    (step: StepConfig) => {
+      emitTutorialEvent({
+        type: "tutorial_completed",
+        mode: tutorialMode,
+        finalStep: step.id,
+        finalStepIndex: step.index,
+        totalSteps,
+      });
+    },
+    [totalSteps, tutorialMode],
+  );
+
+  const emitTutorialFinished = useCallback(
+    (
+      outcome: TutorialCompletionOutcome,
+      step: StepConfig,
+      skipReason: TutorialSkipReason | null,
+    ) => {
+      emitTutorialEvent({
+        type: "tutorial_finished",
+        mode: tutorialMode,
+        outcome,
+        finalStep: step.id,
+        finalStepIndex: step.index,
+        skipReason: skipReason ?? undefined,
+        totalSteps,
+      });
+    },
+    [totalSteps, tutorialMode],
+  );
+
   useEffect(() => {
     didSkipTutorialRef.current = false;
+    skipReasonRef.current = null;
     didHandleTutorialDoneRef.current = false;
     lastEmittedStep.current = -1;
     hasRequestedTutorialHome.current = false;
@@ -245,7 +340,10 @@ export function TutorialProvider({ children }: Props) {
         stepIndex: tutorialStartIndex,
         totalSteps,
       });
-      emitTutorialEvent({ type: "tutorial_started" });
+      const startStep = tutorialSteps[tutorialStartIndex];
+      if (startStep) {
+        emitTutorialStarted(startStep);
+      }
     }, FIRST_LAUNCH_DELAY_MS);
     return () => clearTimeout(t);
   }, [
@@ -255,6 +353,7 @@ export function TutorialProvider({ children }: Props) {
     state.hasStarted,
     state.phase,
     totalSteps,
+    emitTutorialStarted,
     tutorialMode,
     tutorialSteps,
     tutorialStartIndex,
@@ -275,9 +374,9 @@ export function TutorialProvider({ children }: Props) {
     lastEmittedStep.current = state.stepIndex;
     const step = tutorialSteps[state.stepIndex];
     if (step) {
-      emitTutorialEvent({ type: "tutorial_step_shown", stepId: step.id });
+      emitTutorialStepShown(step);
     }
-  }, [state.phase, state.stepIndex]);
+  }, [emitTutorialStepShown, state.phase, state.stepIndex, tutorialSteps]);
 
   // waiting 진입 시각을 기록하고, 새 스텝에 들어갈 때마다 speechCompleted 표식을 리셋한다.
   useEffect(() => {
@@ -364,11 +463,7 @@ export function TutorialProvider({ children }: Props) {
             return "sheet";
         }
       })();
-      emitTutorialEvent({
-        type: "tutorial_step_advanced",
-        stepId: step.id,
-        method,
-      });
+      emitTutorialStepAdvanced(step, method);
     }
     let cancelled = false;
     let interactionHandle: { cancel: () => void } | null = null;
@@ -391,7 +486,13 @@ export function TutorialProvider({ children }: Props) {
       clearTimeout(t);
       interactionHandle?.cancel();
     };
-  }, [state.phase, state.stepIndex, totalSteps, tutorialSteps]);
+  }, [
+    emitTutorialStepAdvanced,
+    state.phase,
+    state.stepIndex,
+    totalSteps,
+    tutorialSteps,
+  ]);
 
   useEffect(() => {
     if (!state.hasStarted) return;
@@ -412,7 +513,17 @@ export function TutorialProvider({ children }: Props) {
     if (didHandleTutorialDoneRef.current) return;
 
     didHandleTutorialDoneRef.current = true;
-    emitTutorialEvent({ type: "tutorial_completed" });
+    const finalStep = tutorialSteps[state.stepIndex];
+    const outcome: TutorialCompletionOutcome = didSkipTutorialRef.current
+      ? "skipped"
+      : "completed";
+
+    if (finalStep) {
+      if (outcome === "completed") {
+        emitTutorialCompleted(finalStep);
+      }
+      emitTutorialFinished(outcome, finalStep, skipReasonRef.current);
+    }
 
     if (tutorialMode === "expiration-notification") {
       void markExpirationNotificationTutorialCompleted();
@@ -439,8 +550,12 @@ export function TutorialProvider({ children }: Props) {
   }, [
     router,
     state.phase,
+    state.stepIndex,
+    emitTutorialCompleted,
+    emitTutorialFinished,
     markCompleted,
     markExpirationNotificationTutorialCompleted,
+    tutorialSteps,
     tutorialMode,
   ]);
 
@@ -621,13 +736,20 @@ export function TutorialProvider({ children }: Props) {
 
   const goToLoginFromTutorial = useCallback(() => {
     const step = tutorialSteps[state.stepIndex];
-    if (step) emitTutorialEvent({ type: "tutorial_skipped", atStep: step.id });
+    if (step) emitTutorialSkipped(step, "login_choice");
     didSkipTutorialRef.current = true;
+    skipReasonRef.current = "login_choice";
     clearPendingAnchorAction();
     dispatch({ type: "SKIP" });
     router.dismissAll();
     router.replace("/(auth)");
-  }, [clearPendingAnchorAction, router, state.stepIndex, tutorialSteps]);
+  }, [
+    clearPendingAnchorAction,
+    emitTutorialSkipped,
+    router,
+    state.stepIndex,
+    tutorialSteps,
+  ]);
 
   const advanceScreenTap = useCallback(
     () =>
@@ -660,18 +782,28 @@ export function TutorialProvider({ children }: Props) {
 
   const skip = useCallback(() => {
     const step = tutorialSteps[state.stepIndex];
-    if (step) emitTutorialEvent({ type: "tutorial_skipped", atStep: step.id });
+    if (step) emitTutorialSkipped(step, "skip_button");
     didSkipTutorialRef.current = true;
+    skipReasonRef.current = "skip_button";
     clearPendingAnchorAction();
     dispatch({ type: "SKIP" });
-  }, [clearPendingAnchorAction, state.stepIndex, tutorialSteps]);
+  }, [
+    clearPendingAnchorAction,
+    emitTutorialSkipped,
+    state.stepIndex,
+    tutorialSteps,
+  ]);
   const restart = useCallback(() => {
     didSkipTutorialRef.current = false;
+    skipReasonRef.current = null;
     didHandleTutorialDoneRef.current = false;
     activeTutorialModeRef.current = tutorialMode;
     dispatch({ type: "RESTART" });
-    emitTutorialEvent({ type: "tutorial_started" });
-  }, [tutorialMode]);
+    const startStep = tutorialSteps[0];
+    if (startStep) {
+      emitTutorialStarted(startStep);
+    }
+  }, [emitTutorialStarted, tutorialMode, tutorialSteps]);
 
   const value = useMemo<TutorialContextValue>(
     () => ({
