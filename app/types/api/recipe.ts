@@ -81,6 +81,7 @@ export interface MyRecipeResponse {
   recipeName: string;
   introduction: string | null;
   thumbnailImgUrl: string | null;
+  ingredientsMatchRate?: number | null;
   postUserName: string | null;
   postDate: string | null;
   isUserScrap: boolean;
@@ -98,6 +99,7 @@ export interface ScrapRecipeResponse {
   recipeName: string;
   introduction: string | null;
   thumbnailImgUrl: string | null;
+  ingredientsMatchRate?: number | null;
   postUserName: string | null;
   postDate: string | null;
   isUserScrap: boolean;

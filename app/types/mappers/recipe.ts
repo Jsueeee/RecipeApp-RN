@@ -22,6 +22,11 @@ import {
 } from "../domain/recipe";
 import { escapeHtml } from "../../utils/HtmlUtils";
 
+const getIngredientMatchRate = (recipe: {
+  ingredientsMatchRate?: number | null;
+  ingredientMatchRate?: number | null;
+}) => recipe.ingredientsMatchRate ?? recipe.ingredientMatchRate ?? null;
+
 export const mapRecommendedRecipesResponse = (
   response: RecommendedRecipesResponse
 ): RecipeSummaryList => ({
@@ -40,7 +45,7 @@ const mapRecommendedRecipeResponse = (
   viewCount: recipe.viewCnt,
   scrapCount: recipe.scrapCnt,
   postDate: recipe.postDate,
-  ingredientMatchRate: recipe.ingredientsMatchRate,
+  ingredientMatchRate: getIngredientMatchRate(recipe),
   linkUrl: recipe.linkUrl,
   postUserName: recipe.postUserName,
   postUserProfileImage: recipe.postUserProfileImage,
@@ -127,7 +132,7 @@ const mapMyRecipeResponse = (recipe: MyRecipeResponse): RecipeSummary => ({
   viewCount: recipe.viewCnt,
   scrapCount: recipe.scrapCnt,
   postDate: recipe.postDate ?? "",
-  ingredientMatchRate: 0,
+  ingredientMatchRate: getIngredientMatchRate(recipe),
   linkUrl: undefined,
   postUserName: recipe.postUserName ?? undefined,
 });
@@ -150,7 +155,7 @@ const mapScrapRecipeResponse = (
   viewCount: recipe.viewCnt,
   scrapCount: recipe.scrapCnt,
   postDate: recipe.postDate,
-  ingredientMatchRate: 0, // TODO: 여기도 추가 가능한지 서버 문의
+  ingredientMatchRate: getIngredientMatchRate(recipe),
   linkUrl: recipe.linkUrl,
   postUserName: recipe.postUserName ?? undefined,
 });

@@ -12,7 +12,7 @@ export interface RecipeSummary {
   viewCount: number;
   scrapCount: number;
   postDate: string | null;
-  ingredientMatchRate: number;
+  ingredientMatchRate: number | null;
   linkUrl?: string | null;
   postUserName?: string;
   postUserProfileImage?: string;
