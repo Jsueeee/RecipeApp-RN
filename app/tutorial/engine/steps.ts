@@ -9,7 +9,7 @@ export const AUTHENTICATED_STEPS: ReadonlyArray<StepConfig> = [
     index: 0,
     character: { emotion: "happy", region: "center" },
     speech:
-      "안녕하세요. 저는 토마토에요 🍅\n레시피 저장소에 오신 걸 환영합니다.\n잠깐 같이 둘러볼까요?",
+      "안녕하세요. 저는 토토에요 🍅\n레시피 저장소에 오신 걸 환영합니다.\n잠깐 같이 둘러볼까요?",
     trigger: { type: "auto", delayMs: 2600 },
     blocksTouches: true,
   },
