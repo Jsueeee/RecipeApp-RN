@@ -13,7 +13,7 @@ export function EditUnitMenu({ unit, onUnitChanged }: Props) {
   return (
     <View className="w-full flex-row items-center">
       <Text className="text-title5 text-text-alternative w-[100px] py-[10px]">
-        {i18n.t("edit_food.menu_quantity")}
+        {i18n.t("edit_food.unit")}
       </Text>
 
       <UnitInput unit={unit} onUnitChanged={onUnitChanged} />
