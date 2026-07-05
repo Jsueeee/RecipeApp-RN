@@ -4,7 +4,7 @@ import { useYoutubeRecipeScrapMutation } from "@/app/hooks/mutations/useYoutubeR
 import { useSearchRecipesQuery } from "@/app/hooks/queries/useSearchRecipeQuery";
 import { useAuthStatus } from "@/app/hooks/useAuthStatus";
 import { useLoginPrompt } from "@/app/hooks/useLoginPrompt";
-import { getNativeAdUnitId } from "@/app/lib/ads/adUnits";
+import { useNativeAdSlots } from "@/app/hooks/useNativeAdSlots";
 import { TutorialAnchor } from "@/app/tutorial";
 import { SearchRecipe } from "@/app/types/domain/recipe";
 import { TealDotLoading } from "@/components/DotLoading";
@@ -25,7 +25,6 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import { Linking, Text, View } from "react-native";
@@ -78,43 +77,14 @@ export default function SearchResult({
       searchType: selectedTab,
     });
 
-  // 광고 캐싱을 위한 Refs
-  const adsCache = useRef<NativeAd[]>([]);
-  const [adsLoadedCount, setAdsLoadedCount] = useState(0); // 리렌더링 트리거용
-
-  // 필요한 광고 수만큼 로드
-  useEffect(() => {
-    if (!recipes) return;
-
-    const adsNeeded = Math.floor(recipes.length / AD_INTERVAL);
-    const currentAds = adsCache.current.length;
-
-    if (adsNeeded > currentAds) {
-      const loadAds = async () => {
-        const adUnitId = getNativeAdUnitId();
-
-        if (!adUnitId) return;
-
-        for (let i = currentAds; i < adsNeeded; i++) {
-          try {
-            const ad = await NativeAd.createForAdRequest(adUnitId);
-            adsCache.current.push(ad);
-            setAdsLoadedCount((prev) => prev + 1);
-          } catch (e) {
-            console.error("Ad load failed", e);
-          }
-        }
-      };
-      loadAds();
-    }
-  }, [recipes?.length]);
-
-  useEffect(() => {
-    return () => {
-      adsCache.current.forEach((ad) => ad.destroy());
-      adsCache.current = [];
-    };
-  }, []);
+  const adSlotCount = useMemo(
+    () => Math.floor((recipes?.length ?? 0) / AD_INTERVAL),
+    [recipes?.length],
+  );
+  const nativeAds = useNativeAdSlots({
+    cacheKey: `${keyword}:${selectedTab}`,
+    count: adSlotCount,
+  });
 
   const handleScrapButtonPress = useCallback(
     (isScrapped: boolean, recipeId: number) => {
@@ -205,17 +175,17 @@ export default function SearchResult({
 
       if ((i + 1) % AD_INTERVAL === 0) {
         // 캐시된 광고가 있으면 할당
-        const ad = adsCache.current[adIndex];
+        const ad = nativeAds[adIndex];
         result.push({
           type: "ad",
-          id: `ad-${adIndex}`,
+          id: ad ? `ad-${ad.responseId}` : `ad-${adIndex}-pending`,
           ad: ad,
         });
         adIndex++;
       }
     }
     return result;
-  }, [recipes, adsLoadedCount]); // adsLoadedCount 변경 시 리스트 갱신
+  }, [recipes, nativeAds]);
 
   const renderItem = useCallback(
     ({ item }: { item: ListItem }) => {
@@ -307,7 +277,7 @@ export default function SearchResult({
         ListEmptyComponent={ListEmptyComponent}
         contentContainerStyle={{ paddingBottom: 100, flexGrow: 1 }}
         style={{ flex: 1 }}
-        extraData={adsLoadedCount}
+        extraData={nativeAds}
       />
     );
   };

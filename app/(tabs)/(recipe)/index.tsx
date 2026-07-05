@@ -5,7 +5,7 @@ import {
 } from "@/app/hooks/queries/useRecommendedRecipesQuery";
 import { useAuthStatus } from "@/app/hooks/useAuthStatus";
 import { useLoginPrompt } from "@/app/hooks/useLoginPrompt";
-import { getNativeAdUnitId } from "@/app/lib/ads/adUnits";
+import { useNativeAdSlots } from "@/app/hooks/useNativeAdSlots";
 import { useGuestFridgeIngredientNamesQuery } from "@/app/lib/storage/guestFridge";
 import { RecipeSummary } from "@/app/types/domain/recipe";
 import { TealDotLoading } from "@/components/DotLoading";
@@ -19,8 +19,6 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
-  useState,
 } from "react";
 import { Text, View } from "react-native";
 import { NativeAd } from "react-native-google-mobile-ads";
@@ -72,43 +70,21 @@ export default function RecipeScreen() {
 
   // 리스트에 광고 아이템을 삽입하기 위한 인터벌
   const AD_INTERVAL = 4;
-  // 광고 캐싱을 위한 Refs
-  const adsCache = useRef<NativeAd[]>([]);
-  const [adsLoadedCount, setAdsLoadedCount] = useState(0); // 리렌더링 트리거용
-
-  // 필요한 광고 수만큼 로드
-  useEffect(() => {
-    if (!recipes) return;
-
-    const adsNeeded = Math.floor(recipes.length / AD_INTERVAL);
-    const currentAds = adsCache.current.length;
-
-    if (adsNeeded > currentAds) {
-      const loadAds = async () => {
-        const adUnitId = getNativeAdUnitId();
-
-        if (!adUnitId) return;
-
-        for (let i = currentAds; i < adsNeeded; i++) {
-          try {
-            const ad = await NativeAd.createForAdRequest(adUnitId);
-            adsCache.current.push(ad);
-            setAdsLoadedCount((prev) => prev + 1);
-          } catch (e) {
-            console.error("Ad load failed", e);
-          }
-        }
-      };
-      loadAds();
-    }
-  }, [recipes?.length]);
-
-  useEffect(() => {
-    return () => {
-      adsCache.current.forEach((ad) => ad.destroy());
-      adsCache.current = [];
-    };
-  }, []);
+  const adSlotCount = useMemo(
+    () => Math.floor((recipes?.length ?? 0) / AD_INTERVAL),
+    [recipes?.length],
+  );
+  const recipeAdCacheKey = useMemo(
+    () =>
+      isAuthenticated
+        ? "authenticated"
+        : `guest:${ingredientNames.join("|")}`,
+    [ingredientNames, isAuthenticated],
+  );
+  const nativeAds = useNativeAdSlots({
+    cacheKey: recipeAdCacheKey,
+    count: adSlotCount,
+  });
 
   const onRecipeItemPress = useCallback((recipeId: number) => {
     router.push({
@@ -179,17 +155,17 @@ export default function RecipeScreen() {
 
       if ((i + 1) % AD_INTERVAL === 0) {
         // 캐시된 광고가 있으면 할당
-        const ad = adsCache.current[adIndex];
+        const ad = nativeAds[adIndex];
         result.push({
           type: "ad",
-          id: `ad-${adIndex}`,
+          id: ad ? `ad-${ad.responseId}` : `ad-${adIndex}-pending`,
           ad: ad,
         });
         adIndex++;
       }
     }
     return result;
-  }, [recipes, adsLoadedCount]);
+  }, [recipes, nativeAds]);
 
   const renderItem = useCallback(
     ({ item, index }: { item: ListItem; index: number }) => {
@@ -315,7 +291,7 @@ export default function RecipeScreen() {
         onScroll={onScroll}
         scrollEventThrottle={16}
         getItemLayout={getItemLayout}
-        extraData={adsLoadedCount}
+        extraData={nativeAds}
       />
     );
   };
