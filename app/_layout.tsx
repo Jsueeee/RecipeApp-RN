@@ -1,4 +1,5 @@
 import { TutorialProvider } from "@/app/tutorial";
+import { FirebaseAnalyticsTracker } from "@/app/components/FirebaseAnalyticsTracker";
 import { LoginRequiredDialogProvider } from "@/app/components/LoginRequiredDialogProvider";
 import { queryClient } from "@/app/lib/query/client";
 import { installNavigationDebounce } from "@/app/lib/navigation/navigationDebounce";
@@ -156,6 +157,7 @@ function RootLayoutNav() {
       <BottomSheetModalProvider>
         <LoginRequiredDialogProvider>
           <TutorialProvider>
+            <FirebaseAnalyticsTracker />
             <ThemeProvider
               value={
                 colorScheme.colorScheme === "dark" ? DarkTheme : DefaultTheme
