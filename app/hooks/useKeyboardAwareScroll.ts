@@ -51,7 +51,7 @@ export function useKeyboardAwareScroll(
           Platform.OS === "android" ? StatusBar.currentHeight || 0 : 0;
         const inputScreenBottom = y + height + statusBarOffset;
         const keyboardTop = keyboardScreenYRef.current;
-        const padding = 60;
+        const padding = 100;
 
         if (inputScreenBottom + padding > keyboardTop) {
           const scrollAmount = inputScreenBottom + padding - keyboardTop;
