@@ -6,6 +6,14 @@ export const AUTH_KEYS = {
   USER_ID: "auth_user_id",
 } as const;
 
+type AuthStorageListener = () => void;
+
+const authStorageListeners = new Set<AuthStorageListener>();
+
+const notifyAuthStorageChanged = () => {
+  authStorageListeners.forEach((listener) => listener());
+};
+
 export const authStorage = {
   setTokens: async (tokens: {
     accessToken: string;
@@ -18,6 +26,7 @@ export const authStorage = {
       tokens.refreshToken
     );
     await SecureStore.setItemAsync(AUTH_KEYS.USER_ID, String(tokens.userId));
+    notifyAuthStorageChanged();
   },
   getAccessToken: async () =>
     await SecureStore.getItemAsync(AUTH_KEYS.ACCESS_TOKEN),
@@ -25,8 +34,17 @@ export const authStorage = {
     await SecureStore.getItemAsync(AUTH_KEYS.REFRESH_TOKEN),
   getUserId: async () => await SecureStore.getItemAsync(AUTH_KEYS.USER_ID),
   clear: async () => {
-    await SecureStore.deleteItemAsync(AUTH_KEYS.ACCESS_TOKEN);
-    await SecureStore.deleteItemAsync(AUTH_KEYS.REFRESH_TOKEN);
-    await SecureStore.deleteItemAsync(AUTH_KEYS.USER_ID);
+    await Promise.all([
+      SecureStore.deleteItemAsync(AUTH_KEYS.ACCESS_TOKEN),
+      SecureStore.deleteItemAsync(AUTH_KEYS.REFRESH_TOKEN),
+      SecureStore.deleteItemAsync(AUTH_KEYS.USER_ID),
+    ]);
+    notifyAuthStorageChanged();
+  },
+  subscribe: (listener: AuthStorageListener) => {
+    authStorageListeners.add(listener);
+    return () => {
+      authStorageListeners.delete(listener);
+    };
   },
 };
