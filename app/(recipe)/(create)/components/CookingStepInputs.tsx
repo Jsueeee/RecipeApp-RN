@@ -3,8 +3,17 @@ import { PressableScale } from "@/app/components/PressableScale";
 import IC_PLUS from "@/assets/images/ic_plus_bold.svg";
 import IC_DELETE from "@/assets/images/ic_selected_cancel.svg";
 import i18n from "@/lib/i18n";
-import { forwardRef, useEffect, useRef } from "react";
-import { Text, TextInput, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import {
+  NativeSyntheticEvent,
+  Platform,
+  Text,
+  TextInput,
+  TextInputContentSizeChangeEventData,
+  View,
+} from "react-native";
+
+const INPUT_LINE_HEIGHT = 20;
 
 interface CookingStepProps {
   stepNumber: number;
@@ -13,56 +22,74 @@ interface CookingStepProps {
   onStepDescriptionChange?: (stepDescription: string) => void;
   onFocus?: () => void;
   onContentSizeChange?: () => void;
+  inputRef?: (input: TextInput | null) => void;
 }
 
-const CookingStepInput = forwardRef<TextInput, CookingStepProps>(
-  (
-    {
-      stepNumber,
-      stepDescription,
-      onDeleteButtonPress,
-      onStepDescriptionChange,
-      onFocus,
-      onContentSizeChange,
-    },
-    ref,
+const CookingStepInput: React.FC<CookingStepProps> = ({
+  stepNumber,
+  stepDescription,
+  onDeleteButtonPress,
+  onStepDescriptionChange,
+  onFocus,
+  onContentSizeChange,
+  inputRef,
+}) => {
+  const [inputHeight, setInputHeight] = useState<number>();
+
+  const handleContentSizeChange = (
+    event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>,
   ) => {
-    return (
-      <View className="w-full bg-fill-subtle rounded-[12px] p-4">
-        <View className="gap-y-2 pb-4">
-          <View className="flex-row items-center justify-between">
-            <Text className="text-title4 text-primary-strong">
-              {String(stepNumber).padStart(2, "0")}
-            </Text>
+    if (Platform.OS === "android") {
+      const nextHeight =
+        Math.ceil(event.nativeEvent.contentSize.height) + INPUT_LINE_HEIGHT;
+      setInputHeight(nextHeight);
+    }
 
-            <DebouncedTouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => onDeleteButtonPress?.(stepNumber)}
-            >
-              <IC_DELETE width={24} height={24} />
-            </DebouncedTouchableOpacity>
-          </View>
+    onContentSizeChange?.();
+  };
 
-          <TextInput
-            ref={ref}
-            value={stepDescription}
-            placeholder={i18n.t("recipe_my_create.cooking_step_input_hint")}
-            multiline
-            scrollEnabled={false}
-            className="w-full text-body2 min-h-[20px] p-0"
-            placeholderTextColor={"#A9A9A9"}
-            textAlignVertical="top"
-            onChangeText={(text) => onStepDescriptionChange?.(text)}
-            onFocus={onFocus}
-            onContentSizeChange={onContentSizeChange}
-          />
+  return (
+    <View className="w-full bg-fill-subtle rounded-[12px] p-4">
+      <View className="gap-y-2 pb-4">
+        <View className="flex-row items-center justify-between">
+          <Text className="text-title4 text-primary-strong">
+            {String(stepNumber).padStart(2, "0")}
+          </Text>
+
+          <DebouncedTouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => onDeleteButtonPress?.(stepNumber)}
+          >
+            <IC_DELETE width={24} height={24} />
+          </DebouncedTouchableOpacity>
         </View>
-      </View>
-    );
-  },
-);
 
-CookingStepInput.displayName = "CookingStepInput";
+        <TextInput
+          ref={inputRef}
+          value={stepDescription}
+          placeholder={i18n.t("recipe_my_create.cooking_step_input_hint")}
+          multiline
+          scrollEnabled={false}
+          className="w-full text-body2 min-h-[20px] p-0"
+          style={
+            Platform.OS === "android" && inputHeight
+              ? {
+                  height: inputHeight,
+                  marginBottom: -INPUT_LINE_HEIGHT,
+                  overflow: "hidden",
+                }
+              : undefined
+          }
+          placeholderTextColor={"#A9A9A9"}
+          textAlignVertical="top"
+          onChangeText={(text) => onStepDescriptionChange?.(text)}
+          onFocus={onFocus}
+          onContentSizeChange={handleContentSizeChange}
+        />
+      </View>
+    </View>
+  );
+};
 
 const PlusButton = ({ onPress }: { onPress: () => void }) => {
   return (
@@ -127,7 +154,7 @@ export const CookingStepInputs = ({
         {stepInfo.map((step, index) => (
           <CookingStepInput
             key={index}
-            ref={(input) => {
+            inputRef={(input) => {
               inputRefs.current[index] = input;
             }}
             stepNumber={index + 1}
