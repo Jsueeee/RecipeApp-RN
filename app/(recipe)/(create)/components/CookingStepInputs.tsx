@@ -40,7 +40,8 @@ const CookingStepInput: React.FC<CookingStepProps> = ({
           value={stepDescription}
           placeholder={i18n.t("recipe_my_create.cooking_step_input_hint")}
           multiline
-          className="flex-1 text-body2 min-h-[20px] leading-[17px] p-0"
+          scrollEnabled={false}
+          className="w-full text-body2 min-h-[20px] p-0"
           placeholderTextColor={"#A9A9A9"}
           textAlignVertical="top"
           onChangeText={(text) => onStepDescriptionChange?.(text)}
