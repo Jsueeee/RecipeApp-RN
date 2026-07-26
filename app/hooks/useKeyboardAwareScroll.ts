@@ -30,6 +30,7 @@ export function useKeyboardAwareScroll(
 ) {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const keyboardScreenYRef = useRef(0);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const scrollToFocusedInput = useCallback(() => {
     const focusedInput = RNTextInput.State.currentlyFocusedInput?.();
@@ -61,11 +62,30 @@ export function useKeyboardAwareScroll(
     );
   }, [scrollViewRef, scrollY]);
 
+  const scheduleScrollToFocusedInput = useCallback(
+    (delay: number) => {
+      if (keyboardScreenYRef.current === 0) return;
+
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+
+      scrollTimeoutRef.current = setTimeout(() => {
+        scrollTimeoutRef.current = null;
+        scrollToFocusedInput();
+      }, delay);
+    },
+    [scrollToFocusedInput],
+  );
+
   const handleInputFocus = useCallback(() => {
-    if (keyboardScreenYRef.current > 0) {
-      setTimeout(scrollToFocusedInput, 100);
-    }
-  }, [scrollToFocusedInput]);
+    scheduleScrollToFocusedInput(100);
+  }, [scheduleScrollToFocusedInput]);
+
+  const handleInputContentSizeChange = useCallback(() => {
+    // multiline 입력창의 새 높이가 네이티브 레이아웃에 반영된 뒤 위치를 측정한다.
+    scheduleScrollToFocusedInput(50);
+  }, [scheduleScrollToFocusedInput]);
 
   useEffect(() => {
     const showEvent =
@@ -78,19 +98,31 @@ export function useKeyboardAwareScroll(
       setKeyboardHeight(e.endCoordinates.height);
 
       const delay = Platform.OS === "ios" ? 50 : 100;
-      setTimeout(scrollToFocusedInput, delay);
+      scheduleScrollToFocusedInput(delay);
     });
 
     const keyboardHideListener = Keyboard.addListener(hideEvent, () => {
       keyboardScreenYRef.current = 0;
       setKeyboardHeight(0);
+
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+        scrollTimeoutRef.current = null;
+      }
     });
 
     return () => {
       keyboardShowListener.remove();
       keyboardHideListener.remove();
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
     };
-  }, [scrollToFocusedInput]);
+  }, [scheduleScrollToFocusedInput]);
 
-  return { keyboardHeight, handleInputFocus };
+  return {
+    keyboardHeight,
+    handleInputFocus,
+    handleInputContentSizeChange,
+  };
 }

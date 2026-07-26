@@ -56,10 +56,11 @@ export default function RecipeCreateScreen() {
     },
   });
 
-  const { keyboardHeight, handleInputFocus } = useKeyboardAwareScroll(
-    scrollViewRef,
-    scrollY,
-  );
+  const {
+    keyboardHeight,
+    handleInputFocus,
+    handleInputContentSizeChange,
+  } = useKeyboardAwareScroll(scrollViewRef, scrollY);
 
   // 패럴랙스(자연스러운 위/당김)
   const imageAnimatedStyle = useAnimatedStyle(() => {
@@ -530,6 +531,7 @@ export default function RecipeCreateScreen() {
               onDeleteButtonPress={onDeleteButtonPress}
               onStepDescriptionChange={onStepDescriptionChange}
               onStepFocus={handleInputFocus}
+              onStepContentSizeChange={handleInputContentSizeChange}
             />
 
             <View className="h-[60px]" />
