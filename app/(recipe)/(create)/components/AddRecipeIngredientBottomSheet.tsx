@@ -13,12 +13,13 @@ import {
   BottomSheetScrollView,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
+  InteractionManager,
+  LayoutChangeEvent,
   Text,
   useWindowDimensions,
   View,
-  InteractionManager,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Animated, {
@@ -65,11 +66,11 @@ export const AddRecipeIngredientBottomSheet = ({
   onIconChanged,
   onCTAButtonPress,
 }: Props) => {
-  const { width, height } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const PAGE_WIDTH = width - 20; // DefaultBottomSheetModal marginHorizontal: 10 * 2
-  const ICON_PICKER_HEIGHT = height * 0.7;
   const [step, setStep] = useState<"form" | "icon">("form");
   const [showIconPicker, setShowIconPicker] = useState(false);
+  const [pageHeight, setPageHeight] = useState(0);
   const translateX = useSharedValue(0);
 
   useEffect(() => {
@@ -95,7 +96,7 @@ export const AddRecipeIngredientBottomSheet = ({
             ingredientName: ingredient.name,
             ingredientIconId: ingredient.iconId,
           })),
-        } as CategorizedPickIngredients)
+        }) as CategorizedPickIngredients,
     );
   }, []);
 
@@ -137,6 +138,10 @@ export const AddRecipeIngredientBottomSheet = ({
 
   const disabled = inputNameValue?.length === 0 || inputQuantity <= 0;
 
+  const handleFormLayout = (event: LayoutChangeEvent) => {
+    setPageHeight(event.nativeEvent.layout.height);
+  };
+
   return (
     <DefaultBottomSheetModal
       bottomSheetModalRef={bottomSheetModalRef}
@@ -144,8 +149,8 @@ export const AddRecipeIngredientBottomSheet = ({
         step === "icon"
           ? i18n.t("custom_ingredient_create.select_icon")
           : isEditMode
-          ? i18n.t("recipe_my_create.ingredients_bottom_sheet_edit_title")
-          : i18n.t("recipe_my_create.ingredients_bottom_sheet_title")
+            ? i18n.t("recipe_my_create.ingredients_bottom_sheet_edit_title")
+            : i18n.t("recipe_my_create.ingredients_bottom_sheet_title")
       }
       onDismiss={handleDismiss}
       onBack={step === "icon" ? backToForm : undefined}
@@ -159,7 +164,7 @@ export const AddRecipeIngredientBottomSheet = ({
             containerStyle,
           ]}
         >
-          <View style={{ width: PAGE_WIDTH }}>
+          <View style={{ width: PAGE_WIDTH }} onLayout={handleFormLayout}>
             <BottomSheetScrollView
               contentContainerStyle={{ paddingHorizontal: 16 }}
             >
@@ -194,7 +199,7 @@ export const AddRecipeIngredientBottomSheet = ({
                     selectTextOnFocus
                     editable={true}
                     placeholder={i18n.t(
-                      "recipe_my_create.ingredients_bottom_sheet_name_hint"
+                      "recipe_my_create.ingredients_bottom_sheet_name_hint",
                     )}
                     placeholderTextColor="#9FADA6"
                   />
@@ -205,7 +210,7 @@ export const AddRecipeIngredientBottomSheet = ({
                   <View className="w-full flex-row items-center">
                     <Text className="text-title5 text-text-alternative w-[100px]">
                       {i18n.t(
-                        "recipe_my_create.ingredients_bottom_sheet_quantity"
+                        "recipe_my_create.ingredients_bottom_sheet_quantity",
                       )}
                     </Text>
 
@@ -218,7 +223,7 @@ export const AddRecipeIngredientBottomSheet = ({
                   {inputQuantity <= 0 && (
                     <Text className="text-body3 text-strong-destructive ms-[100px]">
                       {i18n.t(
-                        "recipe_my_create.ingredients_bottom_sheet_quantity_error"
+                        "recipe_my_create.ingredients_bottom_sheet_quantity_error",
                       )}
                     </Text>
                   )}
@@ -239,7 +244,7 @@ export const AddRecipeIngredientBottomSheet = ({
                     selectTextOnFocus
                     editable={true}
                     placeholder={i18n.t(
-                      "recipe_my_create.ingredients_bottom_sheet_unit_hint"
+                      "recipe_my_create.ingredients_bottom_sheet_unit_hint",
                     )}
                     placeholderTextColor="#9FADA6"
                   />
@@ -249,7 +254,7 @@ export const AddRecipeIngredientBottomSheet = ({
                   buttonLabel={
                     isEditMode
                       ? i18n.t(
-                          "recipe_my_create.ingredients_bottom_sheet_edit_cta"
+                          "recipe_my_create.ingredients_bottom_sheet_edit_cta",
                         )
                       : i18n.t("recipe_my_create.ingredients_bottom_sheet_cta")
                   }
@@ -261,7 +266,7 @@ export const AddRecipeIngredientBottomSheet = ({
             </BottomSheetScrollView>
           </View>
 
-          <View style={{ width: PAGE_WIDTH, height: ICON_PICKER_HEIGHT }}>
+          <View style={{ width: PAGE_WIDTH, height: pageHeight }}>
             {showIconPicker && (
               <IngredientIconGrid
                 categorizedIngredients={ingredientList}
