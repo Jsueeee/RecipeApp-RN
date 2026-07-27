@@ -2,11 +2,17 @@ import { DebouncedPressable } from "@/app/components/DebouncedPressable";
 import IC_EDIT_FOOD_MINUS from "@/assets/images/ic_edit_food_minus.svg";
 import IC_EDIT_FOOD_PLUS from "@/assets/images/ic_edit_food_plus.svg";
 import i18n from "@/lib/i18n";
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { Platform, Text, TextInput, View } from "react-native";
 
 interface Props {
   quantity: number;
   onQuantityChanged: (value: number) => void;
+}
+
+interface QuantityInputProps extends Props {
+  isBottomSheet?: boolean;
+  onFocus?: () => void;
 }
 
 export function EditQuantityMenu({ quantity, onQuantityChanged }: Props) {
@@ -32,7 +38,14 @@ export function EditQuantityMenu({ quantity, onQuantityChanged }: Props) {
   );
 }
 
-export const QuantityInput = ({ quantity, onQuantityChanged }: Props) => {
+export const QuantityInput = ({
+  quantity,
+  onQuantityChanged,
+  isBottomSheet = false,
+  onFocus,
+}: QuantityInputProps) => {
+  const Input = isBottomSheet ? BottomSheetTextInput : TextInput;
+
   const handleDecrease = () => {
     if (quantity > 0.5) {
       const updateQuantity = quantity - 0.5;
@@ -50,7 +63,7 @@ export const QuantityInput = ({ quantity, onQuantityChanged }: Props) => {
         <IC_EDIT_FOOD_MINUS width={32} height={32} />
       </DebouncedPressable>
 
-      <TextInput
+      <Input
         value={quantity.toString()}
         onChangeText={(text) => {
           if (text === "") {
@@ -64,7 +77,10 @@ export const QuantityInput = ({ quantity, onQuantityChanged }: Props) => {
         }}
         className="flex-1 text-center text-utility2 text-text-strong"
         keyboardType="numeric"
-        returnKeyType="done"
+        returnKeyType={
+          isBottomSheet && Platform.OS === "ios" ? "default" : "done"
+        }
+        onFocus={onFocus}
         selectTextOnFocus
         selectionColor="transparent"
         editable={true}

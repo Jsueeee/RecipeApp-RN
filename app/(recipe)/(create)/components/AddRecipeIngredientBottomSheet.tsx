@@ -11,9 +11,10 @@ import i18n from "@/lib/i18n";
 import {
   BottomSheetModal,
   BottomSheetScrollView,
+  BottomSheetScrollViewMethods,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   InteractionManager,
   LayoutChangeEvent,
@@ -71,6 +72,7 @@ export const AddRecipeIngredientBottomSheet = ({
   const [step, setStep] = useState<"form" | "icon">("form");
   const [showIconPicker, setShowIconPicker] = useState(false);
   const [pageHeight, setPageHeight] = useState(0);
+  const formScrollViewRef = useRef<BottomSheetScrollViewMethods>(null);
   const translateX = useSharedValue(0);
 
   useEffect(() => {
@@ -142,6 +144,12 @@ export const AddRecipeIngredientBottomSheet = ({
     setPageHeight(event.nativeEvent.layout.height);
   };
 
+  const handleQuantityFocus = () => {
+    setTimeout(() => {
+      formScrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 300);
+  };
+
   return (
     <DefaultBottomSheetModal
       bottomSheetModalRef={bottomSheetModalRef}
@@ -166,6 +174,7 @@ export const AddRecipeIngredientBottomSheet = ({
         >
           <View style={{ width: PAGE_WIDTH }} onLayout={handleFormLayout}>
             <BottomSheetScrollView
+              ref={formScrollViewRef}
               contentContainerStyle={{ paddingHorizontal: 16 }}
             >
               <View className="pt-2">
@@ -217,6 +226,8 @@ export const AddRecipeIngredientBottomSheet = ({
                     <QuantityInput
                       quantity={inputQuantity}
                       onQuantityChanged={onInputQuantityChanged}
+                      isBottomSheet
+                      onFocus={handleQuantityFocus}
                     />
                   </View>
 
