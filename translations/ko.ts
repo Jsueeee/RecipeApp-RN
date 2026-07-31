@@ -379,6 +379,7 @@ export default {
     ingredients_bottom_sheet_name: "이름",
     ingredients_bottom_sheet_name_hint: "이름을 입력하세요",
     ingredients_bottom_sheet_quantity: "수량",
+    ingredients_bottom_sheet_quantity_error: "0 이하는 등록할 수 없어요",
     ingredients_bottom_sheet_unit: "단위",
     ingredients_bottom_sheet_unit_hint: "단위를 입력하세요 (ex. 개, g, ml)",
     ingredients_bottom_sheet_icon_title: "아이콘 선택",
