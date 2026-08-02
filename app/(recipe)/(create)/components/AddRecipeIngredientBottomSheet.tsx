@@ -73,7 +73,12 @@ export const AddRecipeIngredientBottomSheet = ({
   const [showIconPicker, setShowIconPicker] = useState(false);
   const [pageHeight, setPageHeight] = useState(0);
   const formScrollViewRef = useRef<BottomSheetScrollViewMethods>(null);
+  const latestInputNameRef = useRef(inputNameValue);
+  const latestInputUnitRef = useRef(inputUnitValue);
   const translateX = useSharedValue(0);
+
+  latestInputNameRef.current = inputNameValue;
+  latestInputUnitRef.current = inputUnitValue;
 
   useEffect(() => {
     // 바텀시트 열림 애니메이션 등이 끝난 후(인터랙션 가능 시점)에 아이콘 리스트를 렌더링
@@ -126,6 +131,11 @@ export const AddRecipeIngredientBottomSheet = ({
     }, 300);
   };
 
+  const handleOpen = () => {
+    inputNameRef.current?.setNativeProps({ text: latestInputNameRef.current });
+    inputUnitRef.current?.setNativeProps({ text: latestInputUnitRef.current });
+  };
+
   const containerStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: translateX.value }],
@@ -161,6 +171,7 @@ export const AddRecipeIngredientBottomSheet = ({
             : i18n.t("recipe_my_create.ingredients_bottom_sheet_title")
       }
       onDismiss={handleDismiss}
+      onOpen={handleOpen}
       onBack={step === "icon" ? backToForm : undefined}
       scrollEnabled={false}
       contentStyle={{ flex: 1, alignItems: "flex-start", overflow: "hidden" }}
@@ -201,7 +212,6 @@ export const AddRecipeIngredientBottomSheet = ({
 
                   <BottomSheetTextInput
                     ref={inputNameRef}
-                    defaultValue={inputNameValue}
                     onChangeText={onInputNameChanged}
                     className="flex-1 text-utility2 text-text-strong"
                     returnKeyType="done"
@@ -248,10 +258,10 @@ export const AddRecipeIngredientBottomSheet = ({
 
                   <BottomSheetTextInput
                     ref={inputUnitRef}
-                    defaultValue={inputUnitValue}
                     onChangeText={onInputUnitChanged}
                     className="flex-1 text-utility2 text-text-strong"
                     returnKeyType="done"
+                    maxLength={10}
                     selectTextOnFocus
                     editable={true}
                     placeholder={i18n.t(
