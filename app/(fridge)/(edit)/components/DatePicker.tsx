@@ -5,6 +5,8 @@ import DateTimePicker, {
   useDefaultClassNames,
 } from "react-native-ui-datepicker";
 
+const MIN_EXPIRATION_DATE = new Date(2024, 0, 1);
+
 interface Props {
   showPicker: boolean;
   setShowPicker: (showPicker: boolean) => void;
@@ -37,6 +39,7 @@ export function DatePicker({
             <DateTimePicker
               mode="single"
               date={expiredAt ?? new Date()}
+              minDate={MIN_EXPIRATION_DATE}
               onChange={handleDateChange}
               locale="ko"
               classNames={{

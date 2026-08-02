@@ -1,0 +1,82 @@
+diff --git a/node_modules/react-native-ui-datepicker/lib/commonjs/utils.js b/node_modules/react-native-ui-datepicker/lib/commonjs/utils.js
+index b205275..e94fe9a 100644
+--- a/node_modules/react-native-ui-datepicker/lib/commonjs/utils.js
++++ b/node_modules/react-native-ui-datepicker/lib/commonjs/utils.js
+@@ -32,6 +32,7 @@ function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e
+ const CALENDAR_FORMAT = exports.CALENDAR_FORMAT = 'YYYY-MM-DD HH:mm';
+ const DATE_FORMAT = exports.DATE_FORMAT = 'YYYY-MM-DD';
+ const YEAR_PAGE_SIZE = exports.YEAR_PAGE_SIZE = 12;
++const FIRST_EXPIRATION_YEAR = 2024;
+ const VALID_JALALI_LOCALES = exports.VALID_JALALI_LOCALES = new Set(['fa', 'en']);
+ const JALALI_MONTHS = exports.JALALI_MONTHS = {
+   en: ['Farvardin', 'Ordibehesht', 'Khordad', 'Tir', 'Mordad', 'Shahrivar', 'Mehr', 'Aban', 'Azar', 'Dey', 'Bahman', 'Esfand'],
+@@ -243,11 +244,8 @@ const getDate = date => (0, _dayjs.default)(date);
+  */
+ exports.getDate = getDate;
+ const getYearRange = year => {
+-  const endYear = YEAR_PAGE_SIZE * Math.ceil(year / YEAR_PAGE_SIZE);
+-  let startYear = endYear === year ? endYear : endYear - YEAR_PAGE_SIZE;
+-  if (startYear < 0) {
+-    startYear = 0;
+-  }
++  const page = Math.max(0, Math.floor((year - FIRST_EXPIRATION_YEAR) / YEAR_PAGE_SIZE));
++  const startYear = FIRST_EXPIRATION_YEAR + page * YEAR_PAGE_SIZE;
+   return Array.from({
+     length: YEAR_PAGE_SIZE
+   }, (_, i) => startYear + i);
+diff --git a/node_modules/react-native-ui-datepicker/lib/module/utils.js b/node_modules/react-native-ui-datepicker/lib/module/utils.js
+index ce76677..6a1efd3 100644
+--- a/node_modules/react-native-ui-datepicker/lib/module/utils.js
++++ b/node_modules/react-native-ui-datepicker/lib/module/utils.js
+@@ -7,6 +7,7 @@ import { numeralSystems } from './numerals';
+ export const CALENDAR_FORMAT = 'YYYY-MM-DD HH:mm';
+ export const DATE_FORMAT = 'YYYY-MM-DD';
+ export const YEAR_PAGE_SIZE = 12;
++const FIRST_EXPIRATION_YEAR = 2024;
+ export const VALID_JALALI_LOCALES = new Set(['fa', 'en']);
+ export const JALALI_MONTHS = {
+   en: ['Farvardin', 'Ordibehesht', 'Khordad', 'Tir', 'Mordad', 'Shahrivar', 'Mehr', 'Aban', 'Azar', 'Dey', 'Bahman', 'Esfand'],
+@@ -207,11 +208,8 @@ export const getDate = date => dayjs(date);
+  * @returns year range
+  */
+ export const getYearRange = year => {
+-  const endYear = YEAR_PAGE_SIZE * Math.ceil(year / YEAR_PAGE_SIZE);
+-  let startYear = endYear === year ? endYear : endYear - YEAR_PAGE_SIZE;
+-  if (startYear < 0) {
+-    startYear = 0;
+-  }
++  const page = Math.max(0, Math.floor((year - FIRST_EXPIRATION_YEAR) / YEAR_PAGE_SIZE));
++  const startYear = FIRST_EXPIRATION_YEAR + page * YEAR_PAGE_SIZE;
+   return Array.from({
+     length: YEAR_PAGE_SIZE
+   }, (_, i) => startYear + i);
+diff --git a/node_modules/react-native-ui-datepicker/src/utils.ts b/node_modules/react-native-ui-datepicker/src/utils.ts
+index 655acf1..6ab9df6 100644
+--- a/node_modules/react-native-ui-datepicker/src/utils.ts
++++ b/node_modules/react-native-ui-datepicker/src/utils.ts
+@@ -16,6 +16,7 @@ import { numeralSystems } from './numerals';
+ export const CALENDAR_FORMAT = 'YYYY-MM-DD HH:mm';
+ export const DATE_FORMAT = 'YYYY-MM-DD';
+ export const YEAR_PAGE_SIZE = 12;
++const FIRST_EXPIRATION_YEAR = 2024;
+ export const VALID_JALALI_LOCALES = new Set(['fa', 'en']);
+ export const JALALI_MONTHS = {
+   en: [
+@@ -317,12 +318,12 @@ export const getDate = (date: DateType) => dayjs(date);
+  * @returns year range
+  */
+ export const getYearRange = (year: number) => {
+-  const endYear = YEAR_PAGE_SIZE * Math.ceil(year / YEAR_PAGE_SIZE);
+-  let startYear = endYear === year ? endYear : endYear - YEAR_PAGE_SIZE;
++  const page = Math.max(
++    0,
++    Math.floor((year - FIRST_EXPIRATION_YEAR) / YEAR_PAGE_SIZE)
++  );
++  const startYear = FIRST_EXPIRATION_YEAR + page * YEAR_PAGE_SIZE;
+ 
+-  if (startYear < 0) {
+-    startYear = 0;
+-  }
+   return Array.from({ length: YEAR_PAGE_SIZE }, (_, i) => startYear + i);
+ };
+ 
