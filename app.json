@@ -2,7 +2,7 @@
   "expo": {
     "name": "레시피 저장소",
     "slug": "RecipeApp",
-    "version": "2.0.1",
+    "version": "2.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -13,7 +13,7 @@
       "googleServicesFile": "./GoogleService-Info.plist",
       "appleTeamId": "S7TUXRR3LP",
       "usesAppleSignIn": true,
-      "buildNumber": "4",
+      "buildNumber": "5",
       "entitlements": {
         "aps-environment": "development"
       },
@@ -28,7 +28,7 @@
         "backgroundColor": "#9FE5D3"
       },
       "package": "com.recipe.android.recipeapp",
-      "versionCode": 200008,
+      "versionCode": 200009,
       "googleServicesFile": "./google-services.json",
       "permissions": ["android.permission.POST_NOTIFICATIONS"],
       "blockedPermissions": [
