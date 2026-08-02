@@ -82,17 +82,20 @@ export default function DefaultBottomSheetModal({
     };
   }, []);
 
-  const handleSheetChanges = useCallback((index: number) => {
-    setIsOpen(index !== -1);
+  const handleSheetChanges = useCallback(
+    (index: number) => {
+      setIsOpen(index !== -1);
 
-    if (index === -1) {
-      bottomSheetModalRef.current?.dismiss();
-      Keyboard.dismiss();
-      onDismiss?.();
-    } else {
-      onOpen?.();
-    }
-  }, []);
+      if (index === -1) {
+        bottomSheetModalRef.current?.dismiss();
+        Keyboard.dismiss();
+        onDismiss?.();
+      } else {
+        onOpen?.();
+      }
+    },
+    [bottomSheetModalRef, onDismiss, onOpen],
+  );
 
   const onBackDropPress = () => {
     if (keyboardVisible) {
