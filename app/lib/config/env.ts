@@ -14,6 +14,10 @@ export const admobNativeIosId =
   process.env.EXPO_PUBLIC_ADMOB_NATIVE_IOS_ID ?? "";
 export const admobNativeAndroidId =
   process.env.EXPO_PUBLIC_ADMOB_NATIVE_ANDROID_ID ?? "";
+export const admobSearchKeywordNativeIosId =
+  process.env.EXPO_PUBLIC_ADMOB_SEARCH_KEYWORD_NATIVE_IOS_ID ?? "";
+export const admobSearchKeywordNativeAndroidId =
+  process.env.EXPO_PUBLIC_ADMOB_SEARCH_KEYWORD_NATIVE_ANDROID_ID ?? "";
 
 let didValidate = false;
 
@@ -34,6 +38,14 @@ export function validatePublicEnv() {
       ? [
           ["EXPO_PUBLIC_ADMOB_NATIVE_IOS_ID", admobNativeIosId],
           ["EXPO_PUBLIC_ADMOB_NATIVE_ANDROID_ID", admobNativeAndroidId],
+          [
+            "EXPO_PUBLIC_ADMOB_SEARCH_KEYWORD_NATIVE_IOS_ID",
+            admobSearchKeywordNativeIosId,
+          ],
+          [
+            "EXPO_PUBLIC_ADMOB_SEARCH_KEYWORD_NATIVE_ANDROID_ID",
+            admobSearchKeywordNativeAndroidId,
+          ],
         ]
       : []),
   ]

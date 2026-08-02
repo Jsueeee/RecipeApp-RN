@@ -1,6 +1,7 @@
 import { ScrollView, View } from "react-native";
 import { PopularKeywords } from "./PopularKeywords";
 import { RecentKeywords } from "./RecentKeywords";
+import { SearchKeywordNativeAd } from "./SearchKeywordNativeAd";
 
 interface Props {
   recentKeywords: string[];
@@ -37,12 +38,16 @@ export function SearchKeywords({
       )}
 
       {popularKeywords.length > 0 && (
-        <View className="mt-10">
-          <PopularKeywords
-            keywords={popularKeywords}
-            onKeywordPress={onKeywordPress}
-          />
-        </View>
+        <>
+          <View className="mt-10">
+            <PopularKeywords
+              keywords={popularKeywords}
+              onKeywordPress={onKeywordPress}
+            />
+          </View>
+
+          <SearchKeywordNativeAd />
+        </>
       )}
     </ScrollView>
   );

@@ -6,9 +6,14 @@ import { getNativeAdUnitId } from "@/app/lib/ads/adUnits";
 interface UseNativeAdSlotsParams {
   cacheKey: string;
   count: number;
+  adUnitId?: string | null;
 }
 
-export function useNativeAdSlots({ cacheKey, count }: UseNativeAdSlotsParams) {
+export function useNativeAdSlots({
+  cacheKey,
+  count,
+  adUnitId,
+}: UseNativeAdSlotsParams) {
   const adsRef = useRef<NativeAd[]>([]);
   const cacheKeyRef = useRef(cacheKey);
   const [adVersion, refreshAds] = useReducer(
@@ -32,9 +37,10 @@ export function useNativeAdSlots({ cacheKey, count }: UseNativeAdSlotsParams) {
       return;
     }
 
-    const adUnitId = getNativeAdUnitId();
+    const resolvedAdUnitId =
+      adUnitId === undefined ? getNativeAdUnitId() : adUnitId;
 
-    if (!adUnitId) {
+    if (!resolvedAdUnitId) {
       return;
     }
 
@@ -45,7 +51,7 @@ export function useNativeAdSlots({ cacheKey, count }: UseNativeAdSlotsParams) {
 
       for (let i = 0; i < adsToLoad; i++) {
         try {
-          const ad = await NativeAd.createForAdRequest(adUnitId);
+          const ad = await NativeAd.createForAdRequest(resolvedAdUnitId);
 
           if (isCancelled || cacheKeyRef.current !== cacheKey) {
             ad.destroy();
@@ -69,7 +75,7 @@ export function useNativeAdSlots({ cacheKey, count }: UseNativeAdSlotsParams) {
     return () => {
       isCancelled = true;
     };
-  }, [cacheKey, count]);
+  }, [adUnitId, cacheKey, count]);
 
   useEffect(() => {
     return () => {
