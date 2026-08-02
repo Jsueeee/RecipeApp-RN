@@ -14,7 +14,13 @@ import {
   BottomSheetScrollViewMethods,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   InteractionManager,
   LayoutChangeEvent,
@@ -75,10 +81,12 @@ export const AddRecipeIngredientBottomSheet = ({
   const formScrollViewRef = useRef<BottomSheetScrollViewMethods>(null);
   const latestInputNameRef = useRef(inputNameValue);
   const latestInputUnitRef = useRef(inputUnitValue);
+  const latestCTAButtonPressRef = useRef(onCTAButtonPress);
   const translateX = useSharedValue(0);
 
   latestInputNameRef.current = inputNameValue;
   latestInputUnitRef.current = inputUnitValue;
+  latestCTAButtonPressRef.current = onCTAButtonPress;
 
   useEffect(() => {
     // 바텀시트 열림 애니메이션 등이 끝난 후(인터랙션 가능 시점)에 아이콘 리스트를 렌더링
@@ -150,6 +158,25 @@ export const AddRecipeIngredientBottomSheet = ({
 
   const disabled = inputNameValue?.length === 0 || inputQuantity <= 0;
 
+  const handleCTAButtonPress = useCallback(() => {
+    latestCTAButtonPressRef.current();
+  }, []);
+
+  const formFooter = useMemo(
+    () => (
+      <CTAButton
+        buttonLabel={
+          isEditMode
+            ? i18n.t("recipe_my_create.ingredients_bottom_sheet_edit_cta")
+            : i18n.t("recipe_my_create.ingredients_bottom_sheet_cta")
+        }
+        disabled={disabled}
+        onPress={handleCTAButtonPress}
+      />
+    ),
+    [disabled, handleCTAButtonPress, isEditMode],
+  );
+
   const handleFormLayout = (event: LayoutChangeEvent) => {
     setPageHeight(event.nativeEvent.layout.height);
   };
@@ -175,6 +202,7 @@ export const AddRecipeIngredientBottomSheet = ({
       onBack={step === "icon" ? backToForm : undefined}
       scrollEnabled={false}
       contentStyle={{ flex: 1, alignItems: "flex-start", overflow: "hidden" }}
+      footer={step === "form" ? formFooter : undefined}
     >
       <View style={{ width: PAGE_WIDTH * 2, flexDirection: "row" }}>
         <Animated.View
@@ -186,7 +214,11 @@ export const AddRecipeIngredientBottomSheet = ({
           <View style={{ width: PAGE_WIDTH }} onLayout={handleFormLayout}>
             <BottomSheetScrollView
               ref={formScrollViewRef}
-              contentContainerStyle={{ paddingHorizontal: 16 }}
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={{
+                paddingHorizontal: 16,
+                paddingBottom: 96,
+              }}
             >
               <View className="pt-2">
                 <PressableScale
@@ -270,19 +302,6 @@ export const AddRecipeIngredientBottomSheet = ({
                     placeholderTextColor="#9FADA6"
                   />
                 </View>
-
-                <CTAButton
-                  buttonLabel={
-                    isEditMode
-                      ? i18n.t(
-                          "recipe_my_create.ingredients_bottom_sheet_edit_cta",
-                        )
-                      : i18n.t("recipe_my_create.ingredients_bottom_sheet_cta")
-                  }
-                  disabled={disabled}
-                  onPress={onCTAButtonPress}
-                  className="mt-5 mb-[22px]"
-                />
               </View>
             </BottomSheetScrollView>
           </View>

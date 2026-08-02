@@ -63,7 +63,7 @@ export default function DefaultBottomSheetModal({
 
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
-      backAction
+      backAction,
     );
 
     return () => backHandler.remove();
@@ -71,10 +71,10 @@ export default function DefaultBottomSheetModal({
 
   useEffect(() => {
     const showSub = Keyboard.addListener("keyboardDidShow", () =>
-      setKeyboardVisible(true)
+      setKeyboardVisible(true),
     );
     const hideSub = Keyboard.addListener("keyboardDidHide", () =>
-      setKeyboardVisible(false)
+      setKeyboardVisible(false),
     );
     return () => {
       showSub.remove();
@@ -106,6 +106,18 @@ export default function DefaultBottomSheetModal({
     Keyboard.dismiss();
   };
 
+  const renderFooter = useCallback(
+    ({ animatedFooterPosition }: BottomSheetFooterProps) => (
+      <BottomSheetFooter
+        animatedFooterPosition={animatedFooterPosition}
+        style={styles.footer}
+      >
+        {footer}
+      </BottomSheetFooter>
+    ),
+    [footer],
+  );
+
   const backdropComponent = ({
     animatedIndex,
     style,
@@ -126,7 +138,7 @@ export default function DefaultBottomSheetModal({
           bounces={false}
           alwaysBounceVertical={false}
           // expo 54 이후 gorhom/bottom-sheet 에서 버그가 있어서 임시 처리
-          contentContainerStyle={{ paddingBottom: footer ? 80 : 0 }}
+          contentContainerStyle={{ paddingBottom: footer ? 96 : 0 }}
         >
           {children}
         </BottomSheetScrollView>
@@ -140,17 +152,6 @@ export default function DefaultBottomSheetModal({
       >
         {children}
       </BottomSheetView>
-    );
-  };
-
-  const Footer = ({ animatedFooterPosition }: BottomSheetFooterProps) => {
-    return (
-      <BottomSheetFooter
-        animatedFooterPosition={animatedFooterPosition}
-        style={{ padding: 16 }}
-      >
-        {footer}
-      </BottomSheetFooter>
     );
   };
 
@@ -203,8 +204,9 @@ export default function DefaultBottomSheetModal({
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
       enableBlurKeyboardOnGesture={true}
+      topInset={insets.top}
       bottomInset={insets.bottom}
-      footerComponent={footer ? Footer : undefined}
+      footerComponent={footer ? renderFooter : undefined}
     >
       {renderContent()}
     </BottomSheetModal>
@@ -215,5 +217,9 @@ const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.2)",
+  },
+  footer: {
+    padding: 16,
+    backgroundColor: "white",
   },
 });
